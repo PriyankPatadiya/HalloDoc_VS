@@ -1,0 +1,37 @@
+﻿#patientbtn {
+    color: #4367d3;
+    background-color: #e8eaf1;
+    border: 1px solid #4367d3;
+}
+
+#familytbtn {
+    color: #00adef;
+    background-color: #e5f3f8;
+    border: 1px solid #00adef;
+}
+
+#conciergebtn {
+    color: #228b22;
+    background-color: #e8f0e8;
+    border: 1px solid #228b22;
+}
+
+#businessbtn {
+    color: #d90f81;
+    background-color: #f7e5ee;
+    border: 1px solid #d90f81;
+}
+
+#centerdiv {
+    height: 82vh;
+}
+
+@media only screen and (max-width: 768px) {
+    #submitfooter {
+        display: none !important;
+    }
+
+    #centerdiv {
+        height: 90vh;
+    }
+}

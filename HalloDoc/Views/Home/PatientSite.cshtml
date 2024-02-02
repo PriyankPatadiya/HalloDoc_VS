@@ -1,0 +1,67 @@
+﻿@{
+    ViewData["Title"] = "Submit-Request ";
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+  
+    <link rel="stylesheet" href="~/HalloDoc.styles.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/PatientSite.css" asp-append-version="true" />
+</head>
+<body>
+    <!-- Background Image -->
+
+    <div class="BackImage" style="z-index: -1">
+        <img src="~/images/11116016_415.jpg"
+             alt=""
+             class="img-fluid object-fit-fill border rounded" />
+    </div>
+    <div class="DesktopView">
+        <!-- Dark Mode Button Absolute -->
+        <button class="btn bg-transparent pt-1 pb-2 border border-info text-info me-4 position-absolute top-0 end-0 my-2">
+            <svg xmlns="http://www.w3.org/2000/svg"
+                 width="16"
+                 height="16"
+                 fill="currentColor"
+                 class="bi bi-moon"
+                 viewBox="0 0 16 16">
+                <path d="M6 .278a.77.77 0 0 1 .08.858 7.2 7.2 0 0 0-.878 3.46c0 4.021 3.278 7.277 7.318 7.277q.792-.001 1.533-.16a.79.79 0 0 1 .81.316.73.73 0 0 1-.031.893A8.35 8.35 0 0 1 8.344 16C3.734 16 0 12.286 0 7.71 0 4.266 2.114 1.312 5.124.06A.75.75 0 0 1 6 .278M4.858 1.311A7.27 7.27 0 0 0 1.025 7.71c0 4.02 3.279 7.276 7.319 7.276a7.32 7.32 0 0 0 5.205-2.162q-.506.063-1.029.063c-4.61 0-8.343-3.714-8.343-8.29 0-1.167.242-2.278.681-3.286" />
+            </svg>
+        </button>
+
+        <!-- Header For Logo -->
+
+        <div class="header d-flex justify-content-center">
+            <img src="~/images/hallodoc2.png"
+                 alt=""
+                 style="height: 18vh"
+                 id="halloLogo" />
+        </div>
+
+        <!-- Two Buttons -->
+        <div class="container py-4 " id="TwoButtons">
+            <a href="CreatPatientRequest.html"
+               class="btn mx-auto text-start fw-semibold fs-4 rounded-3 d-block text-center my-4 text-light bg-info Buttons"
+               style="width: 80%">
+                <span class="fs-3"> Submit a Request </span>
+            </a>
+            <a href="CreatPatientRequest.html"
+               class="btn mx-auto text-start fw-semibold fs-4 rounded-3 d-block text-center border-info my-4 text-light bg-info Buttons"
+               style="width: 80%">
+                <span class="fs-3"> Registered Patients </span>
+            </a>
+        </div>
+
+        <div class="d-flex justify-content-center align-items-center position-absolute bottom-0 pb-3"
+             id="submitfooter"
+             style="width: 100%">
+            <span class="text-secondary fw-semibold">Terms of conditions | Privacy Policy </span>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,53 @@
+﻿html {
+    height: 100%;
+    position: relative;
+}
+
+.Buttons {
+    padding-top: 15px;
+    padding-bottom: 15px;
+}
+
+.BackImage {
+    display: none;
+}
+
+#TwoButtons {
+    margin-top: 100px;
+    margin-bottom: 100px;
+}
+
+@media only screen and (max-width: 568px) {
+    .BackImage {
+        background-repeat: no-repeat;
+        background-image: url("~/images/11116016_415.jpg");
+        background-size: cover;
+        background-position: center;
+        height: 100vh;
+        width: 100%;
+        filter: blur(8px);
+        position: relative;
+        display: inline-flex;
+    }
+
+    .DesktopView {
+        position: absolute;
+        height: 100vh;
+        left: 0;
+        right: 0;
+        top: 0;
+    }
+
+    #halloLogo {
+        visibility: hidden;
+    }
+
+    .Buttons {
+        padding-top: 12px;
+        padding-bottom: 12px;
+    }
+
+    #TwoButtons {
+        margin-top: 150px;
+    }
+}

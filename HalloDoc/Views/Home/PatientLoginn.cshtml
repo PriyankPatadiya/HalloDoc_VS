@@ -1,0 +1,101 @@
+﻿@{
+    ViewData["Title"] = "Login-Page";
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+
+    <link rel="stylesheet" href="~/HalloDoc.styles.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/PatientLoginStyle.css" asp-append-version="true"/>
+    <title>Platform Page</title>
+</head>
+<body>
+    <div class="container-fluid">
+        <!-- Dark Mode Icon -->
+        <button class="btn bg-transparent pt-1 pb-2 border border-info text-info position-absolute top-0 end-0 mx-2 my-2">
+            <svg xmlns="http://www.w3.org/2000/svg"
+                 width="16"
+                 height="16"
+                 fill="currentColor"
+                 class="bi bi-moon"
+                 viewBox="0 0 16 16">
+                <path d="M6 .278a.77.77 0 0 1 .08.858 7.2 7.2 0 0 0-.878 3.46c0 4.021 3.278 7.277 7.318 7.277q.792-.001 1.533-.16a.79.79 0 0 1 .81.316.73.73 0 0 1-.031.893A8.35 8.35 0 0 1 8.344 16C3.734 16 0 12.286 0 7.71 0 4.266 2.114 1.312 5.124.06A.75.75 0 0 1 6 .278M4.858 1.311A7.27 7.27 0 0 0 1.025 7.71c0 4.02 3.279 7.276 7.319 7.276a7.32 7.32 0 0 0 5.205-2.162q-.506.063-1.029.063c-4.61 0-8.343-3.714-8.343-8.29 0-1.167.242-2.278.681-3.286" />
+            </svg>
+        </button>
+
+
+        <!-- Main Row Of Login Page -->
+        <div class="row" id="mainRowOfLoginpg ">
+
+            <!-- First Column ( Background Page ) -->
+            <div class="col-12 col-lg-6 col-sm-12 col-md-6 mx-auto"
+                 id="FirstColOfLogin">
+                <img src="../  Images/11116016_415.jpg"
+                     alt=""
+                     class="img-fluid object-fit-fill border rounded"
+                     style="height: 100vh" />
+            </div>
+
+            <!-- Second Column ( Login Form with logo Page ) -->
+            <div class="col-12 col-lg-6 col-sm-12 col-md-6 text-center overflow-hidden"
+                 id="SecondColOfLogin">
+                <!-- HalloDoc Logo  -->
+                <div class="LogoImg my-5 py-3" id="hallodocImage">
+                    <img src="Images/hallodoclogo.jpg" alt="" />
+                </div>
+
+                <!-- Login form  -->
+                <div class="loginform py-2 text-start mx-auto" style="width: 50%">
+                    <div id="backtologin " class="mx-auto">
+                        <button class="btn p-0">
+                            <img src="Images/arrow_back_ios_FILL0_wght400_GRAD0_opsz24.svg"
+                                 alt="" /><span class="fw-semibold">Back</span>
+                        </button>
+
+                        <h2 class="my-4">LogIn To Your Account</h2>
+                    </div>
+
+                    <div class="mx-auto my-2">
+                        <div class="form-floating d-flex border rounded bg-white logininputdiv">
+                            <input type="text"
+                                   class="form-control no-border"
+                                   id="floatingInputGroup1"
+                                   placeholder="Username" /><img src="Images/user_circle.svg" alt="" class="pe-3" />
+                            <label for="floatingInputGroup1">Username</label>
+                        </div>
+                    </div>
+                    <div class="mx-auto my-2">
+                        <div class="form-floating d-flex border rounded bg-white logininputdiv">
+                            <input type="password"
+                                   class="form-control no-border"
+                                   id="floatingPassword"
+                                   placeholder="Password" />
+                            <img src="Images/password_icon.svg" alt="" class="pe-3" />
+                            <label for="floatingPassword">Password</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="d-grid mx-auto btn-group btn-group-lg my-4"
+                     style="width: 50%">
+                    <button class="btn btn-info text-white" type="submit">
+                        Reset Password
+                    </button>
+                </div>
+                <a href="ResetPasscode.html" style="text-decoration: none">
+                    <span class="my-5 fw-semibold text-info">
+                        Forget Password?
+                    </span>
+                </a>
+                <div class="termsfooter text-center align-bottom">
+                    <span class="text-secondary fw-semibold">Terms of conditions | Privacy Policy </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

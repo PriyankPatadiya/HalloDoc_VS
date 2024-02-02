@@ -1,0 +1,56 @@
+﻿
+/* Stylesheet for Platform and resetpasscode page */
+
+.no-border {
+    border: 0;
+    box-shadow: none; /* You may want to include this as bootstrap applies these styles too */
+}
+
+#floatingInputGroup1, #floatingPassword:focus {
+    box-shadow: none;
+}
+
+.termsfooter {
+    position: relative;
+    top: 20%;
+}
+
+#FirstColOfLogin {
+    position: relative;
+    background-image: url("../Images/11116016_415.jpg");
+    background-repeat: no-repeat;
+    background-size: cover;
+    height: 100vh;
+    background-position: center;
+    filter: blur(8px);
+}
+
+#SecondColOfLogin {
+    position: absolute;
+    left: 0;
+    right: 0;
+    margin: auto;
+    height: 100vh;
+}
+
+@media only screen and (max-width: 768px) {
+    #FirstColOfLogin {
+        position: relative;
+        background-image: url("../Images/11116016_415.jpg");
+        background-repeat: no-repeat;
+        background-size: cover;
+        height: 100vh;
+        background-position: center;
+        filter: blur(8px);
+        opacity: 0.4;
+    }
+
+    #SecondColOfLogin {
+        position: absolute;
+        height: 100vh;
+    }
+
+    #hallodocImage {
+        visibility: hidden;
+    }
+}
