@@ -1,6 +1,7 @@
 ﻿using HalloDoc.Models;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
+using System.Text.Encodings.Web;
 
 namespace HalloDoc.Controllers
 {
@@ -12,14 +13,10 @@ namespace HalloDoc.Controllers
         {
             _logger = logger;
         }
-
-        public IActionResult Index()
+        public IActionResult Privacy(string name, int numTimes = 1)
         {
-            return View();
-        }
-
-        public IActionResult Privacy()
-        {
+            ViewData["Messege"] = "Hello" + name;
+            ViewData["numTimes"] = numTimes;
             return View();
         }
         public IActionResult SubmitRequest()
@@ -46,6 +43,26 @@ namespace HalloDoc.Controllers
         public IActionResult Error()
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+        }
+    }
+
+    public class patientFormsController : Controller
+    {
+        public IActionResult PatientRequestForm()
+        {
+            return View();
+        }
+        public IActionResult Friend_FamilyRequestForm()
+        {
+            return View();
+        }
+        public IActionResult BusinessRequestForm()
+        {
+            return View();
+        }
+        public IActionResult ConciergeRequestForm()
+        {
+            return View();
         }
     }
 }

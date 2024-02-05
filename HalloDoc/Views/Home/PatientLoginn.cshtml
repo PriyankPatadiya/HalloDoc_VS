@@ -12,7 +12,7 @@
 
     <link rel="stylesheet" href="~/HalloDoc.styles.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/PatientLoginStyle.css" asp-append-version="true"/>
-    <title>Platform Page</title>
+    <title>@ViewData["Title"]</title>
 </head>
 <body>
     <div class="container-fluid">
@@ -52,13 +52,12 @@
                 <!-- Login form  -->
                 <div class="loginform py-2 text-start mx-auto" style="width: 50%">
                     <div id="backtologin " class="mx-auto">
-                        <button class="btn p-0">
+                        <a asp-action="PatientSite" class="btn p-0 text-decoration-none">
                             <img src="Images/arrow_back_ios_FILL0_wght400_GRAD0_opsz24.svg"
                                  alt="" /><span class="fw-semibold">Back</span>
-                        </button>
-
-                        <h2 class="my-4">LogIn To Your Account</h2>
+                        </a>
                     </div>
+                    <h2 class="my-4">LogIn To Your Account</h2>
 
                     <div class="mx-auto my-2">
                         <div class="form-floating d-flex border rounded bg-white logininputdiv">
@@ -87,7 +86,7 @@
                     </button>
                 </div>
                 <a href="ResetPasscode.html" style="text-decoration: none">
-                    <span class="my-5 fw-semibold text-info">
+                    <span class="my-5 fw-semibold text-black">
                         Forget Password?
                     </span>
                 </a>

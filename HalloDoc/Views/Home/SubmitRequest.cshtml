@@ -6,7 +6,7 @@
         <div class="headingbtn mt-4 d-flex align-items-center mx-auto justify-content-around"
              style="width: 70%;">
             <span class="fs-2 fw-semibold" style="margin-left: 25%;">I am a...</span>
-            <a href="Platform.html" class="p-2 border text-decoration-none border-info rounded">
+            <a asp-action="PatientSite" class="p-2 border text-decoration-none border-info rounded">
                 <svg xmlns="http://www.w3.org/2000/svg"
                      width="16"
                      height="16"
@@ -20,25 +20,25 @@
             </a>
         </div>
 
-        <a href="CreatPatientRequest.html"
-           class="btn mx-auto text-start mt-4 mb-3 fw-semibold fs-4 rounded-3"
+        <a asp-controller="PatientForms" asp-action="PatientRequestForm"
+            class="btn mx-auto text-start mt-4 mb-3 fw-semibold fs-4 rounded-3"
            style="width: 320px; height: 70px"
            id="patientbtn">
             PATIENT
         </a>
-        <a href="CreateFamilyRequest.html"
+        <a asp-controller="PatientForms" asp-action="Friend_FamilyRequestForm"
            class="btn mx-auto text-start rounded-3 my-3 fw-semibold fs-4"
            style="width: 320px; height: 70px"
            id="familytbtn">
             FAMILY/FRIEND
         </a>
-        <a href="ConciergeRequest.html"
+        <a asp-controller="PatientForms" asp-action="ConciergeRequestForm"
            class="btn mx-auto text-start my-3 rounded-3 fw-semibold fs-4"
            style="width: 320px; height: 70px"
            id="conciergebtn">
             CONCIERGE
         </a>
-        <a href="BusinessRequest.html"
+        <a asp-controller="PatientForms" asp-action="BusinessRequestForm"
            class="btn mx-auto text-start my-3 rounded-3 fw-semibold fs-4"
            style="width: 320px; height: 70px"
            id="businessbtn">
