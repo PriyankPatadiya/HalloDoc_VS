@@ -11,7 +11,7 @@
     
     <link rel="stylesheet" href="~/css/PatientSite.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/PatientLoginStyle.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/css/RequestForms.css" asp-append-version="true"/>
+   
 </head>
 <body>
     <header>
@@ -25,14 +25,15 @@
         class=""
       />
       <button
-        class="btn bg-transparent pt-1 pb-2 border border-info text-info me-4"
+        class="btn bg-transparent pt-1 pb-2 border border-info text-info me-4 shadow-none"
+        id="themebtn" onclick="toggletheme()"
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
           width="16"
           height="16"
           fill="currentColor"
-          class="bi bi-moon"
+          class="bi bi-moon "
           viewBox="0 0 16 16"
         >
           <path
@@ -56,6 +57,12 @@
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
+    <script>
+        function toggletheme(){
+            var element = document.body;
+            element.classList.toggle("dark-mode");
+        }
+    </script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

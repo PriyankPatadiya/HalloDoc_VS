@@ -26,6 +26,9 @@
     height: 82vh;
 }
 
+.dark-mode div:first-child{
+    background-color: #526D82 !important;
+}
 @media only screen and (max-width: 768px) {
     #submitfooter {
         display: none !important;

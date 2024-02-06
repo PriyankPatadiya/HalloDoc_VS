@@ -1,18 +1,90 @@
 ﻿.form-control:focus {
     box-shadow: none !important;
     outline: none !important;
-    border: 1px solid #0e6d7b;
+    border: 1px solid #17a2b8;
+}
+#lightsvg{
+    display: none;
+    margin-top: 4px;
+    color: yellow;
 }
 
+
     .form-control:focus + label {
-        color: #0e6d7b !important;
+        color: #17a2b8 !important;
     }
+
     .form-control:focus + label {
-        color: #0e6d7b !important;
+        color: #17a2b8 !important;
     }
-/*.floating-label {
-    color: #39d7fa !important;
-}*/
+
+.dark-mode div {
+    background-color: #526D82 !important;
+}
+.dark-mode nav {
+    background-color: #162447 !important;
+}
+.dark-mode h4 {
+    color: powderblue !important;
+}
+
+.dark-mode nav button {
+    border-color: #162447 !important;
+}
+.dark-mode button {
+    color: black !important;
+    
+}
+
+.dark-mode #FormOfPatientRequest {
+    background-color: #27374D !important;
+}
+
+.dark-mode form div {
+    background-color: #27374D !important;
+}
+
+
+.dark-mode .form-control, .dark-mode textarea, .dark-mode input {
+    background-color: #9DB2BF !important;
+   
+}
+
+.dark-mode .backbtn a {
+    background-color: #9DB2BF !important;
+    color: lightcyan !important;
+    border-color: black !important;
+}
+
+.dark-mode .backbtn svg {
+    color: black !important;
+}
+
+.dark-mode .filebutton {
+    background-color: #9DB2BF !important;
+}
+
+.dark-mode .backbtn a span {
+    color: black !important;
+}
+
+.dark-mode .form-control:focus {
+    box-shadow: none !important;
+    outline: none !important;
+    border: 1px solid black !important;
+}
+
+    .dark-mode .form-control:focus + label {
+        color: black !important;
+    }
+
+    .dark-mode .form-control:focus + label {
+        color: black !important;
+    }
+
+.dark-mode #submitfooter {
+    background-color: #343a40 !important;
+}
 
 #secondDiv {
     width: 60%;
