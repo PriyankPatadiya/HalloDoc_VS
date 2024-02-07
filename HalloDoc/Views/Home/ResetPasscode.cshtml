@@ -1,17 +1,16 @@
 ﻿@{
     ViewData["Title"] = "ResetPasscode";
-    Layout = null;
 }
+
 <!DOCTYPE html>
 <html lang="en">
-<head> 
-    <meta charset="UTF-8" />
+<head> <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
 
     <link rel="stylesheet" href="~/HalloDoc.styles.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/css/PatientLoginStyle.css" asp-append-version="true"/>
-  
+    <link rel="stylesheet" href="~/css/PatientLoginStyle.css" asp-append-version="true" />
+    <title>@ViewData["Title"]</title>
 </head>
 <body>
     <div class="container-fluid">
@@ -26,6 +25,8 @@
                  viewBox="0 0 16 16">
                 <path d="M6 .278a.77.77 0 0 1 .08.858 7.2 7.2 0 0 0-.878 3.46c0 4.021 3.278 7.277 7.318 7.277q.792-.001 1.533-.16a.79.79 0 0 1 .81.316.73.73 0 0 1-.031.893A8.35 8.35 0 0 1 8.344 16C3.734 16 0 12.286 0 7.71 0 4.266 2.114 1.312 5.124.06A.75.75 0 0 1 6 .278M4.858 1.311A7.27 7.27 0 0 0 1.025 7.71c0 4.02 3.279 7.276 7.319 7.276a7.32 7.32 0 0 0 5.205-2.162q-.506.063-1.029.063c-4.61 0-8.343-3.714-8.343-8.29 0-1.167.242-2.278.681-3.286" />
             </svg>
+
+
         </button>
 
         <!-- Main Row Of Reset Passcode  -->
@@ -34,23 +35,23 @@
             <!-- First Column ( Background Image ) -->
             <div class="col-12 col-lg-6 col-sm-12 col-md-6 mx-auto"
                  id="FirstColOfLogin">
-                <img src="~/images/11116016_415.jpg"
+                <img src="../Images/11116016_415.jpg"
                      alt=""
                      class="img-fluid object-fit-fill border rounded"
-                     style="height: 100vh; opacity: 0.inherit;" />
+                     style="height: 100vh" />
             </div>
 
             <!-- Second Column ( Login Form ) -->
             <div class="col-12 col-lg-6 col-sm-12 col-md-6 text-center mx-auto overflow-hidden"
                  id="SecondColOfLogin">
                 <div class="LogoImg my-5 py-3" id="hallodocImage">
-                    <img src="~/images/hallodoclogo.jpg" alt="" />
+                    <img src="Images/hallodoclogo.jpg" alt="" />
                 </div>
 
                 <div class="loginform py-4 text-start mx-auto" style="width: 50%">
                     <div id="backtologin " class="mx-auto mb-4">
                         <button class="btn p-0">
-                            <img src="~/images/arrow_back_ios_FILL0_wght400_GRAD0_opsz24.svg"
+                            <img src="Images/arrow_back_ios_FILL0_wght400_GRAD0_opsz24.svg"
                                  alt="" /><span class="fw-semibold">Back</span>
                         </button>
 
@@ -73,7 +74,7 @@
                         Reset Password
                     </button>
                 </div>
-                <a href="Platform.html" style="text-decoration: none"><span class="fw-semibold text-info"> &lt; Back To Login</span></a>
+                <a asp-action="PatientLoginn" style="text-decoration: none"><span class="fw-semibold text-info"> &lt; Back To Login</span></a>
                 <footer class="termsfooter text-center">
                     <span>Terms of conditions</span>
                 </footer>

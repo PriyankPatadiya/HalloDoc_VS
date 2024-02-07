@@ -1,14 +1,17 @@
-﻿using HalloDoc.Models;
+﻿using HalloDoc.DataModels;
+using HalloDoc.Models;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 using System.Text.Encodings.Web;
+using HalloDoc.DataContext;
+using HalloDoc.NewFolder1;
 
 namespace HalloDoc.Controllers
 {
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
-
+        private readonly ApplicationDbContext _context;
         public HomeController(ILogger<HomeController> logger)
         {
             _logger = logger;
@@ -28,17 +31,29 @@ namespace HalloDoc.Controllers
         {
             return View();
         }
-        
+
         public IActionResult PatientLoginn()
         {
             return View();
         }
-
-        public IActionResult ResetPasscode()
+        [HttpPost]
+        public String PatientLoginn(RegisterDTO a)
+        {
+           
+            return "Username is " + a.UserId;
+        }
+        public IActionResult ResetPassword()
         {
             return View();
         }
 
+       
+        public IActionResult PatientCreateAcc()
+        {
+            return View();
+        }
+
+       
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {

@@ -1,7 +1,7 @@
-﻿@model HalloDoc.NewFolder1.RegisterDTO
+﻿@model HalloDoc.DataModels.AspNetUser
 
 @{
-    ViewData["Title"] = "Login-Page";
+    ViewData["Title"] = "createAcc";
     Layout = null;
 }
 
@@ -13,7 +13,7 @@
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
 
     <link rel="stylesheet" href="~/HalloDoc.styles.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/css/PatientLoginStyle.css" asp-append-version="true"/>
+    <link rel="stylesheet" href="~/css/PatientLoginStyle.css" asp-append-version="true" />
     <title>@ViewData["Title"]</title>
 </head>
 <body>
@@ -48,11 +48,11 @@
                  id="SecondColOfLogin">
                 <!-- HalloDoc Logo  -->
                 <div class="LogoImg my-5 py-3" id="hallodocImage">
-                    <img src="Images/hallodoclogo.jpg" alt="" />
+                    <img src="~/images/hallodoclogo.jpg" alt="" />
                 </div>
 
                 <!-- Login form  -->
-                <form asp-action="PatientLoginn" asp-controller="Home" method="post">
+                <form asp-controller="Home" asp-action="createAcc">
                 <div class="loginform py-2 text-start mx-auto" style="width: 50%">
                     <div id="backtologin " class="mx-auto">
                         <a asp-action="PatientSite" class="btn p-0 text-decoration-none">
@@ -65,7 +65,7 @@
                     <div class="mx-auto my-2">
                         <div class="form-floating d-flex border rounded bg-white logininputdiv">
                             <input type="text"
-                                asp-for="UserId"
+                                asp-for="UserName"
                                    class="form-control no-border"
                                    id="floatingInputGroup1"
                                    placeholder="Username" /><img src="Images/user_circle.svg" alt="" class="pe-3" />
@@ -75,7 +75,7 @@
                     <div class="mx-auto my-2">
                         <div class="form-floating d-flex border rounded bg-white logininputdiv">
                             <input type="password"
-                                asp-for="Password"
+                                asp-for="PasswordHash"
                                    class="form-control no-border"
                                    id="floatingPassword"
                                    placeholder="Password" />
@@ -83,22 +83,27 @@
                             <label for="floatingPassword">Password</label>
                         </div>
                     </div>
+                    <div class="mx-auto my-2">
+                        <div class="form-floating d-flex border rounded bg-white logininputdiv">
+                            <input type="password"
+                                   class="form-control no-border"
+                                   id="floatingPassword"
+                                   placeholder="Password" />
+                            <img src="Images/password_icon.svg" alt="" class="pe-3" />
+                            <label for="floatingPassword">Confirm Password</label>
+                        </div>
+                    </div>
                 </div>
+                </form>
                 <div class="d-grid mx-auto btn-group btn-group-lg my-4"
                      style="width: 50%">
                     <button class="btn btn-info text-white" type="submit">
-                        Login
+                        CreateAccount
                     </button>
                 </div>
-                </form>
                 <a asp-action="ResetPassword" style="text-decoration: none">
                     <span class="my-5 fw-semibold text-black">
                         Forget Password?
-                    </span>
-                </a>
-                <a asp-action="PatientCreateAcc" style="text-decoration: none">
-                    <span class="my-5 fw-semibold text-black">
-                        Sign Up
                     </span>
                 </a>
                 <div class="termsfooter text-center align-bottom">
