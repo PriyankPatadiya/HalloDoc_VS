@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.Text.Encodings.Web;
 using HalloDoc.DataContext;
 using HalloDoc.NewFolder1;
+using Microsoft.EntityFrameworkCore;
 
 namespace HalloDoc.Controllers
 {
@@ -37,10 +38,15 @@ namespace HalloDoc.Controllers
             return View();
         }
         [HttpPost]
-        public String PatientLoginn(RegisterDTO a)
+        public async Task<IActionResult> PatientLoginn(RegisterDTO a)
         {
-           
-            return "Username is " + a.UserId;
+            if(a.UserId == null )
+            {
+                return NotFound();
+            }
+
+            var user = await _context.RegisterDTOs.FirstOrDefaultAsync(m => m.UserId == a.UserId);
+            return View();
         }
         public IActionResult ResetPassword()
         {
@@ -61,23 +67,5 @@ namespace HalloDoc.Controllers
         }
     }
 
-    public class patientFormsController : Controller
-    {
-        public IActionResult PatientRequestForm()
-        {
-            return View();
-        }
-        public IActionResult Friend_FamilyRequestForm()
-        {
-            return View();
-        }
-        public IActionResult BusinessRequestForm()
-        {
-            return View();
-        }
-        public IActionResult ConciergeRequestForm()
-        {
-            return View();
-        }
-    }
+    
 }
