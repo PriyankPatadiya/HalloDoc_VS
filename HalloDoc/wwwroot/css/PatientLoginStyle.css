@@ -22,11 +22,11 @@
     background-size: cover;
     height: 100vh;
     background-position: center;
-    filter: blur(8px);
 }
 
+
+
 #SecondColOfLogin {
-    position: absolute;
     left: 0;
     right: 0;
     margin: auto;
@@ -50,7 +50,5 @@
         height: 100vh;
     }
 
-    #hallodocImage {
-        visibility: hidden;
-    }
+    
 }

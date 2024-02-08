@@ -1,4 +1,4 @@
-﻿@model HalloDoc.DataModels.AspNetUser
+﻿@model DAL.DataModels.AspNetUser
 
 @{
     ViewData["Title"] = "createAcc";
@@ -70,6 +70,7 @@
                                    id="floatingInputGroup1"
                                    placeholder="Username" /><img src="Images/user_circle.svg" alt="" class="pe-3" />
                             <label for="floatingInputGroup1">Username</label>
+                            <span asp-validation-for="UserName" class="text-danger"></span>
                         </div>
                     </div>
                     <div class="mx-auto my-2">
@@ -81,16 +82,19 @@
                                    placeholder="Password" />
                             <img src="Images/password_icon.svg" alt="" class="pe-3" />
                             <label for="floatingPassword">Password</label>
+                                <span asp-validation-for="PasswordHash" class="text-danger"></span>
                         </div>
                     </div>
                     <div class="mx-auto my-2">
                         <div class="form-floating d-flex border rounded bg-white logininputdiv">
                             <input type="password"
+                                asp-for="PasswordHash"
                                    class="form-control no-border"
                                    id="floatingPassword"
                                    placeholder="Password" />
                             <img src="Images/password_icon.svg" alt="" class="pe-3" />
                             <label for="floatingPassword">Confirm Password</label>
+                                <span asp-validation-for="PasswordHash" class="text-danger"></span>
                         </div>
                     </div>
                 </div>

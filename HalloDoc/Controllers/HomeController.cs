@@ -1,11 +1,11 @@
-﻿using HalloDoc.DataModels;
+﻿
 using HalloDoc.Models;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
-using System.Text.Encodings.Web;
-using HalloDoc.DataContext;
 using HalloDoc.NewFolder1;
 using Microsoft.EntityFrameworkCore;
+using DAL.DataContext;
+using DAL.DataModels;
 
 namespace HalloDoc.Controllers
 {
@@ -13,9 +13,11 @@ namespace HalloDoc.Controllers
     {
         private readonly ILogger<HomeController> _logger;
         private readonly ApplicationDbContext _context;
-        public HomeController(ILogger<HomeController> logger)
+      
+
+        public HomeController(ApplicationDbContext db)
         {
-            _logger = logger;
+            _context = db;
         }
         public IActionResult Privacy(string name, int numTimes = 1)
         {
@@ -37,16 +39,28 @@ namespace HalloDoc.Controllers
         {
             return View();
         }
+
+        //Post
         [HttpPost]
-        public async Task<IActionResult> PatientLoginn(RegisterDTO a)
-        {
-            if(a.UserId == null )
+        public async Task<IActionResult> PatientLoginn(AspNetUser a)
+            {  
+
+            if(a.Id == null || a.PasswordHash == null)
+            {
+                ModelState.AddModelError("EmptyField", "The Field Is Empty");
+            }
+            if(_context.AspNetUsers == null)
             {
                 return NotFound();
             }
 
-            var user = await _context.RegisterDTOs.FirstOrDefaultAsync(m => m.UserId == a.UserId);
+            var user = await _context.AspNetUsers.FirstOrDefaultAsync(m => m.Id == a.Id);
+            if(user !=null && user.PasswordHash == a.PasswordHash)
+            {
+                return RedirectToAction(nameof(PatientSite));
+            }
             return View();
+           
         }
         public IActionResult ResetPassword()
         {
@@ -57,6 +71,20 @@ namespace HalloDoc.Controllers
         public IActionResult PatientCreateAcc()
         {
             return View();
+        }
+
+        //POST
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult PatientCreateAcc(AspNetUser Obj) 
+        {
+            if (ModelState.IsValid)
+            {
+                _context.Add(Obj);
+                _context.SaveChanges();
+                return RedirectToAction("PatientLoginn");
+            }
+            return View(Obj);
         }
 
        

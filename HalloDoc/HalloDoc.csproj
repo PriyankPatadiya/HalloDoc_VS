@@ -48,4 +48,9 @@
     <_ContentIncludedByDefault Remove="Views\Home\ResetPasscode.cshtml" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\BAL\BAL.csproj" />
+    <ProjectReference Include="..\DAL\DAL.csproj" />
+  </ItemGroup>
+
 </Project>

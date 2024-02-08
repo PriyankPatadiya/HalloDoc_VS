@@ -5,6 +5,10 @@ VisualStudioVersion = 17.6.33723.286
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HalloDoc", "HalloDoc\HalloDoc.csproj", "{8531328B-EC73-40C2-BEF4-47C0CC0332CB}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DAL", "DAL\DAL.csproj", "{36B221E6-A962-43E3-8F14-8E53D4020E86}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BAL", "BAL\BAL.csproj", "{5AD35A12-6C3F-4282-A297-C7EE1A849C4E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +19,14 @@ Global
 		{8531328B-EC73-40C2-BEF4-47C0CC0332CB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8531328B-EC73-40C2-BEF4-47C0CC0332CB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8531328B-EC73-40C2-BEF4-47C0CC0332CB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{36B221E6-A962-43E3-8F14-8E53D4020E86}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{36B221E6-A962-43E3-8F14-8E53D4020E86}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{36B221E6-A962-43E3-8F14-8E53D4020E86}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{36B221E6-A962-43E3-8F14-8E53D4020E86}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5AD35A12-6C3F-4282-A297-C7EE1A849C4E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5AD35A12-6C3F-4282-A297-C7EE1A849C4E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5AD35A12-6C3F-4282-A297-C7EE1A849C4E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5AD35A12-6C3F-4282-A297-C7EE1A849C4E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

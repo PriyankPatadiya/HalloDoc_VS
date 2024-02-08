@@ -1,4 +1,4 @@
-﻿@model HalloDoc.NewFolder1.RegisterDTO
+﻿@model DAL.DataModels.AspNetUser
 
 @{
     ViewData["Title"] = "Login-Page";
@@ -47,8 +47,8 @@
             <div class="col-12 col-lg-6 col-sm-12 col-md-6 text-center overflow-hidden"
                  id="SecondColOfLogin">
                 <!-- HalloDoc Logo  -->
-                <div class="LogoImg my-5 py-3" id="hallodocImage">
-                    <img src="Images/hallodoclogo.jpg" alt="" />
+                <div class="LogoImg my-5 py-auto d-flex align-items-center justify-content-center" id="hallodocImage" style="height: 30%;">
+                    <img src="~/images/hallodoc2.png" alt="" style="height: 50%;"/>
                 </div>
 
                 <!-- Login form  -->
@@ -65,24 +65,29 @@
                     <div class="mx-auto my-2">
                         <div class="form-floating d-flex border rounded bg-white logininputdiv">
                             <input type="text"
-                                asp-for="UserId"
+                                asp-for="Id"
                                    class="form-control no-border"
                                    id="floatingInputGroup1"
                                    placeholder="Username" /><img src="Images/user_circle.svg" alt="" class="pe-3" />
                             <label for="floatingInputGroup1">Username</label>
+                            
                         </div>
                     </div>
+                            <span asp-validation-for="Id" class="text-danger"></span>
                     <div class="mx-auto my-2">
                         <div class="form-floating d-flex border rounded bg-white logininputdiv">
                             <input type="password"
-                                asp-for="Password"
+                                asp-for="PasswordHash"
                                    class="form-control no-border"
                                    id="floatingPassword"
                                    placeholder="Password" />
                             <img src="Images/password_icon.svg" alt="" class="pe-3" />
                             <label for="floatingPassword">Password</label>
+                            
                         </div>
+                            
                     </div>
+                        <span asp-validation-for="PasswordHash" class="text-danger"></span>
                 </div>
                 <div class="d-grid mx-auto btn-group btn-group-lg my-4"
                      style="width: 50%">

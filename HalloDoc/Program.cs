@@ -1,4 +1,4 @@
-using HalloDoc.DataContext;
+using DAL.DataContext;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -27,6 +27,6 @@ app.UseAuthorization();
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Home}/{action=PatientLoginn}/{id?}");
+    pattern: "{controller=Home}/{action=PatientSite}/{id?}");
 
 app.Run();
