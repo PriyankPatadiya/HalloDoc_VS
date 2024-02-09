@@ -41,27 +41,27 @@ namespace HalloDoc.Controllers
         }
 
         //Post
-        [HttpPost]
-        public async Task<IActionResult> PatientLoginn(AspNetUser a)
-            {  
+            [HttpPost]
+            public async Task<IActionResult> PatientLoginn(AspNetUser a)
+                {  
 
-            if(a.Id == null || a.PasswordHash == null)
-            {
-                ModelState.AddModelError("EmptyField", "The Field Is Empty");
-            }
-            if(_context.AspNetUsers == null)
-            {
-                return NotFound();
-            }
+                if(a.Id == null || a.PasswordHash == null)
+                {
+                    ModelState.AddModelError("EmptyField", "The Field Is Empty");
+                }
+                if(_context.AspNetUsers == null)
+                {
+                    return NotFound();
+                }
 
-            var user = await _context.AspNetUsers.FirstOrDefaultAsync(m => m.Id == a.Id);
-            if(user !=null && user.PasswordHash == a.PasswordHash)
-            {
-                return RedirectToAction(nameof(PatientSite));
-            }
-            return View();
+                var user = await _context.AspNetUsers.FirstOrDefaultAsync(m => m.Id == a.Id);
+                if(user !=null && user.PasswordHash == a.PasswordHash)
+                {
+                    return RedirectToAction(nameof(PatientSite));
+                }
+                return View();
            
-        }
+            }
         public IActionResult ResetPassword()
         {
             return View();
