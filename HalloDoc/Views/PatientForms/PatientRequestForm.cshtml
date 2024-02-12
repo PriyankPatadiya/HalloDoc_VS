@@ -37,7 +37,7 @@
             </svg>
         </button>
     </nav>
-
+    
     <div class="container-fluid bg-light pb-4">
         <div class="mx-auto pt-3 mb-3" id="secondDiv">
             <div class="backbtn d-flex justify-content-end">
@@ -57,7 +57,7 @@
             </div>
 
             <div id="FormOfPatientRequest" class="bg-white mt-3 p-3 gx-4 mb-3">
-                <form class="form-floating" asp-action="PatientReq">
+                <form class="form-floating" asp-controller="PatientForms" asp-action="PatientReq" method="post">
                     <!-- Patient Information -->
                     <div class="row gx-4">
                         <h4 class="fw-semibold text-dark">Patient Information</h4>
@@ -98,20 +98,42 @@
                             Patient Contact Information
                         </h4>
                         <div class="col-sm-12 col-md-12 col-lg-6 form-floating my-3">
-                            <input type="email"
+                            <input type="text"
                                 asp-for="Email"
                                    class="form-control"
-                                   id="floatingInput"
-                                   placeholder="First Name" />
+                                   
+                                   id="email1"
+                                   id = "floatingInput"
+                                   placeholder="name@InputType.com"
+                                   onchange="CheckEmail()" />
                             <label for="floatingInput" class="ms-2">Email</label>
                         </div>
                         <div class="col-sm-12 col-md-12 col-lg-6 form-floating my-3">
                             <input type="tel"
                                 asp-for="PhoneNumber"
+                               
                                    class="form-control"
                                    id="floatingInput"
-                                   placeholder="Last Name" />
+                                   placeholder="PhoneNumber" />
                             <label for="floatingInput" class="ms-2">Mobile Number</label>
+                        </div>
+                        <div class ="row" id="passwordFields" style="display : none;">
+                            <div class="col-sm-12 col-md-12 col-lg-6 form-floating my-3">
+                                <input type="password"
+                                       asp-for="PasswordHash"
+                                       class="form-control"
+                                       id="password"
+                                       placeholder="Password" />
+                                <label for="floatingInput" class="ms-2">Password</label>
+                            </div>
+                            <div class="col-sm-12 col-md-12 col-lg-6 form-floating my-3">
+                                <input type="tel"
+                                       asp-for="ConfirmPasswordHash"
+                                       class="form-control"
+                                       id="ConfirmPassword"
+                                       placeholder="ConfirmPassword" />
+                                <label for="floatingInput" class="ms-2">ConfirmPassword</label>
+                            </div>
                         </div>
 
                         <!-- Patient Location-->
@@ -194,7 +216,7 @@
                             </button>
                         </div>
                         <div class="d-flex justify-content-end my-3">
-                            <button class="btn border-none bg-info p-3 text-light fw-semibold me-4">
+                            <button class="btn border-none bg-info p-3 text-light fw-semibold me-4" id="submitBtn">
                                 submit
                             </button>
                             <button class="btn border-none bg-danger border-danger text-light p-3 fw-semibold">
@@ -203,12 +225,56 @@
                         </div>
                     </div>
                 </form>
+                <div asp-validation-summary="ModelOnly"></div>
             </div>
         </div>
     </div>
     <div style="height: 8vh;" class="bg-dark d-flex flex-row-reverse align-items-center pe-3 " id="submitfooter">
         <span class="text-light fw-semibold">Terms of conditions | Privacy Policy</span>
     </div>
-    <script src="~/js/RequestForms.js" asp-append-version="true"></script>
+
+    @section scripts {
+        <!-- jQuery script -->
+        
+    }
+    
+    
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+
+        <script src="~/js/RequestForms.js" asp-append-version="true"></script>
+
+
+    <script type="text/javascript">
+       var passfield = "#passwordFields"
+
+        function CheckEmail() {
+            var email = $('#email1').val();
+            $.ajax({
+                type: "POST",
+                url: "@Url.Action("CheckMail", "PatientForms")",
+                data: {email:email},
+                
+                
+                success: function (response) {
+                    if (!response) {
+                        // Email not available.
+                        $('#passwordFields').show();
+                    } else {
+                        // Email  available.
+                        $('#passwordFields').hide();
+                    }
+                },
+                error: function (error) {
+                    console.log(error);
+                }
+            });
+        };
+    </script>
+
+
 </body>
 </html>
+    

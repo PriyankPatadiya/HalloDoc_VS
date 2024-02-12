@@ -1,19 +1,22 @@
-﻿using DAL.DataContext;
-using DAL.DataModels;
+﻿using BAL.Interface;
+using DAL.DataContext;
 using DAL.ViewModels;
 using Microsoft.AspNetCore.Mvc;
-using Npgsql.EntityFrameworkCore.PostgreSQL.Infrastructure.Internal;
 
 namespace HalloDoc.Controllers
 {
     public class patientFormsController : Controller
     {
 
-        private readonly ApplicationDbContext _context; 
+        private readonly ApplicationDbContext _context;
+        private readonly IPatientRequest _patreq;
+        private readonly IRequests _otherreq;
 
-        public patientFormsController(ApplicationDbContext context)
+        public patientFormsController(ApplicationDbContext context, IPatientRequest patreq, IRequests otherreq)
         {
             _context = context; 
+            _patreq = patreq;
+            _otherreq = otherreq;
         }
         public IActionResult PatientRequestForm()
         {
@@ -38,58 +41,83 @@ namespace HalloDoc.Controllers
         {
             if(ModelState.IsValid) 
             {
+                if(pInfo.PasswordHash != pInfo.ConfirmPasswordHash)
+                {
+                    ModelState.AddModelError("ConfirmPassword", "Password and ConfirmPassword is not same");
+                    return View("PatientRequestForm");
+                }
+                
                 if (pInfo != null)
                 {
-                    var aspnetuser = new AspNetUser();
-                   
-                    aspnetuser.Id = Guid.NewGuid().ToString();
-                    aspnetuser.Email = pInfo.Email;
-                    aspnetuser.CreatedDate = DateTime.Now;
-                    aspnetuser.UserName = pInfo.Email;
-
-                    _context.AspNetUsers.Add(aspnetuser);
-                    _context.SaveChanges();
-                   
-                    var user = new User();
-                    user.AspNetUserId = aspnetuser.Id;
-                    user.FirstName = pInfo.FirstName;
-                    user.LastName  = pInfo.LastName;
-                    user.Mobile = pInfo.PhoneNumber;
-                    user.Street = pInfo.Street;
-                    user.City = pInfo.City; 
-                    user.State = pInfo.State;   
-                    user.ZipCode = pInfo.ZipCode;
-                    user.Email = pInfo.Email;
-                    user.CreatedBy = pInfo.FirstName;
-
-                    _context.Users.Add(user);
-                    _context.SaveChanges();
-
-                    var request = new Request();
                     
-                    request.UserId = user.UserId;
-                    request.FirstName = pInfo.FirstName;
-                    request.LastName = pInfo.LastName;  
-                    request.CreatedDate = DateTime.Now;
-                    request.PhoneNumber = pInfo.PhoneNumber;    
-                    request.Email = pInfo.Email;
-                    
-                    _context.Requests.Add(request);
-                    _context.SaveChanges();
+                   _patreq.AddPatientForm(pInfo);
+                    return View("Friend_FamilyRequestForm");
                 }
 
                 
                 
             }
+            return View("PatientRequestForm");
+        }
+
+        [HttpPost]
+        public IActionResult Friend_FamilyRequest(OthersReqVM model)
+        {
+            if (ModelState.IsValid)
+            {
+                if(model != null)
+                {
+                    _otherreq.AddFamilyFriendForm(model);
+                    return View();
+                }
+            }
             return View("Friend_FamilyRequestForm");
         }
 
         [HttpPost]
-        public JsonResult CheckEmail(string email)
+
+        public IActionResult ConciergeRequestForm(OthersReqVM model)
         {
-            AspNetUser entities = new AspNetUser();
-            bool isValid = !entities.Users.ToList().Exists(p => p.Email.Equals(email, StringComparison.CurrentCultureIgnoreCase));
-            return Json(isValid);
+            if (ModelState.IsValid)
+            {
+                if(model !=null)
+                {
+                    _otherreq.AddConciergeForm(model);
+                    return View();
+                }
+            }
+            return View();
         }
+
+        [HttpPost]
+
+        public IActionResult BusinessRequestForm(OthersReqVM model)
+        {
+            if (ModelState.IsValid) { 
+                if(model != null)
+                {
+                    _otherreq.AddBusinessForm(model);
+                    return View();
+                }
+            }
+            return View();
+        }
+
+        [HttpPost]
+        public bool CheckMail(string email)
+        {
+            var user = _context.AspNetUsers.FirstOrDefault(u => u.Email == email);
+            if (user != null)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+        
+
+
     }
 }

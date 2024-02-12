@@ -16,32 +16,46 @@ namespace DAL.ViewModels
 
         
         [StringLength(128)]
-        public string? Id { get; set; } 
+        public string? Id { get; set; } = null!;
 
         [Column(TypeName = "character varying")]
-        public string? PasswordHash { get; set; }
+        [Required(ErrorMessage = " Password Is Required") ]
+        public string? PasswordHash { get; set; } = null!;
+
+        [Column(TypeName = "character varying")]
+        public string? ConfirmPasswordHash { get; set; }
 
         [Key]
         [StringLength(256)]
-        public string? Email { get; set; }
+        [Required(ErrorMessage = " Email Is Required")]
+
+        public string? Email { get; set; } = null!;
 
         [Column(TypeName = "character varying")]
+        [Required(ErrorMessage = " Phone number Is Required")]
+
         public string? PhoneNumber { get; set; }
 
         [Column(TypeName = "timestamp without time zone")]
         public DateTime? CreatedDate { get; set; }
 
         [Column(TypeName = "timestamp without time zone")]
-        public DateTime? BirthDate { get; set; }
+        [Required(ErrorMessage = " BirthDate Is Required")]
+
+        public DateTime? BirthDate { get; set; } = null!;
 
         [StringLength(100)]
+        [Required(ErrorMessage = " Patient FirstName Is Required")]
+
         public string FirstName { get; set; } = null!;
 
         [StringLength(100)]
-        public string? LastName { get; set; }
+        [Required(ErrorMessage = " Patient LastName Is Required")]
+
+        public string? LastName { get; set; } = null!;
 
         [StringLength(100)]
-        public string? Street { get; set; }
+        public string? Street { get; set; } 
 
         [StringLength(100)]
         public string? City { get; set; }

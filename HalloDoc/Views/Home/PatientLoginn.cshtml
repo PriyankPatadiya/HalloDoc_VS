@@ -1,4 +1,4 @@
-﻿@model DAL.DataModels.AspNetUser
+﻿@model DAL.ViewModels.LoginVM
 
 @{
     ViewData["Title"] = "Login-Page";
@@ -65,7 +65,7 @@
                     <div class="mx-auto my-2">
                         <div class="form-floating d-flex border rounded bg-white logininputdiv">
                             <input type="text"
-                                asp-for="Id"
+                                asp-for="UserName"
                                    class="form-control no-border"
                                    id="floatingInputGroup1"
                                    placeholder="Username" /><img src="Images/user_circle.svg" alt="" class="pe-3" />
@@ -73,7 +73,7 @@
                             
                         </div>
                     </div>
-                            <span asp-validation-for="Id" class="text-danger"></span>
+                            <span asp-validation-for="UserName" class="text-danger"></span>
                     <div class="mx-auto my-2">
                         <div class="form-floating d-flex border rounded bg-white logininputdiv">
                             <input type="password"

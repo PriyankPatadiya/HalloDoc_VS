@@ -6,6 +6,8 @@ using HalloDoc.NewFolder1;
 using Microsoft.EntityFrameworkCore;
 using DAL.DataContext;
 using DAL.DataModels;
+using BAL.Interface;
+using DAL.ViewModels;
 
 namespace HalloDoc.Controllers
 {
@@ -13,11 +15,16 @@ namespace HalloDoc.Controllers
     {
         private readonly ILogger<HomeController> _logger;
         private readonly ApplicationDbContext _context;
+        private readonly ILogin _login;
+        private readonly ICreateAcc _createacc;
       
 
-        public HomeController(ApplicationDbContext db)
+        public HomeController(ApplicationDbContext db , ILogin login , ICreateAcc createacc)
         {
             _context = db;
+            _login = login;
+            _createacc = createacc; 
+
         }
         public IActionResult Privacy(string name, int numTimes = 1)
         {
@@ -42,26 +49,26 @@ namespace HalloDoc.Controllers
 
         //Post
             [HttpPost]
-            public async Task<IActionResult> PatientLoginn(AspNetUser a)
-                {  
-
-                if(a.Id == null || a.PasswordHash == null)
+            public async Task<IActionResult> PatientLoginn(LoginVM a)
+            {
+            
+            if (ModelState.IsValid)
+            {
+                var user = _login.LoginVarify(a);
+                
+                if(user == true)
                 {
-                    ModelState.AddModelError("EmptyField", "The Field Is Empty");
+                    return RedirectToAction(nameof(Privacy));
                 }
-                if(_context.AspNetUsers == null)
+                else
                 {
-                    return NotFound();
+                    return View(a);
                 }
-
-                var user = await _context.AspNetUsers.FirstOrDefaultAsync(m => m.Id == a.Id);
-                if(user !=null && user.PasswordHash == a.PasswordHash)
-                {
-                    return RedirectToAction(nameof(PatientSite));
-                }
-                return View();
-           
             }
+            return View(a);
+            }
+
+
         public IActionResult ResetPassword()
         {
             return View();
@@ -76,13 +83,24 @@ namespace HalloDoc.Controllers
         //POST
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult PatientCreateAcc(AspNetUser Obj) 
+        public IActionResult PatientCreateAcc(CreateAccVM Obj) 
         {
             if (ModelState.IsValid)
             {
-                _context.Add(Obj);
-                _context.SaveChanges();
-                return RedirectToAction("PatientLoginn");
+                if(Obj.Password != Obj.ConfirmPassword)
+                {
+                    ModelState.AddModelError("ConfirmPassword", "The Password and Confirm Password do not match");
+                    return View(Obj);
+                }
+                var newUser = new AspNetUser
+                {
+                    Id = Guid.NewGuid().ToString(),
+                    UserName = Obj.UserName,
+                    PasswordHash = Obj.Password,
+                };
+
+                _createacc.AddUser(newUser);
+                return RedirectToAction(nameof(Privacy));
             }
             return View(Obj);
         }
