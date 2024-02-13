@@ -47,6 +47,10 @@ namespace HalloDoc.Controllers
             return View();
         }
 
+        public IActionResult PatientDashboard()
+        {
+            return View();
+        }
         //Post
             [HttpPost]
             public async Task<IActionResult> PatientLoginn(LoginVM a)

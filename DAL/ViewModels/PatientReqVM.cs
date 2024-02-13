@@ -6,6 +6,8 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Org.BouncyCastle.Asn1.Mozilla;
+using Microsoft.AspNetCore.Http;
 
 namespace DAL.ViewModels
 {
@@ -19,7 +21,7 @@ namespace DAL.ViewModels
         public string? Id { get; set; } = null!;
 
         [Column(TypeName = "character varying")]
-        [Required(ErrorMessage = " Password Is Required") ]
+        
         public string? PasswordHash { get; set; } = null!;
 
         [Column(TypeName = "character varying")]
@@ -47,7 +49,7 @@ namespace DAL.ViewModels
         [StringLength(100)]
         [Required(ErrorMessage = " Patient FirstName Is Required")]
 
-        public string FirstName { get; set; } = null!;
+        public string? FirstName { get; set; } = null!;
 
         [StringLength(100)]
         [Required(ErrorMessage = " Patient LastName Is Required")]
@@ -65,7 +67,16 @@ namespace DAL.ViewModels
 
         [StringLength(10)]
         public string? ZipCode { get; set; }
+        [StringLength(10)]
+        public string? ImageUrl { get; set; }
 
-        public int Typeid { get; set; }
+        [StringLength(120)]
+        public string? ImagePath { get; set; }
+
+        public IFormFile? Document { get; set; } 
+        public int? Typeid { get; set; }
+
+        
+
     }
 }

@@ -1,6 +1,4 @@
-function uploadfile() {
-    document.getElementById("inputGroupFile04").click();
-}
+
 function myFucnction() {
     var element = document.body;
     element.classList.toggle("dark-mode");
@@ -17,3 +15,23 @@ function myFucnction() {
         lightbtn.style.display = 'none';
     }
 }
+
+function CheckEmail() {
+    var email = $('#email').val();
+    $.ajax({
+        type: "POST",
+        url: '@Url.Action("CheckMail","PatientForms")',
+        data: { email: email },
+
+
+        success: function (response) {
+            if (!response) {
+                // Email not available.
+                '@Url.Action("SendMail", "PatientForms")';
+            }
+        },
+        error: function (error) {
+            console.log(error);
+        }
+    });
+};

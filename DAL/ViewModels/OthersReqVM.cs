@@ -1,11 +1,7 @@
-﻿using Microsoft.EntityFrameworkCore.Metadata.Internal;
-using System;
-using System.Collections.Generic;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DAL.ViewModels
 {
@@ -68,6 +64,9 @@ namespace DAL.ViewModels
 
         [Required(ErrorMessage = "Please Enter Zipcode")]
         public string Zipcode { get; set; } = null!;
+
+        [Required]
+        public IFormFile file { get; set; }
 
 
     }

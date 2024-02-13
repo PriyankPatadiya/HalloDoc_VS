@@ -174,11 +174,14 @@
                             Patient Contact Information
                         </h4>
                         <div class="col-sm-12 col-md-12 col-lg-6 form-floating my-3">
-                            <input type="email"
+                            <input type="text"
                                 asp-for="Email"
                                    class="form-control"
+                                   id="email"
                                    id="floatingInput"
-                                   placeholder="Email" />
+                                   placeholder="Email"
+                                   onchange="CheckEmail()"
+                                   />
                             <label for="floatingInput" class="ms-2">Email</label>
                         </div>
                         <div class="col-sm-12 col-md-12 col-lg-6 form-floating my-3">
@@ -284,18 +287,19 @@
     <div style="height: 8vh;" class="bg-dark d-flex flex-row-reverse align-items-center pe-3" id="submitfooter">
         <span class="text-light fw-semibold">Terms of conditions | Privacy Policy</span>
     </div>
+    <script src="~/js/RequestForms.js" asp-append-version="true"></script>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        function uploadfile() {
-            document.getElementById("inputGroupFile04").click();
-        }
         const myModal = bootstrap.Modal.getOrCreateInstance("#exampleModal");
         window.addEventListener("DOMContentLoaded", () => {
             myModal.show();
         });
+        function uploadfile() {
+            document.getElementById("inputGroupFile04").click();
+        }
+        
     </script>
-    <script src="~/js/RequestForms.js" asp-append-version="true"></script>
     @*<script src="~/js/site.js" asp-append-version="true"></script>*@
 </body>
 </html>
