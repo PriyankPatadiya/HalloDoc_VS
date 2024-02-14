@@ -6,6 +6,7 @@ using MimeKit;
 using Npgsql.Internal.TypeHandlers.LTreeHandlers;
 using System.Net;
 using System.Net.Mail;
+using System.Net.NetworkInformation;
 using System.Text;
 using IHostingEnvironment = Microsoft.AspNetCore.Hosting.IHostingEnvironment;
 
@@ -18,13 +19,15 @@ namespace HalloDoc.Controllers
         private readonly IPatientRequest _patreq;
         private readonly IRequests _otherreq;
         private IHostingEnvironment _environment;
+        private readonly IuploadFile _uploadfile;
 
-        public patientFormsController(ApplicationDbContext context, IPatientRequest patreq, IRequests otherreq, IHostingEnvironment environment)
+        public patientFormsController(ApplicationDbContext context, IPatientRequest patreq, IRequests otherreq, IHostingEnvironment environment, IuploadFile uploadFile)
         {
             _context = context; 
             _patreq = patreq;
             _otherreq = otherreq;
             _environment = environment;
+            _uploadfile = uploadFile;
         }
         public IActionResult PatientRequestForm()
         {
@@ -47,44 +50,35 @@ namespace HalloDoc.Controllers
 
         [HttpPost]
         public IActionResult PatientRequestForm(PatientReqVM pInfo) 
-        {
-            if(ModelState.IsValid) 
             {
-                if(pInfo.PasswordHash != pInfo.ConfirmPasswordHash)
+            if (ModelState.IsValid)
+            {
+                if (pInfo.PasswordHash != pInfo.ConfirmPasswordHash)
                 {
                     ModelState.AddModelError("ConfirmPassword", "Password and ConfirmPassword is not same");
                     return View("PatientRequestForm");
                 }
-                
-                if (pInfo != null)
+                _patreq.AddPatientForm(pInfo);
+                if (pInfo.Document != null && pInfo.Document.Length > 0 )
                 {
-                    
-                   _patreq.AddPatientForm(pInfo);
-
-                    string wwwpath = this._environment.WebRootPath;
-                    string contentpath = this._environment.ContentRootPath;
                     string path = Path.Combine(this._environment.WebRootPath, "Uploads");
-
-
-                    if (!Directory.Exists(path))
-                    {
-                        Directory.CreateDirectory(path);
-                    }
-
-                    List<string> uploadedFiles = new List<string>();
-
                     string fileName = Path.GetFileName(pInfo.Document.FileName);
-                    using (FileStream stream = new FileStream(Path.Combine(path, fileName), FileMode.Create))
-                    {
-                        pInfo.Document.CopyTo(stream);
-                        uploadedFiles.Add(fileName);
-                        ViewBag.Message += string.Format("<b>{0}</b> uploaded.<br />", fileName);
-                    }
+                  
+                    _uploadfile.uploadfile(pInfo.Document, path);
+
+                    var request = _patreq.GetUserByEmail(pInfo.Email);
+                    _patreq.Addrequestwisefile(fileName, request.RequestId);
+
+
                     return View("Friend_FamilyRequestForm");
                 }
             }
             return View("PatientRequestForm");
         }
+
+
+
+
         
 
 
@@ -93,9 +87,15 @@ namespace HalloDoc.Controllers
         {
             if (ModelState.IsValid)
             {
-                if(model != null)
+                _otherreq.AddFamilyFriendForm(model);
+                if(model.Document != null && model.Document.Length > 0)
                 {
-                    _otherreq.AddFamilyFriendForm(model);
+                    string path = Path.Combine(this._environment.WebRootPath, "Uploads");
+                    string fileName = Path.GetFileName(model.Document.FileName);
+                    _uploadfile.uploadfile(model.Document, path);
+
+                    var request = _patreq.GetUserByEmail(model.Email);
+                    _patreq.Addrequestwisefile(fileName, request.RequestId);
                     return View();
                 }
             }
@@ -108,9 +108,15 @@ namespace HalloDoc.Controllers
         {
             if (ModelState.IsValid)
             {
+                _otherreq.AddConciergeForm(model);
                 if(model !=null)
                 {
-                    _otherreq.AddConciergeForm(model);
+                    string path = Path.Combine(this._environment.WebRootPath, "Uploads");
+                    string fileName = Path.GetFileName(model.Document.FileName);
+                    _uploadfile.uploadfile(model.Document, path);
+
+                    var request = _patreq.GetUserByEmail(model.Email);
+                    _patreq.Addrequestwisefile(fileName, request.RequestId);
                     return View();
                 }
             }
@@ -122,9 +128,15 @@ namespace HalloDoc.Controllers
         public IActionResult BusinessRequestForm(OthersReqVM model)
         {
             if (ModelState.IsValid) { 
+                _otherreq.AddBusinessForm(model);
                 if(model != null)
                 {
-                    _otherreq.AddBusinessForm(model);
+                    string path = Path.Combine(this._environment.WebRootPath, "Uploads");
+                    string fileName = Path.GetFileName(model.Document.FileName);
+                    _uploadfile.uploadfile(model.Document, path);
+
+                    var request = _patreq.GetUserByEmail(model.Email);
+                    _patreq.Addrequestwisefile(fileName, request.RequestId);
                     return View();
                 }
             }

@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace DAL.DataModels;
 
+[Index("Email", Name = "AspNetUsers_Ukey", IsUnique = true)]
 public partial class AspNetUser
 {
     [Key]
@@ -16,7 +17,6 @@ public partial class AspNetUser
     public string UserName { get; set; } = null!;
 
     [Column(TypeName = "character varying")]
-    
     public string? PasswordHash { get; set; }
 
     [StringLength(256)]

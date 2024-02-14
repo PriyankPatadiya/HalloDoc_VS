@@ -9,9 +9,17 @@ builder.Services.AddScoped<ILogin, LoginRepo>();
 builder.Services.AddScoped<ICreateAcc,  CreateAccRepo>();
 builder.Services.AddScoped<IPatientRequest, PatientRequestRepo>();
 builder.Services.AddScoped<IRequests, OtherRequestRepo>();   
+builder.Services.AddScoped<IuploadFile, UploadFileRepo>();
 
 // Add DbContext 
 builder.Services.AddDbContext<ApplicationDbContext>();
+
+builder.Services.AddSession(options =>
+{
+    options.IdleTimeout = TimeSpan.FromMinutes(30); // Set your desired timeout
+    options.Cookie.HttpOnly = true;
+    options.Cookie.IsEssential = true;
+});
 
 var app = builder.Build();
 
@@ -29,7 +37,7 @@ app.UseStaticFiles();
 app.UseRouting();
 
 app.UseAuthorization();
-
+app.UseSession();
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=PatientSite}/{id?}");

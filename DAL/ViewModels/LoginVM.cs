@@ -12,7 +12,7 @@ namespace DAL.ViewModels
     public class LoginVM
     {
         [StringLength(256)]
-        public string UserName { get; set; } = null!;
+        public string Email { get; set; } = null!;
 
         [Column(TypeName = "character varying")]
         [Required]

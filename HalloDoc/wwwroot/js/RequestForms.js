@@ -35,3 +35,14 @@ function CheckEmail() {
         }
     });
 };
+
+var input = document.getElementById("fileInput");
+var info = document.getElementById("infoarea");
+
+input.addEventListener('change', showFilename);
+
+function showFilename() {
+    var fileinp = event.srcElement;
+    var fileName = fileinp.files[0].name;
+    info.textContent = fileName;
+}

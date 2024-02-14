@@ -64,8 +64,8 @@
 
                     <div class="mx-auto my-2">
                         <div class="form-floating d-flex border rounded bg-white logininputdiv">
-                            <input type="text"
-                                asp-for="UserName"
+                            <input type="email"
+                                asp-for="Email"
                                    class="form-control no-border"
                                    id="floatingInputGroup1"
                                    placeholder="Username" /><img src="Images/user_circle.svg" alt="" class="pe-3" />
@@ -73,7 +73,7 @@
                             
                         </div>
                     </div>
-                            <span asp-validation-for="UserName" class="text-danger"></span>
+                            <span asp-validation-for="Email" class="text-danger"></span>
                     <div class="mx-auto my-2">
                         <div class="form-floating d-flex border rounded bg-white logininputdiv">
                             <input type="password"

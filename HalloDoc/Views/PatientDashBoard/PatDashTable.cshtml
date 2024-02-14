@@ -1,15 +1,91 @@
-﻿
+﻿@model List<DAL.ViewModels.PatientDashboardVM>
 
 <div class="tab-pane fade show active bg-body-secondary bg-gradient " id="pills-home" role="tabpanel" aria-labelledby="pills-home-tab" tabindex="0">
-    <div class="mx-auto" style="width:93%; padding-top: 3%;">
+    <div class="modal" tabindex="-1" id="modal">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header bg-info text-white">
+                    <h5 class="modal-title">Create New Request</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Here, I want to Create New Request For...</p>
+                
+                    <div class="d-flex justify-content-center">
+                        <button type="button" class="btn btn-primary btn text-decoration-none border border-info bg-info text-white shadow-none ">Me</button>
+                        <button type="button" class="btn btn-primary btn text-decoration-none border border-info bg-white text-info shadow-none mx-3">SomeoneElse</button>
+                    </div>
+                    <div class="d-flex justify-content-end my-2">
+                        <button type="button" class="btn btn-primary btn text-decoration-none border border-info bg-info text-white shadow-none ">Continue</button>
+                        <button type="button" class="btn btn-primary btn text-decoration-none border border-info bg-white text-info shadow-none mx-3">Cancel</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="mx-auto   pb-3" style="width:93%; padding-top: 3%;">
         <h3>Medical History</h3>
         <div class="PatientInfoTable border rounded shadow bg-white">
             <div class="d-flex justify-content-end my-2">
-                <button class="btn text-decoration-none border border-info bg-white text-info shadow-none mx-3">Create New Request</button>
+                <button type="button" class="btn btn-primary btn text-decoration-none border border-info bg-white text-info shadow-none mx-3" data-bs-toggle="modal" data-bs-target="#modal">Create New Request</button>
             </div>
-            
+            <Table class="table table-hover table-responsive">
+                <thead>
+                    <colgroup>
+                        <col span="1" style="width: 20%;">
+                        <col span="1" style="width: 60%;">
+                        <col span="1" style="width: 20%;">
+                    </colgroup>
+                    
+                    <tr class="table-secondary">
+                        
+                        <th scope="col">
+                            CreatedDate
+                        </th>
+                        <th scope="col">
+                            CurrentStatus
+                        </th>
+                        <th scope="col" >
+                            Document
+                        </th>
+
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach(var item in Model)
+                    {
+                        <tr>
+                            <td class="col" class="text-center">
+                                @Html.DisplayFor(modelitem=>item.CreatedDate)
+                            </td>
+                            <td class="col" class="text-center">
+                                @Html.DisplayFor(modelitem=>item.currentStatus)
+                            </td>
+                            <td class="col" class="text-center">
+                                @if(item.Document != null)
+                                {
+                                    @if(item.Document.Count() > 0)
+                                    {
+                                        <button class="btn text-decoration-none border border-info bg-white text-info shadow-none mx-3">View Document</button>
+                                        
+                                    }
+                                }
+                               
+                            </td>
+                            
+                                
+                        </tr>
+                    }
+                </tbody>
+            </Table>
 
         </div>
     </div>
     
 </div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script src="~/lib/bootstrap/dist/js/bootstrap.min.js"></script>
+<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.js"></script>

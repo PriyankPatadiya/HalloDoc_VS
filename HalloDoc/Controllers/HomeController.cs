@@ -62,11 +62,12 @@ namespace HalloDoc.Controllers
                 
                 if(user == true)
                 {
-                    return RedirectToAction(nameof(Privacy));
+                    HttpContext.Session.SetString("Email", a.Email);
+                    return RedirectToAction("PatientDashboard", "PatientDashboard" , new {id = a.Email});
                 }
                 else
                 {
-                    return View(a);
+                    return View();
                 }
             }
             return View(a);

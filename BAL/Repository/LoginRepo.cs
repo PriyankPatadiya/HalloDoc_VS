@@ -24,7 +24,7 @@ namespace BAL.Repository
 
         public bool LoginVarify(LoginVM model)
         {
-            var user = _context.AspNetUsers.FirstOrDefault(u => u.UserName == model.UserName);  
+            var user = _context.AspNetUsers.Any(u => u.Email == model.Email);  
             if(user != null && _context.AspNetUsers.FirstOrDefault(u => u.PasswordHash == model.PasswordHash) != null)
             {
                 return true;

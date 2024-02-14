@@ -66,7 +66,7 @@ namespace DAL.ViewModels
         public string Zipcode { get; set; } = null!;
 
         [Required]
-        public IFormFile file { get; set; }
+        public IFormFile Document { get; set; }
 
 
     }
