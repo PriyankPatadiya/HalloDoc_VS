@@ -32,7 +32,7 @@ namespace BAL.Repository
                 aspnetuser.Id = Guid.NewGuid().ToString();
                 aspnetuser.Email = pInfo.Email;
                 aspnetuser.CreatedDate = DateTime.Now;
-                aspnetuser.UserName = pInfo.Email;
+                aspnetuser.UserName = pInfo.FirstName + pInfo.LastName;
                 aspnetuser.PasswordHash = pInfo.PasswordHash;
 
 

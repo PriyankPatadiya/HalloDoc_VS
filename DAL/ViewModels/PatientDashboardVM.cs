@@ -17,5 +17,7 @@ namespace DAL.ViewModels
         public int currentStatus { get; set; }
 
         public string? Document { get; set; }
+
+        public int? requestid { get; set; }
     }
 }

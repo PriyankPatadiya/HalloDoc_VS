@@ -1,6 +1,7 @@
 ﻿@model List<DAL.ViewModels.PatientDashboardVM>
 
-<div class="tab-pane fade show active bg-body-secondary bg-gradient " id="pills-home" role="tabpanel" aria-labelledby="pills-home-tab" tabindex="0">
+    
+<div class="tab-pane fade show active bg-body-secondary bg-gradient" id="pills-home" style="min-height: 77vh;" role="tabpanel" aria-labelledby="pills-home-tab" tabindex="0">
     <div class="modal" tabindex="-1" id="modal">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
@@ -12,8 +13,8 @@
                     <p>Here, I want to Create New Request For...</p>
                 
                     <div class="d-flex justify-content-center">
-                        <button type="button" class="btn btn-primary btn text-decoration-none border border-info bg-info text-white shadow-none ">Me</button>
-                        <button type="button" class="btn btn-primary btn text-decoration-none border border-info bg-white text-info shadow-none mx-3">SomeoneElse</button>
+                        <a asp-controller="UserCreateRequestForms" asp-action="RequestForMe"><button type="button" class="btn btn-primary btn text-decoration-none border border-info bg-info text-white shadow-none ">Me</button></a>
+                        <a asp-controller="UserCreateRequestForms" asp-action="RequestForSomeoneElse"><button type="button" class="btn btn-primary btn text-decoration-none border border-info bg-white text-info shadow-none mx-3">SomeoneElse</button></a>
                     </div>
                     <div class="d-flex justify-content-end my-2">
                         <button type="button" class="btn btn-primary btn text-decoration-none border border-info bg-info text-white shadow-none ">Continue</button>
@@ -67,7 +68,7 @@
                                 {
                                     @if(item.Document.Count() > 0)
                                     {
-                                        <button class="btn text-decoration-none border border-info bg-white text-info shadow-none mx-3">View Document</button>
+                                        <a asp-action="ViewDocumentsPatdash" asp-route-requestid = "@item.requestid"><button class="btn text-decoration-none border border-info bg-white text-info shadow-none mx-3">View Document</button></a>
                                         
                                     }
                                 }
