@@ -20,7 +20,7 @@
                 <div id="infoarea" class="form-control fs-6 align-middle py-1 d-flex align-items-center">
                     Select File
                 </div>
-                <input class="form-control" id="fileInput" hidden />
+                <input type="file" class="form-control" id="fileInput" hidden />
                 <label class="input-group-text btn btn-info text-light"
                        for="fileInput">
                     <svg xmlns="http://www.w3.org/2000/svg"
@@ -85,5 +85,16 @@
             </table>
         </div>
     </div>
+    <script>
+        var input = document.getElementById("fileInput");
+        var info = document.getElementById("infoarea");
 
+        input.addEventListener('change', showFilename);
+
+        function showFilename() {
+            var fileinp = event.srcElement;
+            var fileName = fileinp.files[0].name;
+            info.textContent = fileName;
+        }
+    </script>
 </div>

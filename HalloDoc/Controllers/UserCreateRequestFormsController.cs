@@ -31,10 +31,10 @@ namespace HalloDoc.Controllers
         }
 
 
-        //public IActionResult RequestForSomeoneElse()
-        //{
-        //    return View();
-        //}
+        public IActionResult RequestForSomeoneElse()
+        {
+            return View();
+        }
 
         [HttpPost]
         public IActionResult RequestForMe(PatientReqVM model)
