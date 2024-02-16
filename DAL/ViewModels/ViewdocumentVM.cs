@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using DAL.DataModels;
+using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,8 +10,8 @@ namespace DAL.ViewModels
 {
     public class ViewdocumentVM
     { 
-        public string uploader { get; set; }
-        public DateTime UploadDate { get; set; }    
-        public string? title { get; set; }
+        public List<RequestWiseFile>? RequestWiseFile { get; set; }    
+
+        public int? requestid { get; set; }
     }
 }

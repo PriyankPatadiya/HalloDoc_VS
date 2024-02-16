@@ -1,43 +1,69 @@
-﻿using DAL.DataContext;
-using DAL.DataModels;
+﻿using BAL.Interface;
+using DAL.DataContext;
 using DAL.ViewModels;
 using Microsoft.AspNetCore.Mvc;
-using System;
+using Microsoft.EntityFrameworkCore;
+using IHostingEnvironment = Microsoft.AspNetCore.Hosting.IHostingEnvironment;
 
 namespace HalloDoc.Controllers
 {
     public class PatientDashBoardController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly IHostingEnvironment _environment;
+        private readonly IuploadFile _uploadfile;
+        private readonly IPatientRequest _request;
 
-        public PatientDashBoardController(ApplicationDbContext context)
+        public PatientDashBoardController(ApplicationDbContext context, IHostingEnvironment environment , IuploadFile file, IPatientRequest request)
         {
             _context = context;
+            _environment = environment;
+            _uploadfile = file;
+            _request = request;
         }
         public IActionResult ViewDocumentPatdash()
         {
             return View();
         }
 
+        [HttpPost]
+
+        public IActionResult uploadFile(int requestid)
+        {
+            var file = Request.Form.Files["Document"];
+            if (file == null)
+            {
+                return NotFound();
+            }
+            else
+            {
+                string path = Path.Combine(this._environment.WebRootPath, "uploads");
+                _uploadfile.uploadfile(file, path);
+
+                _request.Addrequestwisefile(file.FileName, requestid);
+                return RedirectToAction("ViewDocumentsPatdash", new { requestid = requestid });
+            }
+        }
+
+
+
         [HttpGet("{requestid}")]
-        public IActionResult ViewDocumentsPatdash(int requestid)
+        public async Task<IActionResult> ViewDocumentsPatdash(int requestid)
         {
             var email = HttpContext.Session.GetString("Email");
             var xyz = _context.AspNetUsers.FirstOrDefault(u => u.Email == email);
-            var reqfile = _context.RequestWiseFiles.FirstOrDefault(u => u.RequestId == requestid);
+            var reqfile =await _context.RequestWiseFiles.Where(x=>x.RequestId==requestid).ToListAsync();
+
 
             if (xyz != null )
             {
                 ViewBag.username = xyz.UserName;
 
-                var result = (from req in _context.Requests where req.RequestId == requestid
-                              select
-                              new ViewdocumentVM
-                           {
-                                  uploader = req.FirstName + " " + req.LastName,
-                                  title = reqfile.FileName,
-                                  UploadDate = req.CreatedDate,
-                           }).ToList();
+                var result = new ViewdocumentVM
+                              {
+                                  RequestWiseFile = reqfile,
+                                  requestid = requestid
+                              };
 
                 return View(result);
             }

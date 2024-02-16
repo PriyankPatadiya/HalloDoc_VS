@@ -1,0 +1,22 @@
+-- The "film" table has the replacement cost and rental duration (assume, in weeks)
+-- for each movie.
+-- Can you tell me the movies (just the title and relevant details) sorted by highest
+-- to lowest replacement cost and rented out for 4-6 weeks.
+-- Also I don't want all the data, just give me 100 records.
+
+--SELECT rating , film_id , title , replacement_cost , rental_duration from film WHERE rental_duration BETWEEN 4 and 6 ORDER BY replacement_cost desc LIMIT 100
+
+-- I want a list of all movies that either have the rating 'G' or 'PG'.
+-- The movies must be longer than 120 minutes in length, and they should have the
+-- word 'Action' anywhere in the description.
+-- HINT:
+-- Use the "film" table
+-- Use LIKE keyword, for the requirement on 'Action'
+
+--SELECT film_id , title , rating , length , description from film WHERE rating IN('G', 'PG') AND length > 120 AND description LIKE'%Action%';
+
+
+-- The "actor" table has names of all actors. Can you tell me which actor first names
+-- are most common and how many records have it?
+
+--SELECT first_name , COUNT(first_name)FROM actor GROUP BY first_name HAVING COUNT(first_name) >= 3 ORDER BY count desc

@@ -1,0 +1,16 @@
+-- The "payment" table stores customer ids and amount they have paid. I want to
+-- get the list of customer ids that have rented out movies that cost 7.99 or more
+-- so I can put them in a "Platinum" category and send them coupons later.
+-- can you give me a report containing that?
+
+-- SELECT DISTINCT customer_id , amount from payment where amount >= 7.99;
+
+-- The "film" table contains details of films we rent, including their name, rental cost
+-- and replacement cost. Take a look at the table and generate a query that tells me
+-- high value films, meaning those that:
+-- a: have rental rate more than 2.99, OR
+-- b: replacement cost more than 19.99
+-- I want the report to be very simple, so just include the movie name, rental cost
+-- and replacement cost in there.
+
+--SELECT title , rental_rate , replacement_cost FROM film WHERE rental_rate > 2.99 OR replacement_cost > 19.99 ORDER BY rental_rate 
