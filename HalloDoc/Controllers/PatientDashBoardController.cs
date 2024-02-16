@@ -1,8 +1,10 @@
 ﻿using BAL.Interface;
 using DAL.DataContext;
+using DAL.DataModels;
 using DAL.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.IO.Compression;
 using IHostingEnvironment = Microsoft.AspNetCore.Hosting.IHostingEnvironment;
 
 namespace HalloDoc.Controllers
@@ -73,6 +75,53 @@ namespace HalloDoc.Controllers
             }
         }
 
+        [HttpGet]
+        public IActionResult downloadfile(string filename)
+        {
+            string Filename = Path.GetFileName(filename);
+            string folderpath = Path.Combine(_environment.WebRootPath, "uploads");
+            var filePath = Path.Combine(_environment.ContentRootPath, "wwwroot\\uploads", Filename);
+
+            if (System.IO.File.Exists(filePath))
+            {
+                var filestream = new FileStream(filePath, FileMode.Open);
+                var contentType = "application/octet-stream";
+                return File(filestream, contentType, Filename);
+            }
+            else
+            {
+                return NotFound();
+            }
+        }
+
+        //[HttpPost]
+
+        //public IActionResult downloadallfiles(int requestid)
+        //{
+        //    var zipName = $"TestFiles-{DateTime.Now.ToString("yyyy_MM_dd-HH_mm_ss")}.zip";
+
+        //    using (MemoryStream ms = new MemoryStream())
+        //    {
+        //        //required: using System.IO.Compression;  
+        //        using (var zip = new ZipArchive(ms, ZipArchiveMode.Create, true))
+        //        {
+
+
+
+        //            _context.RequestWiseFiles.Where(u => u.RequestId == requestid).ToList().ForEach(file =>
+        //            {
+        //                var entry = zip.CreateEntry(file.FileName);
+        //                using (var fileStream = new MemoryStream(file.))
+        //                using (var entryStream = entry.Open())
+        //                {
+        //                    fileStream.CopyTo(entryStream);
+        //                }
+        //            });
+        //        }
+        //        return File(ms.ToArray(), "application/zip", zipName);
+        //    }
+        //}
+
         public IActionResult PatientDashboard()
         {
          
@@ -82,6 +131,8 @@ namespace HalloDoc.Controllers
             if(xyz != null)
             {
                 ViewBag.username = xyz.UserName;
+                
+
                 var result = (from req in _context.Requests join requestfile in _context.RequestWiseFiles on req.RequestId equals requestfile.RequestId
                               into reqs
                               where req.Email == email
@@ -92,7 +143,8 @@ namespace HalloDoc.Controllers
                                   currentStatus = req.Status,
                                   CreatedDate = req.CreatedDate,
                                   Document = requestfile.FileName == null ? null : requestfile.FileName,
-                                  requestid = req.RequestId
+                                  requestid = req.RequestId,
+                                  count = _context.RequestWiseFiles.Count(u => u.RequestId == req.RequestId),
 
                               }).ToList();
             

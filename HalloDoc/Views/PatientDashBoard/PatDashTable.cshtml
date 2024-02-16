@@ -73,7 +73,15 @@
                                 {
                                     @if(item.Document.Count() > 0)
                                     {
-                                        <a asp-action="ViewDocumentsPatdash" asp-route-requestid = "@item.requestid"><button class="btn text-decoration-none border border-info bg-white text-info shadow-none mx-3">View Document</button></a>
+
+                                        <a asp-action="ViewDocumentsPatdash" asp-route-requestid = "@item.requestid">
+                                            
+                                            <button class="btn text-decoration-none border border-info bg-white text-info shadow-none mx-3">
+
+                                                <span> @item.count</span>
+                                                View Document
+                                                </button>
+                                         </a>
                                         
                                     }
                                 }
@@ -82,7 +90,7 @@
                             
                                 
                         </tr>
-                    }
+                         }
                     }
                 </tbody>
             </Table>

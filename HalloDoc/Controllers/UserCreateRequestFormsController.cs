@@ -2,6 +2,8 @@
 using DAL.DataContext;
 using DAL.ViewModels;
 using Microsoft.AspNetCore.Mvc;
+using System.Net.NetworkInformation;
+using IHostingEnvironment = Microsoft.AspNetCore.Hosting.IHostingEnvironment;
 
 namespace HalloDoc.Controllers
 {
@@ -10,11 +12,14 @@ namespace HalloDoc.Controllers
 
         private readonly ApplicationDbContext _context;
         private readonly IPatientRequest _request;
+        private readonly IHostingEnvironment _environment;
+        private readonly IuploadFile _uploadfile;
 
-        public UserCreateRequestFormsController(ApplicationDbContext context, IPatientRequest req)
+        public UserCreateRequestFormsController(ApplicationDbContext context, IPatientRequest req, IHostingEnvironment environment)
         {
             _request = req;
             _context = context;
+            _environment = environment;
         }
         public IActionResult RequestForMe()
         {
@@ -45,6 +50,19 @@ namespace HalloDoc.Controllers
             
 
             _request.AddPatientForm(model);
+            //if (model.Document != null && model.Document.Length > 0)
+            //{
+            //    string path = Path.Combine(this._environment.WebRootPath, "Uploads");
+            //    string fileName = Path.GetFileName(model.Document.FileName);
+
+            //    model.uploadfile(model.Document, path);
+
+            //    var request = model.GetUserByEmail(model.Email);
+            //    _patreq.Addrequestwisefile(fileName, request.RequestId);
+
+
+            //    return View("Friend_FamilyRequestForm");
+            //}
 
             return View();
             

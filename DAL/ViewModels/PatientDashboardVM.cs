@@ -19,5 +19,7 @@ namespace DAL.ViewModels
         public string? Document { get; set; }
 
         public int? requestid { get; set; }
+
+        public int count { get; set; }  
     }
 }

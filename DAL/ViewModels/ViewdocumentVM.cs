@@ -13,5 +13,6 @@ namespace DAL.ViewModels
         public List<RequestWiseFile>? RequestWiseFile { get; set; }    
 
         public int? requestid { get; set; }
+
     }
 }

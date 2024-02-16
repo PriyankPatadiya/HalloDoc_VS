@@ -24,11 +24,8 @@ namespace BAL.Repository
                 Directory.CreateDirectory(path);
             }
 
-            var uniquefilesavetoken = new Guid().ToString();
-
-            string fileName = Path.GetFileName(file.FileName);
-            fileName = $"{fileName}_{uniquefilesavetoken}";
-            using (FileStream stream = new FileStream(Path.Combine(path, fileName), FileMode.Create))
+           
+            using (FileStream stream = new FileStream(Path.Combine(path, file.FileName), FileMode.Create))
             {
                 file.CopyTo(stream);
             }

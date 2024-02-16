@@ -51,20 +51,36 @@ namespace HalloDoc.Controllers
         [HttpPost]
         public IActionResult PatientRequestForm(PatientReqVM pInfo) 
             {
+            var user = _context.AspNetUsers.FirstOrDefault(a  => a.Email == pInfo.Email);
             if (ModelState.IsValid)
             {
-                if (pInfo.PasswordHash != pInfo.ConfirmPasswordHash)
+                if (pInfo.PasswordHash != pInfo.ConfirmPasswordHash && user == null)
                 {
                     ModelState.AddModelError("ConfirmPassword", "Password and ConfirmPassword is not same");
                     return View("PatientRequestForm");
                 }
+                var uniquefilesavetoken = new Guid().ToString();
+
+                string fileName = Path.GetFileName(pInfo.Document.FileName);
+                fileName = $"{fileName}_{uniquefilesavetoken}";
+                
                 _patreq.AddPatientForm(pInfo);
+
                 if (pInfo.Document != null && pInfo.Document.Length > 0 )
                 {
                     string path = Path.Combine(this._environment.WebRootPath, "Uploads");
-                    string fileName = Path.GetFileName(pInfo.Document.FileName);
-                  
-                    _uploadfile.uploadfile(pInfo.Document, path);
+
+                    
+                    if (!Directory.Exists(path))
+                    {
+                        Directory.CreateDirectory(path);
+                    }
+
+
+                    using (FileStream stream = new FileStream(Path.Combine(path, fileName), FileMode.Create))
+                    {
+                        pInfo.Document.CopyTo(stream);
+                    }
 
                     var request = _patreq.GetUserByEmail(pInfo.Email);
                     _patreq.Addrequestwisefile(fileName, request.RequestId);
