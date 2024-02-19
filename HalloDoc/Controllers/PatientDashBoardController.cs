@@ -103,7 +103,8 @@ namespace HalloDoc.Controllers
                 user.FirstName = profilepatient.FirstName; 
                 user.LastName = profilepatient.LastName;
                 user.Email = profilepatient.Email;
-                user.Street = profilepatient.Street;    
+                user.Street = profilepatient.Street;
+                user.Mobile = profilepatient.PhoneNumber;
                 user.City = profilepatient.City;    
                 user.State = profilepatient.State;
                 user.ZipCode    = profilepatient.ZipCode;   

@@ -110,6 +110,12 @@ namespace HalloDoc.Controllers
             return View(Obj);
         }
 
+
+        public IActionResult Logout()
+        {
+            HttpContext.Session.Remove("Email");
+            return RedirectToAction("PatientLoginn");
+        }
        
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
