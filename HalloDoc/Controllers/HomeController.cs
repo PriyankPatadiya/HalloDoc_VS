@@ -63,7 +63,7 @@ namespace HalloDoc.Controllers
                 if(user == true)
                 {
                     HttpContext.Session.SetString("Email", a.Email);
-                    return RedirectToAction("PatientDashboard", "PatientDashboard");
+                    return RedirectToAction("PatientDashboard", "PatientDashBoard");
                 }
                 else
                 {

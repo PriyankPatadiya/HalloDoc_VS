@@ -51,6 +51,9 @@ namespace BAL.Repository
                 user.ZipCode = pInfo.ZipCode;
                 user.Email = pInfo.Email;
                 user.CreatedBy = pInfo.FirstName;
+                user.IntYear = pInfo.BirthDate.Value.Year;
+                user.IntDate = pInfo.BirthDate.Value.Day;
+                user.StrMonth = pInfo.BirthDate.Value.Month.ToString();
 
                 _context.Users.Add(user);
                 _context.SaveChanges();

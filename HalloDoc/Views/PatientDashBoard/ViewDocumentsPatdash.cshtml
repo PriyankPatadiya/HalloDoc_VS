@@ -107,15 +107,33 @@
             @foreach (var item in Model.RequestWiseFile)
             {
                 <text>
-                    var link = document.createElement("a");
-                    link.href = "/uploads/@item.FileName"; // Add a slash at the beginning and adjust the path accordingly
-                    link.download = "@item.FileName";
-                    link.style.display = "none";
-                    document.body.appendChild(link);
-                    link.click();
-                    document.body.removeChild(link);
+                   
+                var uniqueCounter = 1;
+                var link = document.createElement("a");
+                link.href = "/uploads/@item.FileName"; // Add a slash at the beginning and adjust the path accordingly
+                link.download = "@item.FileName" + (uniqueCounter > 1 ? "(" + uniqueCounter + ")" : "");
+                uniqueCounter++;;
+                link.style.display = "none";
+                document.body.appendChild(link)
+                    ;
+                link.click();
+                document.body.removeChild(link)
+                    ;
                 </text>
             }
+        });
+
+        document.addEventListener("DOMContentLoaded", function () {
+
+            var maincheckbox = document.getElementById('maincheck');
+            var checkboxes = document.querySelectorAll('tbody input[type="checkbox"]');
+
+            maincheckbox.addEventListener('click', function () {
+                checkboxes.forEach(function (checkbox) {
+                    checkbox.checked = maincheckbox.checked;
+                });
+            });
+
         });
     </script>
 </div>
