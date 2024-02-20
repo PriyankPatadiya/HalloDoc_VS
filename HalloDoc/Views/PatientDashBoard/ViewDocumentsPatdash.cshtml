@@ -112,13 +112,12 @@
                 var link = document.createElement("a");
                 link.href = "/uploads/@item.FileName"; // Add a slash at the beginning and adjust the path accordingly
                 link.download = "@item.FileName" + (uniqueCounter > 1 ? "(" + uniqueCounter + ")" : "");
-                uniqueCounter++;;
+                uniqueCounter++;
                 link.style.display = "none";
-                document.body.appendChild(link)
-                    ;
+                document.body.appendChild(link);
                 link.click();
-                document.body.removeChild(link)
-                    ;
+                document.body.removeChild(link);
+
                 </text>
             }
         });
@@ -135,5 +134,7 @@
             });
 
         });
+
+
     </script>
 </div>

@@ -1,0 +1,35 @@
+﻿@{
+    Layout = "~/Views/Shared/LayoutPatDash.cshtml";
+}
+
+<div class="">
+    <div class="w-100 shadow">
+        <ul class="nav nav-underline ps-5" id="pills-tab" role="tablist">
+            <li class="nav-item " role="presentation">
+                <button class="px-2 nav-link text-decoration-none active text-info" id="pills-Dashboard-tab" data-bs-toggle="pill" data-bs-target="#pills-Dashboard" type="button" role="tab" aria-controls="pills-Dashboard" aria-selected="true">Dashboard</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="px-2 nav-link text-decoration-none text-info" id="pills-profile-tab" data-bs-toggle="pill" data-bs-target="#pills-profile" type="button" role="tab" aria-controls="pills-profile" aria-selected="false">Provider Location</button>
+            </li>
+             <li class="nav-item" role="presentation">
+                <button class="px-2 nav-link text-decoration-none text-info" id="pills-profile-tab" data-bs-toggle="pill" data-bs-target="#pills-profile" type="button" role="tab" aria-controls="pills-profile" aria-selected="false">MyProfile</button>
+            </li>
+             <li class="nav-item" role="presentation">
+                <button class="px-2 nav-link text-decoration-none text-info" id="pills-profile-tab" data-bs-toggle="pill" data-bs-target="#pills-profile" type="button" role="tab" aria-controls="pills-profile" aria-selected="false">Providers</button>
+            </li>
+             <li class="nav-item" role="presentation">
+                <button class="px-2 nav-link text-decoration-none text-info" id="pills-profile-tab" data-bs-toggle="pill" data-bs-target="#pills-profile" type="button" role="tab" aria-controls="pills-profile" aria-selected="false">Partners</button>
+            </li>
+             <li class="nav-item" role="presentation">
+                <button class="px-2 nav-link text-decoration-none text-info" id="pills-profile-tab" data-bs-toggle="pill" data-bs-target="#pills-profile" type="button" role="tab" aria-controls="pills-profile" aria-selected="false">Access</button>
+            </li>
+             <li class="nav-item" role="presentation">
+                <button class="px-2 nav-link text-decoration-none text-info" id="pills-profile-tab" data-bs-toggle="pill" data-bs-target="#pills-profile" type="button" role="tab" aria-controls="pills-profile" aria-selected="false">Records</button>
+            </li>
+        </ul>
+    </div>
+
+    <div>
+        <partial name="AdminDashboardPage" />
+    </div>
+</div>

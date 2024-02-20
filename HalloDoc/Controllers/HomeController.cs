@@ -2,12 +2,12 @@
 using HalloDoc.Models;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
-using HalloDoc.NewFolder1;
-using Microsoft.EntityFrameworkCore;
 using DAL.DataContext;
 using DAL.DataModels;
 using BAL.Interface;
 using DAL.ViewModels;
+using System.Text;
+using MimeKit.Cryptography;
 
 namespace HalloDoc.Controllers
 {
@@ -17,13 +17,17 @@ namespace HalloDoc.Controllers
         private readonly ApplicationDbContext _context;
         private readonly ILogin _login;
         private readonly ICreateAcc _createacc;
-      
+        private readonly IEmailService _emailService;
+        //private readonly IJWTTokenservice _jwtTokenService;
 
-        public HomeController(ApplicationDbContext db , ILogin login , ICreateAcc createacc)
+
+        public HomeController(ApplicationDbContext db , ILogin login , ICreateAcc createacc, IEmailService emailService)
         {
             _context = db;
             _login = login;
-            _createacc = createacc; 
+            _createacc = createacc;
+            _emailService = emailService;
+            //_jwtTokenService = jwtservice;
 
         }
         public IActionResult Privacy(string name, int numTimes = 1)
@@ -51,8 +55,30 @@ namespace HalloDoc.Controllers
         {
             return View();
         }
-        //Post
-            [HttpPost]
+
+        public IActionResult ResetPassword()
+        {
+            
+            return View();
+        }
+
+
+        public IActionResult PatientCreateAcc()
+        {
+            return View();
+        }
+
+        public IActionResult Logout()
+        {
+            HttpContext.Session.Remove("Email");
+            return RedirectToAction("PatientLoginn");
+        }
+
+
+        //Post  Login Action
+
+
+        [HttpPost]
             public async Task<IActionResult> PatientLoginn(LoginVM a)
             {
             
@@ -74,18 +100,8 @@ namespace HalloDoc.Controllers
             }
 
 
-        public IActionResult ResetPassword()
-        {
-            return View();
-        }
+        //POST Create Action
 
-       
-        public IActionResult PatientCreateAcc()
-        {
-            return View();
-        }
-
-        //POST
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult PatientCreateAcc(CreateAccVM Obj) 
@@ -111,12 +127,33 @@ namespace HalloDoc.Controllers
         }
 
 
-        public IActionResult Logout()
+
+       [HttpPost]
+        [ValidateAntiForgeryToken]
+
+        public IActionResult ResetPassword(ForgetPasswordVM model)
         {
-            HttpContext.Session.Remove("Email");
-            return RedirectToAction("PatientLoginn");
+            string to = model.email;
+            string subject = "Forget Your Password... Do not worry You can change your password.";
+
+            var body = new StringBuilder();
+            body.AppendFormat("Hello");
+            body.AppendLine(@"Your KAUH Account about to activate click 
+                             the link below to complete the actination process");
+            body.AppendLine("<a href=\"http://localhost:49496/Activated.aspx\">login</a>");
+
+            string Body = body.ToString();
+
+
+            if (ModelState.IsValid)
+            {
+                var user = _context.Users.Where(x => x.Email == to);
+                _emailService.SendEmail(to, subject, Body);
+                model.EmailSent = true;
+            }
+            return View();
         }
-       
+            
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {

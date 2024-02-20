@@ -124,22 +124,6 @@ namespace HalloDoc.Controllers
             }
 
         }
-        //public IActionResult PatientProfile()
-        //{
-        //    var email = HttpContext.Session.GetString("Email");
-
-        //    if (ModelState.IsValid)
-        //    {
-        //        ViewBag.username = _context.AspNetUsers.FirstOrDefault(u => u.Email == email).UserName;
-
-
-        //    return View("PatientDashboard",result);
-        //    }
-        //    else
-        //    {
-        //        return NotFound(ModelState);
-        //    }
-        //}
 
 
         [HttpPost]
