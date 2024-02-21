@@ -1,34 +1,161 @@
 ﻿
+@model List<DAL.ViewModels.AdminDashboardVM>
 
+<div class=" container-fluid tab-pane fade show active bg-light" id="pills-AdminDashboard" style="min-height: 77vh;" role="tabpanel" aria-labelledby="pills-AdminDashboard-tab" tabindex="0">
 
-<div class="tab-pane fade show active bg-light bg-gradient" id="pills-Dashboard" style="min-height: 77vh;" role="tabpanel" aria-labelledby="pills-Dashboard-tab" tabindex="0">
+    @*Tabs Of Status*@
+
     <div class="container-fluid px-4 text-center py-2">
-        <div class="row gx-5 gy-5 mt-0 px-3">
-            <div class="col rounded mx-2 text-light text-start" style="background-color: #203f9a;">
-                <div class="p-3 fw-bold d-flex fs-5">New</div>
-                <h4 class="fw-bold ps-3 pb-2"> 344</h4>
-            </div>
-            <div class="col rounded mx-2 text-primary text-start" style="background-color: #e5f2f8;">
-                <div class="p-3 fw-bold d-flex fs-5">Panding</div>
-                <h4 class="fw-bold ps-3 pb-2">344</h4>
-            </div>
-            <div class="col rounded mx-2 text-success text-start" style="background-color: #e9f0e8;">
-                <div class="p-3 fw-bold d-flex fs-5">Active</div>
-                <h4 class="fw-bold ps-3 pb-2">344</h4>
-            </div>
-            <div class="col rounded mx-2 text-danger text-start" style="background-color: #f7e6ee;">
-                <div class="p-3 fw-bold d-flex fs-5">Conclude</div>
-                <h4 class="fw-bold ps-3 pb-2">344</h4>
-            </div>
-            <div class="col rounded mx-2 text-start" style="background-color: #e5eef5;">
-                <div class="p-3 fw-bold d-flex fs-5">To Close</div>
-                <h4 class="fw-bold ps-3 pb-2">344</h4>
-            </div>
-            <div class="col rounded mx-2 text-start" style="background-color: #efeef4;">
-                <div class="p-3 fw-bold d-flex fs-5">Unpaid</div>
-                <h4 class="fw-bold ps-3 pb-2">344</h4>
-            </div>
+        <ul class=" nav row gx-5 gy-5 mt-0 px-3" id="pills-tab" role="tablist">
+            <li class=" nav-item col rounded mx-2  text-start " style="background-color: #203f9a;" role="presentation">
+                <button class="btn text-decoration-none text-light w-100 text-start shadow-none border-0" id="pills-Dashboard-tab" data-bs-toggle="pill" data-bs-target="#pills-Dashboard" type="button" role="tab" aria-controls="pills-Dashboard" aria-selected="true">
+                    <div class="p-2  d-flex fs-5">New</div>
+                    <h4 class="fw-bolder ps-1 pb-2"> 344</h4>
+                </button>
+            </li>
+            <li class=" nav-item col rounded mx-2 text-primary text-start" style="background-color: #e5f2f8;" role="presentation">
+                <button class="btn text-decoration-none text-primary w-100 text-start shadow-none border-0" id="pills-Pending-tab" data-bs-toggle="pill" data-bs-target="#pills-Pending" type="button" role="tab" aria-controls="pills-Pending" aria-selected="false">
+                    <div class="p-2  d-flex fs-5">Pending</div>
+                    <h4 class="fw-bolder ps-1 pb-2">344</h4>
+                </button>
+            </li>
+            <li class=" nav-item col rounded mx-2 text-success text-start" style="background-color: #e9f0e8;" role="presentation">
+                <button class="btn text-decoration-none text-success w-100 text-start shadow-none border-0" id="pills-Active-tab" data-bs-toggle="pill" data-bs-target="#pills-Active" type="button" role="tab" aria-controls="pills-Active" aria-selected="false">
+                    <div class="p-2 d-flex fs-5">Active</div>
+                    <h4 class="fw-bolder ps-1 pb-2">344</h4>
+                </button>
+            </li>
+            <li class=" nav-item col rounded mx-2 text-danger text-start" style="background-color: #f7e6ee;" role="presentation">
+                <button class="btn text-decoration-none text-danger w-100 text-start shadow-none border-0" id="pills-Conclude-tab" data-bs-toggle="pill" data-bs-target="#pills-Conclude" type="button" role="tab" aria-controls="pills-Conclude" aria-selected="false">
+                    <div class="p-2 d-flex fs-5">Conclude</div>
+                    <h4 class="fw-bolder ps-1 pb-2">344</h4>
+                </button>
+            </li>
+            <li class=" nav-item col rounded mx-2 text-start" style="background-color: #e5eef5;" role="presentation">
+                <button class="btn text-decoration-none text-primary w-100 text-start shadow-none border-0" id="pills-ToClose-tab" data-bs-toggle="pill" data-bs-target="#pills-ToClose" type="button" role="tab" aria-controls="pills-ToClose" aria-selected="false">
+                    <div class="p-2 d-flex fs-5">To Close</div>
+                    <h4 class="fw-bolder ps-1 pb-2">344</h4>
+                </button>
+            </li>
+            <li class="  nav-item col rounded mx-2 text-start" style="background-color: #efeef4;" role="presentation">
+                <button class="btn text-decoration-none text-danger w-100 text-start shadow-none border-0" id="pills-Unpaid-tab" data-bs-toggle="pill" data-bs-target="#pills-Unpaid" type="button" role="tab" aria-controls="pills-Unpaid" aria-selected="true">
+                    <div class="p-2 d-flex fs-5">Unpaid</div>
+                    <h4 class="fw-bolder ps-1 pb-2">344</h4>
+                </button>
+            </li>
 
+        </ul>
+    </div>
+
+
+    @*Buttons and patientName*@
+
+    <div class="row mt-4 px-3">
+        <div class="col-3">
+            <p class="fs-4 ps-2 fw-bolder">Patients<span class="text-primary fs-6">(New)</span></p>
+        </div>
+        <div class="col-9 py-1 d-flex justify-content-end ">
+            <button type="button" class="btn btn-info text-white me-2">
+                <i class="bi bi-send  me-md-2 "></i><span class="d-none d-lg-inline">Send Link</span>
+            </button>
+            <button type="button" class="btn btn-info  text-white me-2">
+                <i class="bi bi-pencil-square me-md-2"></i><span class="d-none d-lg-inline">
+                    Create
+                    Requests
+                </span>
+            </button>
+            <button type="button" class="btn btn-info  text-white me-2">
+                <i class="bi bi-arrow-up-right "></i>
+                <span class="d-none d-lg-inline ">Export</span>
+            </button>
+            <button type="button" class="btn btn-info  text-white me-2">
+                <i class="bi bi-box-arrow-up-right "></i><span class="d-none d-lg-inline">
+                    Export
+                    All
+                </span>
+            </button>
+            <button type="button" class="btn btn-info  text-white me-2">
+                <i class="bi bi-person-plus  me-md-2"></i><span class="d-none d-lg-inline">
+                    Request DTY
+                    Support
+                </span>
+            </button>
         </div>
     </div>
+    
+        
+    @*SearchButton , requestor type and main table*@
+
+    <div class=" mt-4 px-3 rounded ">
+        <div class="row mx-2 bg-white rounded-top">
+
+
+            <div class="d-flex col-4 ">
+                <div class="input-group bg-white mt-2 mb-2 d-flex align-items-center ms-2 " style="width:17rem">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 50 50">
+                        <path d="M 21 3 C 11.654545 3 4 10.654545 4 20 C 4 29.345455 11.654545 37 21 37 C 24.701287 37 28.127393 35.786719 30.927734 33.755859 L 44.085938 46.914062 L 46.914062 44.085938 L 33.875 31.046875 C 36.43682 28.068316 38 24.210207 38 20 C 38 10.654545 30.345455 3 21 3 z M 21 5 C 29.254545 5 36 11.745455 36 20 C 36 28.254545 29.254545 35 21 35 C 12.745455 35 6 28.254545 6 20 C 6 11.745455 12.745455 5 21 5 z">
+                        </path>
+                    </svg>
+                    <input type="text" class="form-control ms-2 shadow-none border-none " placeholder="Search patient">
+                </div>
+                <div class="d-flex  rounded align-items-center ms-2 ps-2" style="width:17rem">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 50 50">
+                        <path d="M 21 3 C 11.654545 3 4 10.654545 4 20 C 4 29.345455 11.654545 37 21 37 C 24.701287 37 28.127393 35.786719 30.927734 33.755859 L 44.085938 46.914062 L 46.914062 44.085938 L 33.875 31.046875 C 36.43682 28.068316 38 24.210207 38 20 C 38 10.654545 30.345455 3 21 3 z M 21 5 C 29.254545 5 36 11.745455 36 20 C 36 28.254545 29.254545 35 21 35 C 12.745455 35 6 28.254545 6 20 C 6 11.745455 12.745455 5 21 5 z">
+                        </path>
+                    </svg>
+                    <select class="form-select border-0 shadow-none" aria-label="Default select example">
+                        <option selected>All Regions</option>
+                        <option value="1">One</option>
+                        <option value="2">Two</option>
+                        <option value="3">Three</option>
+                    </select>
+                </div>
+            </div>
+
+
+            <div class="d-flex col-8 justify-content-end my-3">
+                <button class="active-filter filter-options d-flex align-items-center  px-3 py-1 rounded btn shadow-none border-0">
+                    <span>All</span>
+                </button>
+
+                <button class="filter-options px-2 py-1 rounded d-flex align-items-center ms-2 btn shadow-none border-0">
+                    <svg height="15" width="15" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                        <circle fill="#5fbc61" r="45" cx="50" cy="50" stroke="grey" stroke-width="3" />
+                    </svg>
+                    <span class="ms-2">Patient</span>
+                </button>
+
+                <button class="filter-options px-2 py-1 rounded d-flex align-items-center ms-2 btn shadow-none border-0">
+                    <svg height="15" width="15" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                        <circle fill="#ed9124" r="45" cx="50" cy="50" stroke="grey" stroke-width="3" />
+                    </svg>
+                    <span class="ms-2">Family/Friend</span>
+                </button>
+                <button class="filter-options px-2 py-1 rounded d-flex align-items-center ms-2 btn shadow-none border-0">
+                    <svg height="15" width="15" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                        <circle fill="#e26277" r="45" cx="50" cy="50" stroke="grey" stroke-width="3" />
+                    </svg>
+                    <span class="ms-2">Business</span>
+                </button>
+                <button class="filter-options px-2 py-1 rounded d-flex align-items-center ms-2 btn shadow-none border-0">
+                    <svg height="15" width="15" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                        <circle fill="#007fc6" r="45" cx="50" cy="50" stroke="grey" stroke-width="3" />
+                    </svg>
+                    <span class="ms-2">Concierge</span>
+                </button>
+                <button class="filter-options px-2 py-1 rounded d-flex align-items-center ms-2 btn shadow-none border-0">
+                    <svg height="15" width="15" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                        <circle fill="#9966cd" r="45" cx="50" cy="50" stroke="grey" stroke-width="3" />
+                    </svg>
+                    <span class="ms-2">VIP</span>
+                </button>
+            </div>
+        </div>
+
+        @*render partial view*@
+
+        <partial name="AdminDashboardNew" model="Model"/>
+        <partial name="AdminDashboardPending" model="Model"/>
+    </div>
+   
 </div>

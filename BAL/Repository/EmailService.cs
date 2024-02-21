@@ -13,17 +13,13 @@ namespace BAL.Repository
 {
     public class EmailService : IEmailService
     {
-
-     
-    
-
-        public async Task SendEmail(string to, string subject, string body)
+        public  void SendEmail(string to, string subject, string body)
         {
 
             var smtpClient = new SmtpClient("smtp.office365.com")
             {
                 Port = 587,
-                Credentials = new NetworkCredential("", ""),
+                Credentials = new NetworkCredential("tatva.dotnet.priyankpatadiya@outlook.com", "priyanksoni@135"),
                 EnableSsl = true,
                 DeliveryMethod = SmtpDeliveryMethod.Network,
                 UseDefaultCredentials = false
@@ -31,11 +27,12 @@ namespace BAL.Repository
 
             var mailMessage = new MailMessage
             {
-                From = new MailAddress(""),
+                From = new MailAddress("tatva.dotnet.priyankpatadiya@outlook.com"),
                 Subject = subject,
                 Body = body,
                 IsBodyHtml = true,
             };
+
             mailMessage.To.Add(to);
 
             smtpClient.Send(mailMessage);

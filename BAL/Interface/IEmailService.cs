@@ -8,6 +8,6 @@ namespace BAL.Interface
 {
     public interface IEmailService
     {
-        public Task SendEmail(string to, string subject, string body);
+        public void SendEmail(string to, string subject, string body);
     }
 }

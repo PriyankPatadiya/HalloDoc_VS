@@ -8,8 +8,6 @@ using System.Text;
 
 
 var builder = WebApplication.CreateBuilder(args);
-var jwtIssuer = builder.Configuration.GetSection("Jwt:Issuer").Get<string>();
-var jwtKey = builder.Configuration.GetSection("Jwt:Key").Get<string>();
 
 
 // Add services to the container.
@@ -27,6 +25,9 @@ builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddDbContext<ApplicationDbContext>();
 
 // JWT Configuration
+var jwtIssuer = builder.Configuration.GetSection("Jwt:Issuer").Get<string>();
+var jwtKey = builder.Configuration.GetSection("Jwt:Key").Get<string>();
+
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
  .AddJwtBearer(options =>

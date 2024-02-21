@@ -1,5 +1,4 @@
-﻿
-using HalloDoc.Models;
+﻿using HalloDoc.Models;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 using DAL.DataContext;
@@ -7,7 +6,10 @@ using DAL.DataModels;
 using BAL.Interface;
 using DAL.ViewModels;
 using System.Text;
-using MimeKit.Cryptography;
+using System.IdentityModel.Tokens.Jwt;
+using Microsoft.IdentityModel.Tokens;
+using System.Security.Claims;
+
 
 namespace HalloDoc.Controllers
 {
@@ -18,16 +20,22 @@ namespace HalloDoc.Controllers
         private readonly ILogin _login;
         private readonly ICreateAcc _createacc;
         private readonly IEmailService _emailService;
-        //private readonly IJWTTokenservice _jwtTokenService;
+        private readonly SymmetricSecurityKey _key;
+        private readonly IConfiguration _config;
 
 
-        public HomeController(ApplicationDbContext db , ILogin login , ICreateAcc createacc, IEmailService emailService)
+        //private readonly IJWTTokense
+
+
+        public HomeController(IConfiguration config, ApplicationDbContext db, ILogin login, ICreateAcc createacc, IEmailService emailService)
         {
             _context = db;
             _login = login;
             _createacc = createacc;
             _emailService = emailService;
-            //_jwtTokenService = jwtservice;
+            //_jwtTokenService = jwtservice
+            _config = config;
+            _key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]));
 
         }
         public IActionResult Privacy(string name, int numTimes = 1)
@@ -56,9 +64,10 @@ namespace HalloDoc.Controllers
             return View();
         }
 
-        public IActionResult ResetPassword()
+        [HttpGet]
+        public IActionResult ResetPassword(string token)
         {
-            
+
             return View();
         }
 
@@ -79,14 +88,14 @@ namespace HalloDoc.Controllers
 
 
         [HttpPost]
-            public async Task<IActionResult> PatientLoginn(LoginVM a)
-            {
-            
+        public async Task<IActionResult> PatientLoginn(LoginVM a)
+        {
+
             if (ModelState.IsValid)
             {
                 var user = _login.LoginVarify(a);
-                
-                if(user == true)
+
+                if (user == true)
                 {
                     HttpContext.Session.SetString("Email", a.Email);
                     return RedirectToAction("PatientDashboard", "PatientDashBoard");
@@ -97,18 +106,18 @@ namespace HalloDoc.Controllers
                 }
             }
             return View(a);
-            }
+        }
 
 
         //POST Create Action
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult PatientCreateAcc(CreateAccVM Obj) 
+        public IActionResult PatientCreateAcc(CreateAccVM Obj)
         {
             if (ModelState.IsValid)
             {
-                if(Obj.Password != Obj.ConfirmPassword)
+                if (Obj.Password != Obj.ConfirmPassword)
                 {
                     ModelState.AddModelError("ConfirmPassword", "The Password and Confirm Password do not match");
                     return View(Obj);
@@ -128,19 +137,41 @@ namespace HalloDoc.Controllers
 
 
 
-       [HttpPost]
-        [ValidateAntiForgeryToken]
+        [HttpPost]
+        [AutoValidateAntiforgeryToken]
 
         public IActionResult ResetPassword(ForgetPasswordVM model)
         {
+            // Token Generation 
+
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var key = Encoding.UTF8.GetBytes(_config["Jwt:Key"]);
+            var tokenDescriptor = new SecurityTokenDescriptor
+            {
+                Subject = new ClaimsIdentity(new[] { new Claim("email", model.email) }),
+                Expires = DateTime.UtcNow.AddHours(1), // Token expires in 1 hour
+                Issuer = _config["Jwt:Issuer"],
+                //Audience = _audience,
+                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key)
+
+                , SecurityAlgorithms.HmacSha256Signature)
+            };
+            var token = tokenHandler.CreateToken(tokenDescriptor);
+            var jwtToken = tokenHandler.WriteToken(token);
+
+
+
+            // Sending Mail Information
+
             string to = model.email;
             string subject = "Forget Your Password... Do not worry You can change your password.";
+            var resetlink = Url.Action("ChangePassword", "Home", new { token = jwtToken }, Request.Scheme);
 
             var body = new StringBuilder();
             body.AppendFormat("Hello");
             body.AppendLine(@"Your KAUH Account about to activate click 
                              the link below to complete the actination process");
-            body.AppendLine("<a href=\"http://localhost:49496/Activated.aspx\">login</a>");
+            body.AppendLine("<a href=\"" + resetlink + "\">Change Your Password</a>");
 
             string Body = body.ToString();
 
@@ -150,10 +181,55 @@ namespace HalloDoc.Controllers
                 var user = _context.Users.Where(x => x.Email == to);
                 _emailService.SendEmail(to, subject, Body);
                 model.EmailSent = true;
+                return RedirectToAction("PatientLoginn");
             }
             return View();
         }
-            
+
+
+
+        [HttpGet]
+        public IActionResult ChangePassword(string token)
+        {
+            try
+            {
+                var tokenHandler = new JwtSecurityTokenHandler();
+                var key = Encoding.ASCII.GetBytes(_config["Jwt:Key"]);
+               
+                // 5. Verify the JWT token and allow the user to reset the password if the token is valid
+                tokenHandler.ValidateToken(token, new TokenValidationParameters
+                {
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = new SymmetricSecurityKey(key)
+,
+                    ValidateIssuer = true,
+                    ValidateLifetime = true,
+                    ValidateAudience = false,
+                    ValidIssuer = _config["Jwt:Issuer"],
+                    ClockSkew = TimeSpan.Zero
+                }, out SecurityToken validatedToken);
+
+                var jwtToken = (JwtSecurityToken)validatedToken;
+                var email = jwtToken.Claims.First(x => x.Type == "email").Value;
+
+                // Pass the email to your password reset view
+                ViewBag.Email = email;
+                return View("login_page");
+
+            }
+            catch (Exception ex)
+            {
+                return Content("Invalid token");
+            }
+        }
+
+        [HttpPost]
+        public IActionResult ChangePassword(string email, string password)
+        {
+
+            return Content("Password reset successfully");
+        }
+
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {
@@ -161,5 +237,5 @@ namespace HalloDoc.Controllers
         }
     }
 
-    
+
 }

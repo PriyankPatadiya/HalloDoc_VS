@@ -1,0 +1,177 @@
+﻿
+
+@*For New Status*@
+
+
+<div class="mx-2 tab-pane fade show active" id="pills-Dashboard" role="tabpanel" aria-labelledby="pills-Dashboard-tab" tabindex="0">
+    <Table class="table table-responsive">
+        <thead class="table-light border-0" style="height: 60px;">
+            <tr>
+                <th class="align-middle text-secondary my-2">Name</t>
+                <th class="align-middle text-secondary">Date Of Birth</th>
+                <th class="align-middle text-secondary">Requestor</th>
+                <th class="align-middle text-secondary">RequestedDate</th>
+                <th class="align-middle text-secondary">Phone</th>
+                <th class="align-middle text-secondary">Address</th>
+                <th class="align-middle text-secondary">Notes</th>
+                <th class="align-middle text-secondary">ChatWith</th>
+                <th class="align-middle text-secondary">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                @if (item.requestId == 1)
+                {
+                    <tr class="table-success">
+                        <td class="align-middle">@item.PatientName</td>
+                        <td class="align-middle">@item.BirthDate</td>
+                        <td class="align-middle">@item.RequestorName</td>
+                        <td class="align-middle">@item.RequestDate</td>
+                        <td class="d-flex flex-column">
+                            <div class="border border-1 border-white py-1 text-center rounded btn btn-success ">
+                                <svg class="me-2" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-telephone-fill" viewBox="0 0 16 16">
+                                    <path fill-rule="evenodd" d="M1.885.511a1.745 1.745 0 0 1 2.61.163L6.29 2.98c.329.423.445.974.315 1.494l-.547 2.19a.68.68 0 0 0 .178.643l2.457 2.457a.68.68 0 0 0 .644.178l2.189-.547a1.75 1.75 0 0 1 1.494.315l2.306 1.794c.829.645.905 1.87.163 2.611l-1.034 1.034c-.74.74-1.846 1.065-2.877.702a18.6 18.6 0 0 1-7.01-4.42 18.6 18.6 0 0 1-4.42-7.009c-.362-1.03-.037-2.137.703-2.877z" />
+                                </svg>
+                                @item.phone
+                            </div>
+                            <span>(Patient)</span>
+
+                        </td>
+                        <td>@item.address</td>
+                        <td class="align-middle">-</td>
+                        <td class="align-middle">
+                            <button class="btn btn-success ">
+                                <i class="bi bi-person"></i>
+                                Provider
+                            </button>
+                        </td>
+                        <td class="align-middle">
+                            <button class="btn btn-success">
+                                Action
+                            </button>
+                        </td>
+                    </tr>
+                }
+                @if (item.requestId == 2)
+                {
+                    <tr class="table-warning">
+                        <td class="align-middle">@item.PatientName</td>
+                        <td class="align-middle">@item.BirthDate</td>
+                        <td class="align-middle">@item.RequestorName</td>
+                        <td class="align-middle">@item.RequestDate</td>
+                        <td class="d-flex flex-column">
+                            <div class="border border-1 border-white py-1 text-center text-white rounded btn btn-warning">
+                                <svg class="me-2" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-telephone-fill" viewBox="0 0 16 16">
+                                    <path fill-rule="evenodd" d="M1.885.511a1.745 1.745 0 0 1 2.61.163L6.29 2.98c.329.423.445.974.315 1.494l-.547 2.19a.68.68 0 0 0 .178.643l2.457 2.457a.68.68 0 0 0 .644.178l2.189-.547a1.75 1.75 0 0 1 1.494.315l2.306 1.794c.829.645.905 1.87.163 2.611l-1.034 1.034c-.74.74-1.846 1.065-2.877.702a18.6 18.6 0 0 1-7.01-4.42 18.6 18.6 0 0 1-4.42-7.009c-.362-1.03-.037-2.137.703-2.877z" />
+                                </svg>
+                                @item.phone
+                            </div>
+                            <span>(Patient)</span>
+                            <div class="border border-1 border-white py-1 text-center text-white rounded btn btn-warning">
+                                <svg class="me-2" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-telephone-fill" viewBox="0 0 16 16">
+                                    <path fill-rule="evenodd" d="M1.885.511a1.745 1.745 0 0 1 2.61.163L6.29 2.98c.329.423.445.974.315 1.494l-.547 2.19a.68.68 0 0 0 .178.643l2.457 2.457a.68.68 0 0 0 .644.178l2.189-.547a1.75 1.75 0 0 1 1.494.315l2.306 1.794c.829.645.905 1.87.163 2.611l-1.034 1.034c-.74.74-1.846 1.065-2.877.702a18.6 18.6 0 0 1-7.01-4.42 18.6 18.6 0 0 1-4.42-7.009c-.362-1.03-.037-2.137.703-2.877z" />
+                                </svg>
+                                @item.YourPhone
+                            </div>
+                            <span>(Family-Friend)</span>
+                        </td>
+                        <td class="align-middle">@item.address</td>
+                        <td class="align-middle">-</td>
+                        <td class="align-middle">
+                            <button class="btn btn-warning ">
+                                <i class="bi bi-person"></i>
+                                Provider
+                            </button>
+                        </td>
+                        <td class="align-middle">
+                            <button class="btn btn-warning">
+                                Action
+                            </button>
+                        </td>
+                    </tr>
+                }
+                @if (item.requestId == 3)
+                {
+                    <tr class="table-info">
+                        <td class="align-middle">@item.PatientName</td>
+                        <td class="align-middle">@item.BirthDate</td>
+                        <td class="align-middle">@item.RequestorName</td>
+                        <td class="align-middle">@item.RequestDate</td>
+                        <td class="d-flex flex-column">
+                            <div class="border border-1 border-white py-1 text-center  text-white rounded btn btn-info ">
+                                <svg class="me-2" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-telephone-fill" viewBox="0 0 16 16">
+                                    <path fill-rule="evenodd" d="M1.885.511a1.745 1.745 0 0 1 2.61.163L6.29 2.98c.329.423.445.974.315 1.494l-.547 2.19a.68.68 0 0 0 .178.643l2.457 2.457a.68.68 0 0 0 .644.178l2.189-.547a1.75 1.75 0 0 1 1.494.315l2.306 1.794c.829.645.905 1.87.163 2.611l-1.034 1.034c-.74.74-1.846 1.065-2.877.702a18.6 18.6 0 0 1-7.01-4.42 18.6 18.6 0 0 1-4.42-7.009c-.362-1.03-.037-2.137.703-2.877z" />
+                                </svg>
+                                @item.phone
+                            </div>
+                            <span>(Patient)</span>
+                            <div class="border border-1 border-white py-1 text-center text-white rounded btn btn-info ">
+                                <svg class="me-2" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-telephone-fill" viewBox="0 0 16 16">
+                                    <path fill-rule="evenodd" d="M1.885.511a1.745 1.745 0 0 1 2.61.163L6.29 2.98c.329.423.445.974.315 1.494l-.547 2.19a.68.68 0 0 0 .178.643l2.457 2.457a.68.68 0 0 0 .644.178l2.189-.547a1.75 1.75 0 0 1 1.494.315l2.306 1.794c.829.645.905 1.87.163 2.611l-1.034 1.034c-.74.74-1.846 1.065-2.877.702a18.6 18.6 0 0 1-7.01-4.42 18.6 18.6 0 0 1-4.42-7.009c-.362-1.03-.037-2.137.703-2.877z" />
+                                </svg>
+                                @item.YourPhone
+                            </div>
+                            <span>(Concierge)</span>
+                        </td>
+                        <td class="align-middle">@item.address</td>
+                        <td class="align-middle">-</td>
+                        <td class="align-middle">
+                            <button class="btn btn-info ">
+                                <i class="bi bi-person"></i>
+                                Provider
+                            </button>
+                        </td>
+                        <td class="align-middle">
+                            <button class="btn btn-info">
+                                Action
+                            </button>
+                        </td>
+                    </tr>
+                }
+                @if (item.requestId == 4)
+                {
+                    <tr class="table-danger">
+                        <td class="align-middle">@item.PatientName</td>
+                        <td class="align-middle">@item.BirthDate</td>
+                        <td class="align-middle">@item.RequestorName</td>
+                        <td class="align-middle">@item.RequestDate</td>
+                        <td class="d-flex flex-column">
+                            <div class="border border-1 border-white py-1 text-center text-white rounded btn btn-danger ">
+                                <svg class="me-2" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-telephone-fill" viewBox="0 0 16 16">
+                                    <path fill-rule="evenodd" d="M1.885.511a1.745 1.745 0 0 1 2.61.163L6.29 2.98c.329.423.445.974.315 1.494l-.547 2.19a.68.68 0 0 0 .178.643l2.457 2.457a.68.68 0 0 0 .644.178l2.189-.547a1.75 1.75 0 0 1 1.494.315l2.306 1.794c.829.645.905 1.87.163 2.611l-1.034 1.034c-.74.74-1.846 1.065-2.877.702a18.6 18.6 0 0 1-7.01-4.42 18.6 18.6 0 0 1-4.42-7.009c-.362-1.03-.037-2.137.703-2.877z" />
+                                </svg>
+                                @item.phone
+                            </div>
+                            <span>(Patient)</span>
+                            <div class="border border-1 border-white py-1 text-center text-white rounded btn btn-danger ">
+                                <svg class="me-2" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-telephone-fill" viewBox="0 0 16 16">
+                                    <path fill-rule="evenodd" d="M1.885.511a1.745 1.745 0 0 1 2.61.163L6.29 2.98c.329.423.445.974.315 1.494l-.547 2.19a.68.68 0 0 0 .178.643l2.457 2.457a.68.68 0 0 0 .644.178l2.189-.547a1.75 1.75 0 0 1 1.494.315l2.306 1.794c.829.645.905 1.87.163 2.611l-1.034 1.034c-.74.74-1.846 1.065-2.877.702a18.6 18.6 0 0 1-7.01-4.42 18.6 18.6 0 0 1-4.42-7.009c-.362-1.03-.037-2.137.703-2.877z" />
+                                </svg>
+                                @item.YourPhone
+                            </div>
+                            <span>(Business)</span>
+                        </td>
+                        <td class="align-middle">@item.address</td>
+                        <td class="align-middle">-</td>
+                        <td class="align-middle ">
+                            <button class="btn btn-danger">
+                                <i class="bi bi-person"></i>
+                                Provider
+                            </button>
+                        </td>
+                        <td class="align-middle">
+                            <button class="btn btn-danger">
+                                Action
+                            </button>
+                        </td>
+                    </tr>
+                }
+
+            }
+        </tbody>
+    </Table>
+</div>
+
+
+

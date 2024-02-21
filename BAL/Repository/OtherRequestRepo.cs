@@ -32,12 +32,13 @@ namespace BAL.Repository
             var request = new Request();
             var requestClient = new RequestClient();
 
-
+            request.RequestTypeId = 2;
             request.FirstName = model.YourFirstName;
             request.LastName = model.YourLastName;
             request.Email = model.YourEmail;
             request.PhoneNumber = model.PhoneNumber;
             request.RelationName = model.Relation;
+            request.CreatedDate = DateTime.Now;
 
             _context.Requests.Add(request);
             _context.SaveChanges();
@@ -72,10 +73,12 @@ namespace BAL.Repository
             var requestClient = new RequestClient();
             var concierge = new Concierge();
 
+            request.RequestTypeId = 3;
             request.FirstName = model.YourFirstName;
             request.LastName = model.YourLastName;
             request.Email = model.YourEmail;
-            request.PhoneNumber = model.PhoneNumber;
+            request.PhoneNumber = model.YourPhoneNumber;
+            request.CreatedDate = DateTime.Now;
 
             _context.Requests.Add(request);
             _context.SaveChanges();
@@ -121,10 +124,12 @@ namespace BAL.Repository
             var requestClient = new RequestClient();
             var Business = new Business();
 
+            request.RequestTypeId = 4;
             request.FirstName = model.YourFirstName;
             request.LastName = model.YourLastName;
             request.Email = model.YourEmail;
             request.PhoneNumber = model.PhoneNumber;
+            request.CreatedDate = DateTime.Now;
 
             _context.Requests.Add(request);
             _context.SaveChanges();

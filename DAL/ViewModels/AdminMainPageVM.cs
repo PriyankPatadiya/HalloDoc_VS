@@ -4,10 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BAL.Interface
+namespace DAL.ViewModels
 {
-    public interface IJWTTokenservice
+    public class AdminMainPageVM
     {
-        public string generatetoken(string email);
+        public List<AdminDashboardVM> DashboardVM { get; set;}
     }
 }

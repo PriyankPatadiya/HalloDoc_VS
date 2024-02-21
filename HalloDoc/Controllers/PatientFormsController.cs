@@ -111,11 +111,15 @@ namespace HalloDoc.Controllers
                     _uploadfile.uploadfile(model.Document, path);
 
                     var request = _patreq.GetUserByEmail(model.Email);
-                    _patreq.Addrequestwisefile(fileName, request.RequestId);
-                    return View();
+
+                    if (request != null)
+                    {
+                        _patreq.Addrequestwisefile(fileName, request.RequestId);
+                    }
+                    return RedirectToAction("SubmitRequest","Home");
                 }
             }
-            return View("Friend_FamilyRequestForm");
+            return View();
         }
 
         [HttpPost]
@@ -133,7 +137,7 @@ namespace HalloDoc.Controllers
 
                     var request = _patreq.GetUserByEmail(model.Email);
                     _patreq.Addrequestwisefile(fileName, request.RequestId);
-                    return View();
+                    return RedirectToAction("SubmitRequest", "Home");
                 }
             }
             return View();
@@ -153,7 +157,7 @@ namespace HalloDoc.Controllers
 
                     var request = _patreq.GetUserByEmail(model.Email);
                     _patreq.Addrequestwisefile(fileName, request.RequestId);
-                    return View();
+                    return RedirectToAction("SubmitRequest", "Home");
                 }
             }
             return View();

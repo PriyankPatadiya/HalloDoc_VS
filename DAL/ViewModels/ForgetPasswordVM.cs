@@ -1,17 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel.DataAnnotations;
+
 
 namespace DAL.ViewModels
 {
     public class ForgetPasswordVM
     {
-        [Required , EmailAddress]
+        [Required, EmailAddress]
         public string email { get; set; }
 
-        public bool? EmailSent { get; set; } 
+        public bool? EmailSent { get; set; }
+
+        public string? Password { get; set; }
+        public string? ConfirmPassword { get; set; }
     }
 }

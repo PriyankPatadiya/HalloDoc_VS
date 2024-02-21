@@ -13,6 +13,6 @@ namespace BAL.Interface
         void AddPatientForm(PatientReqVM model);
         void Addrequestwisefile(string filename , int requestId);
 
-        public Request GetUserByEmail(string email);
+        public RequestClient GetUserByEmail(string email);
     }
 }

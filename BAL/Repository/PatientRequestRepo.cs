@@ -34,6 +34,7 @@ namespace BAL.Repository
                 aspnetuser.CreatedDate = DateTime.Now;
                 aspnetuser.UserName = pInfo.FirstName + pInfo.LastName;
                 aspnetuser.PasswordHash = pInfo.PasswordHash;
+                aspnetuser.PhoneNumber = pInfo.PhoneNumber;
 
 
                 _context.AspNetUsers.Add(aspnetuser);
@@ -61,6 +62,7 @@ namespace BAL.Repository
 
                 var request = new Request();
 
+                request.RequestTypeId = 1;
                 request.UserId = user.UserId;
                 request.FirstName = pInfo.FirstName;
                 request.LastName = pInfo.LastName;
@@ -83,6 +85,10 @@ namespace BAL.Repository
                 requestClient.City = pInfo.City;
                 requestClient.State = pInfo.State;
                 requestClient.ZipCode = pInfo.ZipCode;
+                requestClient.IntDate = user.IntDate;
+                requestClient.IntYear = user.IntYear;
+                requestClient.StrMonth = user.StrMonth;
+
 
 
 
@@ -116,7 +122,9 @@ namespace BAL.Repository
                 requestClient.City = pInfo.City;
                 requestClient.State = pInfo.State;
                 requestClient.ZipCode = pInfo.ZipCode;
-
+                requestClient.IntDate = pInfo.BirthDate.Value.Day;
+                requestClient.IntYear = pInfo.BirthDate.Value.Year;
+                requestClient.StrMonth = pInfo.BirthDate.Value.Month.ToString();
 
 
 
@@ -126,9 +134,9 @@ namespace BAL.Repository
 
         }
        
-        public Request GetUserByEmail(string email)
+        public RequestClient GetUserByEmail(string email)
         {
-            return _context.Requests.OrderBy(e => e.RequestId).LastOrDefault(u => u.Email == email);
+            return _context.RequestClients.OrderBy(e => e.RequestId).LastOrDefault(u => u.Email == email);
         }
 
         public void Addrequestwisefile(string filename, int requestid)
