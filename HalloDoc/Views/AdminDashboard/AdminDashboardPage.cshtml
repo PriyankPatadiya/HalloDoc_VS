@@ -52,7 +52,7 @@
 
     <div class="row mt-4 px-3">
         <div class="col-3">
-            <p class="fs-4 ps-2 fw-bolder">Patients<span class="text-primary fs-6">(New)</span></p>
+            <p class="fs-4 ps-2 fw-bolder">Patients <span class="text-primary fs-6"> (New)</span></p>
         </div>
         <div class="col-9 py-1 d-flex justify-content-end ">
             <button type="button" class="btn btn-info text-white me-2">
@@ -91,12 +91,12 @@
 
 
             <div class="d-flex col-4 ">
-                <div class="input-group bg-white mt-2 mb-2 d-flex align-items-center ms-2 " style="width:17rem">
+                <div class="bg-white mt-2 mb-2 d-flex align-items-center ms-2 " style="width:17rem">
                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 50 50">
                         <path d="M 21 3 C 11.654545 3 4 10.654545 4 20 C 4 29.345455 11.654545 37 21 37 C 24.701287 37 28.127393 35.786719 30.927734 33.755859 L 44.085938 46.914062 L 46.914062 44.085938 L 33.875 31.046875 C 36.43682 28.068316 38 24.210207 38 20 C 38 10.654545 30.345455 3 21 3 z M 21 5 C 29.254545 5 36 11.745455 36 20 C 36 28.254545 29.254545 35 21 35 C 12.745455 35 6 28.254545 6 20 C 6 11.745455 12.745455 5 21 5 z">
                         </path>
                     </svg>
-                    <input type="text" class="form-control ms-2 shadow-none border-none " placeholder="Search patient">
+                    <input type="text" class="form-control ms-2 shadow-none border-none " id="SearchString" placeholder="Search patient">
                 </div>
                 <div class="d-flex  rounded align-items-center ms-2 ps-2" style="width:17rem">
                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 50 50">
@@ -114,30 +114,30 @@
 
 
             <div class="d-flex col-8 justify-content-end my-3">
-                <button class="active-filter filter-options d-flex align-items-center  px-3 py-1 rounded btn shadow-none border-0">
+                <button class="active-filter filter-options d-flex align-items-center  px-3 py-1 rounded btn shadow-none border-0 buttonOfFilter" data-value="">
                     <span>All</span>
                 </button>
 
-                <button class="filter-options px-2 py-1 rounded d-flex align-items-center ms-2 btn shadow-none border-0">
+                <button class="filter-options px-2 py-1 rounded d-flex align-items-center ms-2 btn shadow-none border-0 buttonOfFilter" data-value="1">
                     <svg height="15" width="15" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
                         <circle fill="#5fbc61" r="45" cx="50" cy="50" stroke="grey" stroke-width="3" />
                     </svg>
                     <span class="ms-2">Patient</span>
                 </button>
 
-                <button class="filter-options px-2 py-1 rounded d-flex align-items-center ms-2 btn shadow-none border-0">
+                <button class="filter-options px-2 py-1 rounded d-flex align-items-center ms-2 btn shadow-none border-0 buttonOfFilter" data-value="2">
                     <svg height="15" width="15" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
                         <circle fill="#ed9124" r="45" cx="50" cy="50" stroke="grey" stroke-width="3" />
                     </svg>
                     <span class="ms-2">Family/Friend</span>
                 </button>
-                <button class="filter-options px-2 py-1 rounded d-flex align-items-center ms-2 btn shadow-none border-0">
+                <button class="filter-options px-2 py-1 rounded d-flex align-items-center ms-2 btn shadow-none border-0 buttonOfFilter" data-value="4">
                     <svg height="15" width="15" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
                         <circle fill="#e26277" r="45" cx="50" cy="50" stroke="grey" stroke-width="3" />
                     </svg>
                     <span class="ms-2">Business</span>
                 </button>
-                <button class="filter-options px-2 py-1 rounded d-flex align-items-center ms-2 btn shadow-none border-0">
+                <button class="filter-options px-2 py-1 rounded d-flex align-items-center ms-2 btn shadow-none border-0 buttonOfFilter" data-value="3">
                     <svg height="15" width="15" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
                         <circle fill="#007fc6" r="45" cx="50" cy="50" stroke="grey" stroke-width="3" />
                     </svg>
@@ -152,10 +152,12 @@
             </div>
         </div>
 
-        @*render partial view*@
+        @*render partial view of request Status *@
 
-        <partial name="AdminDashboardNew" model="Model"/>
-        <partial name="AdminDashboardPending" model="Model"/>
+        <div class="tab-content SearchPartial">
+            <partial name="AdminDashboardNew" model="Model"/>
+            <partial name="AdminDashboardPending" model="Model"/>
+        </div>
     </div>
    
 </div>

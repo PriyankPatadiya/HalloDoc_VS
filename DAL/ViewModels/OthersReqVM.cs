@@ -65,8 +65,8 @@ namespace DAL.ViewModels
         [Required(ErrorMessage = "Please Enter Zipcode")]
         public string Zipcode { get; set; } = null!;
 
-        [Required]
-        public IFormFile Document { get; set; }
+        
+        public IFormFile? Document { get; set; }
 
 
     }

@@ -149,16 +149,7 @@ namespace HalloDoc.Controllers
         {
             if (ModelState.IsValid) { 
                 _otherreq.AddBusinessForm(model);
-                if(model != null)
-                {
-                    string path = Path.Combine(this._environment.WebRootPath, "Uploads");
-                    string fileName = Path.GetFileName(model.Document.FileName);
-                    _uploadfile.uploadfile(model.Document, path);
-
-                    var request = _patreq.GetUserByEmail(model.Email);
-                    _patreq.Addrequestwisefile(fileName, request.RequestId);
-                    return RedirectToAction("SubmitRequest", "Home");
-                }
+                return View();
             }
             return View();
         }
