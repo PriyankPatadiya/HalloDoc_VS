@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Org.BouncyCastle.Asn1.Mozilla;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,6 +9,7 @@ namespace DAL.ViewModels
 {
     public class AdminMainPageVM
     {
-        public List<AdminDashboardVM> DashboardVM { get; set;}
+       
+        public AdminDashboardVM DashboardVM { get; set;}
     }
 }

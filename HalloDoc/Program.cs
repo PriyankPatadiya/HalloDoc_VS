@@ -18,6 +18,7 @@ builder.Services.AddScoped<IPatientRequest, PatientRequestRepo>();
 builder.Services.AddScoped<IRequests, OtherRequestRepo>();   
 builder.Services.AddScoped<IuploadFile, UploadFileRepo>();
 builder.Services.AddScoped<IEmailService, EmailService>();
+builder.Services.AddScoped<IAdminDashboard, AdminServicesRepo>();
 //builder.Services.AddScoped<IJWTTokenservice, JWTTokenservicerepo>();
 
 

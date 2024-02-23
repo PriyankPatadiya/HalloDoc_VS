@@ -9,14 +9,13 @@ namespace DAL.ViewModels
 {
     public class AdminDashboardVM
     {
-        public string PatientName { get; set; } 
-        public string? BirthDate { get; set; } 
-        public string RequestorName { get; set; }
-        public string RequestDate { get; set; }
-        public string phone { get; set; }
-        public string address { get; set; }
-        public string YourPhone { get; set; }
-        public int requestId { get; set; }
+        public int NewCount { get; set; }
+        public int PendingCount { get; set; }
+        public int ActiveCount { get; set; }
+        public int ConcludeCount { get; set; }
+        public int ToCloseCount { get; set; }
+        public int UnpaidCount { get; set; }
 
+        public List<AdminDashboardTableVM> DashboardTableVM { get; set; }
     }
 }

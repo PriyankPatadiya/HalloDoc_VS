@@ -1,5 +1,18 @@
-﻿
-@model List<DAL.ViewModels.AdminDashboardVM>
+﻿@model DAL.ViewModels.AdminDashboardVM
+
+<style>
+    .triangle{
+        width: 0;
+        height: 0;
+        border-left: 17px solid transparent;
+        border-right: 17px solid transparent;
+        border-top : 17px solid black;
+        position: absolute;
+        bottom: -17px;
+        left: 50%;
+        transform: translateX(-50%);
+    }
+</style>
 
 <div class=" container-fluid tab-pane fade show active bg-light" id="pills-AdminDashboard" style="min-height: 77vh;" role="tabpanel" aria-labelledby="pills-AdminDashboard-tab" tabindex="0">
 
@@ -7,41 +20,49 @@
 
     <div class="container-fluid px-4 text-center py-2">
         <ul class=" nav row gx-5 gy-5 mt-0 px-3" id="pills-tab" role="tablist">
-            <li class=" nav-item col rounded mx-2  text-start " style="background-color: #203f9a;" role="presentation">
-                <button class="btn text-decoration-none text-light w-100 text-start shadow-none border-0" id="pills-Dashboard-tab" data-bs-toggle="pill" data-bs-target="#pills-Dashboard" type="button" role="tab" aria-controls="pills-Dashboard" aria-selected="true">
-                    <div class="p-2  d-flex fs-5">New</div>
-                    <h4 class="fw-bolder ps-1 pb-2"> 344</h4>
+            <li class=" nav-item col rounded-4 mx-2  text-start position-relative" id="statuslink1" style="background-color: #e9eaef;" role="presentation">
+                <button class="btn text-decoration-none text-light w-100 text-start shadow-none border-0 Status-btn"data-id="1">
+                    <div class="p-2  d-flex fs-5 Status-btn-text" >New</div>
+                    <h4 class="fw-bolder ps-1 pb-2 Status-Count">@Model.NewCount</h4>
                 </button>
+                <div id="triangle1" class="triangle"></div>
+             </li>
+                
+ 
+            <li class=" nav-item col rounded-4 mx-2 text-primary text-start position-relative" id="statuslink2" style="background-color: #e5f2f8;" role="presentation">
+                <button class="btn text-decoration-none text-primary w-100 text-start shadow-none border-0 Status-btn" data-id="2">
+                    <div class="p-2  d-flex fs-5 Status-btn-text">Pending</div>
+                    <h4 class="fw-bolder ps-1 pb-2 Status-Coun">@Model.PendingCount</h4>
+                </button>
+                <div id="triangle2" class="triangle" style="display: none;"></div>
             </li>
-            <li class=" nav-item col rounded mx-2 text-primary text-start" style="background-color: #e5f2f8;" role="presentation">
-                <button class="btn text-decoration-none text-primary w-100 text-start shadow-none border-0" id="pills-Pending-tab" data-bs-toggle="pill" data-bs-target="#pills-Pending" type="button" role="tab" aria-controls="pills-Pending" aria-selected="false">
-                    <div class="p-2  d-flex fs-5">Pending</div>
-                    <h4 class="fw-bolder ps-1 pb-2">344</h4>
+            <li class=" nav-item col rounded-4 mx-2 text-success text-start position-relative" id="statuslink3" style="background-color: #e9f0e8;" role="presentation">
+                <button class="btn text-decoration-none text-success w-100 text-start shadow-none border-0 Status-btn" data-id="3">
+                    <div class="p-2 d-flex fs-5 Status-btn-text">Active</div>
+                    <h4 class="fw-bolder ps-1 pb-2 Status-Coun">@Model.ActiveCount</h4>
                 </button>
+                <div id="triangle3" class="triangle" style="display: none;"></div>
             </li>
-            <li class=" nav-item col rounded mx-2 text-success text-start" style="background-color: #e9f0e8;" role="presentation">
-                <button class="btn text-decoration-none text-success w-100 text-start shadow-none border-0" id="pills-Active-tab" data-bs-toggle="pill" data-bs-target="#pills-Active" type="button" role="tab" aria-controls="pills-Active" aria-selected="false">
-                    <div class="p-2 d-flex fs-5">Active</div>
-                    <h4 class="fw-bolder ps-1 pb-2">344</h4>
+            <li class=" nav-item col rounded-4 mx-2 text-danger text-start position-relative" id="statuslink4" style="background-color: #f7e6ee;" role="presentation">
+                <button class="btn text-decoration-none text-danger w-100 text-start shadow-none border-0 Status-btn" data-id="4">
+                    <div class="p-2 d-flex fs-5 Status-btn-text">Conclude</div>
+                    <h4 class="fw-bolder ps-1 pb-2 Status-Coun">@Model.ConcludeCount</h4>
                 </button>
+                <div id="triangle4" class="triangle " style="display: none;"> </div>
             </li>
-            <li class=" nav-item col rounded mx-2 text-danger text-start" style="background-color: #f7e6ee;" role="presentation">
-                <button class="btn text-decoration-none text-danger w-100 text-start shadow-none border-0" id="pills-Conclude-tab" data-bs-toggle="pill" data-bs-target="#pills-Conclude" type="button" role="tab" aria-controls="pills-Conclude" aria-selected="false">
-                    <div class="p-2 d-flex fs-5">Conclude</div>
-                    <h4 class="fw-bolder ps-1 pb-2">344</h4>
+            <li class=" nav-item col rounded-4 mx-2 text-start position-relative" id="statuslink5" style="background-color: #e5eef5;" role="presentation">
+                <button class="btn text-decoration-none text-primary w-100 text-start shadow-none border-0 Status-btn" data-id="5">
+                    <div class="p-2 d-flex fs-5 Status-btn-text">To Close</div>
+                    <h4 class="fw-bolder ps-1 pb-2 Status-Coun">@Model.ToCloseCount</h4>
                 </button>
+                <div id="triangle5" class="triangle" style="display: none;"></div>
             </li>
-            <li class=" nav-item col rounded mx-2 text-start" style="background-color: #e5eef5;" role="presentation">
-                <button class="btn text-decoration-none text-primary w-100 text-start shadow-none border-0" id="pills-ToClose-tab" data-bs-toggle="pill" data-bs-target="#pills-ToClose" type="button" role="tab" aria-controls="pills-ToClose" aria-selected="false">
-                    <div class="p-2 d-flex fs-5">To Close</div>
-                    <h4 class="fw-bolder ps-1 pb-2">344</h4>
+            <li class=" position-relative nav-item col rounded-4 mx-2 text-start" id="statuslink6" style="background-color: #efeef4;" role="presentation">
+                <button class="btn text-decoration-none text-danger w-100 text-start shadow-none border-0 Status-btn" data-id="6">
+                    <div class="p-2 d-flex fs-5 Status-btn-text">Unpaid</div>
+                    <h4 class="fw-bolder ps-1 pb-2 Status-Count">@Model.UnpaidCount</h4>
                 </button>
-            </li>
-            <li class="  nav-item col rounded mx-2 text-start" style="background-color: #efeef4;" role="presentation">
-                <button class="btn text-decoration-none text-danger w-100 text-start shadow-none border-0" id="pills-Unpaid-tab" data-bs-toggle="pill" data-bs-target="#pills-Unpaid" type="button" role="tab" aria-controls="pills-Unpaid" aria-selected="true">
-                    <div class="p-2 d-flex fs-5">Unpaid</div>
-                    <h4 class="fw-bolder ps-1 pb-2">344</h4>
-                </button>
+                <div id="triangle6" class="triangle" style="display: none;"></div>
             </li>
 
         </ul>
@@ -52,7 +73,7 @@
 
     <div class="row mt-4 px-3">
         <div class="col-3">
-            <p class="fs-4 ps-2 fw-bolder">Patients <span class="text-primary fs-6"> (New)</span></p>
+            <p class="fs-4 ps-2 fw-bolder">Patients <span class="text-primary fs-6" id="statusspan">(New)</span></p>
         </div>
         <div class="col-9 py-1 d-flex justify-content-end ">
             <button type="button" class="btn btn-info text-white me-2">
@@ -155,7 +176,7 @@
         @*render partial view of request Status *@
 
         <div class="tab-content SearchPartial">
-            <partial name="AdminDashboardNew" model="Model"/>
+            <partial name="AdminDashboardNew" model="Model.DashboardTableVM"/>
             <partial name="AdminDashboardPending" model="Model"/>
         </div>
     </div>
