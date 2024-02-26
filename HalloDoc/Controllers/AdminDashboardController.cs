@@ -45,7 +45,10 @@ namespace HalloDoc.Controllers
 
             var result = _admin.GetRequestsQuery(StatusButton);
             result = result.Where(s => (String.IsNullOrEmpty(SearchString) || s.PatientName.Contains(SearchString)) && (String.IsNullOrEmpty(selectButton) || s.requestId == int.Parse(selectButton)));
-                
+            if (!String.IsNullOrEmpty(StatusButton))
+            {
+                ViewBag.Status = int.Parse(StatusButton);
+            }
 
             return PartialView("AdminDashboardNew", result.ToList());
         }

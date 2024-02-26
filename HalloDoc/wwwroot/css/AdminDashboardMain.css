@@ -1,0 +1,103 @@
+﻿#menuadmin{
+    display: none;
+}
+
+#accordionExample{
+    display: none;
+}
+
+.successcolor {
+    background-color: #14A44D !important;
+}
+
+.triangle {
+    width: 0;
+    height: 0;
+    border-left: 17px solid transparent;
+    border-right: 17px solid transparent;
+    border-top: 17px solid #203f9a;
+    position: absolute;
+    bottom: -17px;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+#statuslink1 {
+    border: 2px solid #203f9a !important;
+    background-color: #e9eaef !important;
+    color: #203f9a !important;
+}
+
+#statuslink2 {
+    border: 2px solid #00adef !important;
+    background-color: #e5f2f8 !important;
+}
+
+#statuslink3 {
+    border: 2px solid #228c20 !important;
+    background-color: #e9f0e8 !important;
+}
+
+#statuslink4 {
+    border: 2px solid #da0f82 !important;
+    background-color: #f7e6ee !important;
+}
+
+#statuslink5 {
+    border: 2px solid #0370d7 !important;
+    background-color: #e5eef5 !important;
+}
+
+#statuslink6 {
+    border: 2px solid #9966cd !important;
+    background-color: #efeef4 !important;
+}
+
+#statuslink1:hover, #statuslink1 button:hover {
+    background-color: #203f9a !important;
+    color: #e9eaef !important;
+}
+
+#statuslink2:hover, #statuslink2 button:hover {
+    background-color: #00adef !important;
+    color: #e5f2f8 !important;
+}
+
+#statuslink3:hover, #statuslink3 button:hover {
+    background-color: #228c20 !important;
+    color: #e9f0e8 !important;
+}
+
+#statuslink4:hover, #statuslink4 button:hover {
+    background-color: #da0f82 !important;
+    color: #f7e6ee !important;
+}
+
+#statuslink5:hover, #statuslink5 button:hover {
+    background-color: #0370d7 !important;
+    color: #e5eef5 !important;
+}
+
+#statuslink6:hover, #statuslink6 button:hover {
+    background-color: #9966cd !important;
+    color: #efeef4 !important;
+}
+
+@media only screen and (max-width: 815px){
+    .buttonOfFilter  span {
+        font-size: 12px;
+    }
+    #pills-Dashboard{
+        display: none;
+    }
+    #accordionExample{
+        display: block;
+    }
+}
+
+@media only screen and (max-width: 600px){
+    #menuadmin{
+        display: block;
+    }
+
+}

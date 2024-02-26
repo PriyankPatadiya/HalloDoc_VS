@@ -48,6 +48,7 @@ namespace BAL.Repository
                               requestId = req.RequestTypeId,
                               YourPhone = req.PhoneNumber,
                               requestStatus = req.Status,
+                              Email = reqclient.Email,
 
                           });
 
