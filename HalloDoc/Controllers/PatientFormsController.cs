@@ -40,15 +40,21 @@ namespace HalloDoc.Controllers
 
         public IActionResult Friend_FamilyRequestForm()
         {
-            return View();
+            OthersReqVM model = new OthersReqVM();
+            model.Region = _context.Regions.ToList();
+            return View(model);
         }
         public IActionResult BusinessRequestForm()
         {
-            return View();
+            OthersReqVM model = new OthersReqVM();
+            model.Region = _context.Regions.ToList();
+            return View(model);
         }
         public IActionResult ConciergeRequestForm()
         {
-            return View();
+            OthersReqVM model = new OthersReqVM();
+            model.Region = _context.Regions.ToList();
+            return View(model);
         }
 
         [HttpPost]
