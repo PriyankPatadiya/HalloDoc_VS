@@ -16,12 +16,21 @@ namespace HalloDoc.Controllers
             _admin = admin;
         }
 
-        public IActionResult MainPage()
+        public IActionResult MainPage(string pageName)
         {
-            AdminMainPageVM MainModel = new AdminMainPageVM();
+            AdminMainPageVM MainModel = new AdminMainPageVM()
+            {
+                PageName = PageName.Dashboard
+            };
+
             AdminDashboardVM vm = new AdminDashboardVM();
             
             MainModel.DashboardVM = AdminDashCallFromMain(vm , "1");
+            if (!String.IsNullOrEmpty("1"))
+            {
+                ViewBag.Status = int.Parse("1");
+            }
+
             return View(MainModel);
         }
 
@@ -39,6 +48,19 @@ namespace HalloDoc.Controllers
             return model;
         }
 
+        public IActionResult ViewCaseAdmin()
+        {
+            AdminMainPageVM MainModel = new AdminMainPageVM()
+            {
+                PageName = PageName.ViewCaseForm
+            };
+
+            ViewCaseVM model = new ViewCaseVM
+            {
+                
+            };
+            return View("MainPage", MainModel);
+        }
 
         public IActionResult SearchByName(string SearchString, string selectButton , string StatusButton)
         {

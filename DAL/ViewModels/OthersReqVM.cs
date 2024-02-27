@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using DAL.DataModels;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -68,6 +69,9 @@ namespace DAL.ViewModels
         
         public IFormFile? Document { get; set; }
 
+        public List<Region>? Region { get; set; }
+
+        public int SelectedStateId { get; set; }
 
     }
 

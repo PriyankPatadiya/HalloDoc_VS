@@ -226,12 +226,13 @@
                             <label for="floatingInput" class="ms-2">City</label>
                         </div>
                         <div class="col-sm-12 col-md-12 col-lg-6 form-floating my-3">
-                            <input type="text"
-                                asp-for="State"
-                                   class="form-control"
-                                   id="floatingInput"
-                                   placeholder="Last Name" />
-                            <label for="floatingInput" class="ms-2">State</label>
+                            <select class="form-control" asp-for="State" name="SelectedStateId">
+                                <option>Select State</option>
+                                @foreach (var state in Model.Region)
+                                {
+                                    <option value="@state.RegionId">@state.Name</option>
+                                }
+                            </select>
                         </div>
                         <div class="col-sm-12 col-md-12 col-lg-6 form-floating my-3">
                             <input type="text"

@@ -1,4 +1,7 @@
-﻿$(document).ready(function () {
+﻿
+$(document).ready(function () {
+
+
 
     $('.buttonOfFilter').click(function () { 
         $('.buttonOfFilter').removeClass('active')

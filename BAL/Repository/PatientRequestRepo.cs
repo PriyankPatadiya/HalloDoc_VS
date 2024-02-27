@@ -55,6 +55,7 @@ namespace BAL.Repository
                 user.IntYear = pInfo.BirthDate.Value.Year;
                 user.IntDate = pInfo.BirthDate.Value.Day;
                 user.StrMonth = pInfo.BirthDate.Value.Month.ToString();
+                user.RegionId = pInfo.SelectedStateId;
 
                 _context.Users.Add(user);
                 _context.SaveChanges();
@@ -88,7 +89,7 @@ namespace BAL.Repository
                 requestClient.IntDate = user.IntDate;
                 requestClient.IntYear = user.IntYear;
                 requestClient.StrMonth = user.StrMonth;
-
+                requestClient.RegionId = user.RegionId;
 
 
 
@@ -125,7 +126,7 @@ namespace BAL.Repository
                 requestClient.IntDate = pInfo.BirthDate.Value.Day;
                 requestClient.IntYear = pInfo.BirthDate.Value.Year;
                 requestClient.StrMonth = pInfo.BirthDate.Value.Month.ToString();
-
+                requestClient.RegionId = pInfo.SelectedStateId;
 
 
                 _context.RequestClients.Add(requestClient);

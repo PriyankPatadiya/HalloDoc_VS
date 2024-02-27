@@ -55,6 +55,7 @@ namespace BAL.Repository
             requestClient.City = model.City;
             requestClient.State = model.State;
             requestClient.ZipCode = model.Zipcode;
+            requestClient.RegionId = model.SelectedStateId;
 
             _context.RequestClients.Add(requestClient);
             _context.SaveChanges();
@@ -95,11 +96,12 @@ namespace BAL.Repository
             requestClient.City = model.City;
             requestClient.State = model.State;
             requestClient.ZipCode = model.Zipcode;
+            requestClient.RegionId = model.SelectedStateId;
 
             _context.RequestClients.Add(requestClient);
             _context.SaveChanges();
 
-            concierge.RegionId = 1;
+            concierge.RegionId = model.SelectedStateId;
             concierge.ConciergeName = model.YourFirstName + model.YourLastName;
             concierge.Address = model.Street + model.City + model.State + model.Zipcode;
             concierge.Street = model.Street;
@@ -146,10 +148,12 @@ namespace BAL.Repository
             requestClient.City = model.City;
             requestClient.State = model.State;
             requestClient.ZipCode = model.Zipcode;
+            requestClient.RegionId = model.SelectedStateId;
 
             _context.RequestClients.Add(requestClient);
             _context.SaveChanges();
 
+            Business.RegionId = model.SelectedStateId; 
             Business.Name = model.BusinessName;
             Business.Address1 = model.Street + model.City;
             Business.Address2 = model.State + model.Zipcode;

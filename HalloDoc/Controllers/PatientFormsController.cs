@@ -31,7 +31,10 @@ namespace HalloDoc.Controllers
         }
         public IActionResult PatientRequestForm()
         {
-            return View();
+            PatientReqVM model = new PatientReqVM();
+            model.Region = _context.Regions.ToList();
+
+            return View(model);
         }
 
 

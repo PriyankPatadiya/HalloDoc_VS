@@ -5,47 +5,46 @@
 
     @*Tabs Of Status*@
 
-    <div class="container-fluid px-4 text-center py-2">
-        <ul class=" nav  row gx-5 gy-4 mt-0 px-3">
-            <li class=" nav-item col rounded-4 mx-2 text-start position-relative px-0" id="statuslink1" role="presentation">
-                <button class="btn w-100 text-start rounded-4 shadow-none border-0 Status-btn"data-id="1">
+    <div class="container-fluid px-4 text-center py-4">
+        <ul class=" nav gx-5 row  gy-4 mt-0 ">
+            
+            <li class=" nav-item col-4 col-sm-4 col-lg-2 rounded-4 text-start position-relative px-2"  role="presentation">
+                <button class="btn w-100 text-start rounded-4 shadow-none border-0 Status-btn active" id="statuslink1" data-id="1">
                     <div class="py-2  d-flex fs-5 Status-btn-text ">New</div>
                     <h4 class="fw-bolder ps-1 pb-2 Status-Count">@Model.NewCount</h4>
                 </button>
                 <div id="triangle1" class="triangle"></div>
              </li>
-                
- 
-            <li class=" nav-item col rounded-4 mx-2 text-primary text-start position-relative px-0" id="statuslink2" role="presentation">
-                <button class="btn text-decoration-none rounded-4 text-primary w-100 text-start shadow-none border-0 Status-btn" data-id="2">
+            <li class=" nav-item col-4 col-sm-4 col-lg-2 rounded-4 text-primary text-start position-relative px-2" role="presentation">
+                <button class="btn text-decoration-none rounded-4 text-primary w-100 text-start shadow-none border-0 Status-btn" id="statuslink2" data-id="2">
                     <div class="py-2  d-flex fs-5 Status-btn-text">Pending</div>
                     <h4 class="fw-bolder ps-1 pb-2 Status-Coun">@Model.PendingCount</h4>
                 </button>
                 <div id="triangle2" class="triangle" style="display: none;"></div>
             </li>
-            <li class=" nav-item col rounded-4 mx-2 text-success text-start position-relative px-0" id="statuslink3" role="presentation">
-                <button class="btn text-decoration-none rounded-4 text-success w-100 text-start shadow-none border-0 Status-btn" data-id="3">
+            <li class=" nav-item col-4 col-sm-4 col-lg-2 rounded-4 text-success text-start position-relative px-2" role="presentation">
+                <button class="btn text-decoration-none rounded-4 text-success w-100 text-start shadow-none border-0 Status-btn" id="statuslink3" data-id="3">
                     <div class="py-2 d-flex fs-5 Status-btn-text">Active</div>
                     <h4 class="fw-bolder ps-1 pb-2 Status-Coun">@Model.ActiveCount</h4>
                 </button>
                 <div id="triangle3" class="triangle" style="display: none;"></div>
             </li>
-            <li class=" nav-item col rounded-4 mx-2 text-danger text-start position-relative px-0" id="statuslink4" role="presentation">
-                <button class="btn text-decoration-none rounded-4 text-danger w-100 text-start shadow-none border-0 Status-btn" data-id="4">
+            <li class=" nav-item col col-lg-2 rounded-4 text-danger text-start position-relative px-2" role="presentation">
+                <button class="btn text-decoration-none rounded-4 text-danger w-100 text-start shadow-none border-0 Status-btn" id="statuslink4" data-id="4">
                     <div class="py-2 d-flex fs-5 Status-btn-text">Conclude</div>
                     <h4 class="fw-bolder ps-1 pb-2 Status-Coun">@Model.ConcludeCount</h4>
                 </button>
                 <div id="triangle4" class="triangle " style="display: none;"> </div>
             </li>
-            <li class=" nav-item col rounded-4 mx-2 text-start position-relative px-0" id="statuslink5" role="presentation">
-                <button class="btn text-decoration-none rounded-4 text-primary w-100 text-start shadow-none border-0 Status-btn" data-id="5">
+            <li class=" nav-item col col-lg-2 rounded-4 text-start position-relative px-2" role="presentation">
+                <button class="btn text-decoration-none rounded-4 text-primary w-100 text-start shadow-none border-0 Status-btn" id="statuslink5" data-id="5">
                     <div class="py-2 d-flex fs-5 Status-btn-text">To Close</div>
                     <h4 class="fw-bolder ps-1 pb-2 Status-Coun">@Model.ToCloseCount</h4>
                 </button>
                 <div id="triangle5" class="triangle" style="display: none;"></div>
             </li>
-            <li class=" position-relative nav-item col rounded-4 mx-2 text-start px-0" id="statuslink6" role="presentation">
-                <button class="btn text-decoration-none rounded-4 text-danger w-100 text-start shadow-none border-0 Status-btn" data-id="6">
+            <li class=" position-relative col col-lg-2 nav-item rounded-4 text-start px-2" role="presentation">
+                <button class="btn text-decoration-none rounded-4 text-danger w-100 text-start shadow-none border-0 Status-btn" id="statuslink6" data-id="6">
                     <div class="py-2 d-flex fs-5 Status-btn-text">Unpaid</div>
                     <h4 class="fw-bolder ps-1 pb-2 Status-Count">@Model.UnpaidCount</h4>
                 </button>
@@ -58,31 +57,31 @@
 
     @*Buttons and patientName*@
 
-    <div class="row mt-4 px-3">
-        <div class="col col-md-3">
-            <p class="fs-4 ps-2 fw-bolder">Patients <span class="text-primary fs-6" id="statusspan">(New)</span></p>
+    <div class="row mt-4 px-md-3">
+        <div class="col-4">
+            <p class="fs-5 ps-2 fw-bolder">Patients <span class="text-primary fs-6" id="statusspan">(New)</span></p>
         </div>
-        <div class="col col-md-9 py-1 d-flex justify-content-end ">
-            <button type="button" class="btn btn-info text-white me-2">
+        <div class="col-8 py-1 d-flex justify-content-end ">
+            <button type="button" class="btn btn-info text-white me-md-2 me-1">
                 <i class="bi bi-send  me-md-2 "></i><span class="d-none d-lg-inline">Send Link</span>
             </button>
-            <button type="button" class="btn btn-info  text-white me-2">
+            <button type="button" class="btn btn-info  text-white me-md-2 me-1">
                 <i class="bi bi-pencil-square me-md-2"></i><span class="d-none d-lg-inline">
                     Create
                     Requests
                 </span>
             </button>
-            <button type="button" class="btn btn-info  text-white me-2">
+            <button type="button" class="btn btn-info  text-white me-md-2 me-1">
                 <i class="bi bi-arrow-up-right "></i>
                 <span class="d-none d-lg-inline ">Export</span>
             </button>
-            <button type="button" class="btn btn-info  text-white me-2">
+            <button type="button" class="btn btn-info  text-white me-md-2 me-1">
                 <i class="bi bi-box-arrow-up-right "></i><span class="d-none d-lg-inline">
                     Export
                     All
                 </span>
             </button>
-            <button type="button" class="btn btn-info  text-white me-2">
+            <button type="button" class="btn btn-info  text-white me-md-2 me-1">
                 <i class="bi bi-person-plus  me-md-2"></i><span class="d-none d-lg-inline">
                     Request DTY
                     Support
@@ -94,7 +93,7 @@
         
     @*SearchButton , requestor type and main table*@
 
-    <div class="container-fluid mt-4 px-3 rounded ">
+    <div class="container-fluid mt-4 px-0 px-md-3 rounded ">
         <div class="row mx-2 bg-white rounded-top">
 
 
@@ -164,7 +163,7 @@
 
         <div class="tab-content SearchPartial">
             <partial name="AdminDashboardNew" model="Model.DashboardTableVM"/>
-            <partial name="AdminDashboardPending" model="Model"/>
+
         </div>
     </div>
    

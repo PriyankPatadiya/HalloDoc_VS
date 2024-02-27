@@ -1,44 +1,26 @@
 ﻿@model DAL.ViewModels.AdminMainPageVM
 
 @{
-    Layout = "~/Views/Shared/LayoutPatDash.cshtml";
+    Layout = "~/Views/Shared/_LayoutAdminDash.cshtml";
 }
 
 
-<div class="">
-    <div class="w-100 shadow ">
-        <button id="menuadmin" class=" position-absolute start-0 top-0 shadow-none btn  ms-3 mt-3">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-list" viewBox="0 0 16 16">
-                <path fill-rule="evenodd" d="M2.5 12a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5m0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5m0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5" />
-            </svg>
-        </button>
-        <ul class="nav nav-underline ps-5 " id="pills-tab" role="tablist">
-            <li class="nav-item " role="presentation">
-                <button class="px-2 nav-link text-decoration-none active " id="pills-AdminDashboard-tab" data-bs-toggle="pill" data-bs-target="#pills-AdminDashboard" type="button" role="tab" aria-controls="pills-AdminDashboard" aria-selected="true">Dashboard</button>
-            </li>
-            <li class="nav-item" role="presentation">
-                <button class="px-2 nav-link text-decoration-none" id="pills-profile-tab" data-bs-toggle="pill" data-bs-target="#pills-profile" type="button" role="tab" aria-controls="pills-profile" aria-selected="false">Provider Location</button>
-            </li>
-             <li class="nav-item" role="presentation">
-                <button class="px-2 nav-link text-decoration-none " id="pills-profile-tab" data-bs-toggle="pill" data-bs-target="#pills-profile" type="button" role="tab" aria-controls="pills-profile" aria-selected="false">MyProfile</button>
-            </li>
-             <li class="nav-item" role="presentation">
-                <button class="px-2 nav-link text-decoration-none " id="pills-profile-tab" data-bs-toggle="pill" data-bs-target="#pills-profile" type="button" role="tab" aria-controls="pills-profile" aria-selected="false">Providers</button>
-            </li>
-             <li class="nav-item" role="presentation">
-                <button class="px-2 nav-link text-decoration-none" id="pills-profile-tab" data-bs-toggle="pill" data-bs-target="#pills-profile" type="button" role="tab" aria-controls="pills-profile" aria-selected="false">Partners</button>
-            </li>
-             <li class="nav-item" role="presentation">
-                <button class="px-2 nav-link text-decoration-none" id="pills-profile-tab" data-bs-toggle="pill" data-bs-target="#pills-profile" type="button" role="tab" aria-controls="pills-profile" aria-selected="false">Access</button>
-            </li>
-             <li class="nav-item" role="presentation">
-                <button class="px-2 nav-link text-decoration-none" id="pills-profile-tab" data-bs-toggle="pill" data-bs-target="#pills-profile" type="button" role="tab" aria-controls="pills-profile" aria-selected="false">Records</button>
-            </li>
-        </ul>
-    </div>
 
-    <div class="tab-content">
-        <partial name="AdminDashboardPage" model="Model.DashboardVM" />
-    </div>
+<div class="tab-content" >
+    @switch (Model.PageName)
+    {
+        case DAL.ViewModels.PageName.Dashboard:
+            <partial name="AdminDashboardPage" model="Model.DashboardVM" />
+            break;
+
+        case DAL.ViewModels.PageName.ViewCaseForm:
+        <partial name = "ViewCaseAdmin" model = "Model.Casemodel" />
+            break;
+    }
+
 </div>
 
+
+<script>
+
+</script>

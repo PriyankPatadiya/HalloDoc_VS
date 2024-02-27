@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Org.BouncyCastle.Asn1.Mozilla;
 using Microsoft.AspNetCore.Http;
+using DAL.DataModels;
 
 namespace DAL.ViewModels
 {
@@ -75,8 +76,9 @@ namespace DAL.ViewModels
 
         public IFormFile? Document { get; set; } 
         public int? Typeid { get; set; }
+    
+        public List<Region>? Region { get; set; }  
 
-        
-
+        public int SelectedStateId { get; set; }
     }
 }
