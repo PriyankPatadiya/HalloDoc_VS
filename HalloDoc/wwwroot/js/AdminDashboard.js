@@ -64,6 +64,8 @@ $(document).ready(function () {
         var selectButton = $(".buttonOfFilter.active").data("value");
         var StatusButton = $(".Status-btn.active").data("id");
 
+        
+
         if (Searchstring == " " && selectButton == "") {
             console.log('hii')
             locatioen.reload();

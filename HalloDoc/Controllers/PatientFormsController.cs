@@ -58,9 +58,12 @@ namespace HalloDoc.Controllers
         }
 
         [HttpPost]
-        public IActionResult PatientRequestForm(PatientReqVM pInfo) 
+        public async Task<IActionResult> PatientRequestForm(PatientReqVM pInfo) 
             {
             var user = _context.AspNetUsers.FirstOrDefault(a  => a.Email == pInfo.Email);
+            pInfo.State =  await _patreq.GetStateAccordingToRegionId(pInfo.SelectedStateId);
+                pInfo.CreatedDate = DateTime.Now.Date;
+                pInfo.confirmationnumber = _patreq.GenerateConfirmationNumber(pInfo);
             if (ModelState.IsValid)
             {
                 if (pInfo.PasswordHash != pInfo.ConfirmPasswordHash && user == null)
@@ -72,13 +75,13 @@ namespace HalloDoc.Controllers
 
                 string fileName = Path.GetFileName(pInfo.Document.FileName);
                 fileName = $"{fileName}_{uniquefilesavetoken}";
-                
+
                 _patreq.AddPatientForm(pInfo);
 
                 if (pInfo.Document != null && pInfo.Document.Length > 0 )
                 {
                     string path = Path.Combine(this._environment.WebRootPath, "Uploads");
-
+                    
                     
                     if (!Directory.Exists(path))
                     {
@@ -95,7 +98,7 @@ namespace HalloDoc.Controllers
                     _patreq.Addrequestwisefile(fileName, request.RequestId);
 
 
-                    return View("Friend_FamilyRequestForm");
+                    return RedirectToAction("SubmitRequest", "Home");
                 }
             }
             return View("PatientRequestForm");
@@ -108,8 +111,11 @@ namespace HalloDoc.Controllers
 
 
         [HttpPost]
-        public IActionResult Friend_FamilyRequest(OthersReqVM model)
+        public async Task<IActionResult> Friend_FamilyRequest(OthersReqVM model)
         {
+            model.State = await _patreq.GetStateAccordingToRegionId(model.SelectedStateId);
+                model.CreatedDate = DateTime.Now.Date;
+                model.confirmationnumber = _otherreq.GenerateConfirmationNumber(model);
             if (ModelState.IsValid)
             {
                 _otherreq.AddFamilyFriendForm(model);
@@ -133,32 +139,31 @@ namespace HalloDoc.Controllers
 
         [HttpPost]
 
-        public IActionResult ConciergeRequestForm(OthersReqVM model)
+        public async Task<IActionResult> ConciergeRequestForm(OthersReqVM model)
         {
+                model.State =   await _patreq.GetStateAccordingToRegionId(model.SelectedStateId);
+                model.CreatedDate = DateTime.Now.Date;
+                model.confirmationnumber = _otherreq.GenerateConfirmationNumber(model);
             if (ModelState.IsValid)
             {
                 _otherreq.AddConciergeForm(model);
-                if(model !=null)
-                {
-                    string path = Path.Combine(this._environment.WebRootPath, "Uploads");
-                    string fileName = Path.GetFileName(model.Document.FileName);
-                    _uploadfile.uploadfile(model.Document, path);
 
-                    var request = _patreq.GetUserByEmail(model.Email);
-                    _patreq.Addrequestwisefile(fileName, request.RequestId);
                     return RedirectToAction("SubmitRequest", "Home");
-                }
+
             }
             return View();
         }
 
         [HttpPost]
 
-        public IActionResult BusinessRequestForm(OthersReqVM model)
+        public async Task<IActionResult> BusinessRequestForm(OthersReqVM model)
         {
-            if (ModelState.IsValid) { 
+                model.State = await _patreq.GetStateAccordingToRegionId(model.SelectedStateId);
+                model.CreatedDate = DateTime.Now.Date;
+                model.confirmationnumber = _otherreq.GenerateConfirmationNumber(model);
+            if (ModelState.IsValid) {
                 _otherreq.AddBusinessForm(model);
-                return View();
+                return RedirectToAction("SubmitRequest", "Home");
             }
             return View();
         }

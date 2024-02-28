@@ -121,7 +121,7 @@
                                     {
                                         <li><a class="dropdown-item" href="#">Cancel Case</a></li>
                                     }
-                                    <li><a class="dropdown-item" asp-action="ViewCaseAdmin">View Case</a></li>
+                                    <li><a class="dropdown-item" asp-action="ViewCaseAdmin" asp-route-reqcliId="@item.reqclientId">View Case</a></li>
                                     @if (ViewBag.Status != 1) 
                                     {
                                         <li><a class="dropdown-item" href="#">View Uploads</a></li>
@@ -239,7 +239,7 @@
                                     {
                                         <li><a class="dropdown-item" href="#">Cancel Case</a></li>
                                     }
-                                    <li><a class="dropdown-item" href="#">View Case</a></li>
+                                    <li><a class="dropdown-item" asp-action="ViewCaseAdmin" asp-route-reqcliId="@item.reqclientId">View Case</a></li>
                                     @if (ViewBag.Status != 1)
                                     {
                                         <li><a class="dropdown-item" href="#">View Uploads</a></li>
@@ -356,7 +356,7 @@
                                     {
                                         <li><a class="dropdown-item" href="#">Cancel Case</a></li>
                                     }
-                                    <li><a class="dropdown-item" href="#">View Case</a></li>
+                                    <li><a class="dropdown-item" asp-action="ViewCaseAdmin" asp-route-reqcliId="@item.reqclientId">View Case</a></li>
                                     @if (ViewBag.Status != 1)
                                     {
                                         <li><a class="dropdown-item" href="#">View Uploads</a></li>
@@ -473,7 +473,7 @@
                                     {
                                         <li><a class="dropdown-item" href="#">Cancel Case</a></li>
                                     }
-                                    <li><a class="dropdown-item" href="#">View Case</a></li>
+                                    <li><a class="dropdown-item" asp-action="ViewCaseAdmin" asp-route-reqcliId="@item.reqclientId">View Case</a></li>
                                     @if (ViewBag.Status != 1)
                                     {
                                         <li><a class="dropdown-item" href="#">View Uploads</a></li>

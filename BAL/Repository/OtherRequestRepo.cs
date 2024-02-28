@@ -39,6 +39,7 @@ namespace BAL.Repository
             request.PhoneNumber = model.PhoneNumber;
             request.RelationName = model.Relation;
             request.CreatedDate = DateTime.Now;
+            request.ConfirmationNumber = model.confirmationnumber;
 
             _context.Requests.Add(request);
             _context.SaveChanges();
@@ -80,6 +81,7 @@ namespace BAL.Repository
             request.Email = model.YourEmail;
             request.PhoneNumber = model.YourPhoneNumber;
             request.CreatedDate = DateTime.Now;
+            request.ConfirmationNumber = model.confirmationnumber;
 
             _context.Requests.Add(request);
             _context.SaveChanges();
@@ -132,6 +134,7 @@ namespace BAL.Repository
             request.Email = model.YourEmail;
             request.PhoneNumber = model.PhoneNumber;
             request.CreatedDate = DateTime.Now;
+            request.ConfirmationNumber = model.confirmationnumber;
 
             _context.Requests.Add(request);
             _context.SaveChanges();
@@ -173,6 +176,14 @@ namespace BAL.Repository
             _context.RequestBusinesses.Add(requestBusiness);
             _context.SaveChanges();
    
+        }
+
+        public string GenerateConfirmationNumber(OthersReqVM model)
+        {
+            string abr = _context.Regions.Where(s => s.Name == model.State).FirstOrDefault().Abbreviation;
+            int numofrequests = _context.Requests.Where(s => s.CreatedDate.Date == model.CreatedDate).Count();
+            string confirmationnum = abr + model.CreatedDate.Value.ToString("MM dd") + model.LastName.Substring(0, 2) + model.FirstName.Substring(0, 2) + numofrequests.ToString("D4");
+            return confirmationnum;
         }
     }
 }

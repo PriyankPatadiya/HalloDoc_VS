@@ -80,7 +80,7 @@
                 </div>
 
                     <div class="row">
-                        <div class="col col-sm-6 col-12">
+                        <div class="col col-sm-6">
                             <div class="form-floating mb-3">
                                 <input type="email" id="email"
                                        class="form-control"
@@ -91,12 +91,7 @@
 
                             </div>
                         </div>
-                        <div class="col-1">
-
-                        <button onclick="toggleEdit()" type="button" class=" btn btn-outline-info py-3 px-4 fw-semibold shadow-none border-none" id="EditBtn">
-                            Edit
-                        </button>
-                        </div>
+                        
                      </div>
                     
               
@@ -149,11 +144,16 @@
                         </div>
 
                     <div class="d-flex justify-content-end my-1">
-
-                        <button onclick="toggleSave()" type="submit" class="btn border-none bg-info p-3 text-light fw-semibold me-4" id="SaveBtn">
+                        @if(ViewBag.status == 1)
+                        {
+                            <button onclick="toggleSave()" type="submit" class="btn border-none bg-info p-3 text-light fw-semibold me-2" id="SaveBtn">
+                                assign
+                            </button>
+                        }
+                        <button onclick="toggleSave()" type="submit" class="btn border-none bg-info p-3 text-light fw-semibold me-2" id="SaveBtn">
                             View Notes
                         </button>
-                        <button onclick="toggleCancle()" class="btn border-none bg-danger p-3 text-light fw-semibold me-4" id="CancleBtn">
+                        <button onclick="toggleCancle()" class="btn border-none bg-danger p-3 text-light fw-semibold me-2" id="CancleBtn">
                             Cancle
                         </button>
                     </div>

@@ -2,6 +2,7 @@
 using DAL.DataContext;
 using DAL.DataModels;
 using DAL.ViewModels;
+using Microsoft.IdentityModel.Abstractions;
 using Microsoft.VisualBasic;
 using System;
 using System.Collections.Generic;
@@ -70,6 +71,7 @@ namespace BAL.Repository
                 request.CreatedDate = DateTime.Now;
                 request.PhoneNumber = pInfo.PhoneNumber;
                 request.Email = pInfo.Email;
+                request.ConfirmationNumber = pInfo.confirmationnumber;
 
                 _context.Requests.Add(request);
                 _context.SaveChanges();
@@ -107,6 +109,7 @@ namespace BAL.Repository
                 request.CreatedDate = DateTime.Now;
                 request.PhoneNumber = pInfo.PhoneNumber;
                 request.Email = pInfo.Email;
+                request.ConfirmationNumber = pInfo.confirmationnumber;
 
                 _context.Requests.Add(request);
                 _context.SaveChanges();
@@ -154,6 +157,18 @@ namespace BAL.Repository
         }
 
 
+        public async Task<string> GetStateAccordingToRegionId(int regionId)
+        {
+            string state =  _context.Regions.Where(s => s.RegionId == regionId).FirstOrDefault().Name;
+            return state;
+        }
 
+        public string GenerateConfirmationNumber(PatientReqVM model)
+        {
+            string abr = _context.Regions.Where(s => s.Name == model.State).FirstOrDefault().Abbreviation;
+            int numofrequests = _context.Requests.Where(s => s.CreatedDate.Date == model.CreatedDate).Count();
+            string confirmationnum = abr + model.CreatedDate.Value.ToString("MMdd") + model.LastName.Substring(0, 2) + model.FirstName.Substring(0, 2) + numofrequests.ToString("D4");
+            return confirmationnum;
+        }
     }
 }

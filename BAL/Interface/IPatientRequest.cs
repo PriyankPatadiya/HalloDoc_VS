@@ -14,5 +14,9 @@ namespace BAL.Interface
         void Addrequestwisefile(string filename , int requestId);
 
         public RequestClient GetUserByEmail(string email);
+
+        public Task<string> GetStateAccordingToRegionId(int regionId);
+
+        public string GenerateConfirmationNumber(PatientReqVM model);
     }
 }

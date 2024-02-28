@@ -80,5 +80,7 @@ namespace DAL.ViewModels
         public List<Region>? Region { get; set; }  
 
         public int SelectedStateId { get; set; }
+
+        public string? confirmationnumber { get; set; }
     }
 }

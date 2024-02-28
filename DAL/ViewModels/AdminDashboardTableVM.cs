@@ -23,5 +23,7 @@ namespace DAL.ViewModels
         public DateTime? DateOfService { get; set; }
         public string? Region { get; set; }
         public string? Email { get; set; }
+
+        public int reqclientId { get; set; }  
     }
 }

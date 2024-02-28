@@ -10,10 +10,12 @@ namespace HalloDoc.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly IAdminDashboard _admin;
-        public AdminDashboardController(ApplicationDbContext context, IAdminDashboard admin)
+        private readonly IViewCaseAdmin _viewCaseAdmin;
+        public AdminDashboardController(ApplicationDbContext context, IAdminDashboard admin, IViewCaseAdmin Viewadmin)
         {
             _context = context;
             _admin = admin;
+            _viewCaseAdmin = Viewadmin;
         }
 
         public IActionResult MainPage(string pageName)
@@ -45,20 +47,22 @@ namespace HalloDoc.Controllers
             model.ConcludeCount = _admin.CountRequests("4");
             model.ToCloseCount = _admin.CountRequests("5");
             model.UnpaidCount = _admin.CountRequests("6");
+            model.Region = _context.Regions.ToList();
             return model;
         }
 
+        [HttpGet]
         public IActionResult ViewCaseAdmin()
         {
+            var requestclientId = HttpContext.Request.Query["reqcliId"];
             AdminMainPageVM MainModel = new AdminMainPageVM()
             {
                 PageName = PageName.ViewCaseForm
             };
-
-            ViewCaseVM model = new ViewCaseVM
-            {
-                
-            };
+            ViewCaseVM result = _viewCaseAdmin.getViewCaseData(int.Parse(requestclientId)).FirstOrDefault();
+            
+ 
+            MainModel.Casemodel = result;
             return View("MainPage", MainModel);
         }
 

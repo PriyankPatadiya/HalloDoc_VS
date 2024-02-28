@@ -10,8 +10,8 @@
             <a asp-action="PatientDashboard"><button type="button" class="btn btn-primary btn text-decoration-none border border-info bg-transparent text-info shadow-none ">Back</button></a>
         </div>
         <div class="PatientInfoTable border rounded shadow bg-white p-4">
-            <span> patient name</span>
-            <h3 class="text-info">@ViewBag.username</h3>
+            <h6> patient name</h6>
+            <span    class="text-info fs-3 fw-bold">@ViewBag.username </span><span class="text-secondary fw-bold"> (@Model.confirmationNumber)</span><br />
 
             <span>Check here for any files that you or the doctors of your subsequents requestor have attached for you</span>
 

@@ -14,5 +14,7 @@ namespace DAL.ViewModels
 
         public int? requestid { get; set; }
 
+        public string? confirmationNumber { get; set; }
+
     }
 }

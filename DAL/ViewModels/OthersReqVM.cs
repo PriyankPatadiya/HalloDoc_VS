@@ -39,6 +39,9 @@ namespace DAL.ViewModels
         [Column(TypeName = "character varying")]
         public string? YourPhoneNumber { get; set; }
 
+        [Column(TypeName = "timestamp without time zone")]
+        public DateTime? CreatedDate { get; set; }
+
         [StringLength(256)]
         [Required(ErrorMessage = "Please Enter FirstName Of Patient")]
         public string FirstName { get; set; } = null!;
@@ -59,9 +62,7 @@ namespace DAL.ViewModels
 
         [Required(ErrorMessage = "Please Enter City")]
         public string City { get; set; } = null!;
-
-        [Required(ErrorMessage = "Please Enter State")]
-        public string State { get; set; } = null!;
+          public string? State { get; set; } 
 
         [Required(ErrorMessage = "Please Enter Zipcode")]
         public string Zipcode { get; set; } = null!;
@@ -72,6 +73,8 @@ namespace DAL.ViewModels
         public List<Region>? Region { get; set; }
 
         public int SelectedStateId { get; set; }
+
+        public string? confirmationnumber { get; set; }
 
     }
 

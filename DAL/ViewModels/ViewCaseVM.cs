@@ -23,5 +23,6 @@ namespace DAL.ViewModels
 
         public string? region { get; set; }
 
+        public int? requestid { get; set; }
     }
 }

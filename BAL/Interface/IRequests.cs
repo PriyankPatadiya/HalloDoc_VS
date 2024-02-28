@@ -8,5 +8,6 @@ namespace BAL.Interface
         void AddFamilyFriendForm(OthersReqVM model);
         void AddConciergeForm(OthersReqVM model);
         void AddBusinessForm(OthersReqVM model);
+        public string GenerateConfirmationNumber(OthersReqVM model);
     }
 }

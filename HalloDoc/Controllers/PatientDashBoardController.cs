@@ -159,10 +159,13 @@ namespace HalloDoc.Controllers
                 ViewBag.username = xyz.FirstName + " " +xyz.LastName;
 
                 var result = new ViewdocumentVM
-                              {
-                                  RequestWiseFile = reqfile,
-                                  requestid = requestid
-                              };
+                {
+                    RequestWiseFile = reqfile,
+                    requestid = requestid,
+
+                    confirmationNumber = _context.Requests.Where(s => s.RequestId == requestid).FirstOrDefault().ConfirmationNumber.ToUpper()
+                                  
+                };
 
                 return View(result);
             }
@@ -190,6 +193,8 @@ namespace HalloDoc.Controllers
                 return NotFound();
             }
         }
+
+
 
     }
 }
