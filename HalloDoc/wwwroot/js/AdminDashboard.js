@@ -1,15 +1,17 @@
 ﻿
 $(document).ready(function () {
 
-
-
     $('.buttonOfFilter').click(function () { 
         $('.buttonOfFilter').removeClass('active')
         $(this).addClass('active')
         ChangeTable();
     });
 
-    $("#SearchString").on("input", function () {  
+    $("#SearchString").on("input", function () {
+        ChangeTable();
+    });
+
+    $("#SelectedStateId").on("change", function () {  
         ChangeTable();  
     });
         
@@ -63,18 +65,18 @@ $(document).ready(function () {
         var Searchstring = $("#SearchString").val();
         var selectButton = $(".buttonOfFilter.active").data("value");
         var StatusButton = $(".Status-btn.active").data("id");
-
+        var SelectedStateId = $("#SelectedStateId").val();
         
 
-        if (Searchstring == " " && selectButton == "") {
+        if (Searchstring == " " && selectButton == "" && SelectedStateId == "0") {
             console.log('hii')
-            locatioen.reload();
+            location.reload();
         }
         else {
             $.ajax({
                 type: "GET",
                 url: "/AdminDashboard/SearchByName",
-                data: { Searchstring: Searchstring, selectButton: selectButton , StatusButton : StatusButton },
+                data: { Searchstring: Searchstring, selectButton: selectButton, StatusButton: StatusButton, SelectedStateId: SelectedStateId },
 
                 success: function (data) {
                     console.log(data)

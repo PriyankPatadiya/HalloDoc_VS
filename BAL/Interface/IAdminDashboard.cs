@@ -13,5 +13,7 @@ namespace BAL.Interface
         public IQueryable<AdminDashboardTableVM> GetRequestsQuery(string status);
         public AdminDashboardTableVM GetRequestModel();
         public int CountRequests(string StatusButton);
+        public int getRequestIdbyRequestClientId(int requestClientId);
+        public int getStatusByRequetId(int requetId);
     }
 }

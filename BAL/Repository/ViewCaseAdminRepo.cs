@@ -1,6 +1,8 @@
 ﻿using BAL.Interface;
 using DAL.DataContext;
+using DAL.DataModels;
 using DAL.ViewModels;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -32,14 +34,40 @@ namespace BAL.Repository
                               Phone = reqclient.PhoneNumber,
                               Email = reqclient.Email,
                               Notes = reqclient.Notes,
-                              address = reqclient.City + reqclient.State + reqclient.ZipCode.ToString(),
+                              address = reqclient.City + " , " + reqclient.State + " , " + reqclient.ZipCode.ToString(),
                               region = reqclient.State,
                               ConfirmationNumber = req.ConfirmationNumber,
                               RequestClientId = reqclient.RequestClientId,
-
+                              
                           });
             result = result.Where(s => s.RequestClientId == reqclientId);
             return result;
+        }
+
+        public void changeStatusOnCancleCase(int requesid, string reason, string Notes)
+        {
+            var request = _context.Requests.FirstOrDefault(h => h.RequestId == requesid);
+
+
+            if (request != null)
+            {
+                request.Status = 3;
+                request.CaseTag = reason;
+
+
+                RequestStatusLog requeststatuslog = new RequestStatusLog();
+
+                requeststatuslog.RequestId = requesid;
+                requeststatuslog.Notes = Notes;
+                requeststatuslog.CreatedDate = DateTime.Now;
+                requeststatuslog.Status = 3;
+
+                _context.Add(requeststatuslog);
+                _context.SaveChanges();
+
+                _context.Update(request);
+                _context.SaveChanges();
+            }
         }
     }
 }

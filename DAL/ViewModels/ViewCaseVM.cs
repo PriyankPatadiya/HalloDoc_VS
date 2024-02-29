@@ -10,6 +10,7 @@ namespace DAL.ViewModels
     {
         public int? RequestClientId { get; set; }
 
+        public int? Status { get; set; }
         public string? ConfirmationNumber { get; set; }
         public DateTime? DateOfBirth { get; set; }
         public string FirstName { get; set; }

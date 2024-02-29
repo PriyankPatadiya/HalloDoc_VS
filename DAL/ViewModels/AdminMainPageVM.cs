@@ -12,10 +12,14 @@ namespace DAL.ViewModels
         public PageName? PageName { get; set; }
        public ViewCaseVM? Casemodel { get; set; }         
         public AdminDashboardVM? DashboardVM { get; set;}
+
+        public ViewNotesVM? NotesVM { get; set; }   
+
     }
     public enum PageName
     {
         Dashboard , 
-        ViewCaseForm
+        ViewCaseForm ,
+        ViewNotes
     }
 }

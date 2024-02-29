@@ -1,8 +1,11 @@
 ﻿#menuadmin{
     display: none;
 }
+#ViewCasediv{
+    width: 70%;
+}
 
-#accordionExample{
+#accordionExample {
     display: none;
 }
 
@@ -98,5 +101,8 @@
 @media only screen and (max-width: 600px){
     #menuadmin{
         display: block;
+    }
+    #ViewCasediv{
+        width: 90%;
     }
 }

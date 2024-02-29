@@ -1,8 +1,42 @@
 ﻿@model DAL.ViewModels.ViewCaseVM
 
-
 <div class="bg-body-secondary">
-    <div class="mx-auto pt-4  pb-3" style="width:70%;">
+    <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header bg-info">
+                    <h1 class="modal-title fs-5  text-white" id="exampleModalLabel">Confirm Cancellation</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form asp-action="CancelCase" asp-route-reeqid="@Model.requestid" enctype="multipart/form-data">
+                    <div class="modal-body">
+                        <p> Patient Name : <span id="text">@Model.FirstName @Model.LastName</span></p>
+                        <select class="form-select" aria-label="Default select example" name="Reason">
+                            <option selected>Reason For Cancellation</option>
+                            <option value="1">No Respone to call or text, left message</option>
+                            <option value="2">Cost Issue</option>
+                            <option value="3">Insurance Issue</option>
+                            <option value="4">Out of Service Area</option>
+                            <option value="5">Not appropriate for service</option>
+                            <option value="6">Referral to Clinic or Hospital</option>
+                        </select>
+                        <div class="form-floating mt-3">
+                            <textarea class="form-control" name="Notes" placeholder="Leave a comment here" id="floatingTextarea2" style="height: 100px"></textarea>
+                            <label for="floatingTextarea2">provide Additional Notes</label>
+                        </div>
+
+                    </div>
+                    <div class="modal-footer">
+                        <div class="d-flex justify-content-end mt-3">
+                            <button type="submit" class="btn btn-info">Confirm</button>
+                            <button type="button" data-bs-dismiss="modal" class="btn btn-outline-info ms-3">cancle</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="mx-auto pt-4 pb-3" id="ViewCasediv" >
         <div class="d-flex justify-content-between my-2">
             <h3>New Request</h3><br />
             <a><button type="button" class="btn btn-primary btn  border border-info bg-transparent text-info shadow-none text-decoration-none ">Back</button></a>
@@ -144,16 +178,17 @@
                         </div>
 
                     <div class="d-flex justify-content-end my-1">
-                        @if(ViewBag.status == 1)
+                        @if(Model.Status == 1)
                         {
-                            <button onclick="toggleSave()" type="submit" class="btn border-none bg-info p-3 text-light fw-semibold me-2" id="SaveBtn">
+                            <button type="submit" class="btn border-none bg-info p-3 text-light fw-semibold me-2">
                                 assign
                             </button>
                         }
-                        <button onclick="toggleSave()" type="submit" class="btn border-none bg-info p-3 text-light fw-semibold me-2" id="SaveBtn">
-                            View Notes
-                        </button>
-                        <button onclick="toggleCancle()" class="btn border-none bg-danger p-3 text-light fw-semibold me-2" id="CancleBtn">
+                        <a asp-action="ViewNotesAdmin" asp-route-reqid="@Model.requestid">
+                            <button type="button" class="btn border-none bg-info p-3 text-light fw-semibold me-2 ViewNotesBtn">
+                                 View Notes
+                            </button></a>
+                        <button type="button" class="btn border-none bg-danger p-3 text-light fw-semibold me-2" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
                             Cancle
                         </button>
                     </div>
@@ -162,5 +197,5 @@
             </form>
         </div>
     </div>
-     </div>
+</div>
 

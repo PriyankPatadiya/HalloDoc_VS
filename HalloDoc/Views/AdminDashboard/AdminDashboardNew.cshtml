@@ -7,6 +7,7 @@
 @*Table*@
 
 <div class="mx-2 tab-pane fade show active  table-responsive" id="pills-Dashboard" role="tabpanel" aria-labelledby="pills-Dashboard-tab" tabindex="0">
+
     <Table class="table" >
         <thead class="table-light border-0" style="height: 60px;">
             <tr>
@@ -51,6 +52,46 @@
         <tbody>
             @foreach (var item in Model)
             {
+
+                @*Modal*@
+                <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content">
+                            <div class="modal-header bg-info">
+                                <h1 class="modal-title fs-5  text-white" id="exampleModalLabel">Confirm Cancellation</h1>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <form asp-action="CancelCase" asp-route-reeqid="@item.requestId" enctype="multipart/form-data">
+                                <div class="modal-body">
+                                    <p> Patient Name : <span id="text">@item.PatientName</span></p>
+                                    <select class="form-select" aria-label="Default select example" name="Reason">
+                                        <option selected>Reason For Cancellation</option>
+                                        <option value="1">No Respone to call or text, left message</option>
+                                        <option value="2">Cost Issue</option>
+                                        <option value="3">Insurance Issue</option>
+                                        <option value="4">Out of Service Area</option>
+                                        <option value="5">Not appropriate for service</option>
+                                        <option value="6">Referral to Clinic or Hospital</option>
+                                    </select>
+                                    <div class="form-floating mt-3">
+                                        <textarea class="form-control" name="Notes" placeholder="Leave a comment here" id="floatingTextarea2" style="height: 100px"></textarea>
+                                        <label for="floatingTextarea2">provide Additional Notes</label>
+                                    </div>
+
+                                </div>
+                                <div class="modal-footer">
+                                    <div class="d-flex justify-content-end mt-3">
+                                        <button type="submit" class="btn btn-info">Confirm</button>
+                                        <button type="button" data-bs-dismiss="modal" class="btn btn-outline-info ms-3">cancle</button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+
+
                 @if (item.requestId == 1)
                 {
                     <tr class="text-white"
@@ -119,14 +160,18 @@
                                     }
                                     @if (ViewBag.Status != 2 && ViewBag.Status != 3 && ViewBag.Status != 4 && ViewBag.Status != 5 && ViewBag.Status != 6)
                                     {
-                                        <li><a class="dropdown-item" href="#">Cancel Case</a></li>
+                                        <li>
+                                            <a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
+                                                Cancle
+                                            </a>
+                                        </li>
                                     }
                                     <li><a class="dropdown-item" asp-action="ViewCaseAdmin" asp-route-reqcliId="@item.reqclientId">View Case</a></li>
                                     @if (ViewBag.Status != 1) 
                                     {
                                         <li><a class="dropdown-item" href="#">View Uploads</a></li>
                                     }
-                                    <li><a class="dropdown-item" href="#">ViewNotes</a></li>
+                                    <li><a class="dropdown-item" asp-action="ViewNotesAdmin" asp-route-reqid="@item.reqid">ViewNotes</a></li>
                                     @if (ViewBag.Status != 2 && ViewBag.Status != 3 && ViewBag.Status != 4 && ViewBag.Status != 5 && ViewBag.Status != 6)
                                     {
                                         <li><a class="dropdown-item" href="#">BlockPatient</a></li>
@@ -244,7 +289,7 @@
                                     {
                                         <li><a class="dropdown-item" href="#">View Uploads</a></li>
                                     }
-                                    <li><a class="dropdown-item" href="#">ViewNotes</a></li>
+                                    <li><a class="dropdown-item" asp-action="ViewNotesAdmin" asp-route-reqid="@item.reqid">ViewNotes</a></li>
                                     @if (ViewBag.Status != 2 && ViewBag.Status != 3 && ViewBag.Status != 4 && ViewBag.Status != 5 && ViewBag.Status != 6)
                                     {
                                         <li><a class="dropdown-item" href="#">BlockPatient</a></li>
@@ -361,7 +406,7 @@
                                     {
                                         <li><a class="dropdown-item" href="#">View Uploads</a></li>
                                     }
-                                    <li><a class="dropdown-item" href="#">ViewNotes</a></li>
+                                    <li><a class="dropdown-item" asp-action="ViewNotesAdmin" asp-route-reqid="@item.reqid">ViewNotes</a></li>
                                     @if (ViewBag.Status != 2 && ViewBag.Status != 3 && ViewBag.Status != 4 && ViewBag.Status != 5 && ViewBag.Status != 6)
                                     {
                                         <li><a class="dropdown-item" href="#">BlockPatient</a></li>
@@ -478,7 +523,7 @@
                                     {
                                         <li><a class="dropdown-item" href="#">View Uploads</a></li>
                                     }
-                                    <li><a class="dropdown-item" href="#">ViewNotes</a></li>
+                                    <li><a class="dropdown-item" asp-action="ViewNotesAdmin" asp-route-reqid="@item.reqid">ViewNotes</a></li>
                                     @if (ViewBag.Status != 2 && ViewBag.Status != 3 && ViewBag.Status != 4 && ViewBag.Status != 5 && ViewBag.Status != 6)
                                     {
                                         <li><a class="dropdown-item" href="#">BlockPatient</a></li>

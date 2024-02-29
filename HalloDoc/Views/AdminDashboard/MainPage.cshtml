@@ -5,21 +5,31 @@
 }
 
 
+<body class="">
+    <!-- Button trigger modal -->
+  @*  <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
+        Launch static backdrop modal
+    </button>*@
 
-<div class="tab-content" >
-    @switch (Model.PageName)
-    {
-        case DAL.ViewModels.PageName.Dashboard:
-            <partial name="AdminDashboardPage" model="Model.DashboardVM" />
-            break;
+    <!-- Modal -->
+    
+    <div class="tab-content" id="MainPagePartialDiv">
+        @switch (Model.PageName)
+        {
+            case DAL.ViewModels.PageName.Dashboard:
+                <partial name="AdminDashboardPage" model="Model.DashboardVM" />
+                break;
 
-        case DAL.ViewModels.PageName.ViewCaseForm:
-            <partial name = "ViewCaseAdmin" model = "Model.Casemodel" />
-            break;
-    }
+            case DAL.ViewModels.PageName.ViewCaseForm:
+                <partial name="ViewCaseAdmin" model="Model.Casemodel" />
+                break;
+            case DAL.ViewModels.PageName.ViewNotes:
+                <partial name="ViewNotesAdmin" model="Model.NotesVM "/>
+                break;
+        }
 
-</div>
-
+    </div>
+</body>
 
 <script>
 
