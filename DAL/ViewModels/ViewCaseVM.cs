@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DAL.DataModels;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -25,5 +26,7 @@ namespace DAL.ViewModels
         public string? region { get; set; }
 
         public int? requestid { get; set; }
+
+        public List<Region>? regiontable { get; set; }
     }
 }

@@ -1,5 +1,5 @@
 ﻿<!DOCTYPE html>
-<html lang="en">
+<html lang="en" style="min-height: 100vh; height:100vh;">
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -20,7 +20,7 @@
 
     <title>@ViewData["Title"]</title>
 </head>
-<body>
+<body style="min-height: 100vh; height:100vh; " class="position-relative">
     <header class="">
         <nav class="navbar navbar-expand-lg bg-white d-flex justify-content-between border border-bottom">
             <button type="button" id="menuadmin" class="navbar-toggler position-absolute start-0 top-0 shadow-none btn btn-outline-info ms-3 mt-4" data-bs-toggle="collapse" data-bs-target="#navbarTogglerDemo01" aria-controls="navbarTogglerDemo01" aria-expanded="false" aria-label="Toggle navigation">
@@ -91,12 +91,14 @@
 
     </div>
 
-
+    
     <div class="container-fluid px-0">
         <main role="main" class="">
             @RenderBody()
         </main>
     </div>
+    
+
 
     <footer class="border-top footer text-muted">
         <div style="height: 8vh;" class="bg-dark d-flex flex-row-reverse align-items-center pe-3" id="submitfooter">

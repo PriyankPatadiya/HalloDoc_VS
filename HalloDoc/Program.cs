@@ -21,6 +21,7 @@ builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddScoped<IAdminDashboard, AdminServicesRepo>();
 builder.Services.AddScoped<IViewCaseAdmin, ViewCaseAdminRepo>();
 builder.Services.AddScoped<IViewNotes, ViewNotesRepo>();
+builder.Services.AddScoped<IAssignCase, AssignCaseRepo>();
 //builder.Services.AddScoped<IJWTTokenservice, JWTTokenservicerepo>();
 
 

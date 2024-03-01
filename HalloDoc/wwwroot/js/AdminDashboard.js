@@ -14,7 +14,16 @@ $(document).ready(function () {
     $("#SelectedStateId").on("change", function () {  
         ChangeTable();  
     });
-        
+
+    $("#Regionid").on("change", function () {
+        var RegionId = $("#Regionid").val();
+        filterPhysicianByRegion(RegionId);
+    });
+
+    $("#Regionnid").on("change", function () {
+        var RegionId = $("#Regionnid").val();
+        filterPhysicianByRegion(RegionId);
+    });
     $(".Status-btn").click(function () {
         $(".Status-btn").removeClass('active');
         $(this).addClass('active');
@@ -60,6 +69,7 @@ $(document).ready(function () {
         }
     });
 
+
     function ChangeTable() {
 
         var Searchstring = $("#SearchString").val();
@@ -88,5 +98,26 @@ $(document).ready(function () {
         }
     }
 
+    function filterPhysicianByRegion(RegionId) {
+       
+        console.log("hello")
+        console.log("hello")
+        console.log("hello")
+        if (RegionId != "0") {
+            $.ajax({
+                type: "GET",
+                url: "/AdminDashboard/filterPhyByRegion",
+                data: { RegionId: RegionId },
+
+                success: function (data) {
+                    $('#physicianDrop').empty();
+                    $.each(data, function (index, item) {
+                        $('#physicianDrop').append($('<option>').text(item.firstName).attr('value', item.physicianId));
+                    });
+                    $('#physicianDrop option:first').prop('selected', true);
+                }
+            });
+        }
+    }
 });
 

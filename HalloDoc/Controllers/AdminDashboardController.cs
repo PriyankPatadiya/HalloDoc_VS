@@ -12,12 +12,14 @@ namespace HalloDoc.Controllers
         private readonly IAdminDashboard _admin;
         private readonly IViewCaseAdmin _viewCaseAdmin;
         private readonly IViewNotes _viewnotes;
-        public AdminDashboardController(ApplicationDbContext context, IAdminDashboard admin, IViewCaseAdmin Viewadmin, IViewNotes viewnotes)
+        private readonly IAssignCase _assign;
+        public AdminDashboardController(ApplicationDbContext context, IAdminDashboard admin, IViewCaseAdmin Viewadmin, IViewNotes viewnotes, IAssignCase assign)
         {
             _context = context;
             _admin = admin;
             _viewCaseAdmin = Viewadmin;
             _viewnotes = viewnotes;
+            _assign = assign;
         }
 
         public IActionResult MainPage(string pageName)
@@ -66,6 +68,7 @@ namespace HalloDoc.Controllers
             int status = _admin.getStatusByRequetId(requestid);
             result.Status = status;
             result.requestid = requestid;
+            result.regiontable = _context.Regions.ToList();
             MainModel.Casemodel = result;
             return View("MainPage", MainModel);
         }
@@ -104,6 +107,19 @@ namespace HalloDoc.Controllers
         {
             string Notes = Request.Form["Notes"];
             _viewCaseAdmin.changeStatusOnCancleCase(reeqid, Reason, Notes);
+            return Ok();
+        }
+
+        public IActionResult filterPhyByRegion(string RegionId)
+        {
+            var physician = _viewCaseAdmin.GetPhysicianByRegion(RegionId);
+            return Json(physician);
+        }
+
+        [HttpPost]
+        public IActionResult AssignCase(int reeqid, string physicianId, string Notes)
+        {
+            _assign.ChangeOnAssign(reeqid, int.Parse(physicianId), Notes);
             return Ok();
         }
     }

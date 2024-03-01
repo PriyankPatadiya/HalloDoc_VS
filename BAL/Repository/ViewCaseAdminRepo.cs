@@ -69,5 +69,17 @@ namespace BAL.Repository
                 _context.SaveChanges();
             }
         }
+
+
+        public List<Physician> GetPhysicianByRegion(string RegionId)
+        {
+            var result = (from physician in _context.Physicians
+                         join region in _context.PhysicianRegions on
+                           physician.PhysicianId equals region.PhysicianId into phy
+                         select physician).Where(s => s.RegionId == int.Parse(RegionId)).ToList();
+
+            return result;
+                         
+        }
     }
 }

@@ -1,6 +1,55 @@
 ﻿@model DAL.ViewModels.ViewCaseVM
 
 <div class="bg-body-secondary">
+
+
+    @*Assign Case Modal*@
+
+    <div class="modal fade" id="AssignCaseModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header bg-info">
+                    <h1 class="modal-title fs-5  text-white" id="exampleModalLabel">Assign Request</h1>
+                    <button type="button" class="btn-close shadow-none" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form asp-action="AssignCase" asp-route-reeqid="@Model.requestid" enctype="multipart/form-data">
+                    <div class="modal-body">
+                        <p> To assign this request search and select another physician</p>
+                                                                                             @*for ajax*@    
+                        <select class="form-select py-2 my-2 shadow-none border border-info" id="Regionid">
+                            <option value="0" selected >Narrow Search By Region</option>
+                                @foreach(var items in Model.regiontable)
+                                {
+                                    <option value="@items.RegionId">@items.Name</option>
+                                }
+                            </select>
+                                                                                                               @*for action post*@
+
+                        <select class="form-select py-2 my-2 shadow-none border border-info" id="physicianDrop" name="physicianId" >
+                                @*using ajax*@
+                        </select>
+                       
+                        <div class="form-floating mt-3">
+                            <textarea class="form-control border border-info" name="Notes" placeholder="Leave a comment here" id="floatingTextarea2" style="height: 100px"></textarea>
+                            <label for="floatingTextarea2">Description</label>
+                        </div>
+
+                    </div>
+                    <div class="modal-footer">
+                        <div class="d-flex justify-content-end mt-3">
+                            <button type="submit" class="btn btn-info">Confirm</button>
+                            <button type="button" data-bs-dismiss="modal" class="btn btn-outline-info ms-3">cancle</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+
+    @*Cancel Case Modal*@
+
+
     <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
@@ -36,6 +85,11 @@
             </div>
         </div>
     </div>
+
+
+
+
+
     <div class="mx-auto pt-4 pb-3" id="ViewCasediv" >
         <div class="d-flex justify-content-between my-2">
             <h3>New Request</h3><br />
@@ -180,8 +234,8 @@
                     <div class="d-flex justify-content-end my-1">
                         @if(Model.Status == 1)
                         {
-                            <button type="submit" class="btn border-none bg-info p-3 text-light fw-semibold me-2">
-                                assign
+                            <button type="button" class="btn border-none btn-info p-3 text-light fw-semibold me-2" data-bs-toggle="modal" data-bs-target="#AssignCaseModal">
+                                Assign 
                             </button>
                         }
                         <a asp-action="ViewNotesAdmin" asp-route-reqid="@Model.requestid">

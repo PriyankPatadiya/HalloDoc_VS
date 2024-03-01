@@ -1,4 +1,5 @@
-﻿using Org.BouncyCastle.Asn1.Mozilla;
+﻿using DAL.DataModels;
+using Org.BouncyCastle.Asn1.Mozilla;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -25,7 +26,7 @@ namespace DAL.ViewModels
         public string? Email { get; set; }
         public int? regionId { get; set; }
         public int reqclientId { get; set; }  
-
+        public List<Region> regionTable { get; set; }
         public int reqid { get; set; }
     }
 }

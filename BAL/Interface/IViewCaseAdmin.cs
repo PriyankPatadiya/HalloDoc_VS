@@ -1,4 +1,5 @@
-﻿using DAL.ViewModels;
+﻿using DAL.DataModels;
+using DAL.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -12,5 +13,7 @@ namespace BAL.Interface
     {
         public IQueryable<ViewCaseVM> getViewCaseData(int reqclientId);
         public void changeStatusOnCancleCase(int requesid, string reason, string Notes);
+
+        public List<Physician> GetPhysicianByRegion(string RegionId);
     }
 }

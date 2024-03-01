@@ -94,7 +94,7 @@ namespace BAL.Repository
             {
                 myarray.Add(9);
             }
-           var result =  ( from req in _context.Requests
+            var result = (from req in _context.Requests
                           join reqclient in _context.RequestClients
                           on req.RequestId equals reqclient.RequestId
                           select new AdminDashboardTableVM()
@@ -112,7 +112,8 @@ namespace BAL.Repository
                               Email = reqclient.Email,
                               reqclientId = reqclient.RequestClientId,
                               regionId = reqclient.RegionId,
-                              reqid = req.RequestId
+                              reqid = req.RequestId,
+                              regionTable = _context.Regions.ToList()
 
                           }).Where(item=>myarray.Any(s=>item.requestStatus==s));
             
