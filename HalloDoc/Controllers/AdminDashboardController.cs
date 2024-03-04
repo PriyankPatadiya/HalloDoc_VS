@@ -124,5 +124,15 @@ namespace HalloDoc.Controllers
             _adminActions.BlockCase(reeqid, reason);
             return View("MainPage");
         }
+
+        public IActionResult ViewDocuments(int reeqid)
+        {
+            AdminMainPageVM mainmodel = new AdminMainPageVM
+            {
+                PageName = PageName.viewdocument
+            };
+            
+            return View();
+        }
     }
 }

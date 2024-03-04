@@ -1,9 +1,4 @@
-﻿using Org.BouncyCastle.Asn1.Mozilla;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿
 
 namespace DAL.ViewModels
 {
@@ -15,11 +10,14 @@ namespace DAL.ViewModels
 
         public ViewNotesVM? NotesVM { get; set; }   
 
+        public ViewdocumentVM? DocumentVM { get; set; }
+
     }
     public enum PageName
     {
         Dashboard , 
         ViewCaseForm ,
-        ViewNotes
+        ViewNotes,
+        viewdocument
     }
 }

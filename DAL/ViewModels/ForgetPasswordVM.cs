@@ -6,7 +6,7 @@ namespace DAL.ViewModels
     public class ForgetPasswordVM
     {
         [Required, EmailAddress]
-        public string email { get; set; }
+        public string? email { get; set; }
 
         public bool? EmailSent { get; set; }
 

@@ -36,36 +36,42 @@ $(document).ready(function () {
             $("#statusspan").html("(New)");
             $(".triangle").css('display', 'none');
             $("#triangle1").css('display', 'block').css('border-top-color', '#203f9a');
+            partialviewpath = "AdminDashboardNew"; 
             ChangeTable("AdminDashboardNew");
         }
         else if (StatusButton == "2") {
             $("#statusspan").html("(Pending)");
             $(".triangle").css('display', 'none');
             $("#triangle2").css('display', 'block').css('border-top-color', '#00adef');
+            partialviewpath = "AdminDashboardPending";
             ChangeTable("AdminDashboardPending");
         }
         else if (StatusButton == "3") {
             $("#statusspan").html("(Active)");
             $(".triangle").css('display', 'none');
             $("#triangle3").css('display', 'block').css('border-top-color', '#228c20');
+            partialviewpath = "AdminDashboardActive";
             ChangeTable("AdminDashboardActive");
         }
         else if (StatusButton == "4") {
             $("#statusspan").html("(Conclude)");
             $(".triangle").css('display', 'none');
             $("#triangle4").css('display', 'block').css('border-top-color', '#da0f82');
+            partialviewpath = "AdminDashboardConclude";
             ChangeTable("AdminDashboardConclude");
         }
         else if (StatusButton == "5") {
             $("#statusspan").html("(ToClose)");
             $(".triangle").css('display', 'none');
             $("#triangle5").css('display', 'block').css('border-top-color', '#0370d7');
+            partialviewpath = "AdminDashboardToClose";
             ChangeTable("AdminDashboardToClose");
         }
         else {
             $("#statusspan").html("(Unpaid)");
             $(".triangle").css('display', 'none');
             $("#triangle6").css('display', 'block').css('border-top-color', '#9966cd');
+            partialviewpath = "AdminDashboardUnpaid";
             ChangeTable("AdminDashboardUnpaid");
         }
     });
@@ -79,7 +85,7 @@ $(document).ready(function () {
         var SelectedStateId = $("#SelectedStateId").val();
         
 
-        if (Searchstring == " " && selectButton == "" && SelectedStateId == "0") {
+        if (Searchstring == " " && selectButton == " " && SelectedStateId == "0") {
             console.log('hii')
             location.reload();
         }

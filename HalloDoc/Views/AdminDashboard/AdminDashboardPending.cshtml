@@ -123,7 +123,7 @@
                             </div>
                             <form asp-action="BlockCase" asp-route-reeqid="@item.reqid" enctype="multipart/form-data">
                                 <div class="modal-body">
-                                    <p> Patient Name : <span id="text">@item.PatientName</span></p>
+                                    <p> Patient Name : <span id="text">@item.RequestorName</span></p>
 
                                     <div class="form-floating mt-3">
                                         <textarea class="form-control" name="reason" placeholder="Leave a comment here" id="floatingTextarea2" style="height: 100px"></textarea>
@@ -207,7 +207,7 @@
                             </button>
                             <ul class="dropdown-menu">
                                 <li><a class="dropdown-item pe-auto" asp-action="ViewCaseAdmin" asp-route-reqcliId="@item.reqclientId">View Case</a></li>
-                                <li><a class="dropdown-item pe-auto">View Uploads</a></li>
+                                <li><a class="dropdown-item pe-auto" asp-action="View">View Uploads</a></li>
                                 <li><a class="dropdown-item pe-auto" asp-action="ViewNotesAdmin" asp-route-reqid="@item.reqid">ViewNotes</a></li>
                                 <li><a class="dropdown-item pe-auto">Transfer</a></li>
                                 <li><a class="dropdown-item pe-auto">Clear Case</a></li>
