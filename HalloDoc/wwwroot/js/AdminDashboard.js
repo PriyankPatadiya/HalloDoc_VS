@@ -1,18 +1,19 @@
 ﻿
 $(document).ready(function () {
 
+    var partialviewpath = "AdminDashboardNew";
     $('.buttonOfFilter').click(function () { 
         $('.buttonOfFilter').removeClass('active')
         $(this).addClass('active')
-        ChangeTable();
+        ChangeTable(partialviewpath);
     });
 
     $("#SearchString").on("input", function () {
-        ChangeTable();
+        ChangeTable(partialviewpath);
     });
 
     $("#SelectedStateId").on("change", function () {  
-        ChangeTable();  
+        ChangeTable(partialviewpath);  
     });
 
     $("#Regionid").on("change", function () {
@@ -27,7 +28,7 @@ $(document).ready(function () {
     $(".Status-btn").click(function () {
         $(".Status-btn").removeClass('active');
         $(this).addClass('active');
-        ChangeTable();
+        
 
         var StatusButton = $(".Status-btn.active").data("id");
 
@@ -35,42 +36,42 @@ $(document).ready(function () {
             $("#statusspan").html("(New)");
             $(".triangle").css('display', 'none');
             $("#triangle1").css('display', 'block').css('border-top-color', '#203f9a');
-
+            ChangeTable("AdminDashboardNew");
         }
         else if (StatusButton == "2") {
             $("#statusspan").html("(Pending)");
             $(".triangle").css('display', 'none');
             $("#triangle2").css('display', 'block').css('border-top-color', '#00adef');
-
+            ChangeTable("AdminDashboardPending");
         }
         else if (StatusButton == "3") {
             $("#statusspan").html("(Active)");
             $(".triangle").css('display', 'none');
             $("#triangle3").css('display', 'block').css('border-top-color', '#228c20');
-
+            ChangeTable("AdminDashboardActive");
         }
         else if (StatusButton == "4") {
             $("#statusspan").html("(Conclude)");
             $(".triangle").css('display', 'none');
             $("#triangle4").css('display', 'block').css('border-top-color', '#da0f82');
-
+            ChangeTable("AdminDashboardConclude");
         }
         else if (StatusButton == "5") {
             $("#statusspan").html("(ToClose)");
             $(".triangle").css('display', 'none');
             $("#triangle5").css('display', 'block').css('border-top-color', '#0370d7');
-
+            ChangeTable("AdminDashboardToClose");
         }
         else {
             $("#statusspan").html("(Unpaid)");
             $(".triangle").css('display', 'none');
             $("#triangle6").css('display', 'block').css('border-top-color', '#9966cd');
-
+            ChangeTable("AdminDashboardUnpaid");
         }
     });
 
 
-    function ChangeTable() {
+    function ChangeTable(partialviewpath) {
 
         var Searchstring = $("#SearchString").val();
         var selectButton = $(".buttonOfFilter.active").data("value");
@@ -86,7 +87,7 @@ $(document).ready(function () {
             $.ajax({
                 type: "GET",
                 url: "/AdminDashboard/SearchByName",
-                data: { Searchstring: Searchstring, selectButton: selectButton, StatusButton: StatusButton, SelectedStateId: SelectedStateId },
+                data: { Searchstring: Searchstring, selectButton: selectButton, StatusButton: StatusButton, SelectedStateId: SelectedStateId, partialviewpath: partialviewpath },
 
                 success: function (data) {
                     console.log(data)

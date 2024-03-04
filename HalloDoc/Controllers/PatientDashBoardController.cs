@@ -1,13 +1,8 @@
 ﻿using BAL.Interface;
 using DAL.DataContext;
-using DAL.DataModels;
 using DAL.ViewModels;
-using Microsoft.AspNetCore.Diagnostics;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Org.BouncyCastle.Asn1.Ocsp;
-using System.IO.Compression;
 using IHostingEnvironment = Microsoft.AspNetCore.Hosting.IHostingEnvironment;
 
 namespace HalloDoc.Controllers
@@ -15,6 +10,7 @@ namespace HalloDoc.Controllers
     public class PatientDashBoardController : Controller
     {
         private readonly ApplicationDbContext _context;
+        [Obsolete]
         private readonly IHostingEnvironment _environment;
         private readonly IuploadFile _uploadfile;
         private readonly IPatientRequest _request;

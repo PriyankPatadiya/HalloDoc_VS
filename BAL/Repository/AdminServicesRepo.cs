@@ -1,16 +1,6 @@
 ﻿using BAL.Interface;
 using DAL.DataContext;
 using DAL.ViewModels;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata;
-using Org.BouncyCastle.Ocsp;
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BAL.Repository
 {

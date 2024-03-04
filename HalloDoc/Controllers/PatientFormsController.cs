@@ -2,12 +2,8 @@
 using DAL.DataContext;
 using DAL.ViewModels;
 using Microsoft.AspNetCore.Mvc;
-using MimeKit;
-using Npgsql.Internal.TypeHandlers.LTreeHandlers;
 using System.Net;
 using System.Net.Mail;
-using System.Net.NetworkInformation;
-using System.Text;
 using IHostingEnvironment = Microsoft.AspNetCore.Hosting.IHostingEnvironment;
 
 namespace HalloDoc.Controllers

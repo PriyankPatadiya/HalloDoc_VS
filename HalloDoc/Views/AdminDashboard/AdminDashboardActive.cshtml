@@ -16,41 +16,15 @@
             <tr>
 
                 <th class="align-middle text-secondary my-2">Name</th>
-                @if (ViewBag.Status != 6)
-                {
                     <th class="align-middle text-secondary">Date Of Birth</th>
-                }
-                @if (ViewBag.Status != 6 && ViewBag.Status != 4 && ViewBag.Status != 5)
-                {
                     <th class="align-middle text-secondary">Requestor</th>
-                }
-                @if (ViewBag.Status == 1)
-                {
-                    <th class="align-middle text-secondary">RequestedDate</th>
-                }
-                @if (ViewBag.Status != 1)
-                {
                     <th class="align-middle text-secondary">PhysicianName</th>
-                }
-                @if (ViewBag.Status != 1)
-                {
                     <th class="align-middle text-secondary">DateOfService</th>
-                }
-                @if (ViewBag.Status == 5)
-                {
-                    <th class="align-middle text-secondary">Region</th>
-                }
-                @if (ViewBag.Status != 5)
-                {
                     <th class="align-middle text-secondary">Phone</th>
-                }
-                <th class="align-middle text-secondary">Address</th>
-                @if (ViewBag.Status != 4 && ViewBag.Status != 6)
-                {
+                    <th class="align-middle text-secondary">Address</th>
                     <th class="align-middle text-secondary">Notes</th>
-                }
-                <th class="align-middle text-secondary">ChatWith</th>
-                <th class="align-middle text-secondary">Actions</th>
+                    <th class="align-middle text-secondary">ChatWith</th>
+                    <th class="align-middle text-secondary">Actions</th>
             </tr>
         </thead>
         <tbody>
@@ -191,34 +165,10 @@
                 <tr class="text-white" id="adminDashTableRow" style="background-color: @color !important">
 
                     <td class="align-middle text-white">@item.PatientName</td>
-
-                    @if (ViewBag.Status != 6)
-                    {
                         <td class="align-middle text-white">@item.BirthDate</td>
-                    }
-                    @if (ViewBag.Status != 6 && ViewBag.Status != 4 && ViewBag.Status != 5)
-                    {
                         <td class="align-middle text-white">@item.RequestorName</td>
-
-                    }
-                    @if (ViewBag.Status == 1)
-                    {
-                        <td class="align-middle text-white">@item.RequestDate</td>
-                    }
-                    @if (ViewBag.Status != 1)
-                    {
                         <td class="align-middle text-white">@item.physicianname</td>
-                    }
-                    @if (ViewBag.Status != 1)
-                    {
                         <td class="align-middle text-white">@item.DateOfService</td>
-                    }
-                    @if (ViewBag.Status == 5)
-                    {
-                        <td class="align-middle text-white">@item.Region</td>
-                    }
-                    @if (ViewBag.Status != 5)
-                    {
                         <td class="d-flex flex-column  text-white">
                             <div class="border border-1 border-white py-1 text-center rounded">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-telephone-fill me-2" viewBox="0 0 16 16">
@@ -238,13 +188,8 @@
                                 <span>(@requestor)</span>
                             }
                         </td>
-                    }
-
                     <td class=" text-white">@item.address</td>
-                    @if (ViewBag.Status != 4 && ViewBag.Status != 6)
-                    {
                         <td class="align-middle  text-white">Notes</td>
-                    }
                     <td class="align-middle  text-white">
                         <button class="btn btn-outline-light ">
                             <i class="bi bi-person"></i>
@@ -257,61 +202,16 @@
                                 Action
                             </button>
                             <ul class="dropdown-menu">
-                                @if (ViewBag.Status != 2 && ViewBag.Status != 3 && ViewBag.Status != 4 && ViewBag.Status != 5 && ViewBag.Status != 6)
-                                {
-                                    <li><a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#AssignCaseModal">Assign Case</a></li>
-                                }
-                                @if (ViewBag.Status != 2 && ViewBag.Status != 3 && ViewBag.Status != 4 && ViewBag.Status != 5 && ViewBag.Status != 6)
-                                {
-                                    <li>
-                                        <a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
-                                            Cancle
-                                        </a>
-                                    </li>
-                                }
                                 <li><a class="dropdown-item" asp-action="ViewCaseAdmin" asp-route-reqcliId="@item.reqclientId">View Case</a></li>
-                                @if (ViewBag.Status != 1)
-                                {
-                                    <li><a class="dropdown-item" href="#">View Uploads</a></li>
-                                }
+                                <li><a class="dropdown-item" href="#">View Uploads</a></li>
                                 <li><a class="dropdown-item" asp-action="ViewNotesAdmin" asp-route-reqid="@item.reqid">ViewNotes</a></li>
-                                @if (ViewBag.Status != 2 && ViewBag.Status != 3 && ViewBag.Status != 4 && ViewBag.Status != 5 && ViewBag.Status != 6)
-                                {
-                                    <a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#BlockCaseModal">
-                                        Block Case
-                                    </a>
-                                }
-                                @if (ViewBag.Status != 1 && ViewBag.Status != 3 && ViewBag.Status != 4 && ViewBag.Status != 5 && ViewBag.Status != 6)
-                                {
-                                    <li><a class="dropdown-item" href="#">Transfer</a></li>
-                                }
-                                @if (ViewBag.Status != 1 && ViewBag.Status != 3 && ViewBag.Status != 4 && ViewBag.Status != 6)
-                                {
-                                    <li><a class="dropdown-item" href="#">Clear Case</a></li>
-                                }
-                                @if (ViewBag.Status != 3 && ViewBag.Status != 1 && ViewBag.Status != 4 && ViewBag.Status != 5 && ViewBag.Status != 6)
-                                {
-                                    <li><a class="dropdown-item" href="#">Send Agreement</a></li>
-                                }
-                                @if (ViewBag.Status != 1 && ViewBag.Status != 2 && ViewBag.Status != 6)
-                                {
-                                    <li><a class="dropdown-item" href="#">Orders</a></li>
-                                }
-                                @if (ViewBag.Status != 1 && ViewBag.Status != 2 && ViewBag.Status != 3 && ViewBag.Status != 4 && ViewBag.Status != 6)
-                                {
-                                    <li><a class="dropdown-item" href="#">Close Case</a></li>
-                                }
-                                @if (ViewBag.Status != 1 && ViewBag.Status != 2 && ViewBag.Status != 6)
-                                {
-                                    <li><a class="dropdown-item" href="#">Doctors Note</a></li>
-                                }
-                                @if (ViewBag.Status != 1 && ViewBag.Status != 2 && ViewBag.Status != 6)
-                                {
-                                    <li><a class="dropdown-item" href="#">Encounter</a></li>
-                                }
+                                <li><a class="dropdown-item" href="#">Orders</a></li>
+                                <li><a class="dropdown-item" href="#">Doctors Note</a></li>
+                                <li><a class="dropdown-item" href="#">Encounter</a></li>
                             </ul>
                         </div>
                     </td>
+                    
                 </tr>
             }
         </tbody>

@@ -10,19 +10,15 @@ namespace HalloDoc.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly IAdminDashboard _admin;
-        private readonly IViewCaseAdmin _viewCaseAdmin;
-        private readonly IViewNotes _viewnotes;
-        private readonly IAssignCase _assign;
-        public AdminDashboardController(ApplicationDbContext context, IAdminDashboard admin, IViewCaseAdmin Viewadmin, IViewNotes viewnotes, IAssignCase assign)
+        private readonly IAdminActions _adminActions;
+        public AdminDashboardController(ApplicationDbContext context, IAdminDashboard admin, IAdminActions action)
         {
             _context = context;
             _admin = admin;
-            _viewCaseAdmin = Viewadmin;
-            _viewnotes = viewnotes;
-            _assign = assign;
+            _adminActions = action;
         }
 
-        public IActionResult MainPage(string pageName)
+        public IActionResult MainPage()
         {
             AdminMainPageVM MainModel = new AdminMainPageVM()
             {
@@ -63,7 +59,7 @@ namespace HalloDoc.Controllers
             {
                 PageName = PageName.ViewCaseForm
             };
-            ViewCaseVM result = _viewCaseAdmin.getViewCaseData(int.Parse(requestclientId)).FirstOrDefault();
+            ViewCaseVM result = _adminActions.getViewCaseData(int.Parse(requestclientId)).FirstOrDefault();
             int requestid = _admin.getRequestIdbyRequestClientId(int.Parse(requestclientId));
             int status = _admin.getStatusByRequetId(requestid);
             result.Status = status;
@@ -80,12 +76,12 @@ namespace HalloDoc.Controllers
             {
                 PageName = PageName.ViewNotes
             };
-            var result = _viewnotes.viewnotes(int.Parse(requestId));
+            var result = _adminActions.viewnotes(int.Parse(requestId));
             MainModel.NotesVM = result;
             return View("MainPage", MainModel);
         }
 
-        public IActionResult SearchByName(string SearchString, string selectButton, string StatusButton, string SelectedStateId)
+        public IActionResult SearchByName(string SearchString, string selectButton, string StatusButton, string SelectedStateId, string partialviewpath)
         {
 
             var result = _admin.GetRequestsQuery(StatusButton);
@@ -99,28 +95,34 @@ namespace HalloDoc.Controllers
                 ViewBag.Status = int.Parse(StatusButton);
             }
 
-            return PartialView("AdminDashboardNew", result.ToList());
+            return PartialView(partialviewpath, result.ToList());
         }
 
         [HttpPost]
         public IActionResult CancelCase(int reeqid, string Reason)
         {
             string Notes = Request.Form["Notes"];
-            _viewCaseAdmin.changeStatusOnCancleCase(reeqid, Reason, Notes);
+            _adminActions.changeStatusOnCancleCase(reeqid, Reason, Notes);
             return Ok();
         }
 
         public IActionResult filterPhyByRegion(string RegionId)
         {
-            var physician = _viewCaseAdmin.GetPhysicianByRegion(RegionId);
+            var physician = _adminActions.GetPhysicianByRegion(RegionId);
             return Json(physician);
         }
 
         [HttpPost]
         public IActionResult AssignCase(int reeqid, string physicianId, string Notes)
         {
-            _assign.ChangeOnAssign(reeqid, int.Parse(physicianId), Notes);
-            return Ok();
+            _adminActions.ChangeOnAssign(reeqid, int.Parse(physicianId), Notes);
+            return View("MainPage");
+        }
+
+        public IActionResult BlockCase(int reeqid, string reason)
+        {
+            _adminActions.BlockCase(reeqid, reason);
+            return View("MainPage");
         }
     }
 }

@@ -1,13 +1,6 @@
 ﻿using BAL.Interface;
-
-using MailKit.Security;
-using MimeKit;
-using Microsoft.Extensions.Options;
-using System.Threading.Tasks;
-using Microsoft.Extensions.Configuration;
 using System.Net;
 using System.Net.Mail;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace BAL.Repository
 {
