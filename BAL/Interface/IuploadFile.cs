@@ -4,6 +4,6 @@ namespace BAL.Interface
 {
     public interface IuploadFile
     {
-        void uploadfile(IFormFile file, string path);
+        void uploadfile(IFormFile file,string filename, string path);
     }
 }

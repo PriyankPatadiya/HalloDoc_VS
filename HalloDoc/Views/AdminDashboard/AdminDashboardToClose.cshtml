@@ -201,7 +201,7 @@
                             </button>
                             <ul class="dropdown-menu">
                                 <li><a class="dropdown-item" asp-action="ViewCaseAdmin" asp-route-reqcliId="@item.reqclientId">View Case</a></li>
-                                <li><a class="dropdown-item" href="#">View Uploads</a></li>
+                                <li><a class="dropdown-item pe-auto" asp-action="ViewDocuments" asp-route-reeqid="@item.reqid">View Uploads</a></li>
                                 <li><a class="dropdown-item" asp-action="ViewNotesAdmin" asp-route-reqid="@item.reqid">ViewNotes</a></li>
                                 <li><a class="dropdown-item" href="#">Clear Case</a></li>
                                 <li><a class="dropdown-item" href="#">Orders</a></li>
@@ -231,63 +231,57 @@
         <div class="accordion-item bg-info-subtle">
             <button class=" accordion-header btn w-100 px-4 shadow-none" type="button" data-bs-toggle="collapse" data-bs-target="#collapse_@i" aria-expanded="false" aria-controls="collapseTwo">
                 <div class="row w-100 pb-1">
-                    <div class="col-8 text-start my-1">
-                        <h5>@item.PatientName</h5>
+                    <div class="col-8 text-start py-3 pe-0">
+                        <span>@item.PatientName</span>
 
                         <p class="mt-4">@item.address</p>
                     </div>
-                    <div class="col-4 py-3 text-end">
+                    <div class="col-4 d-flex flex-column py-3 text-end pe-0">
                         @if (item.requestId == 1)
                         {
-                            <h6 class="mb-3">
+                            <span class="mb-3">
                                 Patient
 
                                 <svg height="15" width="15" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
                                     <circle fill="#5fbc61" r="45" cx="50" cy="50" stroke="grey" stroke-width="3" />
                                 </svg>
-                            </h6>
+                            </span>
                         }
                         @if (item.requestId == 2)
                         {
-                            <h6 class="mb-3">
+                            <span class="mb-3">
                                 Family/Friend
 
                                 <svg height="15" width="15" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
                                     <circle fill="#ed9124" r="45" cx="50" cy="50" stroke="grey" stroke-width="3" />
                                 </svg>
-                            </h6>
+                            </span>
                         }
                         @if (item.requestId == 3)
                         {
-                            <h6 class="mb-3">
+                            <span class="mb-3">
                                 Concierge
 
                                 <svg height="15" width="15" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
                                     <circle fill="#e26277" r="45" cx="50" cy="50" stroke="grey" stroke-width="3" />
                                 </svg>
-                            </h6>
+                            </span>
                         }
                         @if (item.requestId == 4)
                         {
-                            <h6 class="mb-3">
+                            <span class="mb-3">
                                 Business
 
                                 <svg height="15" width="15" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
                                     <circle fill="#007fc6" r="45" cx="50" cy="50" stroke="grey" stroke-width="3" />
                                 </svg>
-                            </h6>
+                            </span>
                         }
 
-                        <a class="btn rounded-4 btn-outline-info px-3">Map Location</a>
+                        <a class="btn rounded-4 btn-outline-info px-3 fs-7 my-3">Map Location</a>
                     </div>
                 </div>
-                <div class="text-start pb-3">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-clock text-info" viewBox="0 0 16 16">
-                        <path d="M8 3.5a.5.5 0 0 0-1 0V9a.5.5 0 0 0 .252.434l3.5 2a.5.5 0 0 0 .496-.868L8 8.71z" />
-                        <path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16m7-8A7 7 0 1 1 1 8a7 7 0 0 1 14 0" />
-                    </svg>
-                    <span>Wait Time : </span>
-                </div>
+                
             </button>
             <div id="collapse_@i" class="accordion-collapse collapse border-top border-secondary" data-bs-parent="#accordionExample">
                 <div class="accordion-body">

@@ -3,6 +3,7 @@ using DAL.DataContext;
 using DAL.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Net.NetworkInformation;
 using IHostingEnvironment = Microsoft.AspNetCore.Hosting.IHostingEnvironment;
 
 namespace HalloDoc.Controllers
@@ -127,16 +128,22 @@ namespace HalloDoc.Controllers
         public IActionResult uploadFile(int requestid)
         {
             var file = Request.Form.Files["Document"];
+            
             if (file == null) 
             {
                 return NotFound();
             }
             else
             {
-                string path = Path.Combine(this._environment.WebRootPath, "uploads");
-                _uploadfile.uploadfile(file, path);
+                var uniquefilesavetoken = Guid.NewGuid().ToString();
 
-                _request.Addrequestwisefile(file.FileName, requestid);
+                string fileName = Path.GetFileNameWithoutExtension(file.FileName);
+                string extension = Path.GetExtension(file.FileName);
+                fileName = $"{fileName}_{uniquefilesavetoken}{extension}";
+                string path = Path.Combine(this._environment.WebRootPath, "uploads");
+                _uploadfile.uploadfile(file,fileName, path);
+
+                _request.Addrequestwisefile(fileName, requestid);
                 return RedirectToAction("ViewDocumentsPatdash", new { requestid = requestid });
             }
         }

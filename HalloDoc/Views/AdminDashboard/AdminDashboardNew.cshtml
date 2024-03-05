@@ -239,54 +239,54 @@
         <div class="accordion-item bg-info-subtle">
             <button class=" accordion-header btn w-100 px-4 shadow-none" type="button" data-bs-toggle="collapse" data-bs-target="#collapse_@i" aria-expanded="false" aria-controls="collapseTwo">
                 <div class="row w-100 pb-1">
-                    <div class="col-8 text-start my-1">
-                        <h5>@item.PatientName</h5>
+                    <div class="col-8 text-start py-3 pe-0">
+                        <span>@item.PatientName</span>
 
                         <p class="mt-4">@item.address</p>
                     </div>
-                    <div class="col-4 py-3 text-end">
+                    <div class="col-4 py-3 d-flex flex-column text-end pe-0">
                         @if (item.requestId == 1)
                         {
-                            <h6 class="mb-3">
+                            <span class="mb-3">
                                 Patient
 
                                 <svg height="15" width="15" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
                                     <circle fill="#5fbc61" r="45" cx="50" cy="50" stroke="grey" stroke-width="3" />
                                 </svg>
-                            </h6>
+                            </span>
                         }
                         @if (item.requestId == 2)
                         {
-                            <h6 class="mb-3">
+                            <span class="mb-3">
                                 Family/Friend
 
                                 <svg height="15" width="15" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
                                     <circle fill="#ed9124" r="45" cx="50" cy="50" stroke="grey" stroke-width="3" />
                                 </svg>
-                            </h6>
+                            </span>
                         }
                         @if (item.requestId == 3)
                         {
-                            <h6 class="mb-3">
+                            <span class="mb-3">
                                 Concierge
 
                                 <svg height="15" width="15" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
                                     <circle fill="#e26277" r="45" cx="50" cy="50" stroke="grey" stroke-width="3" />
                                 </svg>
-                            </h6>
+                            </span>
                         }
                         @if (item.requestId == 4)
                         {
-                            <h6 class="mb-3">
+                            <span class="mb-3">
                                 Business
 
                                 <svg height="15" width="15" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
                                     <circle fill="#007fc6" r="45" cx="50" cy="50" stroke="grey" stroke-width="3" />
                                 </svg>
-                            </h6>
+                            </span>
                         }
 
-                        <a class="btn rounded-4 btn-outline-info px-3">Map Location</a>
+                        <a class="btn rounded-4 btn-outline-info px-3 fs-7 my-3">Map Location</a>
                     </div>
                 </div>
                 <div class="text-start pb-3">

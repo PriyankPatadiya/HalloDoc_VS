@@ -69,8 +69,9 @@ namespace HalloDoc.Controllers
                 }
                 var uniquefilesavetoken = new Guid().ToString();
 
-                string fileName = Path.GetFileName(pInfo.Document.FileName);
-                fileName = $"{fileName}_{uniquefilesavetoken}";
+                string fileName = Path.GetFileNameWithoutExtension(pInfo.Document.FileName);
+                string extension = Path.GetExtension(pInfo.Document.FileName);
+                fileName = $"{fileName}_{uniquefilesavetoken}{extension}";
 
                 _patreq.AddPatientForm(pInfo);
 
@@ -118,8 +119,12 @@ namespace HalloDoc.Controllers
                 if(model.Document != null && model.Document.Length > 0)
                 {
                     string path = Path.Combine(this._environment.WebRootPath, "Uploads");
-                    string fileName = Path.GetFileName(model.Document.FileName);
-                    _uploadfile.uploadfile(model.Document, path);
+                    var uniquefilesavetoken = new Guid().ToString();
+
+                    string fileName = Path.GetFileNameWithoutExtension(model.Document.FileName);
+                    string extension = Path.GetExtension(model.Document.FileName);
+                    fileName = $"{fileName}_{uniquefilesavetoken}{extension}";
+                    _uploadfile.uploadfile(model.Document,fileName, path);
 
                     var request = _patreq.GetUserByEmail(model.Email);
 

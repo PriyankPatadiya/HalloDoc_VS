@@ -2,7 +2,7 @@
 using DAL.DataContext;
 using DAL.ViewModels;
 using Microsoft.AspNetCore.Mvc;
-
+using IHostingEnvironment = Microsoft.AspNetCore.Hosting.IHostingEnvironment;
 
 namespace HalloDoc.Controllers
 {
@@ -11,11 +11,17 @@ namespace HalloDoc.Controllers
         private readonly ApplicationDbContext _context;
         private readonly IAdminDashboard _admin;
         private readonly IAdminActions _adminActions;
-        public AdminDashboardController(ApplicationDbContext context, IAdminDashboard admin, IAdminActions action)
+        private readonly IHostingEnvironment _hostingEnvironment;
+        private readonly IuploadFile _uploadfile;
+        private readonly IPatientRequest _request;
+        public AdminDashboardController(ApplicationDbContext context, IAdminDashboard admin, IAdminActions action, IHostingEnvironment env, IuploadFile uploadfile, IPatientRequest request)
         {
             _context = context;
             _admin = admin;
             _adminActions = action;
+            _hostingEnvironment = env;
+            _uploadfile = uploadfile;
+            _request = request;
         }
 
         public IActionResult MainPage()
@@ -131,8 +137,79 @@ namespace HalloDoc.Controllers
             {
                 PageName = PageName.viewdocument
             };
-            
-            return View();
+            ViewdocumentVM model = new ViewdocumentVM();
+            var requestfiles = _context.RequestWiseFiles.Where(x => x.RequestId == reeqid).ToList();
+            model.RequestWiseFile = requestfiles;
+            model.requestid = reeqid;
+            //model.confirmationNumber = _context.Requests.Where(s => s.RequestId == reeqid).FirstOrDefault().ConfirmationNumber.ToUpper();
+            mainmodel.DocumentVM = model;
+
+            return View("MainPage", mainmodel);
+        }
+
+        public IActionResult downloadfile(string filename)
+        {
+            string Filename = Path.GetFileName(filename);
+            var filePath = Path.Combine(_hostingEnvironment.ContentRootPath, "wwwroot\\uploads", Filename);
+
+            if (System.IO.File.Exists(filePath))
+            {
+                var filestream = new FileStream(filePath, FileMode.Open);
+                var contentType = "application/octet-stream";
+                return File(filestream, contentType, Filename);
+            }
+            else
+            {
+                return NotFound();
+            }
+        }
+
+        [HttpPost]
+        public IActionResult uploadFile(int requestid)
+        {
+            var file = Request.Form.Files["Document"];
+
+            if (file == null)
+            {
+                return NotFound();
+            }
+            else
+            {
+                var uniquefilesavetoken = Guid.NewGuid().ToString();
+
+                string fileName = Path.GetFileNameWithoutExtension(file.FileName);
+                string extension = Path.GetExtension(file.FileName);
+                fileName = $"{fileName}_{uniquefilesavetoken}{extension}";
+                string path = Path.Combine(this._hostingEnvironment.WebRootPath, "uploads");
+                _uploadfile.uploadfile(file, fileName, path);
+
+                _request.Addrequestwisefile(fileName, requestid);
+                return RedirectToAction("ViewDocuments", new { reeqid = requestid });
+            }
+        }
+
+        
+        public IActionResult deleteFile(int reqid, string filename) { 
+            var requestwisefile = _context.RequestWiseFiles.Where(u => u.RequestId == reqid && u.FileName == filename).FirstOrDefault();
+            requestwisefile.IsDeleted[0] = true;
+
+            _context.RequestWiseFiles.Update(requestwisefile);
+            _context.SaveChanges();
+            return RedirectToAction("ViewDocuments", new { reeqid = reqid });
+        }
+
+        [HttpPost]
+        public IActionResult deleteAllFiles( List<string> selectedFiles)
+        {
+            foreach(var file in selectedFiles)
+            {
+                var reqwisefile = _context.RequestWiseFiles.Where(u => u.FileName == file).FirstOrDefault();
+                reqwisefile.IsDeleted[0] = true;
+                _context.RequestWiseFiles.Update(reqwisefile);
+            }
+            _context.SaveChanges();
+            return Ok();
+
         }
     }
 }

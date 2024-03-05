@@ -1,7 +1,9 @@
 ﻿
 $(document).ready(function () {
-
     var partialviewpath = "AdminDashboardNew";
+    var StatusButton = "1";
+    
+
     $('.buttonOfFilter').click(function () { 
         $('.buttonOfFilter').removeClass('active')
         $(this).addClass('active')
@@ -30,7 +32,8 @@ $(document).ready(function () {
         $(this).addClass('active');
         
 
-        var StatusButton = $(".Status-btn.active").data("id");
+         StatusButton = $(".Status-btn.active").data("id");
+
 
         if (StatusButton == "1") {
             $("#statusspan").html("(New)");

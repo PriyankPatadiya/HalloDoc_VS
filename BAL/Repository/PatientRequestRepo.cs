@@ -2,6 +2,7 @@
 using DAL.DataContext;
 using DAL.DataModels;
 using DAL.ViewModels;
+using System.Collections;
 
 namespace BAL.Repository
 {
@@ -137,11 +138,14 @@ namespace BAL.Repository
 
         public void Addrequestwisefile(string filename, int requestid)
         {
+            BitArray isdelete = new BitArray(1);
+            isdelete[0] = false;
             var requestwisefile = new RequestWiseFile
             {
                 RequestId = requestid,
                 FileName = filename,
                 CreatedDate = DateTime.Now,
+                IsDeleted = isdelete
             };
 
             _context.Add(requestwisefile);
