@@ -1,4 +1,5 @@
 ﻿using BAL.Interface;
+using BAL.Repository;
 using DAL.DataContext;
 using DAL.ViewModels;
 using Microsoft.AspNetCore.Mvc;
@@ -8,6 +9,7 @@ using IHostingEnvironment = Microsoft.AspNetCore.Hosting.IHostingEnvironment;
 
 namespace HalloDoc.Controllers
 {
+    [CustomAuthorize("Patient")]
     public class PatientDashBoardController : Controller
     {
         private readonly ApplicationDbContext _context;

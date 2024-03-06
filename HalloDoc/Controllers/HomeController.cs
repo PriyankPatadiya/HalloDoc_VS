@@ -9,10 +9,12 @@ using System.Text;
 using System.IdentityModel.Tokens.Jwt;
 using Microsoft.IdentityModel.Tokens;
 using System.Security.Claims;
-
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Http;
 
 namespace HalloDoc.Controllers
 {
+
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
@@ -22,17 +24,21 @@ namespace HalloDoc.Controllers
         private readonly IEmailService _emailService;
         private readonly SymmetricSecurityKey _key;
         private readonly IConfiguration _config;
+        private readonly IPasswordHasher<LoginVM> _passwordHasher;
+        private readonly IJwtToken _jwttoken;
 
 
         //private readonly IJWTTokense
 
 
-        public HomeController(IConfiguration config, ApplicationDbContext db, ILogin login, ICreateAcc createacc, IEmailService emailService)
+        public HomeController(IConfiguration config, ApplicationDbContext db, ILogin login, ICreateAcc createacc, IEmailService emailService, IPasswordHasher<LoginVM> passwordHasher, IJwtToken token)
         {
             _context = db;
             _login = login;
             _createacc = createacc;
             _emailService = emailService;
+            _passwordHasher = passwordHasher;
+            _jwttoken = token;
             //_jwtTokenService = jwtservice
             _config = config;
             _key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]));
@@ -98,6 +104,14 @@ namespace HalloDoc.Controllers
                 if (user == true)
                 {
                     HttpContext.Session.SetString("Email", a.Email);
+                    var userid = _context.AspNetUsers.Where(u => u.Email == a.Email).First();
+                    int roleid = (int)_context.AspNetUserRoles.FirstOrDefault(u => u.UserId == userid.Id).RoleId;
+                    string role = _context.AspNetRoles.Where(i => i.Id == roleid).First().Name;
+                    HttpContext.Session.SetString("Role", role);
+
+                    string token = _jwttoken.generateJwtToken(a.Email, role);
+                    Response.Cookies.Append("jwt", token);
+
                     return RedirectToAction("PatientDashboard", "PatientDashBoard");
                 }
                 else

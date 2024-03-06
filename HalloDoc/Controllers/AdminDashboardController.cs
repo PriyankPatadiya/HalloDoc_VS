@@ -1,4 +1,5 @@
 ﻿using BAL.Interface;
+using BAL.Repository;
 using DAL.DataContext;
 using DAL.ViewModels;
 using Microsoft.AspNetCore.Mvc;
@@ -6,6 +7,7 @@ using IHostingEnvironment = Microsoft.AspNetCore.Hosting.IHostingEnvironment;
 
 namespace HalloDoc.Controllers
 {
+    [CustomAuthorize("Administrator")] 
     public class AdminDashboardController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -14,7 +16,8 @@ namespace HalloDoc.Controllers
         private readonly IHostingEnvironment _hostingEnvironment;
         private readonly IuploadFile _uploadfile;
         private readonly IPatientRequest _request;
-        public AdminDashboardController(ApplicationDbContext context, IAdminDashboard admin, IAdminActions action, IHostingEnvironment env, IuploadFile uploadfile, IPatientRequest request)
+        private readonly IEmailService _emailService;
+        public AdminDashboardController(ApplicationDbContext context, IAdminDashboard admin, IAdminActions action, IHostingEnvironment env, IuploadFile uploadfile, IPatientRequest request, IEmailService emailService)
         {
             _context = context;
             _admin = admin;
@@ -22,6 +25,7 @@ namespace HalloDoc.Controllers
             _hostingEnvironment = env;
             _uploadfile = uploadfile;
             _request = request;
+            _emailService = emailService;
         }
 
         public IActionResult MainPage()
@@ -184,6 +188,7 @@ namespace HalloDoc.Controllers
                 _uploadfile.uploadfile(file, fileName, path);
 
                 _request.Addrequestwisefile(fileName, requestid);
+                ViewBag.IsUpload = true;
                 return RedirectToAction("ViewDocuments", new { reeqid = requestid });
             }
         }
@@ -195,6 +200,8 @@ namespace HalloDoc.Controllers
 
             _context.RequestWiseFiles.Update(requestwisefile);
             _context.SaveChanges();
+
+            ViewBag.Isdelete = true;
             return RedirectToAction("ViewDocuments", new { reeqid = reqid });
         }
 
@@ -210,6 +217,24 @@ namespace HalloDoc.Controllers
             _context.SaveChanges();
             return Ok();
 
+        }
+
+        public IActionResult SendEmailWithAttachments(List<string> selectedFilesPath, string email, string reqid)
+        {
+            try
+            {
+                string to = email;
+                string subject = "Sending your documents";
+                string body = "body";
+                _emailService.SendMailWithAttachments(to, subject, body, selectedFilesPath);
+
+                ViewBag.PatientMailalert = true;
+                return RedirectToAction("ViewDocuments", new { reeqid = reqid });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
     }
 }

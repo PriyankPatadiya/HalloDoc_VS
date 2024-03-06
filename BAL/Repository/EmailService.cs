@@ -1,4 +1,5 @@
 ﻿using BAL.Interface;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore.Metadata.Conventions;
 using System.Net;
 using System.Net.Mail;
@@ -7,6 +8,13 @@ namespace BAL.Repository
 {
     public class EmailService : IEmailService
     {
+        private readonly IHostingEnvironment _hostingEnvironment;
+
+        public EmailService(IHostingEnvironment hostingEnvironment)
+        {
+            _hostingEnvironment = hostingEnvironment;
+        }
+
         public  void SendEmail(string to, string subject, string body)
         {
 
@@ -56,7 +64,8 @@ namespace BAL.Repository
 
             foreach(var file in filePaths)
             {
-                var attachment = new Attachment(file);
+                var filePath = Path.Combine(_hostingEnvironment.ContentRootPath, "wwwroot\\uploads", file);
+                var attachment = new Attachment(filePath);
                 mailMessage.Attachments.Add(attachment);
             }
 

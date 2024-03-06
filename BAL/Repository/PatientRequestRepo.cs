@@ -2,6 +2,7 @@
 using DAL.DataContext;
 using DAL.DataModels;
 using DAL.ViewModels;
+using Microsoft.AspNetCore.Identity;
 using System.Collections;
 
 namespace BAL.Repository
@@ -9,9 +10,11 @@ namespace BAL.Repository
     public class PatientRequestRepo : IPatientRequest
     {
         private readonly ApplicationDbContext _context;
-        public PatientRequestRepo(ApplicationDbContext context)
+        private readonly IPasswordHasher<PatientReqVM> _passwordHasher;
+        public PatientRequestRepo(ApplicationDbContext context, IPasswordHasher<PatientReqVM> passwordHasher)
         {
             _context = context;
+            _passwordHasher = passwordHasher;
         }   
        
         // PatientForm
@@ -27,7 +30,7 @@ namespace BAL.Repository
                 aspnetuser.Email = pInfo.Email;
                 aspnetuser.CreatedDate = DateTime.Now;
                 aspnetuser.UserName = pInfo.FirstName + pInfo.LastName;
-                aspnetuser.PasswordHash = pInfo.PasswordHash;
+                aspnetuser.PasswordHash = _passwordHasher.HashPassword(null , pInfo.PasswordHash);
                 aspnetuser.PhoneNumber = pInfo.PhoneNumber;
 
 

@@ -4,8 +4,8 @@ using BAL.Repository;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
-
-
+using Microsoft.AspNetCore.Identity;
+using DAL.ViewModels;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -20,6 +20,9 @@ builder.Services.AddScoped<IuploadFile, UploadFileRepo>();
 builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddScoped<IAdminDashboard, AdminServicesRepo>();
 builder.Services.AddScoped<IAdminActions , AdminActionRepo>();
+builder.Services.AddScoped<IPasswordHasher<PatientReqVM>, PasswordHasher<PatientReqVM>>();
+builder.Services.AddScoped<IPasswordHasher<LoginVM>, PasswordHasher<LoginVM>>();
+builder.Services.AddScoped<IJwtToken, JwtTokenServices>();
 //builder.Services.AddScoped<IJWTTokenservice, JWTTokenservicerepo>();
 
 

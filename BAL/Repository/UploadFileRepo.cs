@@ -28,9 +28,6 @@ namespace BAL.Repository
             {
                 file.CopyTo(stream);
             }
-        }
-
-        
-        
+        }        
     }
 }

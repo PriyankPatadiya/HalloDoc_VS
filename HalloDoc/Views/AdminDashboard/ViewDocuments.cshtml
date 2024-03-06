@@ -1,5 +1,37 @@
 ﻿@model DAL.ViewModels.ViewdocumentVM
 
+@if (ViewBag.IsUpload == true)
+{
+    <div class="alert alert-success" role="alert">
+        A simple success alert with <a href="#" class="alert-link">an example link</a>. Give it a click if you like.
+    </div>
+}
+
+@*     ----------Modal----------      *@
+
+
+<div class="modal fade" id="SendEmailAttachmentModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="exampleModalLabel">Send Files To Patient</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                
+                    <label > Send Mail with attachments </label>
+                    <input type="email" class="form-control shadow-none border0" id="PatientMail" aria-describedby="emailHelp">
+
+                <button type="button" id="SendEmailAttachment" class="btn btn-primary mt-3">Send</button>
+                    <button type="button" class="btn btn-secondary mt-3" data-bs-dismiss="modal">Close</button>
+                
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--     Modal over      -->
+
 <div class="bg-body-secondary " style="min-height: 82vh;">
     <div class="mx-auto   pb-3" style="width:70%; padding-top: 3%;">
         <div class="d-flex justify-content-between my-2">
@@ -44,7 +76,7 @@
                 <div class="d-flex justify-content-end">
                     <button type="button" id="downloadAllBtn" class="btn btn-primary btn text-decoration-none border border-info bg-white text-info shadow-none mx-2">Download All</button>
                     <button type="button" id="deleteAllBtn"  class="btn btn-primary btn text-decoration-none border border-info bg-white text-info shadow-none mx-2">Delete All</button>
-                    <button type="button" id="SendEmailAttachment" class="btn btn-primary btn text-decoration-none border border-info bg-white text-info shadow-none ms-2">Send mail</button>
+                    <button type="button" class="btn btn-primary btn text-decoration-none border border-info bg-white text-info shadow-none ms-2" data-bs-toggle="modal" data-bs-target="#SendEmailAttachmentModal">Send mail</button>
                 </div>
             </div>
         </div>
@@ -179,10 +211,33 @@
         document.getElementById("SendEmailAttachment").addEventListener("click", function () {
             var selectedFilesPath = [];
             var checkboxes = document.querySelectorAll('.checks:checked');
+            var email = document.getElementById("PatientMail").value;   
+            var reqid = @Model.requestid;
+
             checkboxes.forEach(function (checkbox) {
                 selectedFilesPath.push(checkbox.dataset.files);
             });
 
+            if (selectedFilesPath.length === 0) {
+                alert('please select at least one file. ');
+                return;
+            }
+            else {
+                $.ajax({
+                    type: "POST",
+                    url: "/AdminDashboard/SendEmailWithAttachments",
+                    data: { selectedFilesPath: selectedFilesPath, email: email, reqid: reqid },
+
+                    success: function (data) {
+                        window.location.href = '/AdminDashboard/ViewDocuments/?reeqid=' + @Model.requestid
+                    },
+                    error: function (error) {
+                        alert("can't delete files....")
+                        return;
+                    }
+
+                });
+            }
         });
 
         document.addEventListener("DOMContentLoaded", function () {
