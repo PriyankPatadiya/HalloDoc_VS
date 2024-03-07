@@ -17,7 +17,7 @@ public partial class HealthProfessionalType
     public string ProfessionName { get; set; } = null!;
 
     [Column(TypeName = "timestamp without time zone")]
-    public DateTime CreatedDate { get; set; }
+    public DateTime? CreatedDate { get; set; }
 
     [Column(TypeName = "bit(1)")]
     public BitArray? IsActive { get; set; }

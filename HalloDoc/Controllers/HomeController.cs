@@ -86,6 +86,8 @@ namespace HalloDoc.Controllers
         public IActionResult Logout()
         {
             HttpContext.Session.Remove("Email");
+            HttpContext.Session.Remove("Role");
+            Response.Cookies.Delete("jwt");
             return RedirectToAction("PatientLoginn");
         }
 
@@ -112,7 +114,14 @@ namespace HalloDoc.Controllers
                     string token = _jwttoken.generateJwtToken(a.Email, role);
                     Response.Cookies.Append("jwt", token);
 
-                    return RedirectToAction("PatientDashboard", "PatientDashBoard");
+                    if(roleid == 1)
+                    {
+                        return RedirectToAction("MainPage", "AdminDashboard");
+                    }
+                    if(roleid == 2)
+                    {
+                        return RedirectToAction("PatientDashboard", "PatientDashBoard");
+                    }
                 }
                 else
                 {

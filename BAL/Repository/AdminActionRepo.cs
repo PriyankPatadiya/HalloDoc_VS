@@ -110,6 +110,7 @@ namespace BAL.Repository
             model.TransferNotes = transferedNotes;
             model.AdminNotes = _context.RequestNotes.FirstOrDefault(s => s.RequestId == id).AdminNotes;
             model.PhysicianNotes = _context.RequestNotes.FirstOrDefault(s => s.RequestId == id).PhysicianNotes;
+            model.RequestId = id;
             return model;
         }
         public void BlockCase(int requestId, string reason)
@@ -143,5 +144,14 @@ namespace BAL.Repository
             }
         }
 
+        public List<HealthProfessional> getVenbypro(string ProfessionId)
+        {
+            var result = _context.HealthProfessionals.Where(u => u.Profession == int.Parse(ProfessionId)).ToList();
+            //    var result = (from vendors in _context.HealthProfessionals
+            //                 join prof in _context.HealthProfessionalTypes on
+            //                 vendors.Profession equals prof.HealthProfessionalId into professionalTypes
+            //                 select vendors).Where(u => u.Profession == int.Parse(ProfessionId)).ToList();
+            return result;
+        }
     }
 }

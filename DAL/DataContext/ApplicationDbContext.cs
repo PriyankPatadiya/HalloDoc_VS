@@ -313,7 +313,7 @@ public partial class ApplicationDbContext : DbContext
         {
             entity.HasKey(e => e.RequestNotesId).HasName("RequestNotes_pkey");
 
-            entity.HasOne(d => d.Request).WithMany(p => p.RequestNotes)
+            entity.HasOne(d => d.Request).WithOne(p => p.RequestNote)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("RequestNotes_RequestId_fkey");
         });

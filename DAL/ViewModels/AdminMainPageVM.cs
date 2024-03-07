@@ -11,6 +11,7 @@ namespace DAL.ViewModels
         public ViewNotesVM? NotesVM { get; set; }   
 
         public ViewdocumentVM? DocumentVM { get; set; }
+        public SendOrderVM? SendOrderVM { get; set; }
 
     }
     public enum PageName
@@ -18,6 +19,7 @@ namespace DAL.ViewModels
         Dashboard , 
         ViewCaseForm ,
         ViewNotes,
-        viewdocument
+        viewdocument,
+        SendOrder
     }
 }

@@ -106,7 +106,7 @@ public partial class Request
     public virtual ICollection<RequestConcierge> RequestConcierges { get; set; } = new List<RequestConcierge>();
 
     [InverseProperty("Request")]
-    public virtual ICollection<RequestNote> RequestNotes { get; set; } = new List<RequestNote>();
+    public virtual RequestNote? RequestNote { get; set; }
 
     [InverseProperty("Request")]
     public virtual ICollection<RequestStatusLog> RequestStatusLogs { get; set; } = new List<RequestStatusLog>();

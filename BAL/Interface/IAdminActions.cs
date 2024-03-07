@@ -19,5 +19,6 @@ namespace BAL.Interface
 
         // Block Case
         public void BlockCase(int requestId, string reason);
+        public List<HealthProfessional> getVenbypro(string ProfessionId);
     }
 }

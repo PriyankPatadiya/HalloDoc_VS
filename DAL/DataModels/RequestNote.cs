@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace DAL.DataModels;
 
+[Index("RequestId", Name = "UniqueKey_Requestid", IsUnique = true)]
 public partial class RequestNote
 {
     [Key]
@@ -49,6 +50,6 @@ public partial class RequestNote
     public string? AdministrativeNotes { get; set; }
 
     [ForeignKey("RequestId")]
-    [InverseProperty("RequestNotes")]
+    [InverseProperty("RequestNote")]
     public virtual Request Request { get; set; } = null!;
 }

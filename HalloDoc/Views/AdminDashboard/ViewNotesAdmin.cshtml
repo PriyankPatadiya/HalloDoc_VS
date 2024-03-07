@@ -19,7 +19,7 @@
     </div>
     <div class="row justify-content-center mx-0">
         <div class="col-10 col-md-8 col-lg-6">
-            <form>
+            <form asp-action="addAdminnote" asp-route-reqid="@Model.RequestId" method="post" enctype="multipart/form-data">
                 <div class="row justify-content-between">
                     <div class="col-md-6 my-2">
                         <div class=" rounded shadow p-4 bg-white">
@@ -64,9 +64,9 @@
                 </div>
                 <div class="row">
                     <div class="col-12 shadow my-3 bg-white">
-
+                        
                         <div class="form-floating my-3">
-                            <textarea class="form-control shadow-none " placeholder="Patient Notes" id="patientNotes"
+                            <textarea asp-for="AdminNotes" class="form-control shadow-none " placeholder="Patient Notes" id="patientNotes"
                                       style="height: 15vh;"></textarea>
                             <label class="text-muted floating-label ms-2">
                                 Additional Notes

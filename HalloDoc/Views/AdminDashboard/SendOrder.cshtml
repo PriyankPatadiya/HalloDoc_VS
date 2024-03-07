@@ -1,0 +1,91 @@
+﻿@model DAL.ViewModels.SendOrderVM
+
+<div class="bg-light" style="min-height: 82vh;">
+    <div class="mx-auto my-3 py-3 bg-light" style="width:70%;">
+        <div class="d-flex justify-content-between align-items-center my-2 py-auto bg-light">
+            <h3>Send Order</h3><br />
+            <a asp-action="PatientDashboard">
+                <button type="button" class="btn btn-primary btn text-decoration-none border border-info bg-transparent text-info shadow py-2 px-3 ">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-left" viewBox="0 0 16 16">
+                        <path fill-rule="evenodd" d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0" />
+                    </svg>
+                    Back
+                </button>
+            </a>
+        </div>
+        <div class="my-3 py-3 px-4 bg-white rounded-2 shadow">
+            <form>
+                <div class="row gx-4">
+                    
+                    <div class="col-sm-12 col-md-12 col-lg-6 form-floating my-3 ">
+                        <select class="form-select py-3 form-select shadow-none" aria-label="Select Profession" id="SelectProfession">
+                            <option value="0" selected>Select Profession</option>
+                            @foreach(var item in Model.Professions)
+                            {
+                                <option value ="@item.HealthProfessionalId">@item.ProfessionName</option>
+                            }
+                        </select>
+                        <span class="text-danger " style="font-size: 11px;"></span>
+                    </div>
+                    <div class="col-sm-12 col-md-12 col-lg-6 form-floating my-3 ">
+                        <select class="form-select py-3 form-select shadow-none" aria-label="Select Profession" id="SelectBusiness">
+                            <option selected>Business</option>
+                        </select>
+                        <span class="text-danger " style="font-size: 11px;"></span>
+                    </div>
+                    <div class="col-sm-12 col-md-12 col-lg-6 form-floating my-3">
+                        <input type="text"
+                               @*asp-for="BirthDate"*@
+                               class="form-control"
+                               id="Vencontact"
+                               placeholder="Business Contact" />
+                        <label for="floatingInput" class="ms-2">Business Contact</label>
+                        @*<span asp-validation-for="BirthDate" class="text-danger" style="font-size: 11px;">  </span>*@
+                    </div>
+                    <div class="col-sm-12 col-md-12 col-lg-6 form-floating my-3">
+                        <input type="email"
+                               @*asp-for="BirthDate"*@
+                               class="form-control"
+                               id="Venemail"
+                               placeholder="Email" />
+                        <label for="floatingInput" class="ms-2">Email</label>
+                        @*<span asp-validation-for="BirthDate" class="text-danger" style="font-size: 11px;">  </span>*@
+                    </div>
+                    <div class="col-sm-12 col-md-12 col-lg-6 form-floating my-3">
+                        <input type="text"
+                               @*asp-for="BirthDate"*@
+                               class="form-control"
+                               id="VenFax"
+                               placeholder="Fax Number" />
+                        <label for="floatingInput" class="ms-2">Fax Number</label>
+                        @*<span asp-validation-for="BirthDate" class="text-danger" style="font-size: 11px;">  </span>*@
+                    </div>
+                    <div class="form-floating my-3 control-group col-12">
+                        <textarea class="form-control"
+                                  placeholder="Leave a comment here"
+                                  id="floatingTextarea2"
+                                  style="height: 100px"></textarea>
+                        <label for="floatingTextarea2 control-label" class="ms-2 floating-label">Prescription Of Order details</label>
+                    </div>
+                    <div class="col-sm-12 col-md-12 col-lg-6 form-floating my-3">
+                        <input type="text"
+                        @*asp-for="BirthDate"*@
+                               class="form-control"
+                               id="floatingInput"
+                               placeholder="Date Of Birth" />
+                        <label for="floatingInput" class="ms-2">Date Of Birth</label>
+                        @*<span asp-validation-for="BirthDate" class="text-danger" style="font-size: 11px;">  </span>*@
+                    </div>
+                    <div class="d-flex justify-content-end my-3">
+                        <button onclick="" type="submit" class="btn btn-info p-3 fw-semibold me-4">
+                            submit
+                        </button>
+                        <button class="btn btn-outline-info p-3 fw-semibold">
+                            cancel
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

@@ -74,7 +74,6 @@ namespace BAL.Repository
 
 
                 var requestClient = new RequestClient();
-
                 requestClient.RequestId = request.RequestId;
                 requestClient.FirstName = pInfo.FirstName;
                 requestClient.LastName = pInfo.LastName;
@@ -89,10 +88,16 @@ namespace BAL.Repository
                 requestClient.StrMonth = user.StrMonth;
                 requestClient.RegionId = user.RegionId;
 
-
-
-
                 _context.RequestClients.Add(requestClient);
+                _context.SaveChanges();
+
+                var reqnotes = new RequestNote();
+                reqnotes.RequestId = request.RequestId;
+                reqnotes.AdminNotes = "-";
+                reqnotes.CreatedDate = DateTime.Now;
+                reqnotes.CreatedBy = request.FirstName + request.LastName;
+                reqnotes.PhysicianNotes = "-";
+                _context.RequestNotes.Add(reqnotes);
                 _context.SaveChanges();
             }
             else
@@ -129,6 +134,15 @@ namespace BAL.Repository
 
 
                 _context.RequestClients.Add(requestClient);
+                _context.SaveChanges();
+
+                var reqnotes = new RequestNote();
+                reqnotes.RequestId = request.RequestId;
+                reqnotes.AdminNotes = "-";
+                reqnotes.CreatedDate = DateTime.Now;
+                reqnotes.CreatedBy = request.FirstName + request.LastName;
+                reqnotes.PhysicianNotes = "-";
+                _context.RequestNotes.Add(reqnotes);
                 _context.SaveChanges();
             }
 

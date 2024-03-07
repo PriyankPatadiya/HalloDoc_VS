@@ -55,6 +55,16 @@ namespace BAL.Repository
 
             _context.RequestClients.Add(requestClient);
             _context.SaveChanges();
+
+            var reqnotes = new RequestNote();
+            reqnotes.RequestId = request.RequestId;
+            reqnotes.AdminNotes = "-";
+            reqnotes.CreatedDate = DateTime.Now;
+            reqnotes.CreatedBy = request.FirstName + request.LastName;
+            reqnotes.PhysicianNotes = "-";
+
+            _context.RequestNotes.Add(reqnotes);
+            _context.SaveChanges();
         }
 
         
@@ -109,6 +119,15 @@ namespace BAL.Repository
             _context.Concierges.Add(concierge);
             _context.SaveChanges();
 
+            var reqnotes = new RequestNote();
+            reqnotes.RequestId = request.RequestId;
+            reqnotes.AdminNotes = "-";
+            reqnotes.CreatedDate = DateTime.Now;
+            reqnotes.CreatedBy = request.FirstName + request.LastName;
+            reqnotes.PhysicianNotes = "-";
+
+            _context.RequestNotes.Add(reqnotes);
+            _context.SaveChanges();
         }
 
 
@@ -170,7 +189,16 @@ namespace BAL.Repository
 
             _context.RequestBusinesses.Add(requestBusiness);
             _context.SaveChanges();
-   
+
+
+            var reqnotes = new RequestNote();
+            reqnotes.RequestId = request.RequestId;
+            reqnotes.AdminNotes = "-";
+            reqnotes.CreatedDate = DateTime.Now;
+            reqnotes.CreatedBy = request.FirstName + request.LastName;
+            reqnotes.PhysicianNotes = "-";
+            _context.RequestNotes.Add(reqnotes);
+            _context.SaveChanges();
         }
 
         public string GenerateConfirmationNumber(OthersReqVM model)

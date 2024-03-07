@@ -1,6 +1,7 @@
 ﻿using BAL.Interface;
 using BAL.Repository;
 using DAL.DataContext;
+using DAL.DataModels;
 using DAL.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using IHostingEnvironment = Microsoft.AspNetCore.Hosting.IHostingEnvironment;
@@ -106,6 +107,18 @@ namespace HalloDoc.Controllers
             }
 
             return PartialView(partialviewpath, result.ToList());
+        }
+
+        public IActionResult SendOrder()
+        {
+            AdminMainPageVM MainModel = new AdminMainPageVM()
+            {
+                PageName = PageName.SendOrder
+            };
+            SendOrderVM SendOrderVM = new SendOrderVM();
+            SendOrderVM.Professions = _context.HealthProfessionalTypes.ToList();
+            MainModel.SendOrderVM = SendOrderVM;
+            return View("MainPage", MainModel);
         }
 
         [HttpPost]
@@ -235,6 +248,44 @@ namespace HalloDoc.Controllers
             {
                 return BadRequest(ex.Message);
             }
+        }
+        public JsonResult CheckSession()
+        {
+            var request = HttpContext.Request;
+            var token = request.Cookies["jwt"];
+            if (string.IsNullOrEmpty(token))
+            {
+                return Json(new { sessionExists = false });
+            }
+            else
+            {
+                return Json(new { sessionExists = true });
+            }
+        }
+
+        public IActionResult filterVenByPro(string ProfessionId)
+        {
+            var list = _adminActions.getVenbypro(ProfessionId);
+            return Json(list);
+        }
+        public IActionResult getvendordata(string businessId)
+        {
+            var data = _context.HealthProfessionals.Where(u => u.VendorId == int.Parse(businessId));
+            return Json(data);
+        }
+
+        [HttpPost]
+        public IActionResult addAdminnote(ViewNotesVM model, int reqid)
+        {
+            RequestNote notes = _context.RequestNotes.FirstOrDefault(u => u.RequestId == reqid);
+            if(notes != null)
+            {
+                notes.AdminNotes = model.AdminNotes;
+                _context.RequestNotes.Update(notes);
+                _context.SaveChanges();
+                return RedirectToAction("ViewNotesAdmin");
+            }
+            return RedirectToAction("ViewNotesAdmin");
         }
     }
 }

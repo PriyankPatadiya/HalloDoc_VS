@@ -27,6 +27,14 @@ $(document).ready(function () {
         var RegionId = $("#Regionnid").val();
         filterPhysicianByRegion(RegionId);
     });
+    $("#SelectProfession").on("change", function () {
+        var ProfessionId = $("#SelectProfession").val();
+        filterVendorsByProfession(ProfessionId);
+    });
+    $('#SelectBusiness').on("change", function () {
+        var businessId = $('#SelectBusiness').val();
+        getVendordata(businessId);
+    });
     $(".Status-btn").click(function () {
         $(".Status-btn").removeClass('active');
         $(this).addClass('active');
@@ -82,30 +90,39 @@ $(document).ready(function () {
 
     function ChangeTable(partialviewpath) {
 
-        var Searchstring = $("#SearchString").val();
-        var selectButton = $(".buttonOfFilter.active").data("value");
-        var StatusButton = $(".Status-btn.active").data("id");
-        var SelectedStateId = $("#SelectedStateId").val();
-        
+        $.get('/AdminDashboard/CheckSession', function (sessioncheck) {
+            if (sessioncheck.sessionExists) {
 
-        if (Searchstring == " " && selectButton == " " && SelectedStateId == "0") {
-            console.log('hii')
-            location.reload();
-        }
-        else {
-            $.ajax({
-                type: "GET",
-                url: "/AdminDashboard/SearchByName",
-                data: { Searchstring: Searchstring, selectButton: selectButton, StatusButton: StatusButton, SelectedStateId: SelectedStateId, partialviewpath: partialviewpath },
+                var Searchstring = $("#SearchString").val();
+                var selectButton = $(".buttonOfFilter.active").data("value");
+                var StatusButton = $(".Status-btn.active").data("id");
+                var SelectedStateId = $("#SelectedStateId").val();
+                //var token = getCookie("jwt");
 
-                success: function (data) {
-                    console.log(data)
-                    $(".SearchPartial").html(data);
-                    
-                },
+                if (Searchstring == " " && selectButton == " " && SelectedStateId == "0" && token == null) {
+                    console.log('hii')
+                    location.reload();
+                }
 
-            });
-        }
+                else {
+                    $.ajax({
+                        type: "GET",
+                        url: "/AdminDashboard/SearchByName",
+                        data: { Searchstring: Searchstring, selectButton: selectButton, StatusButton: StatusButton, SelectedStateId: SelectedStateId, partialviewpath: partialviewpath },
+
+                        success: function (data) {
+                            console.log(data)
+                            $(".SearchPartial").html(data);
+                        },
+
+                    });
+
+                }
+            }
+            else {
+                window.location.href = "/PatientLoginn";
+            }
+        });
     }
 
     function filterPhysicianByRegion(RegionId) {
@@ -121,10 +138,47 @@ $(document).ready(function () {
 
                 success: function (data) {
                     $('#physicianDrop').empty();
+                    $('#physicianDrop').append($('<option>').text("Physician").attr('value', 0));
                     $.each(data, function (index, item) {
                         $('#physicianDrop').append($('<option>').text(item.firstName).attr('value', item.physicianId));
                     });
                     $('#physicianDrop option:first').prop('selected', true);
+                }
+            });
+        }
+    }
+
+    function filterVendorsByProfession(ProfessionId) {
+
+        if (ProfessionId != "0") {
+            $.ajax({
+                type: "GET",
+                url: "/AdminDashboard/filterVenByPro",
+                data: { ProfessionId: ProfessionId },
+
+                success: function (data) {
+                    $('#SelectBusiness').empty();
+                    $('#SelectBusiness').append($('<option>').text("Business").attr('value', 0));
+                    $.each(data, function (index, item) {
+                        $('#SelectBusiness').append($('<option>').text(item.vendorName).attr('value', item.vendorId));
+                    });
+                    $('#SelectBusiness option:first').prop('selected', true);
+                }
+            });
+        }
+    }
+
+    function getVendordata(businessId) {
+        if (businessId != 0) {
+            $.ajax({
+                type: "GET",
+                url: "/AdminDashboard/getvendordata",
+                data: { businessId: businessId },
+                success: function (data) {
+                    console.log(data);
+                    $("#Vencontact").val(data[0].businessContact);
+                    $("#Venemail").val(data[0].email);
+                    $("#VenFax").val(data[0].faxNumber);
                 }
             });
         }
