@@ -14,11 +14,11 @@
             </a>
         </div>
         <div class="my-3 py-3 px-4 bg-white rounded-2 shadow">
-            <form>
+            <form method="post">
                 <div class="row gx-4">
-                    
+                    <input asp-for="@Model.requestid" hidden />
                     <div class="col-sm-12 col-md-12 col-lg-6 form-floating my-3 ">
-                        <select class="form-select py-3 form-select shadow-none" aria-label="Select Profession" id="SelectProfession">
+                        <select class="form-select py-3 form-select shadow-none" asp-for="profession" aria-label="Select Profession" id="SelectProfession">
                             <option value="0" selected>Select Profession</option>
                             @foreach(var item in Model.Professions)
                             {
@@ -28,14 +28,14 @@
                         <span class="text-danger " style="font-size: 11px;"></span>
                     </div>
                     <div class="col-sm-12 col-md-12 col-lg-6 form-floating my-3 ">
-                        <select class="form-select py-3 form-select shadow-none" aria-label="Select Profession" id="SelectBusiness">
+                        <select class="form-select py-3 form-select shadow-none" asp-for="vendorid" aria-label="Select Profession" id="SelectBusiness">
                             <option selected>Business</option>
                         </select>
                         <span class="text-danger " style="font-size: 11px;"></span>
                     </div>
                     <div class="col-sm-12 col-md-12 col-lg-6 form-floating my-3">
                         <input type="text"
-                               @*asp-for="BirthDate"*@
+                               asp-for="BusinessContact"
                                class="form-control"
                                id="Vencontact"
                                placeholder="Business Contact" />
@@ -44,7 +44,7 @@
                     </div>
                     <div class="col-sm-12 col-md-12 col-lg-6 form-floating my-3">
                         <input type="email"
-                               @*asp-for="BirthDate"*@
+                               asp-for="Email"
                                class="form-control"
                                id="Venemail"
                                placeholder="Email" />
@@ -53,7 +53,7 @@
                     </div>
                     <div class="col-sm-12 col-md-12 col-lg-6 form-floating my-3">
                         <input type="text"
-                               @*asp-for="BirthDate"*@
+                               asp-for="Fax"
                                class="form-control"
                                id="VenFax"
                                placeholder="Fax Number" />
@@ -62,22 +62,23 @@
                     </div>
                     <div class="form-floating my-3 control-group col-12">
                         <textarea class="form-control"
+                                  asp-for="prescription"
                                   placeholder="Leave a comment here"
                                   id="floatingTextarea2"
                                   style="height: 100px"></textarea>
                         <label for="floatingTextarea2 control-label" class="ms-2 floating-label">Prescription Of Order details</label>
                     </div>
                     <div class="col-sm-12 col-md-12 col-lg-6 form-floating my-3">
-                        <input type="text"
-                        @*asp-for="BirthDate"*@
+                        <input type="number"
+                                asp-for="Noofretail"
                                class="form-control"
                                id="floatingInput"
-                               placeholder="Date Of Birth" />
-                        <label for="floatingInput" class="ms-2">Date Of Birth</label>
+                               placeholder="" />
+                        <label for="floatingInput" class="ms-2">No. Of Retail</label>
                         @*<span asp-validation-for="BirthDate" class="text-danger" style="font-size: 11px;">  </span>*@
                     </div>
                     <div class="d-flex justify-content-end my-3">
-                        <button onclick="" type="submit" class="btn btn-info p-3 fw-semibold me-4">
+                        <button type="submit" class="btn btn-info p-3 fw-semibold me-4">
                             submit
                         </button>
                         <button class="btn btn-outline-info p-3 fw-semibold">

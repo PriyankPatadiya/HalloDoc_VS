@@ -37,6 +37,7 @@ $(document).ready(function () {
     });
     $(".Status-btn").click(function () {
         $(".Status-btn").removeClass('active');
+        $(".Status-btn").removeClass('activee');
         $(this).addClass('active');
         
 
@@ -44,6 +45,7 @@ $(document).ready(function () {
 
 
         if (StatusButton == "1") {
+            $("#statuslink1").addClass("activee");
             $("#statusspan").html("(New)");
             $(".triangle").css('display', 'none');
             $("#triangle1").css('display', 'block').css('border-top-color', '#203f9a');
@@ -51,6 +53,7 @@ $(document).ready(function () {
             ChangeTable("AdminDashboardNew");
         }
         else if (StatusButton == "2") {
+            $("#statuslink2").addClass("activee")
             $("#statusspan").html("(Pending)");
             $(".triangle").css('display', 'none');
             $("#triangle2").css('display', 'block').css('border-top-color', '#00adef');
@@ -58,6 +61,7 @@ $(document).ready(function () {
             ChangeTable("AdminDashboardPending");
         }
         else if (StatusButton == "3") {
+            $("#statuslink3").addClass("activee")
             $("#statusspan").html("(Active)");
             $(".triangle").css('display', 'none');
             $("#triangle3").css('display', 'block').css('border-top-color', '#228c20');
@@ -65,6 +69,7 @@ $(document).ready(function () {
             ChangeTable("AdminDashboardActive");
         }
         else if (StatusButton == "4") {
+            $("#statuslink4").addClass("activee")
             $("#statusspan").html("(Conclude)");
             $(".triangle").css('display', 'none');
             $("#triangle4").css('display', 'block').css('border-top-color', '#da0f82');
@@ -72,6 +77,7 @@ $(document).ready(function () {
             ChangeTable("AdminDashboardConclude");
         }
         else if (StatusButton == "5") {
+            $("#statuslink5").addClass("activee")
             $("#statusspan").html("(ToClose)");
             $(".triangle").css('display', 'none');
             $("#triangle5").css('display', 'block').css('border-top-color', '#0370d7');
@@ -79,6 +85,7 @@ $(document).ready(function () {
             ChangeTable("AdminDashboardToClose");
         }
         else {
+            $("#statuslink6").addClass("activee");
             $("#statusspan").html("(Unpaid)");
             $(".triangle").css('display', 'none');
             $("#triangle6").css('display', 'block').css('border-top-color', '#9966cd');
@@ -127,9 +134,6 @@ $(document).ready(function () {
 
     function filterPhysicianByRegion(RegionId) {
        
-        console.log("hello")
-        console.log("hello")
-        console.log("hello")
         if (RegionId != "0") {
             $.ajax({
                 type: "GET",
@@ -138,7 +142,7 @@ $(document).ready(function () {
 
                 success: function (data) {
                     $('#physicianDrop').empty();
-                    $('#physicianDrop').append($('<option>').text("Physician").attr('value', 0));
+                    $('#physicianDrop').append($('<option>').text("Select Physician").attr('value', 0));
                     $.each(data, function (index, item) {
                         $('#physicianDrop').append($('<option>').text(item.firstName).attr('value', item.physicianId));
                     });
@@ -157,6 +161,9 @@ $(document).ready(function () {
                 data: { ProfessionId: ProfessionId },
 
                 success: function (data) {
+                    $("#Vencontact").val('');
+                    $("#Venemail").val('');
+                    $("#VenFax").val('');   
                     $('#SelectBusiness').empty();
                     $('#SelectBusiness').append($('<option>').text("Business").attr('value', 0));
                     $.each(data, function (index, item) {
@@ -181,6 +188,11 @@ $(document).ready(function () {
                     $("#VenFax").val(data[0].faxNumber);
                 }
             });
+        }
+        else {
+            $("#Vencontact").val('');
+            $("#Venemail").val('');
+            $("#VenFax").val('');
         }
     }
 });

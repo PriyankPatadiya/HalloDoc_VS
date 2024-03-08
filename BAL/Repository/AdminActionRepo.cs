@@ -2,7 +2,9 @@
 using DAL.DataContext;
 using DAL.DataModels;
 using DAL.ViewModels;
+using Org.BouncyCastle.Asn1.Mozilla;
 using Org.BouncyCastle.Asn1.Ocsp;
+using Org.BouncyCastle.Ocsp;
 
 
 namespace BAL.Repository
@@ -152,6 +154,33 @@ namespace BAL.Repository
             //                 vendors.Profession equals prof.HealthProfessionalId into professionalTypes
             //                 select vendors).Where(u => u.Profession == int.Parse(ProfessionId)).ToList();
             return result;
+        }
+
+        public bool transferNotes(int requestid, int phyid, string transnotes)
+        {
+            var request = _context.Requests.Where(u => u.RequestId == requestid).FirstOrDefault();
+            if (request != null)
+            {
+                request.ModifiedDate = DateTime.Now;
+                request.PhysicianId = phyid;
+                _context.Requests.Update(request);
+                _context.SaveChanges();
+
+                RequestStatusLog log = new RequestStatusLog();
+                log.Status = request.Status;
+                log.RequestId = requestid;
+                log.PhysicianId = phyid;
+                log.Notes = transnotes;
+                log.CreatedDate = DateTime.Now;
+                _context.RequestStatusLogs.Add(log);
+                _context.SaveChanges();
+
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
     }
 }

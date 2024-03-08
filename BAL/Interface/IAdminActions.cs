@@ -20,5 +20,8 @@ namespace BAL.Interface
         // Block Case
         public void BlockCase(int requestId, string reason);
         public List<HealthProfessional> getVenbypro(string ProfessionId);
+
+        // Transfer Notes
+        public bool transferNotes(int requestid, int phyid, string transnotes);
     }
 }

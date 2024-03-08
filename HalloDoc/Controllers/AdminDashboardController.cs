@@ -96,20 +96,16 @@ namespace HalloDoc.Controllers
         {
 
             var result = _admin.GetRequestsQuery(StatusButton);
-
-
             result = result.Where(s => (String.IsNullOrEmpty(SearchString) || s.PatientName.Contains(SearchString)) && (String.IsNullOrEmpty(selectButton) || s.requestId == int.Parse(selectButton)) && (SelectedStateId == "0" || s.regionId == int.Parse(SelectedStateId)));
-
 
             if (!String.IsNullOrEmpty(StatusButton))
             {
                 ViewBag.Status = int.Parse(StatusButton);
             }
-
             return PartialView(partialviewpath, result.ToList());
         }
 
-        public IActionResult SendOrder()
+        public IActionResult SendOrder(int requestid)
         {
             AdminMainPageVM MainModel = new AdminMainPageVM()
             {
@@ -117,6 +113,7 @@ namespace HalloDoc.Controllers
             };
             SendOrderVM SendOrderVM = new SendOrderVM();
             SendOrderVM.Professions = _context.HealthProfessionalTypes.ToList();
+            SendOrderVM.requestid = requestid;
             MainModel.SendOrderVM = SendOrderVM;
             return View("MainPage", MainModel);
         }
@@ -286,6 +283,41 @@ namespace HalloDoc.Controllers
                 return RedirectToAction("ViewNotesAdmin");
             }
             return RedirectToAction("ViewNotesAdmin");
+        }
+
+        [HttpPost]
+        public IActionResult SendOrder(SendOrderVM model)
+        {
+            OrderDetail order = new OrderDetail
+            {
+                RequestId = model.requestid,
+                VendorId = model.vendorid,
+                FaxNumber = model.Fax,
+                Email = model.Email,
+                BusinessContact = model.BusinessContact,
+                Prescription = model.prescription,
+                NoOfRefill = model.Noofretail,
+                CreatedDate = DateTime.Now,
+            };
+            _context.OrderDetails.Add(order);
+            _context.SaveChanges();
+            return RedirectToAction("MainPage");
+        }
+
+        [HttpPost]
+        public IActionResult TransferNotes(int reeqid)
+        {
+            int phyid = int.Parse(Request.Form["physicianId"]);
+            string transNote = Request.Form["Notes"];
+
+            if (_adminActions.transferNotes(reeqid, phyid, transNote) == true)
+            { 
+                return RedirectToAction("MainPage");
+            }
+            else
+            {
+                return Ok("Cannot Add TransferNotes");
+            }
         }
     }
 }

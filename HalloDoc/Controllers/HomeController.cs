@@ -27,7 +27,6 @@ namespace HalloDoc.Controllers
         private readonly IPasswordHasher<LoginVM> _passwordHasher;
         private readonly IJwtToken _jwttoken;
 
-
         //private readonly IJWTTokense
 
 
@@ -54,17 +53,14 @@ namespace HalloDoc.Controllers
         {
             return View();
         }
-
         public IActionResult PatientSite()
         {
             return View();
         }
-
         public IActionResult PatientLoginn()
         {
             return View();
         }
-
         public IActionResult PatientDashboard()
         {
             return View();

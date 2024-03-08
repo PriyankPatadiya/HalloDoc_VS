@@ -61,7 +61,7 @@ namespace BAL.Repository
                 context.Result = new RedirectToRouteResult(new RouteValueDictionary(new { Controller = "Home", Action = "PatientLoginn" }));
                 return;
             }
-
+                     
             var request = context.HttpContext.Request;
             var token = request.Cookies["jwt"];
             // Redirect to login if not logged in 
