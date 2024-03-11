@@ -182,5 +182,34 @@ namespace BAL.Repository
                 return false;
             }
         }
+
+        public bool ClearCase(int requestId)
+        {
+            var request = _context.Requests.Where(u => u.RequestId == requestId).FirstOrDefault();
+
+            if (request != null)
+            {
+                request.Status = 10;
+                request.ModifiedDate = DateTime.Now;
+
+                _context.Requests.Update(request);
+                _context.SaveChanges();
+
+                RequestStatusLog log = new RequestStatusLog
+                {
+                    RequestId = requestId,
+                    CreatedDate = DateTime.Now,
+                    Status = 10,
+
+                };
+                _context.RequestStatusLogs.Add(log);
+                _context.SaveChanges();
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
     }
 }

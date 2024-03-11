@@ -1,0 +1,44 @@
+﻿
+@*modal*@
+
+<div class="modal fade" id="cancelagreementmodal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header bg-info">
+                <h1 class="modal-title fs-5  text-white" id="exampleModalLabel">Cancel Confirmation</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form asp-action="CancleReviewAgreement" asp-route-requestid="@ViewBag.Requestid">
+                <div class="modal-body">
+                    <p>@ViewBag.Name</p>
+                    <div class="form-floating mt-3">
+                    <textarea class="form-control" name="PatientNote" placeholder="Leave a comment here" id="floatingTextarea2" style="height: 100px"></textarea>
+                        <label for="floatingTextarea2">provide Additional Notes</label>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <div class="d-flex justify-content-end mt-3">
+                        <button type="submit" class="btn btn-info">Confirm</button>
+                        <button type="button" data-bs-dismiss="modal" class="btn btn-outline-info ms-3">cancle</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid mx-auto my-5" style="width: 70%;" >
+    
+    <section>To Provide best medical service, we cannot determine the cost right away. If you agree to our service, so we will provide care and follow-up untill all care is completed. So with this points,if you like us to provide care to you click "Agree" and we'll get started immediately, if you do not agree simply click "Cancel"'</section>
+    <div class="row mt-5">
+        <div class="col-6 text-center">
+            @*<form asp-action="Agree" asp-controller="Request" method="post" asp-route-id="@Model.RequestId">*@
+
+            <a asp-action="ReviewAgreementPost" asp-route-requestid="@ViewBag.Requestid"><button class="btn btn-success text-center text-white" type="button">IAgree</button></a>
+            @*</form>*@
+        </div>
+        <div class="col-6 text-center">
+            <button class="btn btn-danger text-center text-white" data-bs-toggle="modal" data-bs-target="#cancelagreementmodal">Cancel</button>
+        </div>
+    </div>
+</div>

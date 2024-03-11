@@ -23,5 +23,7 @@ namespace BAL.Interface
 
         // Transfer Notes
         public bool transferNotes(int requestid, int phyid, string transnotes);
+
+        public bool ClearCase(int requestId);   
     }
 }

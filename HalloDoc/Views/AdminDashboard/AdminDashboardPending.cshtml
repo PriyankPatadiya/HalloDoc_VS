@@ -41,7 +41,7 @@
                                 <h1 class="modal-title fs-5  text-white" id="exampleModalLabel">Transfer Request</h1>
                                 <button type="button" class="btn-close shadow-none" data-bs-dismiss="modal" aria-label="Close"></button>
                             </div>
-                            <form asp-action="TransferNotes" asp-route-reeqid="@item.requestId" enctype="multipart/form-data">
+                            <form asp-action="TransferNotes" asp-route-reeqid="@item.reqid" enctype="multipart/form-data">
                                 <div class="modal-body">
                                     <p> To assign this request search and select another physician</p>
                                     @*for ajax*@
@@ -75,6 +75,109 @@
                         </div>
                     </div>
                 </div>
+
+                @*Clear Case Modal*@
+
+                <div class="modal fade "
+                     id="ClearModal_@j"
+                     tabindex="-1"
+                     aria-labelledby="exampleModalLabel"
+                     aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content px-5">
+
+                            <div class="warninglogo d-flex justify-content-center my-4 p-2 text-light ">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="70" height="70" fill="currentColor" class="bi bi-exclamation-circle bg-warning border rounded-circle" viewBox="0 0 16 16">
+                                    <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16" />
+                                    <path d="M7.002 11a1 1 0 1 1 2 0 1 1 0 0 1-2 0M7.1 4.995a.905.905 0 1 1 1.8 0l-.35 3.507a.552.552 0 0 1-1.1 0z" />
+                                </svg>
+                            </div>
+                            <div class="modalinfo text-center container ">
+                                <h4>Confirmation for clear case</h4>
+                                <span style="font-size: 13px;">
+                                    Are sure you want to clear this request? Once clear this request then you are not able to see this request.
+                                </span>
+                            </div>
+
+                            <div class="subbutton mx-auto my-4 pb-3">
+                                <a asp-action="ClearCaseee" asp-route-reqid="@item.reqid"> <button class="btn btn-info text-light shadow-none p-3 mx-2">Clear</button></a>
+                                <button class="btn btn-outline-info shadow-none p-3" data-bs-dismiss="modal">cancel</button>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+                @*Send Aggriment Modal*@
+
+                <div class="modal fade" id="SendAggrimentModal_@j" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content">
+                            <div class="modal-header bg-info">
+                                <h1 class="modal-title fs-5  text-white" id="exampleModalLabel">Send Aggriment</h1>
+                                <button type="button" class="btn-close shadow-none" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <p>
+                                    @if (item.requestId == 1)
+                                    {
+                                        <svg height="15" width="15" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                                            <circle fill="#5fbc61" r="45" cx="50" cy="50" stroke="grey" stroke-width="3" />
+                                        </svg>
+                                        <span class="ms-md-2">Patient</span>
+                                    }
+                                    @if (item.requestId == 2)
+                                    {
+                                        <svg height="15" width="15" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                                            <circle fill="#ed9124" r="45" cx="50" cy="50" stroke="grey" stroke-width="3" />
+                                        </svg>
+                                        <span class="ms-md-2">Family/Friend</span>
+                                    }
+                                    @if (item.requestId == 3)
+                                    {
+                                        <svg height="15" width="15" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                                            <circle fill="#e26277" r="45" cx="50" cy="50" stroke="grey" stroke-width="3" />
+                                        </svg>
+                                        <span class="ms-md-2">Business</span>
+                                    }
+                                    @if (item.requestId == 4)
+                                    {
+                                        <svg height="15" width="15" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                                            <circle fill="#007fc6" r="45" cx="50" cy="50" stroke="grey" stroke-width="3" />
+                                        </svg>
+                                        <span class="ms-md-2">Concierge</span>
+                                    }
+                                </p>
+                                <p>To Send Agrrement Papers Make Sure yor are updating the correct contact information Below for the responsiblelity party</p>
+                                <form class="form-floating" id="agreementform" method="post" asp-action="SendAgreement" asp-route-requestid="@item.reqid">
+                                    <div class="form-floating">
+                                        <input type="text"
+                                               value="@item.phone"
+                                               name="phone"
+                                               class="form-control"
+                                               id="floatingInput"
+                                               placeholder="PhoneNumber" />
+                                        <label for="floatingInput" class="ms-2">Mobile Number</label>
+                                    </div>
+                                    <div class="form-floating mt-2">
+                                        <input type="text"
+                                               value="@item.Email"
+                                               name="email"
+                                               class="form-control"
+                                               id="email1"
+                                               placeholder="name@InputType.com" />
+                                        <label for="floatingInput1" class="ms-2">Email</label>
+                                    </div>
+                                    <div class="d-flex justify-content-end m-3 px-3 py-2">
+                                        <button type="button" onclick="submitform()" class="btn btn-info">Send</button>
+                                        <button type="button" data-bs-dismiss="modal" class="btn btn-outline-info ms-3">cancle</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
 
 
                 @if (item.requestId == 1)
@@ -143,8 +246,8 @@
                                 <li><a class="dropdown-item pe-auto" asp-action="ViewDocuments" asp-route-reeqid="@item.reqid">View Uploads</a></li>
                                 <li><a class="dropdown-item pe-auto" asp-action="ViewNotesAdmin" asp-route-reqid="@item.reqid">ViewNotes</a></li>
                                 <li><a class="dropdown-item pe-auto" data-bs-toggle="modal" data-bs-target="#TransferRequestModal_@j">Transfer</a></li>
-                                <li><a class="dropdown-item pe-auto">Clear Case</a></li>
-                                <li><a class="dropdown-item pe-auto">Send Agreement</a></li>
+                                <li><a class="dropdown-item pe-auto" data-bs-toggle="modal" data-bs-target="#ClearModal_@j">Clear Case</a></li>
+                                <li><a class="dropdown-item pe-auto" data-bs-toggle="modal" data-bs-target="#SendAggrimentModal_@j">Send Agreement</a></li>
                             </ul>
                         </div>
                     </td>
@@ -221,7 +324,7 @@
                         <a class="btn rounded-4 btn-outline-info px-3 fs-7 my-3">Map Location</a>
                     </div>
                 </div>
-                
+
             </button>
             <div id="collapse_@i" class="accordion-collapse collapse border-top border-secondary" data-bs-parent="#accordionExample">
                 <div class="accordion-body">
@@ -325,9 +428,13 @@
                 }
             });
         }
-        else{
+        else {
             $('#physicianDrop').empty();
             $('#physicianDrop').append($('<option>').text("Select Physician").attr('value', 0));
         }
+    }
+
+    function submitform(){
+        document.getElementById("agreementform").submit();
     }
 </script>

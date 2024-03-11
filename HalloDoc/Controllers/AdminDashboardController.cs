@@ -4,6 +4,9 @@ using DAL.DataContext;
 using DAL.DataModels;
 using DAL.ViewModels;
 using Microsoft.AspNetCore.Mvc;
+using Org.BouncyCastle.Bcpg.OpenPgp;
+using System.Data.Odbc;
+using System.Text;
 using IHostingEnvironment = Microsoft.AspNetCore.Hosting.IHostingEnvironment;
 
 namespace HalloDoc.Controllers
@@ -304,7 +307,6 @@ namespace HalloDoc.Controllers
             return RedirectToAction("MainPage");
         }
 
-        [HttpPost]
         public IActionResult TransferNotes(int reeqid)
         {
             int phyid = int.Parse(Request.Form["physicianId"]);
@@ -318,6 +320,46 @@ namespace HalloDoc.Controllers
             {
                 return Ok("Cannot Add TransferNotes");
             }
+        }
+
+        public IActionResult ClearCaseee(int reqid)
+        {
+            bool result = _adminActions.ClearCase(reqid);
+
+            if (result == true)
+            {
+                return Ok("Successfully Cleared the Case");
+            }
+            else
+            {
+                return Ok("Can't Clear the case");
+            }
+        }
+
+        [HttpPost]
+        public IActionResult SendAgreement(int requestid)
+        {
+           
+            string token = Guid.NewGuid().ToString() + ":" + requestid.ToString() + ":" + DateTime.Now.ToString();
+            var link = Url.Action("ReviewAgreement","PatientDashBoard", new { token = token } , protocol: HttpContext.Request.Scheme);
+
+            string to = _context.RequestClients.Where(r => r.RequestId == requestid).First().Email;
+            to = "priyank.patadiya@etatvasoft.com";
+            string subject = "Agreement";
+            var body = new StringBuilder();
+            body.AppendFormat("Hello");
+            body.AppendLine(@"Click below link to review the agreement");
+            body.AppendLine("<a href=\"" + link + "\">Click here to continue the process</a>");
+
+            string Body = body.ToString();
+
+            if(to != null)
+            {
+                _emailService.SendEmail(to, subject, Body);
+                return Ok("Agreement sent");
+            }
+
+            return Ok("Failed to send agreement");
         }
     }
 }

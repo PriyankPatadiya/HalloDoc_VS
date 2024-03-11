@@ -1,9 +1,11 @@
 ﻿using BAL.Interface;
 using BAL.Repository;
 using DAL.DataContext;
+using DAL.DataModels;
 using DAL.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using System.Net.NetworkInformation;
 using IHostingEnvironment = Microsoft.AspNetCore.Hosting.IHostingEnvironment;
 
@@ -33,7 +35,67 @@ namespace HalloDoc.Controllers
             return View();
         }
 
+        public IActionResult ReviewAgreement(string token)
+        {
+            string[] tokenParts = token.Split(':');
+            string requestid = tokenParts[1];
+            string timepart = tokenParts[2];
+            ViewBag.Requestid = requestid;
+            var Name = _context.RequestClients.Where(u => u.RequestId == int.Parse(requestid)).FirstOrDefault();
+            string name = Name.FirstName +" "+ Name.LastName;
+            ViewBag.Name = name;
 
+            bool isTrueUser = _context.RequestClients.Any(u => u.RequestId == int.Parse(requestid));
+
+            if (isTrueUser)
+            {
+                return View();
+            }
+            else
+            {
+                return Ok("User Invalid");
+            }
+        }
+
+        public IActionResult ReviewAgreementPost(int requestid)
+        {
+            var request = _context.Requests.Where(u => u.RequestId == requestid).FirstOrDefault();
+            if (request != null && request.Status == 2)
+            {
+                request.Status = 4;
+                request.ModifiedDate = DateTime.Now;
+                _context.Requests.Update(request);
+                _context.SaveChanges();
+                return RedirectToAction("PatientDashboard");
+            }
+            else
+            {
+                return Ok("User Not Exist");
+            }
+        }
+
+        public IActionResult CancleReviewAgreement(int requestid, string PatientNote)
+        {
+            var request = _context.Requests.Where(u => u.RequestId == requestid).FirstOrDefault();
+            if (request != null && request.Status == 2)
+            {
+                request.Status = 7;
+                request.ModifiedDate = DateTime.Now;
+                _context.Requests.Update(request);
+                _context.SaveChanges();
+
+                RequestStatusLog model = new RequestStatusLog();
+                model.Status = request.Status;
+                model.RequestId = requestid;
+                model.Notes = PatientNote;
+                model.CreatedDate = DateTime.Now;
+                _context.RequestStatusLogs.Add(model);
+                _context.SaveChanges();
+
+                return RedirectToAction("PatientDashboard");
+            }
+            return Ok("can't cancel request");
+        }
 
         public IActionResult PatientDashboard()
         {
@@ -92,7 +154,6 @@ namespace HalloDoc.Controllers
         }
 
         [HttpPost]
-
         public IActionResult editprofile(ProfilePatient profilepatient)
         {
             var user = _context.Users.Where(u => u.Email == profilepatient.Email).FirstOrDefault();
