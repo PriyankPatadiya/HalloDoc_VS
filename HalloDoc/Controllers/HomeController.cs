@@ -112,10 +112,14 @@ namespace HalloDoc.Controllers
 
                     if(roleid == 1)
                     {
+                        TempData["Message"] = "LogIn successful";
+                        TempData["MessageType"] = "success";
                         return RedirectToAction("MainPage", "AdminDashboard");
                     }
                     if(roleid == 2)
                     {
+                        TempData["Message"] = "LogIn successful";
+                        TempData["MessageType"] = "success";
                         return RedirectToAction("PatientDashboard", "PatientDashBoard");
                     }
                 }

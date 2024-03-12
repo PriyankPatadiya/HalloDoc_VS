@@ -37,10 +37,7 @@
             <!-- First Column ( Background Page ) -->
             <div class="col-12 col-lg-6 col-sm-12 col-md-6 mx-auto"
                  id="FirstColOfLogin">
-                <img src="../  Images/11116016_415.jpg"
-                     alt=""
-                     class="img-fluid object-fit-fill border rounded"
-                     style="height: 100vh" />
+                
             </div>
 
             <!-- Second Column ( Login Form with logo Page ) -->
@@ -55,8 +52,8 @@
                 <form asp-action="PatientLoginn" asp-controller="Home" method="post">
                 <div class="loginform py-2 text-start mx-auto" style="width: 50%">
                     <div id="backtologin " class="mx-auto">
-                        <a asp-action="PatientSite" class="btn p-0 text-decoration-none">
-                            <img src="Images/arrow_back_ios_FILL0_wght400_GRAD0_opsz24.svg"
+                        <a asp-action="PatientSite" class="btn p-2 btn-outline-info text-decoration-none ">
+                            <img src="~/images//arrow_back_ios_FILL0_wght400_GRAD0_opsz24.svg"
                                  alt="" /><span class="fw-semibold">Back</span>
                         </a>
                     </div>
@@ -68,7 +65,7 @@
                                 asp-for="Email"
                                    class="form-control no-border"
                                    id="floatingInputGroup1"
-                                   placeholder="Username" /><img src="Images/user_circle.svg" alt="" class="pe-3" />
+                                   placeholder="Username" /><img src="~/images/user_circle.svg" alt="" class="pe-3" />
                             <label for="floatingInputGroup1">Username</label>
                             
                         </div>
@@ -81,7 +78,7 @@
                                    class="form-control no-border"
                                    id="floatingPassword"
                                    placeholder="Password" />
-                            <img src="Images/password_icon.svg" alt="" class="pe-3" />
+                            @*<img src="~/images/password_icon.svg" alt="" class="pe-3" />*@
                             <label for="floatingPassword">Password</label>
                             
                         </div>

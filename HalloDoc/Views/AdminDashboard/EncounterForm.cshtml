@@ -1,0 +1,245 @@
+﻿
+@{
+    Layout = "~/Views/Shared/_LayoutAdminDash.cshtml";
+}
+
+<section class="bg-light">
+    <div class="container bg-light pt-3">
+        <div class="d-flex justify-content-between ">
+            <div class="d-flex my-2">
+                <span class="fs-2 text-muted fw-bold">Encounter Form</span>
+            </div>
+            <div class="d-flex justify-content-end align-items-center">
+                <a asp-action="" class="btn btn-outline-info text-center p-2 ">
+                    <svg xmlns="http://www.w3.org/2000/svg"
+                         width="16"
+                         height="16"
+                         fill="currentColor"
+                         class="bi bi-chevron-left"
+                         viewBox="0 0 16 16">
+                        <path fill-rule="evenodd"
+                              d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0" />
+                    </svg>
+                    <span> back</span>
+                </a>
+            </div>
+        </div>
+        <div class="container bg-white p-3">
+            <h2 class="text-center fw-bolder my-3 text-info">Medical Report - Confidential</h2>
+            <form method="post" id="encounterForm">
+                <input class="d-none" value="0" />
+                <div class="row gx-2">
+                    <div class="col-md-6">
+                        <div class="form-floating mb-3">
+                            <input type="text" class="form-control" id="first_name" placeholder="First Name">
+                            <label for="floatingInput">First Name</label>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-floating mb-3">
+                            <input type="text" class="form-control" id="last_name" placeholder="Last Name">
+                            <label for="last_name">Last Name</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="row gx-2">
+                    <div class="col-md-12">
+                        <div class="form-floating mb-3">
+                            <input type="text" class="form-control" id="location" placeholder="Location">
+                            <label for="location">Location</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="row gx-2">
+                    <div class="col-md-6">
+                        <div class="form-floating mb-3">
+                            <input type="date"
+                                   class="form-control"
+                                   id="floatingInput" />
+                            <label for="floatingInput">Date of Birth</label>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-floating mb-3">
+                            <input type="date" class="form-control" id="last_name" placeholder="Date">
+                            <label for="Date">Date</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="row gx-2">
+                    <div class="col-md-6">
+                        <div class="form-floating mb-3">
+                            <input type="text" class="form-control" id="historyillness" placeholder="History Of Present Ilness Or Injury">
+                            <label for="historyillness">History Of Present Ilness Or Injury</label>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-floating mb-3">
+                            <input type="text" class="form-control" id="medicalhistory" placeholder="Medical History">
+                            <label for="medicalhistory">Medical History</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="row gx-2">
+                    <div class="col-md-6">
+                        <div class="form-floating mb-3">
+                            <input type="text" class="form-control" id="medications" placeholder="Medications">
+                            <label for="medications">Medications</label>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-floating mb-3">
+                            <input type="text" class="form-control" id="allergies" placeholder="Allergies">
+                            <label for="allergies">Allergies</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="row gx-2">
+                    <div class="col-md-4">
+                        <div class="form-floating mb-3">
+                            <input type="text" class="form-control" id="temperature" placeholder="Temperature">
+                            <label for="temperature">Temperature</label>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-floating mb-3">
+                            <input type="text" class="form-control" id="hr" placeholder="HR">
+                            <label for="hr">HR</label>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-floating mb-3">
+                            <input type="text" class="form-control" id="rr" placeholder="RR">
+                            <label for="rr">RR</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="row gx-2">
+                    <div class="col-md-2">
+                        <div class="form-floating mb-3">
+                            <input type="text" class="form-control" id="bpsystolic" placeholder="Blood Presssure">
+                            <label for="bpsystolic">BP (Systolic)</label>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-floating mb-3">
+                            <input type="text" class="form-control" id="bpdiastolic" placeholder="Blood Presssure">
+                            <label for="bpdiastolic">BP (Diastolic)</label>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-floating mb-3">
+                            <input type="text" class="form-control" id="oxygen" placeholder="O2">
+                            <label for="oxygen">O2</label>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-floating mb-3">
+                            <input type="text" class="form-control" id="pain" placeholder="Pain">
+                            <label for="pain">Pain</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="row gx-2">
+                    <div class="col-md-6">
+                        <div class="form-floating mb-3">
+                            <input type="text" class="form-control" id="heent" placeholder="HEENT">
+                            <label for="heent">HEENT</label>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-floating mb-3">
+                            <input type="text" class="form-control" id="cv" placeholder="CV">
+                            <label for="cv">CV</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="row gx-2">
+                    <div class="col-md-6">
+                        <div class="form-floating mb-3">
+                            <input type="text" class="form-control" id="chest" placeholder="Chest">
+                            <label for="chest">Chest</label>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-floating mb-3">
+                            <input type="text" class="form-control" id="abd" placeholder="ABD">
+                            <label for="abd">ABD</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="row gx-2">
+                    <div class="col-md-6">
+                        <div class="form-floating mb-3">
+                            <input type="text" class="form-control" id="extr" placeholder="Extr">
+                            <label for="extr">Extr</label>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-floating mb-3">
+                            <input type="text" class="form-control" id="skin" placeholder="Skin">
+                            <label for="skin">Skin</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="row gx-2">
+                    <div class="col-md-6">
+                        <div class="form-floating mb-3">
+                            <input type="text" class="form-control" id="neuro" placeholder="Neuro">
+                            <label for="neuro">Neuro</label>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-floating mb-3">
+                            <input type="text" class="form-control" id="other" placeholder="Other">
+                            <label for="other">Other</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="row gx-2">
+                    <div class="col-md-6">
+                        <div class="form-floating mb-3">
+                            <input type="text" class="form-control" id="diagnosis" placeholder="Diagnosis">
+                            <label for="diagnosis">Diagnosis</label>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-floating mb-3">
+                            <input type="text" class="form-control" id="treatmentplan" placeholder="Treatment Plan">
+                            <label for="treatmentplan">Treatment Plan</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="row gx-2">
+                    <div class="col-md-6">
+                        <div class="form-floating mb-3">
+                            <input type="text" class="form-control" id="medicationsdispensed" placeholder="Medications Dispensed">
+                            <label for="medicationsdispensed">Medications Dispensed</label>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-floating mb-3">
+                            <input type="text" class="form-control" id="procedures" placeholder="Procedures">
+                            <label for="procedures">Procedures</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="row gx-2">
+                    <div class="col-md-12">
+                        <div class="form-floating mb-3">
+                            <input type="text" class="form-control" id="followup" placeholder="Followup">
+                            <label for="followup">Followup</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="d-flex flex-row-reverse mb-3">
+                    <button class="p-2 btn btn-outline-info mx-1">Cancel</button>
+                    <button type="button" class="btn p-2 mx-1" style="background-color:indigo; color:white" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
+                        Finalize
+                    </button>
+                    <button class="btn btn-info mx-1" id="savachanges">Save Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</section>

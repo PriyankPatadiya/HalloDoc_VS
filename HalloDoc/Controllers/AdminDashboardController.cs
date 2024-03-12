@@ -6,6 +6,7 @@ using DAL.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Org.BouncyCastle.Bcpg.OpenPgp;
 using System.Data.Odbc;
+using System.Net;
 using System.Text;
 using IHostingEnvironment = Microsoft.AspNetCore.Hosting.IHostingEnvironment;
 
@@ -83,6 +84,78 @@ namespace HalloDoc.Controllers
             return View("MainPage", MainModel);
         }
 
+        public IActionResult EncounterForm()
+        {
+            return View();
+        }
+
+        public IActionResult CloseCase(int reqid)
+        {
+            AdminMainPageVM mainModel = new AdminMainPageVM();
+            mainModel.PageName = PageName.CloseCase;
+
+            var filedetails = _context.RequestWiseFiles.Where(u => u.RequestId == reqid).ToList();
+            var client = _context.RequestClients.Where(u => u.RequestId == reqid).FirstOrDefault();
+            var request = _context.Requests.FirstOrDefault(u => u.RequestId == reqid); 
+
+            CloseCaseVM model = new CloseCaseVM
+            {
+                Files = filedetails,
+                FirstName = client.FirstName,
+                LastName = client.LastName,
+                Email = client.Email,
+                Phonenum = client.PhoneNumber,
+                DateOfBirth = new DateOnly((int)client.IntYear, int.Parse(client.StrMonth), (int)client.IntDate),
+                ConfirmationNum = request.ConfirmationNumber.ToUpper(),
+                requestid = reqid
+            };
+            mainModel.closecase = model;
+            return View("MainPage", mainModel);
+        }
+        [HttpPost]
+        public IActionResult CloseCase(CloseCaseVM model)
+        {
+            var client = _context.RequestClients.Where(u => u.RequestId == model.requestid).FirstOrDefault();
+            if(client != null)
+            {
+                client.FirstName = model.FirstName;
+                client.LastName = model.LastName;
+                client.PhoneNumber = model.Phonenum;
+                client.IntDate = model.DateOfBirth.Day;
+                client.IntYear = model.DateOfBirth.Year;
+                client.StrMonth = model.DateOfBirth.Month.ToString();
+                _context.RequestClients.Update(client);
+                _context.SaveChanges();
+                return RedirectToAction("CloseCase", new { reqid = model.requestid });
+            }
+            return Ok("can't save details");
+        }
+
+        public IActionResult ClosecasePost(int reqid)
+        {
+            var request =_context.Requests.Where(i => i.RequestId == reqid).FirstOrDefault();
+            if(request != null)
+            {
+                request.Status = 9;
+                request.ModifiedDate = DateTime.Now;
+                _context.Requests.Update(request);
+                _context.SaveChanges();
+
+                RequestStatusLog log = new RequestStatusLog
+                {
+                    Status = request.Status,
+                    RequestId = reqid,
+                    CreatedDate = DateTime.Now,
+                };
+                _context.RequestStatusLogs.Add(log);
+                _context.SaveChanges();
+
+                return RedirectToAction("MainPage");
+            }
+            return Ok("can't close the request");
+        }
+
+
         public IActionResult ViewNotesAdmin()
         {
             var requestId = HttpContext.Request.Query["reqid"];
@@ -96,16 +169,20 @@ namespace HalloDoc.Controllers
         }
 
         public IActionResult SearchByName(string SearchString, string selectButton, string StatusButton, string SelectedStateId, string partialviewpath)
-        {
+            {
 
             var result = _admin.GetRequestsQuery(StatusButton);
-            result = result.Where(s => (String.IsNullOrEmpty(SearchString) || s.PatientName.Contains(SearchString)) && (String.IsNullOrEmpty(selectButton) || s.requestId == int.Parse(selectButton)) && (SelectedStateId == "0" || s.regionId == int.Parse(SelectedStateId)));
-
-            if (!String.IsNullOrEmpty(StatusButton))
+                result = result.Where(s => (String.IsNullOrEmpty(SearchString) || s.PatientName.Contains(SearchString)) && (String.IsNullOrEmpty(selectButton) || s.requestId == int.Parse(selectButton)) && ((SelectedStateId == "0" || SelectedStateId == null) || s.regionId == int.Parse(SelectedStateId)));
+            if(result != null)
             {
-                ViewBag.Status = int.Parse(StatusButton);
+
+                if (!String.IsNullOrEmpty(StatusButton))
+                {
+                    ViewBag.Status = int.Parse(StatusButton);
+                }
+                return PartialView(partialviewpath, result.ToList());
             }
-            return PartialView(partialviewpath, result.ToList());
+            return View("MainPage");
         }
 
         public IActionResult SendOrder(int requestid)

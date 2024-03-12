@@ -205,7 +205,7 @@ namespace BAL.Repository
         {
             string abr = _context.Regions.Where(s => s.Name == model.State).FirstOrDefault().Abbreviation;
             int numofrequests = _context.Requests.Where(s => s.CreatedDate.Date == model.CreatedDate).Count();
-            string confirmationnum = abr + model.CreatedDate.Value.ToString("MM dd") + model.LastName.Substring(0, 2) + model.FirstName.Substring(0, 2) + numofrequests.ToString("D4");
+            string confirmationnum = abr + model.CreatedDate.Value.ToString("MMdd") + model.LastName.Substring(0, 2) + model.FirstName.Substring(0, 2) + numofrequests.ToString("D4");
             return confirmationnum;
         }
     }

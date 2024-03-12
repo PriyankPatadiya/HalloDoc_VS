@@ -9,7 +9,7 @@
         <ul class=" nav gx-5 row  gy-4 mt-0 px-md-3">
             
             <li class=" nav-item col-4 col-sm-4 col-lg-2 rounded-4 text-start position-relative px-2"  role="presentation">
-                <button class="btn w-100 text-start rounded-4 shadow-none activee border-0 Status-btn text-sm-start text-center statuslink1" id="statuslink1" data-id="1">
+                <button class="btn w-100 text-start rounded-4 shadow-none border-0 Status-btn text-sm-start text-center statuslink1" id="statuslink1" data-id="1">
                     <span class="py-2 d-sm-block d-flex justify-content-center fs-5 Status-btn-text text-sm-start text-center">New</span>
                     <h4 class="fw-bolder ps-1 pb-2 Status-Count">@Model.NewCount</h4>
                 </button>
@@ -59,7 +59,7 @@
 
     <div class="row mt-4 px-md-3 d-flex justify-content-end">
         <div class="col-12 col-sm-5">
-            <p class="fs-4 ps-2 fw-bolder">Patients <span class="text-primary fs-6" id="statusspan">(New)</span></p>
+            <p class="fs-4 ps-2 fw-bolder">Patients <span class="text-primary fs-6" id="statusspan"></span></p>
         </div>
         <div class="col-12 col-sm-7 py-1 d-sm-flex justify-content-end ">
             <button type="button" class="btn btn-info text-white me-md-2 me-1 ms-2">
@@ -166,7 +166,7 @@
         @*render partial view of request Status *@
 
         <div class="tab-content SearchPartial">
-            <partial name="AdminDashboardNew" model="Model.DashboardTableVM"/>
+            @*<partial name="AdminDashboardNew" model="Model.DashboardTableVM"/>*@
 
         </div>
     </div>

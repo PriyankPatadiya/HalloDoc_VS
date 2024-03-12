@@ -1,21 +1,47 @@
 ﻿
 $(document).ready(function () {
-    var partialviewpath = "AdminDashboardNew";
-    var StatusButton = "1";
     
+    var path;
+    var StatusButton;
+    var span = localStorage.getItem("statusspan");
+    var statuslink = localStorage.getItem("statuslink");
+    var triangleid = localStorage.getItem("triangle");
+    var trianglecolor = localStorage.getItem("color");
+
+    if (localStorage.getItem("partialviewpath") != undefined) {
+        path = localStorage.getItem("partialviewpath");
+    }
+    else {
+        path = "AdminDashboardNew";
+    }
+    //localStorage.getItem("triangle");
+    //localStorage.getItem("class");
+    $(".Status-btn").removeClass('activee');
+    $(".triangle").css('display', 'none');
+    $("#statusspan").html(span);
+    $(statuslink).addClass("activee");
+    $(triangleid).css('display', 'block').css('border-top-color', trianglecolor);
+
+    if (localStorage.getItem("statusbutton") != undefined) {
+        StatusButton = localStorage.getItem("statusbutton");
+    }
+    else {
+        StatusButton = "1";
+    }
+    ChangeTable(path, StatusButton);
 
     $('.buttonOfFilter').click(function () { 
         $('.buttonOfFilter').removeClass('active')
         $(this).addClass('active')
-        ChangeTable(partialviewpath);
+        ChangeTable(path, StatusButton);
     });
 
     $("#SearchString").on("input", function () {
-        ChangeTable(partialviewpath);
+        ChangeTable(path, StatusButton);
     });
 
     $("#SelectedStateId").on("change", function () {  
-        ChangeTable(partialviewpath);  
+        ChangeTable(path, StatusButton);
     });
 
     $("#Regionid").on("change", function () {
@@ -35,6 +61,12 @@ $(document).ready(function () {
         var businessId = $('#SelectBusiness').val();
         getVendordata(businessId);
     });
+
+    $('#closecaseeditbtn').on("click", function () {
+        $('.inputclass').removeAttr("disabled");
+        $('.hiddenbuttons').css('display', 'block');
+        $('.buttonstohide').css('display', 'none');
+    });
     $(".Status-btn").click(function () {
         $(".Status-btn").removeClass('active');
         $(".Status-btn").removeClass('activee');
@@ -50,7 +82,14 @@ $(document).ready(function () {
             $(".triangle").css('display', 'none');
             $("#triangle1").css('display', 'block').css('border-top-color', '#203f9a');
             partialviewpath = "AdminDashboardNew"; 
-            ChangeTable("AdminDashboardNew");
+            localStorage.setItem("partialviewpath", partialviewpath);
+            localStorage.setItem("statusbutton", $("#statuslink1").data("id"));
+            localStorage.setItem("triangle", "#triangle1");
+            localStorage.setItem("statuslink", "#statuslink1");
+            localStorage.setItem("color", "#203f9a");
+            localStorage.setItem("statusspan", "(New)");
+
+            ChangeTable("AdminDashboardNew", $("#statuslink1").data("id"));
         }
         else if (StatusButton == "2") {
             $("#statuslink2").addClass("activee")
@@ -58,7 +97,13 @@ $(document).ready(function () {
             $(".triangle").css('display', 'none');
             $("#triangle2").css('display', 'block').css('border-top-color', '#00adef');
             partialviewpath = "AdminDashboardPending";
-            ChangeTable("AdminDashboardPending");
+            localStorage.setItem("partialviewpath", partialviewpath);
+            localStorage.setItem("statusbutton", $("#statuslink2").data("id"));
+            localStorage.setItem("triangle", "#triangle2");
+            localStorage.setItem("statuslink", "#statuslink2");
+            localStorage.setItem("color", "#00adef");
+            localStorage.setItem("statusspan", "(Pending)");
+            ChangeTable("AdminDashboardPending", $("#statuslink2").data("id"));
         }
         else if (StatusButton == "3") {
             $("#statuslink3").addClass("activee")
@@ -66,7 +111,13 @@ $(document).ready(function () {
             $(".triangle").css('display', 'none');
             $("#triangle3").css('display', 'block').css('border-top-color', '#228c20');
             partialviewpath = "AdminDashboardActive";
-            ChangeTable("AdminDashboardActive");
+            localStorage.setItem("partialviewpath", partialviewpath);
+            localStorage.setItem("statusbutton", $("#statuslink3").data("id"));
+            localStorage.setItem("triangle", "#triangle3");
+            localStorage.setItem("statuslink", "#statuslink3");
+            localStorage.setItem("color", "#228c20");
+            localStorage.setItem("statusspan", "(Active)");
+            ChangeTable("AdminDashboardActive", $("#statuslink3").data("id"));
         }
         else if (StatusButton == "4") {
             $("#statuslink4").addClass("activee")
@@ -74,7 +125,13 @@ $(document).ready(function () {
             $(".triangle").css('display', 'none');
             $("#triangle4").css('display', 'block').css('border-top-color', '#da0f82');
             partialviewpath = "AdminDashboardConclude";
-            ChangeTable("AdminDashboardConclude");
+            localStorage.setItem("partialviewpath", partialviewpath);
+            localStorage.setItem("statusbutton", $("#statuslink4").data("id"));
+            localStorage.setItem("triangle", "#triangle4");
+            localStorage.setItem("statusspan", "(Conclude)");
+            localStorage.setItem("statuslink", "#statuslink4");
+            localStorage.setItem("color", "#da0f82");
+            ChangeTable("AdminDashboardConclude", $("#statuslink4").data("id"));
         }
         else if (StatusButton == "5") {
             $("#statuslink5").addClass("activee")
@@ -82,7 +139,13 @@ $(document).ready(function () {
             $(".triangle").css('display', 'none');
             $("#triangle5").css('display', 'block').css('border-top-color', '#0370d7');
             partialviewpath = "AdminDashboardToClose";
-            ChangeTable("AdminDashboardToClose");
+            localStorage.setItem("partialviewpath", partialviewpath);
+            localStorage.setItem("statusbutton", $("#statuslink5").data("id"));
+            localStorage.setItem("triangle", "#triangle5");
+            localStorage.setItem("statusspan", "(Conclude)");
+            localStorage.setItem("statuslink", "#statuslink5");
+            localStorage.setItem("color", "#0370d7");
+            ChangeTable("AdminDashboardToClose", $("#statuslink5").data("id"));
         }
         else {
             $("#statuslink6").addClass("activee");
@@ -90,19 +153,24 @@ $(document).ready(function () {
             $(".triangle").css('display', 'none');
             $("#triangle6").css('display', 'block').css('border-top-color', '#9966cd');
             partialviewpath = "AdminDashboardUnpaid";
-            ChangeTable("AdminDashboardUnpaid");
+            localStorage.setItem("partialviewpath", partialviewpath);
+            localStorage.setItem("statusbutton", $("#statuslink6").data("id"));
+            localStorage.setItem("triangle", "#triangle6");
+            localStorage.setItem("statusspan", "(Conclude)");
+            localStorage.setItem("statuslink", "#statuslink6");
+            localStorage.setItem("color", "#9966cd");
+            ChangeTable("AdminDashboardUnpaid", $("#statuslink6").data("id"));
         }
     });
 
 
-    function ChangeTable(partialviewpath) {
+    function ChangeTable(partialviewpath, StatusButton) {
 
-        $.get('/AdminDashboard/CheckSession', function (sessioncheck) {
+         $.get('/AdminDashboard/CheckSession', function (sessioncheck) {
             if (sessioncheck.sessionExists) {
 
                 var Searchstring = $("#SearchString").val();
                 var selectButton = $(".buttonOfFilter.active").data("value");
-                var StatusButton = $(".Status-btn.active").data("id");
                 var SelectedStateId = $("#SelectedStateId").val();
                 //var token = getCookie("jwt");
 
@@ -174,6 +242,7 @@ $(document).ready(function () {
             });
         }
     }
+
 
     function getVendordata(businessId) {
         if (businessId != 0) {
