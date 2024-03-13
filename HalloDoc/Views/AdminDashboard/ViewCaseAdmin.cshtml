@@ -98,8 +98,8 @@
         <div class=" shadow bg-white p-4">
             <h4 class="pt-3 mb-4">Patient Information</h4>
 
-            <p>Confirmation Number</p>
-            <h4 class="mb-2 mb-sm-5 text-info"> MD1205223232323</h4>
+            
+            <h4 class="mb-2 mb-sm-5 text-info"> @Model.ConfirmationNumber.ToUpper()</h4>
 
             <form method="post" id="emailForm" enctype="multipart/form-data" asp-action="ViewCase">
                 <div class="row">

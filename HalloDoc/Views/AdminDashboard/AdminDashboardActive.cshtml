@@ -232,12 +232,12 @@
         <div class="accordion-item bg-info-subtle">
             <button class=" accordion-header btn w-100 px-4 shadow-none" type="button" data-bs-toggle="collapse" data-bs-target="#collapse_@i" aria-expanded="false" aria-controls="collapseTwo">
                 <div class="row w-100 pb-1">
-                    <div class="col-8 text-start py-3 pe-0">
+                    <div class="col-6 text-start pt-3 pe-0">
                         <span>@item.PatientName</span>
 
                         <p class="mt-4">@item.address</p>
                     </div>
-                    <div class="col-4 d-flex flex-column py-3 text-end pe-0">
+                    <div class="col-6 d-flex flex-column pt-3 text-end pe-0">
                         @if (item.requestId == 1)
                         {
                             <span class="mb-3">
@@ -278,14 +278,21 @@
                                 </svg>
                             </span>
                         }
+                        <div class="d-flex justify-content-end">
 
-                        <a class="btn rounded-4 btn-outline-info px-3 fs-7 my-3">Map Location</a>
+                            <a class="btn rounded-4 btn-outline-info my-3 px-0 w-75"><span class="fs-6">Map Location</span></a>
+                        </div>
                     </div>
                 </div>
                 
             </button>
             <div id="collapse_@i" class="accordion-collapse collapse border-top border-secondary" data-bs-parent="#accordionExample">
-                <div class="accordion-body">
+                <div class="accordion-body position-relative">
+                    <a asp-action="ViewCaseAdmin" asp-route-reqcliId="@item.reqclientId">
+                        <button class="btn btn-light position-absolute rounded-4 border-1 border-dark-subtle" style="top: -18px; right: 5px;">
+                            view case
+                        </button>
+                    </a>
                     <h6 class="w-100">
 
                         <button class="btn border-1 rounded-5 border-info pt-0 ">
@@ -315,7 +322,36 @@
 
                         Patient: @item.phone
                     </h6>
+                    <h6 class="w-100">
+                        <button class="btn border-1 rounded-5 border-info pt-0">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-journal-album" viewBox="0 0 16 16">
+                                <path d="M5.5 4a.5.5 0 0 0-.5.5v5a.5.5 0 0 0 .5.5h5a.5.5 0 0 0 .5-.5v-5a.5.5 0 0 0-.5-.5zm1 7a.5.5 0 0 0 0 1h3a.5.5 0 0 0 0-1z" />
+                                <path d="M3 0h10a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2v-1h1v1a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H3a1 1 0 0 0-1 1v1H1V2a2 2 0 0 1 2-2" />
+                                <path d="M1 5v-.5a.5.5 0 0 1 1 0V5h.5a.5.5 0 0 1 0 1h-2a.5.5 0 0 1 0-1zm0 3v-.5a.5.5 0 0 1 1 0V8h.5a.5.5 0 0 1 0 1h-2a.5.5 0 0 1 0-1zm0 3v-.5a.5.5 0 0 1 1 0v.5h.5a.5.5 0 0 1 0 1h-2a.5.5 0 0 1 0-1z" />
+                            </svg>
+                        </button>
 
+                        Transfer: Amin Transferred to @item.physicianname
+                    </h6>
+                    <h6 class="w-100">
+                        <button class="btn border-1 rounded-5 border-info pt-0">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-calendar-week" viewBox="0 0 16 16">
+                                <path d="M11 6.5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5zm-3 0a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5zm-5 3a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5zm3 0a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5z" />
+                                <path d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5M1 4v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4z" />
+                            </svg>
+                        </button>
+
+                        DateOfService: @item.DateOfService
+                    </h6>
+                    <h6 class="w-100">
+                        <button class="btn border-1 rounded-5 border-info pt-0">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-person-badge-fill" viewBox="0 0 16 16">
+                                <path d="M2 2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2zm4.5 0a.5.5 0 0 0 0 1h3a.5.5 0 0 0 0-1zM8 11a3 3 0 1 0 0-6 3 3 0 0 0 0 6m5 2.755C12.146 12.825 10.623 12 8 12s-4.146.826-5 1.755V14a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1z" />
+                            </svg>
+                        </button>
+
+                        Physician: @item.physicianname
+                    </h6>
                     <h6 class="w-100">
                         <button class="btn border-1 rounded-5 border-info pt-0">
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-person" viewBox="0 0 16 16">
@@ -323,31 +359,40 @@
                             </svg>
                         </button>
 
-                        Requestor:
+                        Requestor: @item.RequestorName
                     </h6>
 
                     <div class="row gy-2  py-3">
                         <div class="col-6 px-3">
-                            <button class="border-1 btn-danger rounded-5 btn w-100 "> Assign Case</button>
+                            <a asp-action="ViewNotesAdmin" asp-route-reqid="@item.reqid"><button class="border-1 btn-success rounded-5 btn w-100 ">View Notes</button></a>
                         </div>
                         <div class="col-6 px-3">
-                            <button class=" border-1 btn-danger px-3 rounded-5 btn w-100"> Cancel Case</button>
-
+                            <button class=" border-1 btn-success px-3 rounded-5 btn w-100">Doctor Notes</button>
                         </div>
                         <div class="col-6 px-3">
-                            <button class=" border-1 btn-danger px-3 rounded-5 btn w-100"> View Notes</button>
-
+                            <a asp-action="ViewDocuments" asp-route-reeqid="@item.reqid"><button class=" border-1 btn-success px-3 rounded-5 btn w-100">View Uploads</button></a>
                         </div>
                         <div class="col-6 px-3">
-                            <button class=" border-1 btn-danger px-3 rounded-5 btn w-100"> Block Patient</button>
-
+                            <button class=" border-1 btn-success px-3 rounded-5 btn w-100">Encounter</button>
                         </div>
                         <div class="col-6 px-3">
-                            <button class="border-1 btn-danger px-3 rounded-5 btn w-100"> Email</button>
-
+                            <a asp-action="SendOrder" asp-route-requestid="@item.reqid"><button class="border-1 btn-warning px-3 rounded-5 btn w-100">Orders</button></a>
+                        </div>
+                        <div class="col-6 px-3">
+                            <a href="mailto: @item.Email"><button class="border-1 btn-success px-3 rounded-5 btn w-100">Email</button></a>
                         </div>
                     </div>
-
+                    <div class="d-flex justify-content-end align-middle">
+                        <span class="fs-5">Chat With: </span>
+                        <button class="btn btn-outline-info mx-1">
+                            <i class="bi bi-person"></i>
+                            Patient
+                        </button>
+                        <button class="btn btn-outline-info mx-1">
+                            <i class="bi bi-person"></i>
+                            Provider
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>

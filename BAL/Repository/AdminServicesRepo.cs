@@ -93,7 +93,7 @@ namespace BAL.Repository
                               PatientName = reqclient.FirstName + " " + reqclient.LastName,
                               BirthDate = new DateOnly((int)reqclient.IntYear, int.Parse(reqclient.StrMonth), (int)reqclient.IntDate).ToString("MMMM dd, yyyy"),
                               RequestorName = req.FirstName + " " + req.LastName,
-                              RequestDate = req.CreatedDate.ToString("MMMM dd , yyyy hh mm"),
+                              RequestDate = req.CreatedDate.ToString("MMMM dd,yyyy hh:mm"),
                               phone = reqclient.PhoneNumber,
                               address = reqclient.Street + " ," + reqclient.City + " ," + reqclient.State + ", " + reqclient.ZipCode,
                               requestId = req.RequestTypeId,
@@ -102,8 +102,11 @@ namespace BAL.Repository
                               Email = reqclient.Email,
                               reqclientId = reqclient.RequestClientId,
                               regionId = reqclient.RegionId,
+                              Region = _context.Regions.FirstOrDefault(u => u.RegionId == reqclient.RegionId).Name,
                               reqid = req.RequestId,
-                              regionTable = _context.Regions.ToList()
+                              regionTable = _context.Regions.ToList(),
+                              DateOfService = req.ModifiedDate,
+                              physicianname = _context.Physicians.FirstOrDefault(u => u.PhysicianId == req.PhysicianId).FirstName,
 
                           }).Where(item=>myarray.Any(s=>item.requestStatus==s));
             

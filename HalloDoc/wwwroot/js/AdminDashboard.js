@@ -1,6 +1,8 @@
 ﻿
 $(document).ready(function () {
-    
+
+    // Local Storage
+
     var path;
     var StatusButton;
     var span = localStorage.getItem("statusspan");
@@ -14,8 +16,6 @@ $(document).ready(function () {
     else {
         path = "AdminDashboardNew";
     }
-    //localStorage.getItem("triangle");
-    //localStorage.getItem("class");
     $(".Status-btn").removeClass('activee');
     $(".triangle").css('display', 'none');
     $("#statusspan").html(span);
@@ -30,43 +30,56 @@ $(document).ready(function () {
     }
     ChangeTable(path, StatusButton);
 
+    // Local Storage end // 
+
     $('.buttonOfFilter').click(function () { 
-        $('.buttonOfFilter').removeClass('active')
-        $(this).addClass('active')
+        $('.buttonOfFilter').removeClass('active');
+        $(this).addClass('active');
         ChangeTable(path, StatusButton);
     });
 
+    //Search filter
     $("#SearchString").on("input", function () {
         ChangeTable(path, StatusButton);
     });
 
+    // Status button 
     $("#SelectedStateId").on("change", function () {  
         ChangeTable(path, StatusButton);
     });
 
+    // physician dropdown in assign case
     $("#Regionid").on("change", function () {
         var RegionId = $("#Regionid").val();
         filterPhysicianByRegion(RegionId);
     });
 
+    // same as above
     $("#Regionnid").on("change", function () {
         var RegionId = $("#Regionnid").val();
         filterPhysicianByRegion(RegionId);
     });
+
+    // Send Order 
     $("#SelectProfession").on("change", function () {
         var ProfessionId = $("#SelectProfession").val();
         filterVendorsByProfession(ProfessionId);
     });
+
+    // Send Order 
     $('#SelectBusiness').on("change", function () {
         var businessId = $('#SelectBusiness').val();
         getVendordata(businessId);
     });
 
+    // enable inputs in close case
     $('#closecaseeditbtn').on("click", function () {
         $('.inputclass').removeAttr("disabled");
         $('.hiddenbuttons').css('display', 'block');
         $('.buttonstohide').css('display', 'none');
     });
+
+    // Status buttons , set in local storage and some designs 
     $(".Status-btn").click(function () {
         $(".Status-btn").removeClass('active');
         $(".Status-btn").removeClass('activee');
@@ -163,7 +176,7 @@ $(document).ready(function () {
         }
     });
 
-
+    // Main function that filters and load partial view in admin dashboard
     function ChangeTable(partialviewpath, StatusButton) {
 
          $.get('/AdminDashboard/CheckSession', function (sessioncheck) {
@@ -186,10 +199,14 @@ $(document).ready(function () {
                         data: { Searchstring: Searchstring, selectButton: selectButton, StatusButton: StatusButton, SelectedStateId: SelectedStateId, partialviewpath: partialviewpath },
 
                         success: function (data) {
-                            console.log(data)
                             $(".SearchPartial").html(data);
                         },
-
+                        failure: function (data) {
+                            alert(data.d);
+                        },
+                        error: function (data) {
+                            alert(data.d);
+                        }
                     });
 
                 }
@@ -242,7 +259,6 @@ $(document).ready(function () {
             });
         }
     }
-
 
     function getVendordata(businessId) {
         if (businessId != 0) {
