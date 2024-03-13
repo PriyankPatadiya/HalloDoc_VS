@@ -20,3 +20,8 @@ html {
 body {
   margin-bottom: 60px;
 }
+#lightsvg {
+    display: none;
+    margin-top: 4px;
+    color: yellow;
+}

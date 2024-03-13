@@ -93,22 +93,8 @@ namespace HalloDoc.Controllers
         {
             AdminMainPageVM mainModel = new AdminMainPageVM();
             mainModel.PageName = PageName.CloseCase;
-
-            var filedetails = _context.RequestWiseFiles.Where(u => u.RequestId == reqid).ToList();
-            var client = _context.RequestClients.Where(u => u.RequestId == reqid).FirstOrDefault();
-            var request = _context.Requests.FirstOrDefault(u => u.RequestId == reqid); 
-
-            CloseCaseVM model = new CloseCaseVM
-            {
-                Files = filedetails,
-                FirstName = client.FirstName,
-                LastName = client.LastName,
-                Email = client.Email,
-                Phonenum = client.PhoneNumber,
-                DateOfBirth = new DateOnly((int)client.IntYear, int.Parse(client.StrMonth), (int)client.IntDate),
-                ConfirmationNum = request.ConfirmationNumber.ToUpper(),
-                requestid = reqid
-            };
+            CloseCaseVM model = new CloseCaseVM();
+            model = _adminActions.closecasegetdata(model, reqid);
             mainModel.closecase = model;
             return View("MainPage", mainModel);
         }

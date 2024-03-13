@@ -20,7 +20,6 @@ namespace BAL.Repository
         }
         public void ChangeOnAssign(int reeqid, int phyid, string notes)
         {
-
             var Request = _context.Requests.Where(s => s.RequestId == reeqid).FirstOrDefault();
             if (Request != null)
             {
@@ -39,8 +38,6 @@ namespace BAL.Repository
                 _context.RequestStatusLogs.Add(requestStatusLog);
                 _context.SaveChanges();
             }
-
-
         }
         public IQueryable<ViewCaseVM> getViewCaseData(int reqclientId)
         {
@@ -68,8 +65,6 @@ namespace BAL.Repository
         public void changeStatusOnCancleCase(int requesid, string reason, string Notes)
         {
             var request = _context.Requests.FirstOrDefault(h => h.RequestId == requesid);
-
-
             if (request != null)
             {
                 request.Status = 3;
@@ -90,8 +85,6 @@ namespace BAL.Repository
                 _context.SaveChanges();
             }
         }
-
-
         public List<Physician> GetPhysicianByRegion(string RegionId)
         {
             var result = (from physician in _context.Physicians
@@ -102,7 +95,6 @@ namespace BAL.Repository
             return result;
 
         }
-
         public ViewNotesVM viewnotes(int id)
         {
             ViewNotesVM model = new ViewNotesVM();
@@ -210,6 +202,25 @@ namespace BAL.Repository
             {
                 return false;
             }
+        }
+
+        public CloseCaseVM closecasegetdata(CloseCaseVM model, int reqid)
+        {
+            var filedetails = _context.RequestWiseFiles.Where(u => u.RequestId == reqid).ToList();
+            var client = _context.RequestClients.Where(u => u.RequestId == reqid).FirstOrDefault();
+            var request = _context.Requests.FirstOrDefault(u => u.RequestId == reqid);
+            if (request != null )
+            {
+                model.Files = filedetails;
+                model.FirstName = client.FirstName;
+                model.LastName = client.LastName;
+                model.Email = client.Email;
+                model.Phonenum = client.PhoneNumber;
+                model.DateOfBirth = new DateOnly((int)client.IntYear, int.Parse(client.StrMonth), (int)client.IntDate);
+                model.ConfirmationNum = request.ConfirmationNumber.ToUpper();
+                model.requestid = reqid;
+            }
+            return model;
         }
     }
 }

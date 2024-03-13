@@ -6,14 +6,14 @@
 }
 
 
-<body>
-    <div class="w-100 shadow">
+
+    <div class="w-100 shadow" id="dashboardpills">
         <ul class="nav nav-underline ps-5" id="pills-tab" role="tablist">
             <li class="nav-item " role="presentation">
-                <button class="px-2 nav-link text-decoration-none active text-black-50" id="pills-home-tab" data-bs-toggle="pill" data-bs-target="#pills-home" type="button" role="tab" aria-controls="pills-home" aria-selected="true">Dashboard</button>
+                <button class="px-2 nav-link text-decoration-none active text-secondary-emphasis" id="pills-home-tab" data-bs-toggle="pill" data-bs-target="#pills-home" type="button" role="tab" aria-controls="pills-home" aria-selected="true">Dashboard</button>
             </li>
             <li class="nav-item" role="presentation">
-                <button class="px-2 nav-link text-decoration-none text-black-50" id="pills-profile-tab" data-bs-toggle="pill" data-bs-target="#pills-profile" type="button" role="tab" aria-controls="pills-profile" aria-selected="false">Profile</button>
+            <button class="px-2 nav-link text-decoration-none text-secondary-emphasis" id="pills-profile-tab" data-bs-toggle="pill" data-bs-target="#pills-profile" type="button" role="tab" aria-controls="pills-profile" aria-selected="false">Profile</button>
             </li>
         
         </ul>
@@ -72,13 +72,8 @@
                 $('.inputss').removeAttr("disabled");
                 $('.btn').css("display", "inline-block");
                 $('#submitBtnforenable').css("display", "none");
-            })
-        })
-        event.preventDefault();
-
-
+            });
+        });
     </script>
 
-</body>
-</html>
 
