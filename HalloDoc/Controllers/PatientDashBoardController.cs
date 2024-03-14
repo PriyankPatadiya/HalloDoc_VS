@@ -66,6 +66,14 @@ namespace HalloDoc.Controllers
                 request.ModifiedDate = DateTime.Now;
                 _context.Requests.Update(request);
                 _context.SaveChanges();
+
+                RequestStatusLog model = new RequestStatusLog();
+                model.Status = request.Status;
+                model.RequestId = requestid;
+                model.CreatedDate = DateTime.Now;
+
+                _context.RequestStatusLogs.Add(model);
+                _context.SaveChanges();
                 return RedirectToAction("PatientDashboard");
             }
             else
@@ -228,7 +236,7 @@ namespace HalloDoc.Controllers
                 {
                     RequestWiseFile = reqfile,
                     requestid = requestid,
-
+                    
                     confirmationNumber = _context.Requests.Where(s => s.RequestId == requestid).FirstOrDefault().ConfirmationNumber.ToUpper()
                                   
                 };

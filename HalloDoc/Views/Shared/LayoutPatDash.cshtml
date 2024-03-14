@@ -20,15 +20,15 @@
 </head> 
 <body class="">
     
-        <nav class="navbar navbar-expand-lg navbar-light d-flex justify-content-between border border-bottom" >
+        <nav class="navbar navbar-expand-lg d-flex justify-content-between shadow" >
             <img src="~/images/hallodoc2.png"
                  alt=""
                  style="height: 8vh; margin-left: 4vw"
                  class="" />
 
             <div class="text-center align-items-center">
-                <span class="text-secondary"> Welcome </span>
-                <span class="fw-bold fs-6 text-black mt-1">@ViewBag.username</span>
+                <span class="text-body"> Welcome </span>
+                <span class="fw-bold fs-6 text-body mt-1">@ViewBag.username</span>
                 <a asp-controller="Home" asp-action="Logout"> <button class="btn btn-outline-info shadow-none mx-2">Logout</button></a>
                 <button class="btn bg-transparent pt-1 pb-2 border border-info text-info me-4 shadow-none" id="theme-toggle">
                     <svg xmlns="http://www.w3.org/2000/svg"

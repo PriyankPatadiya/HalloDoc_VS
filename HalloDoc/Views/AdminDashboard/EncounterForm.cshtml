@@ -1,7 +1,5 @@
-﻿
-@{
-    Layout = "~/Views/Shared/_LayoutAdminDash.cshtml";
-}
+﻿@model DAL.ViewModels.EncounterFormVM
+
 
 <section class="bg-light">
     <div class="container bg-light pt-3">
@@ -27,17 +25,17 @@
         <div class="container bg-white p-3">
             <h2 class="text-center fw-bolder my-3 text-info">Medical Report - Confidential</h2>
             <form method="post" id="encounterForm">
-                <input class="d-none" value="0" />
+                <input class="d-none" asp-for=requestid hidden/>
                 <div class="row gx-2">
                     <div class="col-md-6">
                         <div class="form-floating mb-3">
-                            <input type="text" class="form-control" id="first_name" placeholder="First Name">
+                            <input type="text" asp-for=FirstName class="form-control" id="first_name" placeholder="First Name">
                             <label for="floatingInput">First Name</label>
                         </div>
                     </div>
                     <div class="col-md-6">
                         <div class="form-floating mb-3">
-                            <input type="text" class="form-control" id="last_name" placeholder="Last Name">
+                            <input type="text" asp-for="LastName" class="form-control" id="last_name" placeholder="Last Name">
                             <label for="last_name">Last Name</label>
                         </div>
                     </div>
@@ -45,7 +43,7 @@
                 <div class="row gx-2">
                     <div class="col-md-12">
                         <div class="form-floating mb-3">
-                            <input type="text" class="form-control" id="location" placeholder="Location">
+                            <input type="text" asp-for="Location" class="form-control" id="location" placeholder="Location">
                             <label for="location">Location</label>
                         </div>
                     </div>
@@ -54,6 +52,7 @@
                     <div class="col-md-6">
                         <div class="form-floating mb-3">
                             <input type="date"
+                                asp-for="BirthDate"
                                    class="form-control"
                                    id="floatingInput" />
                             <label for="floatingInput">Date of Birth</label>
@@ -61,7 +60,7 @@
                     </div>
                     <div class="col-md-6">
                         <div class="form-floating mb-3">
-                            <input type="date" class="form-control" id="last_name" placeholder="Date">
+                            <input type="date" asp-for="ServiceDate" class="form-control" id="last_name" placeholder="Date">
                             <label for="Date">Date</label>
                         </div>
                     </div>
@@ -69,13 +68,13 @@
                 <div class="row gx-2">
                     <div class="col-md-6">
                         <div class="form-floating mb-3">
-                            <input type="text" class="form-control" id="historyillness" placeholder="History Of Present Ilness Or Injury">
+                            <input type="text" asp-for="IllnessOrInjury" class="form-control" id="historyillness" placeholder="History Of Present Ilness Or Injury">
                             <label for="historyillness">History Of Present Ilness Or Injury</label>
                         </div>
                     </div>
                     <div class="col-md-6">
                         <div class="form-floating mb-3">
-                            <input type="text" class="form-control" id="medicalhistory" placeholder="Medical History">
+                            <input type="text" asp-for="MedicalHistory" class="form-control" id="medicalhistory" placeholder="Medical History">
                             <label for="medicalhistory">Medical History</label>
                         </div>
                     </div>
@@ -83,13 +82,13 @@
                 <div class="row gx-2">
                     <div class="col-md-6">
                         <div class="form-floating mb-3">
-                            <input type="text" class="form-control" id="medications" placeholder="Medications">
+                            <input type="text" asp-for="Medications" class="form-control" id="medications" placeholder="Medications">
                             <label for="medications">Medications</label>
                         </div>
                     </div>
                     <div class="col-md-6">
                         <div class="form-floating mb-3">
-                            <input type="text" class="form-control" id="allergies" placeholder="Allergies">
+                            <input type="text" asp-for="Allergies" class="form-control" id="allergies" placeholder="Allergies">
                             <label for="allergies">Allergies</label>
                         </div>
                     </div>
@@ -97,19 +96,19 @@
                 <div class="row gx-2">
                     <div class="col-md-4">
                         <div class="form-floating mb-3">
-                            <input type="text" class="form-control" id="temperature" placeholder="Temperature">
+                            <input type="text" asp-for="Temprature" class="form-control" id="temperature" placeholder="Temperature">
                             <label for="temperature">Temperature</label>
                         </div>
                     </div>
                     <div class="col-md-4">
                         <div class="form-floating mb-3">
-                            <input type="text" class="form-control" id="hr" placeholder="HR">
+                            <input type="text" asp-for="HR" class="form-control" id="hr" placeholder="HR">
                             <label for="hr">HR</label>
                         </div>
                     </div>
                     <div class="col-md-4">
                         <div class="form-floating mb-3">
-                            <input type="text" class="form-control" id="rr" placeholder="RR">
+                            <input type="text" asp-for="RR" class="form-control" id="rr" placeholder="RR">
                             <label for="rr">RR</label>
                         </div>
                     </div>
@@ -117,25 +116,25 @@
                 <div class="row gx-2">
                     <div class="col-md-2">
                         <div class="form-floating mb-3">
-                            <input type="text" class="form-control" id="bpsystolic" placeholder="Blood Presssure">
+                            <input type="text" asp-for="SytolicBp" class="form-control" id="bpsystolic" placeholder="Blood Presssure">
                             <label for="bpsystolic">BP (Systolic)</label>
                         </div>
                     </div>
                     <div class="col-md-2">
                         <div class="form-floating mb-3">
-                            <input type="text" class="form-control" id="bpdiastolic" placeholder="Blood Presssure">
+                            <input type="text" asp-for="DistolicBp" class="form-control" id="bpdiastolic" placeholder="Blood Presssure">
                             <label for="bpdiastolic">BP (Diastolic)</label>
                         </div>
                     </div>
                     <div class="col-md-4">
                         <div class="form-floating mb-3">
-                            <input type="text" class="form-control" id="oxygen" placeholder="O2">
+                            <input type="text" asp-for="O2" class="form-control" id="oxygen" placeholder="O2">
                             <label for="oxygen">O2</label>
                         </div>
                     </div>
                     <div class="col-md-4">
                         <div class="form-floating mb-3">
-                            <input type="text" class="form-control" id="pain" placeholder="Pain">
+                            <input type="text" asp-for="Pain" class="form-control" id="pain" placeholder="Pain">
                             <label for="pain">Pain</label>
                         </div>
                     </div>
@@ -143,13 +142,13 @@
                 <div class="row gx-2">
                     <div class="col-md-6">
                         <div class="form-floating mb-3">
-                            <input type="text" class="form-control" id="heent" placeholder="HEENT">
+                            <input type="text" asp-for="Heent" class="form-control" id="heent" placeholder="HEENT">
                             <label for="heent">HEENT</label>
                         </div>
                     </div>
                     <div class="col-md-6">
                         <div class="form-floating mb-3">
-                            <input type="text" class="form-control" id="cv" placeholder="CV">
+                            <input type="text" asp-for="Cv" class="form-control" id="cv" placeholder="CV">
                             <label for="cv">CV</label>
                         </div>
                     </div>
@@ -157,13 +156,13 @@
                 <div class="row gx-2">
                     <div class="col-md-6">
                         <div class="form-floating mb-3">
-                            <input type="text" class="form-control" id="chest" placeholder="Chest">
+                            <input type="text" asp-for="Chest" class="form-control" id="chest" placeholder="Chest">
                             <label for="chest">Chest</label>
                         </div>
                     </div>
                     <div class="col-md-6">
                         <div class="form-floating mb-3">
-                            <input type="text" class="form-control" id="abd" placeholder="ABD">
+                            <input type="text" asp-for="ABD" class="form-control" id="abd" placeholder="ABD">
                             <label for="abd">ABD</label>
                         </div>
                     </div>
@@ -171,13 +170,13 @@
                 <div class="row gx-2">
                     <div class="col-md-6">
                         <div class="form-floating mb-3">
-                            <input type="text" class="form-control" id="extr" placeholder="Extr">
+                            <input type="text" asp-for="Extr" class="form-control" id="extr" placeholder="Extr">
                             <label for="extr">Extr</label>
                         </div>
                     </div>
                     <div class="col-md-6">
                         <div class="form-floating mb-3">
-                            <input type="text" class="form-control" id="skin" placeholder="Skin">
+                            <input type="text" asp-for="Skin" class="form-control" id="skin" placeholder="Skin">
                             <label for="skin">Skin</label>
                         </div>
                     </div>
@@ -185,13 +184,13 @@
                 <div class="row gx-2">
                     <div class="col-md-6">
                         <div class="form-floating mb-3">
-                            <input type="text" class="form-control" id="neuro" placeholder="Neuro">
+                            <input type="text" asp-for="Neuro" class="form-control" id="neuro" placeholder="Neuro">
                             <label for="neuro">Neuro</label>
                         </div>
                     </div>
                     <div class="col-md-6">
                         <div class="form-floating mb-3">
-                            <input type="text" class="form-control" id="other" placeholder="Other">
+                            <input type="text" asp-for="Other" class="form-control" id="other" placeholder="Other">
                             <label for="other">Other</label>
                         </div>
                     </div>
@@ -199,13 +198,13 @@
                 <div class="row gx-2">
                     <div class="col-md-6">
                         <div class="form-floating mb-3">
-                            <input type="text" class="form-control" id="diagnosis" placeholder="Diagnosis">
+                            <input type="text" asp-for="Dignosis" class="form-control" id="diagnosis" placeholder="Diagnosis">
                             <label for="diagnosis">Diagnosis</label>
                         </div>
                     </div>
                     <div class="col-md-6">
                         <div class="form-floating mb-3">
-                            <input type="text" class="form-control" id="treatmentplan" placeholder="Treatment Plan">
+                            <input type="text" asp-for="TreatmentPlan" class="form-control" id="treatmentplan" placeholder="Treatment Plan">
                             <label for="treatmentplan">Treatment Plan</label>
                         </div>
                     </div>
@@ -213,13 +212,13 @@
                 <div class="row gx-2">
                     <div class="col-md-6">
                         <div class="form-floating mb-3">
-                            <input type="text" class="form-control" id="medicationsdispensed" placeholder="Medications Dispensed">
+                            <input type="text" asp-for="MedicationDispensed" class="form-control" id="medicationsdispensed" placeholder="Medications Dispensed">
                             <label for="medicationsdispensed">Medications Dispensed</label>
                         </div>
                     </div>
                     <div class="col-md-6">
                         <div class="form-floating mb-3">
-                            <input type="text" class="form-control" id="procedures" placeholder="Procedures">
+                            <input type="text" asp-for="Procedures" class="form-control" id="procedures" placeholder="Procedures">
                             <label for="procedures">Procedures</label>
                         </div>
                     </div>
@@ -227,13 +226,13 @@
                 <div class="row gx-2">
                     <div class="col-md-12">
                         <div class="form-floating mb-3">
-                            <input type="text" class="form-control" id="followup" placeholder="Followup">
+                            <input type="text" asp-for="Followup" class="form-control" id="followup" placeholder="Followup">
                             <label for="followup">Followup</label>
                         </div>
                     </div>
                 </div>
                 <div class="d-flex flex-row-reverse mb-3">
-                    <button class="p-2 btn btn-outline-info mx-1">Cancel</button>
+                    <button type="button" class="p-2 btn btn-outline-info mx-1">Cancel</button>
                     <button type="button" class="btn p-2 mx-1" style="background-color:indigo; color:white" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
                         Finalize
                     </button>

@@ -1,8 +1,4 @@
-﻿// Please see documentation at https://docs.microsoft.com/aspnet/core/client-side/bundling-and-minification
-// for details on configuring this project to bundle and minify static web assets.
-
-// Write your JavaScript code.
-// JavaScript code to toggle between light and dark theme
+﻿
 const toggleButton = document.getElementById("theme-toggle");
 let currentTheme = localStorage.getItem("theme") || "light";
 

@@ -70,8 +70,14 @@
             $('#submitBtnforenable').click(function () {
                 event.preventDefault();
                 $('.inputss').removeAttr("disabled");
-                $('.btn').css("display", "inline-block");
+                $('.hiddenbtn').css("display", "inline-block");
                 $('#submitBtnforenable').css("display", "none");
+            });
+            $('#cancelbtn').click(function (){
+                event.preventDefault();
+                $('.inputss').attr("disabled");
+                $('.hiddenbtn').css("display", "none");
+                $('#submitBtnforenable').css("display", "inline-block");
             });
         });
     </script>

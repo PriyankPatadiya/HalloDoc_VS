@@ -4,10 +4,10 @@
 
 
     <div class="tab-pane fade" id="pills-profile" role="tabpanel" aria-labelledby="pills-profile-tab" tabindex="0">
-    <div class="container-fluid  p-4 bg-body-secondary">
+    <div class="container-fluid  p-4 ">
         <div class=" mx-auto mb-3 justify-content-between pt-2 "  id="secondDiv" style="width: 90%">
             <div class="backbtn d-flex justify-content-between">
-                <h3>User Profile</h3>
+                <h3 class="text-body">User Profile</h3>
                 <a asp-controller="PatientDashBoard" asp-action="PatientDashboard"
                    class="p-2 btn btn-outline-info border-info rounded ">
                     <svg xmlns="http://www.w3.org/2000/svg"
@@ -22,18 +22,18 @@
                     <span class="mx-2 ">Back</span>
                 </a>
             </div>
-            <div id="FormOfPatientRequest" class=" mt-3 p-3 gx-4 mb-3">
+            <div id="FormOfPatientRequest" class=" mt-3 p-3 gx-4 mb-3 bg-gradient shadow">
                 <form asp-action="editprofile" method="post" class="form-floating" id="profileform">
 
                     <!-- general information -->
 
                     <div class="row gx-4">
-                        <h4 class="fw-semibold ">General Information</h4>
+                        <h4 class="fw-semibold text-body">General Information</h4>
                         
                         <div class="col-sm-12 col-md-12 col-lg-6 form-floating my-3">
                             <input type="text"
                                    asp-for="FirstName"
-                                   class="form-control inputss"
+                                   class="form-control inputss shadow-none"
                                    id="floatingInput"
                                    placeholder="First Name" disabled/>
                             <label for="floatingInput" class="ms-2">First Name</label>
@@ -42,7 +42,7 @@
                         <div class="col-sm-12 col-md-12 col-lg-6 form-floating my-3">
                             <input type="text"
                                    asp-for="LastName"
-                                   class="form-control  inputss"
+                                   class="form-control  inputss shadow-none"
                                    id="floatingInput"
                                    placeholder="Last Name" disabled />
                             <label for="floatingInput" class="ms-2">Last Name</label>
@@ -52,7 +52,7 @@
                         <div class="col-sm-12 col-md-12 col-lg-6 form-floating my-3">
                             <input type="date"
                                    asp-for="BirthDate"
-                                   class="form-control inputss"
+                                   class="form-control inputss shadow-none"
                                    id="floatingInput"
                                    placeholder="Date Of Birth" disabled />
                             <label for="floatingInput" class="ms-2">Date Of Birth</label>
@@ -61,7 +61,7 @@
 
                         <!-- Contact Information -->
 
-                        <h4 class="fw-semibold mt-3">
+                        <h4 class="fw-semibold text-body mt-3">
                             Contact Information
                         </h4>
                         
@@ -69,7 +69,7 @@
                         <div class="col-sm-12 col-md-12 col-lg-6 form-floating my-3">
                             <input type="tel"
                                    asp-for="PhoneNumber"
-                                   class="form-control inputss"
+                                   class="form-control inputss shadow-none"
                                    id="floatingInput"
                                    placeholder="PhoneNumber" disabled />
                             <label for="floatingInput" class="ms-2">Mobile Number</label>
@@ -77,13 +77,13 @@
                         </div>
 
                         <div class="col-sm-12 col-md-12 col-lg-6 form-floating my-3">
-                            <input type="text"
+                            <input type="email"
                                    asp-for="Email"
-                                   class="form-control inputss"
+                                   class="form-control inputss shadow-none"
                                    id="email1"
                                    id="floatingInput"
                                    placeholder="name@InputType.com"
-                                   onchange="CheckEmail()" disabled readonly/>
+                                   onchange="CheckEmail()" readonly disabled/>
                             <label for="floatingInput" class="ms-2">Email</label>
                             @*<span asp-validation-for="" class="text-danger" style="font-size: 11px;"></span>*@
                         </div>
@@ -91,13 +91,13 @@
 
                         <!-- Location Information -->
 
-                        <h4 class="fw-semibold mt-3">
+                        <h4 class="fw-semibold text-body mt-3">
                             Location Information
                         </h4>
                         <div class="col-sm-12 col-md-12 col-lg-6 form-floating my-3">
                             <input type="text"
                                    asp-for="Street"
-                                   class="form-control inputss"
+                                   class="form-control inputss shadow-none"
                                    id="floatingInput"
                                    placeholder="Street" disabled />
                             <label for="floatingInput" class="ms-2">Street</label>
@@ -105,7 +105,7 @@
                         <div class="col-sm-12 col-md-12 col-lg-6 form-floating my-3">
                             <input type="text"
                                    asp-for="City"
-                                   class="form-control inputss"
+                                   class="form-control inputss shadow-none"
                                    id="floatingInput"
                                    placeholder="City" disabled />
                             <label for="floatingInput" class="ms-2">City</label>
@@ -113,7 +113,7 @@
                         <div class="col-sm-12 col-md-12 col-lg-6 form-floating my-3">
                             <input type="text"
                                    asp-for="State"
-                                   class="form-control inputss"
+                                   class="form-control inputss shadow-none"
                                    id="floatingInput"
                                    placeholder="State" disabled />
                             <label for="floatingInput" class="ms-2">State</label>
@@ -121,7 +121,7 @@
                         <div class="col-sm-12 col-md-12 col-lg-4 form-floating my-3">
                             <input type="text"
                                    asp-for="ZipCode"
-                                   class="form-control inputss"
+                                   class="form-control inputss shadow-none"
                                    id="floatingInput"
                                    placeholder="Zip Code" disabled />
                             <label for="floatingInput" class="ms-2">Zip Code</label>
@@ -137,14 +137,14 @@
                         </div>
 
                         <div class="d-flex justify-content-end my-3">
-                            <button onclick="enableInputs()" type="submit" class="btn border-none bg-info p-3 text-light fw-semibold me-4" id="submitBtnforenable">
+                            <button type="submit" class="btn border-none bg-info p-3 text-light fw-semibold me-4" id="submitBtnforenable">
                                 Edit
                             </button>
-                                <a asp-action="editprofile"><button type="submit" class="btn border-none bg-info p-3 text-light fw-semibold me-4" style="display:none;">
+                                <a asp-action="editprofile"><button type="submit" class="btn border-none bg-info p-3 text-light fw-semibold me-4 hiddenbtn" style="display:none;">
                                     Save
                                 </button>
                             </a>
-                            <button onclick="" type="button" class="btn border-none bg-danger p-3 text-light fw-semibold me-4" style="display:none;">
+                            <button type="button" class=" hiddenbtn btn border-none bg-danger p-3 text-light fw-semibold me-4" id="cancelbtn" style="display:none;">
                                 Cancel
                             </button>
                         </div>

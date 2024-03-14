@@ -60,10 +60,10 @@
                     <h2 class="my-4">LogIn To Your Account</h2>
 
                     <div class="mx-auto my-2">
-                        <div class="form-floating d-flex border rounded bg-white logininputdiv">
+                        <div class="form-floating d-flex border rounded bg-transparent logininputdiv">
                             <input type="email"
                                 asp-for="Email"
-                                   class="form-control no-border"
+                                   class="form-control no-border bg-transparent"
                                    id="floatingInputGroup1"
                                    placeholder="Username" /><img src="~/images/user_circle.svg" alt="" class="pe-3" />
                             <label for="floatingInputGroup1">Username</label>
@@ -72,10 +72,10 @@
                     </div>
                             <span asp-validation-for="Email" class="text-danger"></span>
                     <div class="mx-auto my-2">
-                        <div class="form-floating d-flex border rounded bg-white logininputdiv">
+                            <div class="form-floating d-flex border rounded bg-transparent logininputdiv">
                             <input type="password"
                                 asp-for="PasswordHash"
-                                   class="form-control no-border"
+                                       class="form-control no-border bg-transparent"
                                    id="floatingPassword"
                                    placeholder="Password" />
                             @*<img src="~/images/password_icon.svg" alt="" class="pe-3" />*@

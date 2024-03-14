@@ -2,26 +2,13 @@
     Layout = "~/Views/Shared/LayoutPatDash.cshtml";
 }
 @model DAL.ViewModels.PatientReqVM
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" asp-append-version="true" />
-    @*<link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />*@
-    <link rel="stylesheet" href="~/HalloDoc.styles.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/css/RequestForms.css" asp-append-version="true" />
-    <title>@ViewData["Title"]</title>
-</head>
-<body class="">
 
-
-    <div class="container-fluid bg-light pb-4">
+    <div class="container-fluid pb-4">
         <div class="mx-auto pt-3 mb-3" id="secondDiv">
-            <div class="backbtn d-flex justify-content-end">
+            <div class="backbtn container-sm px-3 d-flex justify-content-between">
+            <h4 class="text-body">Submit Information</h4>
                 <a asp-controller="PatientDashBoard" asp-action="PatientDashboard"
-                   class="p-2 border text-decoration-none border-info rounded bg-light">
+                   class="p-2 border text-decoration-none border-info rounded bg-transparent">
                     <svg xmlns="http://www.w3.org/2000/svg"
                          width="16"
                          height="16"
@@ -35,11 +22,11 @@
                 </a>
             </div>
 
-            <div id="FormOfPatientRequest" class="bg-white mt-3 p-3 gx-4 mb-3">
+            <div id="FormOfPatientRequest" class="container-sm mt-3 p-3 gx-4 mb-3 bg-gradient">
                 <form class="form-floating" method="post" enctype="multipart/form-data">
                     <!-- Patient Information -->
                     <div class="row gx-4">
-                        <h4 class="fw-semibold text-dark">Patient Information</h4>
+                        <h4 class="fw-semibold text-body">Patient Information</h4>
                         <div class="form-floating my-3 control-group col-12">
                             <textarea class="form-control"
                                       placeholder="Leave a comment here"
@@ -78,7 +65,7 @@
 
                         <!-- Patient Contact Information -->
 
-                        <h4 class="fw-semibold text-dark mt-3">
+                    <h4 class="fw-semibold text-body mt-3">
                             Patient Contact Information
                         </h4>
                         <div class="col-sm-12 col-md-12 col-lg-6 form-floating my-3">
@@ -127,7 +114,7 @@
 
                         <!-- Patient Location-->
 
-                        <h4 class="fw-semibold text-dark mt-3">
+                    <h4 class="fw-semibold text-body mt-3">
                             Patient Location
                         </h4>
                         <div class="col-sm-12 col-md-12 col-lg-6 form-floating my-3">
@@ -181,7 +168,7 @@
 
 
 
-                        <h4 class="fw-semibold text-dark mt-3">
+                    <h4 class="fw-semibold text-body mt-3">
                             Relation
                         </h4>
                         <div class="col-sm-12 col-md-12 col-lg-6 form-floating my-3">
@@ -196,7 +183,7 @@
 
                         <!-- Upload File -->
 
-                        <h4 class="fw-semibold text-dark mt-3">
+                    <h4 class="fw-semibold text-body mt-3">
                             (Optional) Upload File Or Document
                         </h4>
 
@@ -281,9 +268,6 @@
 
     </script>
 
-
-</body>
-</html>
 
 
 

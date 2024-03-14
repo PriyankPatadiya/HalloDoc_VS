@@ -29,5 +29,10 @@ namespace BAL.Interface
         // Close Case
 
         public CloseCaseVM closecasegetdata(CloseCaseVM model, int reqid);
+
+        // Encounter form
+
+        public List<EncounterFormVM> getEncounterformdata(int requestid);
+        public void addencounterdata(EncounterFormVM model);
     }
 }

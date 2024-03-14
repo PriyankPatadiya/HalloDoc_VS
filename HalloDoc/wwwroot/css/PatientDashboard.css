@@ -4,3 +4,7 @@
 }*/
 
 
+.form-control[readonly] {
+    background-color: transparent;
+    font-size: 1em;
+}

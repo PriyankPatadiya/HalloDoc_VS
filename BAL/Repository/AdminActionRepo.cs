@@ -2,6 +2,7 @@
 using DAL.DataContext;
 using DAL.DataModels;
 using DAL.ViewModels;
+using Microsoft.IdentityModel.Abstractions;
 using Org.BouncyCastle.Asn1.Mozilla;
 using Org.BouncyCastle.Asn1.Ocsp;
 using Org.BouncyCastle.Ocsp;
@@ -221,6 +222,125 @@ namespace BAL.Repository
                 model.requestid = reqid;
             }
             return model;
+        }
+
+        public List<EncounterFormVM> getEncounterformdata(int requestid)
+        {
+
+            var model = (from req in _context.Requests
+                                     join
+                                    reqclient in _context.RequestClients on
+                                    req.RequestId equals reqclient.RequestId
+                                     join encounter in _context.EncounterForms on
+                                     req.RequestId equals encounter.RequestId
+                                     into total
+                                     from encounter in total.DefaultIfEmpty()
+                                     where req.RequestId == requestid
+                                     select new EncounterFormVM
+                                     {
+                                         FirstName = reqclient.FirstName,
+                                         LastName = reqclient.LastName,
+                                         //Location = reqclient.Location,
+                                         BirthDate = new DateTime((int)reqclient.IntYear, int.Parse(reqclient.StrMonth), (int)reqclient.IntDate),
+                                         //ServiceDate = (DateTime)req.ModifiedDate,
+                                         IllnessOrInjury = encounter.HistoryOfPresentIllnessOrInjury,
+                                         MedicalHistory = encounter.MedicalHistory,
+                                         Medications = encounter.Medications,
+                                         Allergies = encounter.Allergies,
+                                         Temprature = encounter.Temp,
+                                         HR = encounter.Hr,
+                                         RR = encounter.Rr,
+                                         SytolicBp = encounter.BloodPressureSystolic,
+                                         DistolicBp = encounter.BloodPressureDiastolic,
+                                         O2 = encounter.O2,
+                                         Pain = encounter.Pain,
+                                         Heent = encounter.Heent,
+                                         Cv = encounter.Cv,
+                                         Chest = encounter.Chest,
+                                         ABD = encounter.Abd,
+                                         Extr = encounter.Extremeties,
+                                         Skin = encounter.Skin,
+                                         Neuro = encounter.Neuro,
+                                         Other = encounter.Other,
+                                         Dignosis = encounter.Diagnosis,
+                                         TreatmentPlan = encounter.TreatmentPlan,
+                                         MedicationDispensed = encounter.MedicationsDispensed,
+                                         Procedures = encounter.Procedures,
+                                         Followup = encounter.FollowUp,
+                                         requestid = requestid
+                                     }).ToList();
+
+            return model;
+
+        }
+
+        public void addencounterdata(EncounterFormVM model)
+        {
+            var encounter = _context.EncounterForms.FirstOrDefault(u => u.RequestId == model.requestid);
+            if(encounter == null)
+            {
+                EncounterForm data = new EncounterForm
+                {
+                    RequestId = model.requestid,
+                    HistoryOfPresentIllnessOrInjury = model.IllnessOrInjury,
+                    MedicalHistory = model.MedicalHistory,
+                    Medications = model.Medications,
+                    Allergies = model.Allergies,
+                    Temp = model.Temprature,
+                    Hr = model.HR,
+                    Rr = model.RR,
+                    BloodPressureDiastolic = model.DistolicBp,
+                    BloodPressureSystolic = model.SytolicBp,
+                    O2 = model.O2,
+                    Pain = model.Pain,
+                    Heent = model.Heent,
+                    Cv = model.Cv,
+                    Chest = model.Chest,
+                    Abd = model.ABD,
+                    Extremeties = model.Extr,
+                    Skin = model.Skin,
+                    Neuro = model.Neuro,
+                    Other = model.Other,
+                    Diagnosis = model.Dignosis,
+                    TreatmentPlan = model.TreatmentPlan,
+                    MedicationsDispensed = model.MedicationDispensed,
+                    Procedures = model.Procedures,
+                    FollowUp = model.Followup,
+                    //AdminId
+                    //PhysicianId
+                };
+                _context.EncounterForms.Add(data);
+                _context.SaveChanges();
+            }
+            else
+            {
+                    encounter.HistoryOfPresentIllnessOrInjury = model.IllnessOrInjury;
+                    encounter.MedicalHistory = model.MedicalHistory;
+                    encounter.Medications = model.Medications;
+                    encounter.Allergies = model.Allergies;
+                    encounter.Temp = model.Temprature;
+                    encounter.Hr = model.HR;
+                    encounter.Rr = model.RR;
+                    encounter.BloodPressureDiastolic = model.DistolicBp;
+                    encounter.BloodPressureSystolic = model.SytolicBp;
+                    encounter.O2 = model.O2;
+                    encounter.Pain = model.Pain;
+                    encounter.Heent = model.Heent;
+                    encounter.Cv = model.Cv;
+                    encounter.Chest = model.Chest;
+                    encounter.Abd = model.ABD;
+                    encounter.Extremeties = model.Extr;
+                    encounter.Skin = model.Skin;
+                    encounter.Neuro = model.Neuro;
+                    encounter.Other = model.Other;
+                    encounter.Diagnosis = model.Dignosis;
+                    encounter.TreatmentPlan = model.TreatmentPlan;
+                    encounter.MedicationsDispensed = model.MedicationDispensed;
+                    encounter.Procedures = model.Procedures;
+                    encounter.FollowUp = model.Followup;
+                _context.EncounterForms.Update(encounter);
+                _context.SaveChanges();
+            }
         }
     }
 }

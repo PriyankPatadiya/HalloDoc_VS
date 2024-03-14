@@ -20,7 +20,7 @@ function CheckEmail() {
     var email = $('#email').val();
     $.ajax({
         type: "POST",
-        url: '@Url.Action("CheckMail","PatientForms")',
+        url: "CheckMail,PatientForms",
         data: { email: email },
 
 

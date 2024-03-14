@@ -66,6 +66,42 @@ namespace HalloDoc.Controllers
             return model;
         }
 
+
+        public IActionResult SearchByName(string SearchString, string selectButton, string StatusButton, string SelectedStateId, string partialviewpath)
+        {
+
+            var result = _admin.GetRequestsQuery(StatusButton);
+            result = result.Where(s => (String.IsNullOrEmpty(SearchString) || s.PatientName.Contains(SearchString)) && (String.IsNullOrEmpty(selectButton) || s.requestId == int.Parse(selectButton)) && ((SelectedStateId == "0" || SelectedStateId == null) || s.regionId == int.Parse(SelectedStateId)));
+            if (result != null)
+            {
+
+                if (!String.IsNullOrEmpty(StatusButton))
+                {
+                    ViewBag.Status = int.Parse(StatusButton);
+                }
+                return PartialView(partialviewpath, result.ToList());
+            }
+            return View("MainPage");
+        }
+
+        public IActionResult EncounterForm(int requestid)
+        {
+            AdminMainPageVM MainModel = new AdminMainPageVM
+            {
+                PageName = PageName.Encounterform
+            };
+            List<EncounterFormVM> model = _adminActions.getEncounterformdata(requestid);
+            MainModel.encountermodel = model[0];
+            return View("MainPage", MainModel);
+        }
+
+        [HttpPost]
+        public IActionResult EncounterForm(EncounterFormVM model)
+        {
+            _adminActions.addencounterdata(model);
+            return RedirectToAction("EncounterForm", new { requestid = model.requestid});
+        }
+
         [HttpGet]
         public IActionResult ViewCaseAdmin()
         {
@@ -82,11 +118,6 @@ namespace HalloDoc.Controllers
             result.regiontable = _context.Regions.ToList();
             MainModel.Casemodel = result;
             return View("MainPage", MainModel);
-        }
-
-        public IActionResult EncounterForm()
-        {
-            return View();
         }
 
         public IActionResult CloseCase(int reqid)
@@ -154,22 +185,6 @@ namespace HalloDoc.Controllers
             return View("MainPage", MainModel);
         }
 
-        public IActionResult SearchByName(string SearchString, string selectButton, string StatusButton, string SelectedStateId, string partialviewpath)
-            {
-
-            var result = _admin.GetRequestsQuery(StatusButton);
-                result = result.Where(s => (String.IsNullOrEmpty(SearchString) || s.PatientName.Contains(SearchString)) && (String.IsNullOrEmpty(selectButton) || s.requestId == int.Parse(selectButton)) && ((SelectedStateId == "0" || SelectedStateId == null) || s.regionId == int.Parse(SelectedStateId)));
-            if(result != null)
-            {
-
-                if (!String.IsNullOrEmpty(StatusButton))
-                {
-                    ViewBag.Status = int.Parse(StatusButton);
-                }
-                return PartialView(partialviewpath, result.ToList());
-            }
-            return View("MainPage");
-        }
 
         public IActionResult SendOrder(int requestid)
         {

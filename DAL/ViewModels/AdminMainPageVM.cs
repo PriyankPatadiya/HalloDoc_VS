@@ -12,7 +12,8 @@ namespace DAL.ViewModels
         public ViewdocumentVM? DocumentVM { get; set; }
         public SendOrderVM? SendOrderVM { get; set; }
         public CloseCaseVM? closecase { get; set; }
-
+        public EncounterFormVM? encountermodel { get; set; }
+ 
     }
     public enum PageName
     {

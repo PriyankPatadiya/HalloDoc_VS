@@ -207,7 +207,7 @@
                                 <li><a class="dropdown-item" asp-action="ViewNotesAdmin" asp-route-reqid="@item.reqid">ViewNotes</a></li>
                                 <li><a class="dropdown-item" asp-action="SendOrder" asp-route-requestid="@item.reqid">Orders</a></li>
                                 <li><a class="dropdown-item" href="#">Doctors Note</a></li>
-                                <li><a class="dropdown-item" href="#">Encounter</a></li>
+                                <li><a class="dropdown-item" asp-action="EncounterForm" asp-route-requestid="@item.reqid">Encounter</a></li>
                             </ul>
                         </div>
                     </td>
@@ -373,7 +373,7 @@
                             <a asp-action="ViewDocuments" asp-route-reeqid="@item.reqid"><button class=" border-1 btn-success px-3 rounded-5 btn w-100">View Uploads</button></a>
                         </div>
                         <div class="col-6 px-3">
-                            <button class=" border-1 btn-success px-3 rounded-5 btn w-100">Encounter</button>
+                            <a asp-action="EncounterForm"><button class=" border-1 btn-success px-3 rounded-5 btn w-100">Encounter</button></a>
                         </div>
                         <div class="col-6 px-3">
                             <a asp-action="SendOrder" asp-route-requestid="@item.reqid"><button class="border-1 btn-warning px-3 rounded-5 btn w-100">Orders</button></a>
