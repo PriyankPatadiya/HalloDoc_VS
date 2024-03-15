@@ -52,6 +52,9 @@ namespace HalloDoc.Controllers
                 ViewBag.Status = int.Parse("1");
             }
 
+           
+            
+
             return View(MainModel);
         }
         public AdminDashboardVM AdminDashCallFromMain(AdminDashboardVM model, string StatusButton)

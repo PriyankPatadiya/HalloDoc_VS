@@ -91,7 +91,6 @@ namespace BAL.Repository
                           on req.RequestId equals reqclient.RequestId
                           select new AdminDashboardTableVM()
                           {
-
                               PatientName = reqclient.FirstName + " " + reqclient.LastName,
                               BirthDate = new DateOnly((int)reqclient.IntYear, int.Parse(reqclient.StrMonth), (int)reqclient.IntDate).ToString("MMMM dd, yyyy"),
                               RequestorName = req.FirstName + " " + req.LastName,

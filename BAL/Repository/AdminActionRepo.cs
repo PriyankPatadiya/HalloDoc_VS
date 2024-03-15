@@ -306,8 +306,6 @@ namespace BAL.Repository
                     MedicationsDispensed = model.MedicationDispensed,
                     Procedures = model.Procedures,
                     FollowUp = model.Followup,
-                    //AdminId
-                    //PhysicianId
                 };
                 _context.EncounterForms.Add(data);
                 _context.SaveChanges();
