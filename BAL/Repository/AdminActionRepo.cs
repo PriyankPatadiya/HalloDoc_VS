@@ -342,5 +342,18 @@ namespace BAL.Repository
                 _context.SaveChanges();
             }
         }
+
+        public bool finalize(int requestid)
+        {
+            var encounter = _context.EncounterForms.FirstOrDefault(u => u.RequestId == requestid);
+            if (encounter != null)
+            {
+                encounter.IsFinalize = true;
+                _context.EncounterForms.Update(encounter);
+                _context.SaveChanges();
+                return true;
+            }
+            return false;
+        }
     }
 }

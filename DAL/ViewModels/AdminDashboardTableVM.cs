@@ -21,5 +21,6 @@ namespace DAL.ViewModels
         public int reqclientId { get; set; }  
         public List<Region> regionTable { get; set; }
         public int reqid { get; set; }
+        public bool? IsEncounterFinalize { get; set; }
     }
 }

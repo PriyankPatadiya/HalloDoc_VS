@@ -3,12 +3,16 @@ using BAL.Repository;
 using DAL.DataContext;
 using DAL.DataModels;
 using DAL.ViewModels;
+using iTextSharp.text.pdf;
+using iTextSharp.text;
+using iTextSharp.tool.xml;
 using Microsoft.AspNetCore.Mvc;
-using Org.BouncyCastle.Bcpg.OpenPgp;
-using System.Data.Odbc;
-using System.Net;
 using System.Text;
 using IHostingEnvironment = Microsoft.AspNetCore.Hosting.IHostingEnvironment;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.AspNetCore.Mvc.ViewEngines;
+using Rotativa.AspNetCore;
+using Org.BouncyCastle.Asn1.Mozilla;
 
 namespace HalloDoc.Controllers
 {
@@ -50,8 +54,6 @@ namespace HalloDoc.Controllers
 
             return View(MainModel);
         }
-
-
         public AdminDashboardVM AdminDashCallFromMain(AdminDashboardVM model, string StatusButton)
         {
             var result = _admin.GetRequestsQuery(StatusButton);
@@ -66,15 +68,14 @@ namespace HalloDoc.Controllers
             return model;
         }
 
+        // Filter action 
 
         public IActionResult SearchByName(string SearchString, string selectButton, string StatusButton, string SelectedStateId, string partialviewpath)
         {
-
             var result = _admin.GetRequestsQuery(StatusButton);
             result = result.Where(s => (String.IsNullOrEmpty(SearchString) || s.PatientName.Contains(SearchString)) && (String.IsNullOrEmpty(selectButton) || s.requestId == int.Parse(selectButton)) && ((SelectedStateId == "0" || SelectedStateId == null) || s.regionId == int.Parse(SelectedStateId)));
             if (result != null)
             {
-
                 if (!String.IsNullOrEmpty(StatusButton))
                 {
                     ViewBag.Status = int.Parse(StatusButton);
@@ -83,6 +84,8 @@ namespace HalloDoc.Controllers
             }
             return View("MainPage");
         }
+
+        // Encounter Form Actions
 
         public IActionResult EncounterForm(int requestid)
         {
@@ -101,6 +104,34 @@ namespace HalloDoc.Controllers
             _adminActions.addencounterdata(model);
             return RedirectToAction("EncounterForm", new { requestid = model.requestid});
         }
+        public IActionResult finalizeForm(int requestid)
+        {
+            bool result = _adminActions.finalize(requestid);
+            if (result == true)
+            {
+                return RedirectToAction("MainPage");
+            }
+            return Ok("Can't finalize the form");
+        }
+        public IActionResult GeneratePdf(int requestid)
+        {
+
+            List<EncounterFormVM> viewEncounterForm = _adminActions.getEncounterformdata(requestid);
+
+            if (viewEncounterForm == null)
+            {
+                return NotFound();
+            }
+
+            //return View("EncounterFormDetails", encounterFormView);
+            return new ViewAsPdf("EncounterFormDetails", viewEncounterForm[0])
+            {
+                FileName = "Encounter_Form.pdf"
+            };
+
+        }
+
+        // View Case Actions
 
         [HttpGet]
         public IActionResult ViewCaseAdmin()
@@ -119,6 +150,8 @@ namespace HalloDoc.Controllers
             MainModel.Casemodel = result;
             return View("MainPage", MainModel);
         }
+
+        // Close Case Actions
 
         public IActionResult CloseCase(int reqid)
         {
@@ -172,6 +205,7 @@ namespace HalloDoc.Controllers
             return Ok("can't close the request");
         }
 
+        // View Notes Actions
 
         public IActionResult ViewNotesAdmin()
         {
@@ -185,6 +219,7 @@ namespace HalloDoc.Controllers
             return View("MainPage", MainModel);
         }
 
+        // Send Order Actions
 
         public IActionResult SendOrder(int requestid)
         {
@@ -198,6 +233,28 @@ namespace HalloDoc.Controllers
             MainModel.SendOrderVM = SendOrderVM;
             return View("MainPage", MainModel);
         }
+
+        [HttpPost]
+        public IActionResult SendOrder(SendOrderVM model)
+        {
+            OrderDetail order = new OrderDetail
+            {
+                RequestId = model.requestid,
+                VendorId = model.vendorid,
+                FaxNumber = model.Fax,
+                Email = model.Email,
+                BusinessContact = model.BusinessContact,
+                Prescription = model.prescription,
+                NoOfRefill = model.Noofretail,
+                CreatedDate = DateTime.Now,
+            };
+            _context.OrderDetails.Add(order);
+            _context.SaveChanges();
+            return RedirectToAction("MainPage");
+        }
+
+
+        // Assign Case Actions
 
         [HttpPost]
         public IActionResult CancelCase(int reeqid, string Reason)
@@ -220,11 +277,15 @@ namespace HalloDoc.Controllers
             return View("MainPage");
         }
 
+        // Block Request Actions
+
         public IActionResult BlockCase(int reeqid, string reason)
         {
             _adminActions.BlockCase(reeqid, reason);
             return View("MainPage");
         }
+
+        // View Document Actions
 
         public IActionResult ViewDocuments(int reeqid)
         {
@@ -341,6 +402,8 @@ namespace HalloDoc.Controllers
             }
         }
 
+        // View Notes
+
         public IActionResult filterVenByPro(string ProfessionId)
         {
             var list = _adminActions.getVenbypro(ProfessionId);
@@ -365,26 +428,6 @@ namespace HalloDoc.Controllers
             }
             return RedirectToAction("ViewNotesAdmin");
         }
-
-        [HttpPost]
-        public IActionResult SendOrder(SendOrderVM model)
-        {
-            OrderDetail order = new OrderDetail
-            {
-                RequestId = model.requestid,
-                VendorId = model.vendorid,
-                FaxNumber = model.Fax,
-                Email = model.Email,
-                BusinessContact = model.BusinessContact,
-                Prescription = model.prescription,
-                NoOfRefill = model.Noofretail,
-                CreatedDate = DateTime.Now,
-            };
-            _context.OrderDetails.Add(order);
-            _context.SaveChanges();
-            return RedirectToAction("MainPage");
-        }
-
         public IActionResult TransferNotes(int reeqid)
         {
             int phyid = int.Parse(Request.Form["physicianId"]);
@@ -438,6 +481,11 @@ namespace HalloDoc.Controllers
             }
 
             return Ok("Failed to send agreement");
+        }
+
+        public IActionResult AdminProfile()
+        {
+            return View();
         }
     }
 }

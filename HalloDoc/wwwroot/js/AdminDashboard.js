@@ -176,6 +176,7 @@ $(document).ready(function () {
         }
     });
 
+    
     // Main function that filters and load partial view in admin dashboard
     function ChangeTable(partialviewpath, StatusButton) {
 
@@ -216,7 +217,12 @@ $(document).ready(function () {
             }
         });
     }
+    // downloadpdf in encouter action which is finalized
 
+    $("#submitBtnEncounterForm").click(function () {
+        debugger;
+        console.log("......")
+    });
     function filterPhysicianByRegion(RegionId) {
        
         if (RegionId != "0") {

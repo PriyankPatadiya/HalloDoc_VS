@@ -34,5 +34,6 @@ namespace BAL.Interface
 
         public List<EncounterFormVM> getEncounterformdata(int requestid);
         public void addencounterdata(EncounterFormVM model);
+        public bool finalize(int requestid);
     }
 }

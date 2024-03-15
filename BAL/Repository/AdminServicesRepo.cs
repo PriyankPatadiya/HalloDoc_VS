@@ -1,6 +1,8 @@
 ﻿using BAL.Interface;
 using DAL.DataContext;
 using DAL.ViewModels;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
+using System.ComponentModel;
 
 namespace BAL.Repository
 {
@@ -107,6 +109,7 @@ namespace BAL.Repository
                               regionTable = _context.Regions.ToList(),
                               DateOfService = req.ModifiedDate,
                               physicianname = _context.Physicians.FirstOrDefault(u => u.PhysicianId == req.PhysicianId).FirstName,
+                              IsEncounterFinalize = _context.EncounterForms.FirstOrDefault(r => r.RequestId == req.RequestId).IsFinalize
 
                           }).Where(item=>myarray.Any(s=>item.requestStatus==s));
             
