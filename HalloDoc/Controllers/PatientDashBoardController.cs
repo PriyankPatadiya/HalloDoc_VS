@@ -116,9 +116,10 @@ namespace HalloDoc.Controllers
 
 
                 var Dashboard = (from req in _context.Requests
+                                 join reqclient in _context.RequestClients on req.RequestId equals reqclient.RequestId
                               join requestfile in _context.RequestWiseFiles on req.RequestId equals requestfile.RequestId
                               into reqs
-                              where req.Email == email
+                              where reqclient.Email == email
                               from requestfile
                               in reqs.DefaultIfEmpty()
                               select new PatDashTableVM

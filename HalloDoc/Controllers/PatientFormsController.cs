@@ -54,14 +54,15 @@ namespace HalloDoc.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> PatientRequestForm(PatientReqVM pInfo) 
-            {
-            var user = _context.AspNetUsers.FirstOrDefault(a  => a.Email == pInfo.Email);
-            pInfo.State =  await _patreq.GetStateAccordingToRegionId(pInfo.SelectedStateId);
-                pInfo.CreatedDate = DateTime.Now.Date;
-                pInfo.confirmationnumber = _patreq.GenerateConfirmationNumber(pInfo);
+        public async Task<IActionResult> PatientRequestForm(PatientReqVM pInfo)
+        {
+            var user = _context.AspNetUsers.FirstOrDefault(a => a.Email == pInfo.Email);
             if (ModelState.IsValid)
             {
+                pInfo.State = await _patreq.GetStateAccordingToRegionId(pInfo.SelectedStateId);
+                pInfo.CreatedDate = DateTime.Now.Date;
+                pInfo.confirmationnumber = _patreq.GenerateConfirmationNumber(pInfo);
+
                 if (pInfo.PasswordHash != pInfo.ConfirmPasswordHash && user == null)
                 {
                     ModelState.AddModelError("ConfirmPassword", "Password and ConfirmPassword is not same");
@@ -75,11 +76,11 @@ namespace HalloDoc.Controllers
 
                 _patreq.AddPatientForm(pInfo);
 
-                if (pInfo.Document != null && pInfo.Document.Length > 0 )
+                if (pInfo.Document != null && pInfo.Document.Length > 0)
                 {
                     string path = Path.Combine(this._environment.WebRootPath, "Uploads");
-                    
-                    
+
+
                     if (!Directory.Exists(path))
                     {
                         Directory.CreateDirectory(path);
@@ -98,28 +99,24 @@ namespace HalloDoc.Controllers
                     return RedirectToAction("SubmitRequest", "Home");
                 }
             }
-            return View("PatientRequestForm");
+            pInfo.Region = _context.Regions.ToList();
+            return View("PatientRequestForm", pInfo);
         }
-
-
-
-
-        
 
 
         [HttpPost]
         public async Task<IActionResult> Friend_FamilyRequest(OthersReqVM model)
         {
-            model.State = await _patreq.GetStateAccordingToRegionId(model.SelectedStateId);
-                model.CreatedDate = DateTime.Now.Date;
-                model.confirmationnumber = _otherreq.GenerateConfirmationNumber(model);
             if (ModelState.IsValid)
             {
+                model.State = await _patreq.GetStateAccordingToRegionId(model.SelectedStateId);
+                model.CreatedDate = DateTime.Now.Date;
+                model.confirmationnumber = _otherreq.GenerateConfirmationNumber(model);
                 _otherreq.AddFamilyFriendForm(model);
                 if(model.Document != null && model.Document.Length > 0)
                 {
                     string path = Path.Combine(this._environment.WebRootPath, "Uploads");
-                    var uniquefilesavetoken = new Guid().ToString();
+                    var uniquefilesavetoken = Guid.NewGuid().ToString();
 
                     string fileName = Path.GetFileNameWithoutExtension(model.Document.FileName);
                     string extension = Path.GetExtension(model.Document.FileName);
@@ -134,39 +131,41 @@ namespace HalloDoc.Controllers
                     }
                     return RedirectToAction("SubmitRequest","Home");
                 }
+                return RedirectToAction("SubmitRequest", "Home");
             }
-            return View();
+            model.Region = _context.Regions.ToList();
+            return View("Friend_FamilyRequestForm", model);
         }
 
         [HttpPost]
 
         public async Task<IActionResult> ConciergeRequestForm(OthersReqVM model)
-        {
-                model.State =   await _patreq.GetStateAccordingToRegionId(model.SelectedStateId);
-                model.CreatedDate = DateTime.Now.Date;
-                model.confirmationnumber = _otherreq.GenerateConfirmationNumber(model);
+        { 
             if (ModelState.IsValid)
             {
+                model.State = await _patreq.GetStateAccordingToRegionId(model.SelectedStateId);
+                model.CreatedDate = DateTime.Now.Date;
+                model.confirmationnumber = _otherreq.GenerateConfirmationNumber(model);
                 _otherreq.AddConciergeForm(model);
-
-                    return RedirectToAction("SubmitRequest", "Home");
-
+                return RedirectToAction("SubmitRequest", "Home");
             }
-            return View();
+            model.Region = _context.Regions.ToList();
+            return View("ConciergeRequestForm", model);
         }
 
         [HttpPost]
 
         public async Task<IActionResult> BusinessRequestForm(OthersReqVM model)
         {
+            if (ModelState.IsValid) {
                 model.State = await _patreq.GetStateAccordingToRegionId(model.SelectedStateId);
                 model.CreatedDate = DateTime.Now.Date;
                 model.confirmationnumber = _otherreq.GenerateConfirmationNumber(model);
-            if (ModelState.IsValid) {
                 _otherreq.AddBusinessForm(model);
                 return RedirectToAction("SubmitRequest", "Home");
             }
-            return View();
+            model.Region = _context.Regions.ToList();
+            return View("BusinessRequestForm", model);
         }
 
         [HttpPost]

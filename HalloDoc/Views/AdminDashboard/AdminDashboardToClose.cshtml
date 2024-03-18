@@ -2,7 +2,6 @@
 
 @{
     var color = "";
-    var requestor = "";
     var j = 1;
 }
 
@@ -143,22 +142,18 @@
                 @if (item.requestId == 1)
                 {
                     color = "#14A44D";
-                    requestor = "Patient";
                 }
                 else if (item.requestId == 2)
                 {
                     color = "#E4A11B";
-                    requestor = "Family";
                 }
                 else if (item.requestId == 3)
                 {
                     color = "#54B4D3";
-                    requestor = "Concierge";
                 }
                 else if (item.requestId == 4)
                 {
                     color = "#DC4C64";
-                    requestor = "Business";
                 }
 
                 <tr class="text-white" id="adminDashTableRow">

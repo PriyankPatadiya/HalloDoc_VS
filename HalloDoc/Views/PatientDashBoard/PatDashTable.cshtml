@@ -1,11 +1,11 @@
 ﻿@model List<DAL.ViewModels.PatDashTableVM>
 
-    @{
-        var uniqueid = new HashSet<int?>();
-    }
+@{
+    var uniqueid = new HashSet<int?>();
+}
 <div class="tab-pane fade show active " id="pills-home" style="min-height: 77vh;" role="tabpanel" aria-labelledby="pills-home-tab" tabindex="0">
     <div class="p-0 m-0 NoAccordion d-sm-block d-none">
-        <div class="modal fade" role="dialog" tabindex="-1" id="modal"aria-hidden="true">
+        <div class="modal fade" role="dialog" tabindex="-1" id="modal" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered">
                 <div class="modal-content">
                     <div class="modal-header bg-info text-white">
@@ -29,89 +29,89 @@
         </div>
 
         <div class="mx-auto pb-3" style="width:93%; padding-top: 2.5%;">
-        <h3 class="my-4">Medical History</h3>
-        <div class="PatientInfoTable border rounded shadow bg-body-secondary">
-            <div class="d-flex justify-content-end my-2">
-                <button type="button" class="btn btn-outline-info shadow-none mx-3" data-bs-toggle="modal" data-bs-target="#modal">Create New Request</button>
-            </div>
-            <Table class="table table-hover table-responsive">
-                <thead>
+            <h3 class="my-4">Medical History</h3>
+            <div class="PatientInfoTable border rounded shadow bg-body-secondary">
+                <div class="d-flex justify-content-end my-2">
+                    <button type="button" class="btn btn-outline-info shadow-none mx-3" data-bs-toggle="modal" data-bs-target="#modal">Create New Request</button>
+                </div>
+                <Table class="table table-hover table-responsive">
                     <colgroup>
                         <col span="1" style="width: 20%;">
                         <col span="1" style="width: 60%;">
                         <col span="1" style="width: 20%;">
-                    </colgroup>
+                    </colgroup> 
+                    <thead>
+                        <tr class="table-secondary">
 
-                    <tr class="table-secondary">
+                            <th scope="col">
+                                CreatedDate
+                            </th>
+                            <th scope="col">
+                                CurrentStatus
+                            </th>
+                            <th scope="col">
+                                Document
+                            </th>
 
-                        <th scope="col">
-                            CreatedDate
-                        </th>
-                        <th scope="col">
-                            CurrentStatus
-                        </th>
-                        <th scope="col">
-                            Document
-                        </th>
-
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var item in Model)
-                    {
-                        if (uniqueid.Add(item.requestid))
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
                         {
-                            <tr>
-                                <td class="col" class="text-center">
-                                    @Html.DisplayFor(modelitem=>item.CreatedDate)
-                                </td>
-                                <td class="col" class="text-center">
-                                    @Html.DisplayFor(modelitem=>item.currentStatus)
-                                </td>
-                                <td class="col" class="text-center">
-                                    @if (item.Document != null)
-                                    {
-                                        @if (item.Document.Count() > 0)
+                            if (uniqueid.Add(item.requestid))
+                            {
+                                <tr>
+                                    <td class="col align-middle accept-policy">
+                                        @Html.DisplayFor(modelitem=>item.CreatedDate)
+                                    </td>
+                                    <td class="col align-middle">
+                                        @Html.DisplayFor(modelitem=>item.currentStatus)
+                                    </td>
+                                    <td class="col align-middle">
+                                        @if (item.Document != null)
                                         {
+                                            @if (item.Document.Count() > 0)
+                                            {
 
-                                            <a asp-action="ViewDocumentsPatdash" asp-route-requestid="@item.requestid">
+                                                <a asp-action="ViewDocumentsPatdash" asp-route-requestid="@item.requestid">
 
-                                                <button class="btn btn-outline-info shadow-none mx-3">
+                                                    <button class="btn btn-outline-info shadow-none mx-3">
 
-                                                    <span> @item.count</span>
-                                                    View Document
-                                                </button>
-                                            </a>
+                                                        <span> @item.count</span>
+                                                        View Document
+                                                    </button>
+                                                </a>
 
+                                            }
                                         }
-                                    }
 
-                                </td>
+                                    </td>
 
 
-                            </tr>
+                                </tr>
+                            }
                         }
-                    }
-                </tbody>
-            </Table>
+                    </tbody>
+                </Table>
 
+            </div>
         </div>
-    </div>
     </div>
     <h4 class="py-4 px-4 d-block d-sm-none mt-4">Medical History</h4>
     <div class="accordion accordion-flush d-sm-none d-block mx-3 mt-3 rounded-3 shadow bg-info-subtle" id="accordionFlushExample">
         <div class="d-flex justify-content-end border-bottom">
-            <button type="button" class="btn btn-outline-info my-3 mx-5 py-2"> 
+            <button type="button" class="btn btn-outline-info my-3 mx-5 py-2">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-plus" viewBox="0 0 16 16">
                     <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4" />
                 </svg>
             </button>
-            
+
         </div>
         @{
             var j = 1;
         }
-        @foreach(var item in Model){
+        @foreach (var item in Model)
+        {
 
             <div class="accordion-item bg-info-subtle">
                 <h2 class="accordion-header">

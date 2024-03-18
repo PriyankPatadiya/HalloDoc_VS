@@ -25,7 +25,7 @@ namespace BAL.Repository
             {
                 var aspnetuser = new AspNetUser();
 
-
+                
                 aspnetuser.Id = Guid.NewGuid().ToString();
                 aspnetuser.Email = pInfo.Email;
                 aspnetuser.CreatedDate = DateTime.Now;
@@ -38,7 +38,6 @@ namespace BAL.Repository
                 _context.SaveChanges();
 
                 var user = new User();
-                
                 user.AspNetUserId = aspnetuser.Id;
                 user.FirstName = pInfo.FirstName;
                 user.LastName = pInfo.LastName;
@@ -57,6 +56,13 @@ namespace BAL.Repository
                 _context.Users.Add(user);
                 _context.SaveChanges();
 
+                var aspnetuserrole = new AspNetUserRole
+                {
+                    UserId = aspnetuser.Id,
+                    RoleId = 2
+                };
+                _context.AspNetUserRoles.Add(aspnetuserrole);
+                _context.SaveChanges();
 
                 var request = new Request();
 

@@ -109,22 +109,20 @@ namespace HalloDoc.Controllers
 
                     string token = _jwttoken.generateJwtToken(a.Email, role);
                     Response.Cookies.Append("jwt", token);
-
-                    if(roleid == 1)
+                    
+                    if (roleid == 1)
                     {
-                        TempData["Message"] = "LogIn successful";
-                        TempData["MessageType"] = "success";
                         return RedirectToAction("MainPage", "AdminDashboard");
                     }
                     if(roleid == 2)
                     {
-                        TempData["Message"] = "LogIn successful";
-                        TempData["MessageType"] = "success";
                         return RedirectToAction("PatientDashboard", "PatientDashBoard");
                     }
                 }
                 else
                 {
+                    TempData["Message"] = "Invalid Credentials!";
+                    TempData["MessageType"] = "error";
                     return View();
                 }
             }

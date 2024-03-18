@@ -38,7 +38,6 @@ namespace DAL.ViewModels
 
         [Column(TypeName = "timestamp without time zone")]
         [Required(ErrorMessage = " BirthDate Is Required")]
-
         public DateTime? BirthDate { get; set; } = null!;
 
         [StringLength(100)]

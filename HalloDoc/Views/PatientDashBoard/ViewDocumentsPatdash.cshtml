@@ -3,7 +3,7 @@
     Layout = "~/Views/Shared/LayoutPatDash.cshtml";
 }
 
-<div class=" " style="min-height: 82vh;">
+<div class="bg-secondary-subtle" style="min-height: 82vh;">
     <div class="mx-auto   pb-3" style="width:70%; padding-top: 3%;">
         <div class="d-flex justify-content-between my-2">
             <h3>View Documents</h3><br />
@@ -44,12 +44,12 @@
         </div>
         <table class="table table-responsive shadow w-100">
             <thead>
-                <tr class="table-secondary">
-                    <th scope="col" class="ps-4"><input type="checkbox" name="maincheck" class="form-check-input" id="maincheck" value=""></th>
-                    <th scope="col">DocumentName</th>
-                    <th scope="col">Uploader</th>
-                    <th scope="col">UploadDate</th>
-                    <th scope="col" class="pe-4 ">Action</th>
+                <tr class="table-secondary-subtle">
+                    <th scope="col" class="ps-4 text-secondary"><input type="checkbox" name="maincheck" class="form-check-input" id="maincheck" value=""></th>
+                    <th scope="col" class="px-4 text-secondary">DocumentName</th>
+                    <th scope="col" class="px-4 text-secondary">Uploader</th>
+                    <th scope="col" class="px-4 text-secondary">UploadDate</th>
+                    <th scope="col" class="pe-4 text-secondary">Action</th>
 
                 </tr>
             </thead>
@@ -60,19 +60,19 @@
                         <td class="ps-4">
                             <input type="checkbox" name="chk" class="checks form-check-input " data-files="@item.FileName">
                         </td>
-                        <td>
+                        <td class="px-4 text-secondary">
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-file-earmark" viewBox="0 0 16 16">
                                 <path d="M14 4.5V14a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2h5.5zm-3 0A1.5 1.5 0 0 1 9.5 3V1H4a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V4.5z" class="text-primary" />
                             </svg>
                             @item.FileName
                         </td>
-                        <td>
+                        <td class="px-4 text-secondary">
                             Test Tester
                         </td>
-                        <td>
+                        <td class="px-4 text-secondary">
                             @item.CreatedDate
                         </td>
-                        <td>
+                        <td class="px-4 text-body">
                             <a asp-action="downloadfile" asp-route-filename="@item.FileName" class="btn btn-outline-info shadow-none " target="_blank">
                                 <svg xmlns="http://www.w3.org/2000/svg"
                                      width="24"
