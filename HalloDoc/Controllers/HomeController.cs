@@ -218,12 +218,13 @@ namespace HalloDoc.Controllers
             {
                 var tokenHandler = new JwtSecurityTokenHandler();
                 var key = Encoding.ASCII.GetBytes(_config["Jwt:Key"]);
-               
+
                 // 5. Verify the JWT token and allow the user to reset the password if the token is valid
                 tokenHandler.ValidateToken(token, new TokenValidationParameters
                 {
                     ValidateIssuerSigningKey = true,
                     IssuerSigningKey = new SymmetricSecurityKey(key)
+
 ,
                     ValidateIssuer = true,
                     ValidateLifetime = true,
@@ -237,7 +238,7 @@ namespace HalloDoc.Controllers
 
                 // Pass the email to your password reset view
                 ViewBag.Email = email;
-                return View("login_page");
+                return View();
 
             }
             catch (Exception ex)
@@ -247,10 +248,20 @@ namespace HalloDoc.Controllers
         }
 
         [HttpPost]
-        public IActionResult ChangePassword(string email, string password)
+        public IActionResult ChangePassword(ForgetPasswordVM model)
         {
-
-            return Content("Password reset successfully");
+            if (ModelState.IsValid && model != null && _context.AspNetUsers.Any(u => u.Email == model.email))
+            {
+                if (model.Password == model.ConfirmPassword)
+                {
+                    var user = _context.AspNetUsers.FirstOrDefault(u => u.Email == model.email);
+                    user.PasswordHash = _passwordHasher.HashPassword(null, model.Password);
+                    _context.AspNetUsers.Update(user);
+                    _context.SaveChanges();
+                    return View("PatientLoginn");
+                }
+            }
+            return Content("Model is not valid");
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

@@ -4,31 +4,32 @@
         var uniqueid = new HashSet<int?>();
     }
 <div class="tab-pane fade show active " id="pills-home" style="min-height: 77vh;" role="tabpanel" aria-labelledby="pills-home-tab" tabindex="0">
-    <div class="modal fade" role="dialog" tabindex="-1" id="modal"aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header bg-info text-white">
-                    <h5 class="modal-title">Create New Request</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <p>Here, I want to Create New Request For...</p>
-
-                    <div class="d-flex justify-content-center">
-                        <a asp-controller="UserCreateRequestForms" asp-action="RequestForMe"><button type="button" class="btn btn-primary btn text-decoration-none border border-info bg-info text-white shadow-none ">Me</button></a>
-                        <a asp-controller="UserCreateRequestForms" asp-action="RequestForSomeoneElse"><button type="button" class="btn btn-primary btn text-decoration-none border border-info bg-white text-info shadow-none mx-3">SomeoneElse</button></a>
+    <div class="p-0 m-0 NoAccordion d-sm-block d-none">
+        <div class="modal fade" role="dialog" tabindex="-1" id="modal"aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header bg-info text-white">
+                        <h5 class="modal-title">Create New Request</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
-                    <div class="d-flex justify-content-end my-2">
-                        <button type="button" class="btn btn-primary btn text-decoration-none border border-info bg-info text-white shadow-none ">Continue</button>
-                        <button type="button" class="btn btn-primary btn text-decoration-none border border-info bg-white text-info shadow-none mx-3">Cancel</button>
+                    <div class="modal-body">
+                        <p>Here, I want to Create New Request For...</p>
+
+                        <div class="d-flex justify-content-center">
+                            <a asp-controller="UserCreateRequestForms" asp-action="RequestForMe"><button type="button" class="btn btn-primary btn text-decoration-none border border-info bg-info text-white shadow-none ">Me</button></a>
+                            <a asp-controller="UserCreateRequestForms" asp-action="RequestForSomeoneElse"><button type="button" class="btn btn-primary btn text-decoration-none border border-info bg-white text-info shadow-none mx-3">SomeoneElse</button></a>
+                        </div>
+                        <div class="d-flex justify-content-end my-2">
+                            <button type="button" class="btn btn-primary btn text-decoration-none border border-info bg-info text-white shadow-none ">Continue</button>
+                            <button type="button" class="btn btn-primary btn text-decoration-none border border-info bg-white text-info shadow-none mx-3">Cancel</button>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
 
-    <div class="mx-auto pb-3" style="width:93%; padding-top: 3%;">
-        <h3>Medical History</h3>
+        <div class="mx-auto pb-3" style="width:93%; padding-top: 2.5%;">
+        <h3 class="my-4">Medical History</h3>
         <div class="PatientInfoTable border rounded shadow bg-body-secondary">
             <div class="d-flex justify-content-end my-2">
                 <button type="button" class="btn btn-outline-info shadow-none mx-3" data-bs-toggle="modal" data-bs-target="#modal">Create New Request</button>
@@ -96,6 +97,36 @@
 
         </div>
     </div>
+    </div>
+    <h4 class="py-4 px-4 d-block d-sm-none mt-4">Medical History</h4>
+    <div class="accordion accordion-flush d-sm-none d-block mx-3 mt-3 rounded-3 shadow bg-info-subtle" id="accordionFlushExample">
+        <div class="d-flex justify-content-end border-bottom">
+            <button type="button" class="btn btn-outline-info my-3 mx-5 py-2"> 
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-plus" viewBox="0 0 16 16">
+                    <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4" />
+                </svg>
+            </button>
+            
+        </div>
+        @{
+            var j = 1;
+        }
+        @foreach(var item in Model){
 
+            <div class="accordion-item bg-info-subtle">
+                <h2 class="accordion-header">
+                    <button class="accordion-button collapsed shadow-none bg-info-subtle" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapse_@j" aria-expanded="false" aria-controls="flush-collapseTwo">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-clock" viewBox="0 0 16 16">
+                            <path d="M8 3.5a.5.5 0 0 0-1 0V9a.5.5 0 0 0 .252.434l3.5 2a.5.5 0 0 0 .496-.868L8 8.71z" />
+                            <path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16m7-8A7 7 0 1 1 1 8a7 7 0 0 1 14 0" />
+                        </svg>  <span class="fw-bold ">Created Date: @item.CreatedDate</span>
+                    </button>
+                </h2>
+                <div id="flush-collapse_@j" class="accordion-collapse collapse" data-bs-parent="#accordionFlushExample">
+                    <div class="accordion-body">Placeholder content for this accordion, which is intended to demonstrate the <code>.accordion-flush</code> class. This is the second item's accordion body. Let's imagine this being filled with some actual content.</div>
+                </div>
+            </div>
+            j++;
+        }
+    </div>
 </div> 
-
