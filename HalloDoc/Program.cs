@@ -24,6 +24,7 @@ builder.Services.AddScoped<IAdminActions , AdminActionRepo>();
 builder.Services.AddScoped<IPasswordHasher<PatientReqVM>, PasswordHasher<PatientReqVM>>();
 builder.Services.AddScoped<IPasswordHasher<LoginVM>, PasswordHasher<LoginVM>>();
 builder.Services.AddScoped<IJwtToken, JwtTokenServices>();
+builder.Services.AddScoped<IPasswordHasher<AdminProfileVM>, PasswordHasher<AdminProfileVM>>();
 //builder.Services.AddScoped<IJWTTokenservice, JWTTokenservicerepo>();
 
 

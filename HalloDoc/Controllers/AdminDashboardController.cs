@@ -3,16 +3,13 @@ using BAL.Repository;
 using DAL.DataContext;
 using DAL.DataModels;
 using DAL.ViewModels;
-using iTextSharp.text.pdf;
-using iTextSharp.text;
-using iTextSharp.tool.xml;
 using Microsoft.AspNetCore.Mvc;
 using System.Text;
 using IHostingEnvironment = Microsoft.AspNetCore.Hosting.IHostingEnvironment;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.AspNetCore.Mvc.ViewEngines;
 using Rotativa.AspNetCore;
-using Org.BouncyCastle.Asn1.Mozilla;
+using Microsoft.AspNetCore.Identity;
+using iTextSharp.text;
+using System.Drawing.Printing;
 
 namespace HalloDoc.Controllers
 {
@@ -22,11 +19,15 @@ namespace HalloDoc.Controllers
         private readonly ApplicationDbContext _context;
         private readonly IAdminDashboard _admin;
         private readonly IAdminActions _adminActions;
+        [Obsolete]
         private readonly IHostingEnvironment _hostingEnvironment;
         private readonly IuploadFile _uploadfile;
         private readonly IPatientRequest _request;
         private readonly IEmailService _emailService;
-        public AdminDashboardController(ApplicationDbContext context, IAdminDashboard admin, IAdminActions action, IHostingEnvironment env, IuploadFile uploadfile, IPatientRequest request, IEmailService emailService)
+        private readonly IPasswordHasher<AdminProfileVM> _passwordHasher;
+
+        [Obsolete]
+        public AdminDashboardController(ApplicationDbContext context, IAdminDashboard admin, IAdminActions action, IHostingEnvironment env, IuploadFile uploadfile, IPatientRequest request, IEmailService emailService, IPasswordHasher<AdminProfileVM> password)
         {
             _context = context;
             _admin = admin;
@@ -35,10 +36,13 @@ namespace HalloDoc.Controllers
             _uploadfile = uploadfile;
             _request = request;
             _emailService = emailService;
+            _passwordHasher = password; 
         }
 
         public IActionResult MainPage()
         {
+            var email = HttpContext.Session.GetString("Email");
+            ViewBag.username = _context.Admins.First(u => u.Email == email).FirstName;
             AdminMainPageVM MainModel = new AdminMainPageVM()
             {
                 PageName = PageName.Dashboard
@@ -51,10 +55,6 @@ namespace HalloDoc.Controllers
             {
                 ViewBag.Status = int.Parse("1");
             }
-
-           
-            
-
             return View(MainModel);
         }
         public AdminDashboardVM AdminDashCallFromMain(AdminDashboardVM model, string StatusButton)
@@ -73,17 +73,28 @@ namespace HalloDoc.Controllers
 
         // Filter action 
 
-        public IActionResult SearchByName(string SearchString, string selectButton, string StatusButton, string SelectedStateId, string partialviewpath)
+        public IActionResult SearchByName(string SearchString, string selectButton, string StatusButton, string SelectedStateId, string partialviewpath, int pagesize, int currentpage)
         {
             var result = _admin.GetRequestsQuery(StatusButton);
             result = result.Where(s => (String.IsNullOrEmpty(SearchString) || s.PatientName.Contains(SearchString)) && (String.IsNullOrEmpty(selectButton) || s.requestId == int.Parse(selectButton)) && ((SelectedStateId == "0" || SelectedStateId == null) || s.regionId == int.Parse(SelectedStateId)));
+
+            if (SearchString != null || selectButton != null || SelectedStateId != "0")
+            {
+                currentpage = 1;
+            }
+
+            int totalItems = result.Count();
+            int totalPages = (int)Math.Ceiling((double)totalItems / pagesize);
+            var paginatedData = result.Skip((currentpage - 1) * pagesize).Take(pagesize).ToList();
             if (result != null)
             {
                 if (!String.IsNullOrEmpty(StatusButton))
                 {
                     ViewBag.Status = int.Parse(StatusButton);
+                    ViewBag.CurrentPage = currentpage;
+                    ViewBag.TotalPages = totalPages;
                 }
-                return PartialView(partialviewpath, result.ToList());
+                return PartialView(partialviewpath, paginatedData);
             }
             return View("MainPage");
         }
@@ -306,6 +317,7 @@ namespace HalloDoc.Controllers
             return View("MainPage", mainmodel);
         }
 
+        [Obsolete]
         public IActionResult downloadfile(string filename)
         {
             string Filename = Path.GetFileName(filename);
@@ -486,9 +498,52 @@ namespace HalloDoc.Controllers
             return Ok("Failed to send agreement");
         }
 
+        // Admin Profile
+
         public IActionResult AdminProfile()
         {
-            return View();
+            string email = HttpContext.Session.GetString("Email");
+            ViewBag.username = _context.Admins.First(u => u.Email == email).FirstName;
+            var admin = _admin.getProfileData(email);
+            return View(admin);
+        }
+
+        public IActionResult changeAccInfo(AdminProfileVM model)
+        {
+            string email = HttpContext.Session.GetString("Email");
+
+            if(email != "")
+            {
+                _admin.changeAccountInfo(model, email);
+                HttpContext.Session.SetString("Email", email);
+                ViewBag.Message = "Edited Successfully";
+                ViewBag.MessageType = "success";
+                return RedirectToAction("AdminProfile");
+            }
+            return Content("can't edit");
+        }
+
+        public IActionResult changeBillingInfo(AdminProfileVM model)
+        {
+            string email = HttpContext.Session.GetString("Email");
+            if(email != "")
+            {
+                _admin.changeBillingInfo(model, email);
+                return RedirectToAction("AdminProfile");
+            }
+            return Content("can't edit");
+        }
+
+        public IActionResult changePass([FromForm] string Password)
+        {
+            string email = HttpContext.Session.GetString("Email");
+            Password = _passwordHasher.HashPassword(null , Password);
+            if (email != "")
+            {
+                _admin.changePassword(email, Password);
+                return RedirectToAction("PatientLoginn", "Home");
+            }
+            return Content("Can't change password");
         }
     }
 }

@@ -2,7 +2,8 @@
 $(document).ready(function () {
 
     // Local Storage
-
+    var currentpage = 1;
+    var pagesize = 4;
     var path;
     var StatusButton;
     var span = localStorage.getItem("statusspan");
@@ -28,24 +29,31 @@ $(document).ready(function () {
     else {
         StatusButton = "1";
     }
-    ChangeTable(path, StatusButton);
+    ChangeTable(path, StatusButton, currentpage, pagesize);
 
-    // Local Storage end // 
+    // Local Storage end //
+
+    $(document).on("click", "#pagination a.page-link", function () {
+        console.log("Pagination link clicked!");
+        currentpage = $(this).text().trim();
+        console.log("Current Page: " + currentpage);
+        ChangeTable(path, StatusButton, currentpage, pagesize);
+    });
 
     $('.buttonOfFilter').click(function () { 
         $('.buttonOfFilter').removeClass('active');
         $(this).addClass('active');
-        ChangeTable(path, StatusButton);
+        ChangeTable(path, StatusButton, currentpage, pagesize);
     });
 
     //Search filter
     $("#SearchString").on("input", function () {
-        ChangeTable(path, StatusButton);
+        ChangeTable(path, StatusButton, currentpage, pagesize);
     });
 
     // Status button 
     $("#SelectedStateId").on("change", function () {  
-        ChangeTable(path, StatusButton);
+        ChangeTable(path, StatusButton, currentpage, pagesize);
     });
 
     // physician dropdown in assign case
@@ -102,7 +110,7 @@ $(document).ready(function () {
             localStorage.setItem("color", "#203f9a");
             localStorage.setItem("statusspan", "(New)");
 
-            ChangeTable("AdminDashboardNew", $("#statuslink1").data("id"));
+            ChangeTable("AdminDashboardNew", $("#statuslink1").data("id"), currentpage, pagesize);
         }
         else if (StatusButton == "2") {
             $("#statuslink2").addClass("activee")
@@ -116,7 +124,7 @@ $(document).ready(function () {
             localStorage.setItem("statuslink", "#statuslink2");
             localStorage.setItem("color", "#00adef");
             localStorage.setItem("statusspan", "(Pending)");
-            ChangeTable("AdminDashboardPending", $("#statuslink2").data("id"));
+            ChangeTable("AdminDashboardPending", $("#statuslink2").data("id"), currentpage, pagesize);
         }
         else if (StatusButton == "3") {
             $("#statuslink3").addClass("activee")
@@ -125,12 +133,12 @@ $(document).ready(function () {
             $("#triangle3").css('display', 'block').css('border-top-color', '#228c20');
             partialviewpath = "AdminDashboardActive";
             localStorage.setItem("partialviewpath", partialviewpath);
-            localStorage.setItem("statusbutton", $("#statuslink3").data("id"));
+            localStorage.setItem("statusbutton", $("#statuslink3").data("id"), currentpage, pagesize);
             localStorage.setItem("triangle", "#triangle3");
             localStorage.setItem("statuslink", "#statuslink3");
             localStorage.setItem("color", "#228c20");
             localStorage.setItem("statusspan", "(Active)");
-            ChangeTable("AdminDashboardActive", $("#statuslink3").data("id"));
+            ChangeTable("AdminDashboardActive", $("#statuslink3").data("id"), currentpage, pagesize);
         }
         else if (StatusButton == "4") {
             $("#statuslink4").addClass("activee")
@@ -139,12 +147,12 @@ $(document).ready(function () {
             $("#triangle4").css('display', 'block').css('border-top-color', '#da0f82');
             partialviewpath = "AdminDashboardConclude";
             localStorage.setItem("partialviewpath", partialviewpath);
-            localStorage.setItem("statusbutton", $("#statuslink4").data("id"));
+            localStorage.setItem("statusbutton", $("#statuslink4").data("id"), currentpage, pagesize);
             localStorage.setItem("triangle", "#triangle4");
             localStorage.setItem("statusspan", "(Conclude)");
             localStorage.setItem("statuslink", "#statuslink4");
             localStorage.setItem("color", "#da0f82");
-            ChangeTable("AdminDashboardConclude", $("#statuslink4").data("id"));
+            ChangeTable("AdminDashboardConclude", $("#statuslink4").data("id"), currentpage, pagesize);
         }
         else if (StatusButton == "5") {
             $("#statuslink5").addClass("activee")
@@ -158,7 +166,7 @@ $(document).ready(function () {
             localStorage.setItem("statusspan", "(Conclude)");
             localStorage.setItem("statuslink", "#statuslink5");
             localStorage.setItem("color", "#0370d7");
-            ChangeTable("AdminDashboardToClose", $("#statuslink5").data("id"));
+            ChangeTable("AdminDashboardToClose", $("#statuslink5").data("id"), currentpage, pagesize);
         }
         else {
             $("#statuslink6").addClass("activee");
@@ -172,13 +180,13 @@ $(document).ready(function () {
             localStorage.setItem("statusspan", "(Conclude)");
             localStorage.setItem("statuslink", "#statuslink6");
             localStorage.setItem("color", "#9966cd");
-            ChangeTable("AdminDashboardUnpaid", $("#statuslink6").data("id"));
+            ChangeTable("AdminDashboardUnpaid", $("#statuslink6").data("id"), currentpage, pagesize);
         }
     });
 
     
     // Main function that filters and load partial view in admin dashboard
-    function ChangeTable(partialviewpath, StatusButton) {
+    function ChangeTable(partialviewpath, StatusButton, currentpage, pagesize) {
 
          $.get('/AdminDashboard/CheckSession', function (sessioncheck) {
             if (sessioncheck.sessionExists) {
@@ -188,7 +196,7 @@ $(document).ready(function () {
                 var SelectedStateId = $("#SelectedStateId").val();
                 //var token = getCookie("jwt");
 
-                if (Searchstring == " " && selectButton == " " && SelectedStateId == "0" && token == null) {
+                if (Searchstring == "" && selectButton == " " && SelectedStateId == "0" && token == null) {
                     console.log('hii')
                     location.reload();
                 }
@@ -197,7 +205,7 @@ $(document).ready(function () {
                     $.ajax({
                         type: "GET",
                         url: "/AdminDashboard/SearchByName",
-                        data: { Searchstring: Searchstring, selectButton: selectButton, StatusButton: StatusButton, SelectedStateId: SelectedStateId, partialviewpath: partialviewpath },
+                        data: { Searchstring: Searchstring, selectButton: selectButton, StatusButton: StatusButton, SelectedStateId: SelectedStateId, partialviewpath: partialviewpath,currentpage: currentpage, pagesize: pagesize },
 
                         success: function (data) {
                             $(".SearchPartial").html(data);
@@ -286,5 +294,7 @@ $(document).ready(function () {
             $("#VenFax").val('');
         }
     }
+
+
 });
 

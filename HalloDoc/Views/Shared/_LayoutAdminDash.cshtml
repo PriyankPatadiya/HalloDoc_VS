@@ -24,7 +24,7 @@
 <body style="min-height: 100vh; height:100vh; " class="position-relative">
     <header class="">
         <nav class="navbar navbar-expand-lg d-flex justify-content-between border border-bottom">
-            <button type="button" id="menuadmin" class="navbar-toggler position-absolute start-0 top-0 shadow-none btn btn-outline-info ms-3 mt-4" data-bs-toggle="collapse" data-bs-target="#navbarTogglerDemo01" aria-controls="navbarTogglerDemo01" aria-expanded="false" aria-label="Toggle navigation">
+            <button type="button" id="menuadmin" class="navbar-toggler position-absolute start-0 top-0 shadow-none btn btn-outline-info ms-3 mt-4 d-sm-none d-block" data-bs-toggle="collapse" data-bs-target="#navbarTogglerDemo01" aria-controls="navbarTogglerDemo01" aria-expanded="false" aria-label="Toggle navigation">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-list" viewBox="0 0 16 16">
                     <path fill-rule="evenodd" d="M2.5 12a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5m0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5m0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5" />
                 </svg>
@@ -36,7 +36,7 @@
 
             <div class="text-center align-items-center">
                 <span class="text-secondary d-none d-sm-inline"> Welcome </span>
-                <span class="fw-bold fs-6 text-black mt-1">@ViewBag.username</span>
+                <span class="fw-bold fs-6 text-body mt-1 ">@ViewBag.username</span>
                 <a asp-controller="Home" asp-action="Logout"> <button class="btn text-decoration-none border border-info bg-transparent text-info shadow-none mx-2">Logout</button></a>
                 <button class="btn bg-transparent pt-1 pb-2 border border-info text-info me-4 shadow-none"
                         id="theme-toggle" >
@@ -62,27 +62,27 @@
                 
                 <div class="collapse navbar-collapse" id="navbarTogglerDemo01">
 
-                    <ul class="nav nav-underline " id="pills-tab" role="tablist">
+                    <ul class="nav nav-underline" id="pills-tab" role="tablist">
                         <li class="nav-item " role="presentation">
-                            <a class="px-2 nav-link text-decoration-none active" asp-action="MainPage"><buton class="btn p-0" data-bs-toggle="pill">Dashboard</buton></a>
+                            <a class="px-2 btn shadow-none nav-link text-decoration-none text-body @(ViewContext.ActionDescriptor.RouteValues["action"] == "MainPage" ? "active" : "")" asp-action="MainPage">Dashboard</a>
                         </li>
                         <li class="nav-item" role="presentation">
-                            <a class="px-2 nav-link text-decoration-none"><buton class="btn p-0" data-bs-toggle="pill">Provider Location</buton></a>
+                            <a class="px-2 btn nav-link text-decoration-none text-body shadow-none">Provider Location</a>
                         </li>
                         <li class="nav-item" role="presentation">
-                            <a class="px-2 nav-link text-decoration-none" asp-action="AdminProfile"><buton class="btn p-0" data-bs-toggle="pill">My Profile</buton></a>
+                            <a class="px-2 btn shadow-none nav-link text-decoration-none text-body @(ViewContext.ActionDescriptor.RouteValues["action"] == "AdminProfile" ? "active" : "")" asp-action="AdminProfile">My Profile</a>
                         </li>
                         <li class="nav-item" role="presentation">
-                            <button class="px-2 nav-link text-decoration-none "><buton class="btn p-0" data-bs-toggle="pill">Providers</buton></button>
+                            <button class="px-2 shadow-none nav-link btn text-decoration-none text-body">Providers</button>
                         </li>
                         <li class="nav-item" role="presentation">
-                            <button class="px-2 nav-link text-decoration-none" id="pills-profile-tab" data-bs-toggle="pill" data-bs-target="#pills-profile" type="button" role="tab" aria-controls="pills-profile" aria-selected="false">Partners</button>
+                            <button class="px-2 shadow-none btn nav-link btn text-decoration-none text-body">Partners</button>
                         </li>
                         <li class="nav-item" role="presentation">
-                            <button class="px-2 nav-link text-decoration-none" id="pills-profile-tab" data-bs-toggle="pill" data-bs-target="#pills-profile" type="button" role="tab" aria-controls="pills-profile" aria-selected="false">Access</button>
+                            <button class="px-2 shadow-none btn nav-link text-decoration-none text-body">Access</button>
                         </li>
                         <li class="nav-item" role="presentation">
-                            <button class="px-2 nav-link text-decoration-none" id="pills-profile-tab" data-bs-toggle="pill" data-bs-target="#pills-profile" type="button" role="tab" aria-controls="pills-profile" aria-selected="false">Records</button>
+                            <button class="px-2 shadow-none btn nav-link text-decoration-none text-body">Records</button>
                         </li>
                     </ul>
                 </div>

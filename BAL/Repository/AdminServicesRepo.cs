@@ -3,6 +3,8 @@ using DAL.DataContext;
 using DAL.ViewModels;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 using System.ComponentModel;
+using DAL.DataModels;
+using Microsoft.AspNetCore.Identity;
 
 namespace BAL.Repository
 {
@@ -147,6 +149,83 @@ namespace BAL.Repository
         {
             int status = _context.Requests.Where(s => s.RequestId == requetId).FirstOrDefault().Status; 
             return status;
+        }
+
+        public AdminProfileVM getProfileData(string email)
+        {
+            
+            AdminProfileVM profile = (from admin in _context.Admins
+                                     join AspNetUser in _context.AspNetUsers
+                                     on admin.AspNetUserId equals AspNetUser.Id
+                                     join adminregion in _context.AdminRegions
+                                     on admin.RegionId equals adminregion.RegionId
+                                     where admin.Email == email
+                                     select new AdminProfileVM()
+                                     {
+                                         UserName = admin.Email,
+                                         Password = AspNetUser.PasswordHash,
+                                         //Status = admin.Status,
+                                         //Role =,
+                                         FirstName = admin.FirstName,
+                                         LastName = admin.LastName,
+                                         Email = admin.Email,
+                                         Confirmemail = admin.Email,
+                                         phone = admin.Mobile,
+                                         Address1 = admin.City +", "+ _context.Regions.First(u => u.RegionId == admin.RegionId).Name,
+                                         Address2 = "---",
+                                         city = admin.City,
+                                         state = _context.Regions.First(u => u.RegionId == admin.RegionId).RegionId,
+                                         zipcode = admin.Zip,
+                                         billingphone = admin.AltPhone
+
+                                     }).First();
+            profile.Region = _context.Regions.ToList();
+            return profile;
+        }
+
+        public void changeAccountInfo(AdminProfileVM model, string email)
+        {
+            var admin = _context.Admins.First(u => u.Email == email);
+            admin.Email = model.Email;
+            admin.FirstName = model.FirstName;
+            admin.LastName = model.LastName;
+            admin.Mobile = model.phone;
+            _context.Admins.Update(admin);
+            _context.SaveChanges();
+
+            var aspnetuser = _context.AspNetUsers.First(u => u.Email == email);
+            aspnetuser.Email = model.Email;
+            _context.AspNetUsers.Update(aspnetuser);
+            _context.SaveChanges();
+        }
+
+        public void changeBillingInfo(AdminProfileVM model, string email)
+        {
+            var admin = _context.Admins.First(u => u.Email == email);
+            admin.Address1 = model.Address1;
+            admin.Address2 = model.Address2;
+            admin.City = model.city;
+            admin.RegionId = model.SelectedStateId;
+            admin.Zip = model.zipcode;
+            admin.AltPhone = model.billingphone;
+            _context.Admins.Update(admin);
+            _context.SaveChanges();             
+            
+            var adminregion = _context.AdminRegions.First(u => u.AdminId == admin.AdminId);
+            adminregion.RegionId = model.SelectedStateId;
+            _context.AdminRegions.Update(adminregion);
+            _context.SaveChanges();
+        }
+
+        public void changePassword(string email, string password)
+        {
+            var admin = _context.AspNetUsers.First(u => u.Email == email);
+            if(admin != null)
+            {
+                admin.PasswordHash = password;
+                _context.AspNetUsers.Update(admin);
+                _context.SaveChanges();
+            }
         }
     }
 }

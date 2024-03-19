@@ -2,10 +2,51 @@
 @{
     Layout = "~/Views/Shared/_LayoutAdminDash.cshtml";
 }
-<div class="container px-0 py-3 rounded-3 backbtn d-flex align-items-center my-4 justify-content-between">
-    
+
+
+@*Toaster*@
+@if (ViewBag.Message != "")
+{
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
+    <script>
+        if ('@ViewBag.Message' != '') {
+            showToast('ViewBag.Message', 'ViewBag.MessageType');
+        }
+        function showToast(message, messageType) {
+            const Toast = Swal.mixin({
+                toast: true,
+                position: "top-end",
+                showConfirmButton: false,
+                timer: 3000,
+                timerProgressBar: true,
+                didOpen: (toast) => {
+                    toast.onmouseenter = Swal.stopTimer;
+                    toast.onmouseleave = Swal.resumeTimer;
+                }
+            });
+
+            let icon = "info";
+            if (messageType === "success") {
+                icon = "success";
+            } else if (messageType === "error") {
+                icon = "error";
+            } else if (messageType === "warning") {
+                icon = "warning";
+            }
+
+            Toast.fire({
+                icon: icon,
+                title: message
+            });
+        }
+    </script>
+}
+
+<div class="container px-0 py-3 rounded-3 backbtn d-flex align-items-center my-4 justify-content-between" style="width: 95%;">
+
     <h4 class="text-body align-middle my-0 ">My Profile</h4>
-    <a asp-controller="Home" asp-action="submitRequest"
+    <a asp-controller="AdminDashBoard" asp-action="MainPage"
        class="p-2 border text-decoration-none border-info rounded bg-transparent">
         <svg xmlns="http://www.w3.org/2000/svg"
              width="16"
@@ -19,167 +60,236 @@
         <span class="mx-2 text-info">Back</span>
     </a>
 </div>
-<div class="container p-sm-3 p-1 my-3 bg-gradient  shadow rounded-3">
-    <form class="form-floating" method="post">
-        <div class="row gx-4">
-            <h4 class="text-body">Account Information</h4>
-            <div class="col-sm-12 col-md-12 col-lg-6 form-floating my-3">
-                <input type="text"
-                       asp-for="UserName"
-                       class="form-control shadow-none"
-                       placeholder="UserName" />
-                <label for="floatingInput" class="ms-2">UserName</label>
-                @*<span asp-validation-for="FirstName" class="text-danger " style="font-size: 11px;"></span>*@
-            </div>
-            <div class="col-sm-12 col-md-12 col-lg-6 form-floating my-3">
-                <input type="password"
-                       asp-for="Password"
-                       class="form-control shadow-none"
-                       placeholder="Password" />
-                <label for="floatingInput" class="ms-2">Password</label>
-                @*<span asp-validation-for="LastName" class="text-danger" style="font-size: 11px;"></span>*@
-            </div>
-            <div class="col-sm-12 col-md-12 col-lg-6 form-floating my-3">
+<div class="container p-sm-3 p-1 my-3 bg-gradient  shadow rounded-3" style="width: 95%;">
 
-                <select class="form-control py-2" @*asp-for="State"*@ name="SelectedStateId">
-                    <option>Select State</option>
-                    @*@foreach (var state in Model.Region)
-                    {
+    <div class="row gx-4">
+        <form class="form-floating" method="post" asp-action="changePass">
+            <div class="row m-0 p-0">
+                <h4 class="text-body">Account Information</h4>
+                <div class="col-sm-12 col-md-12 col-lg-6 form-floating my-3">
+                    <input type="email"
+                           asp-for="Email"
+                           class="form-control shadow-none"
+                           placeholder="UserName" disabled />
+                    <label for="floatingInput" class="ms-2">UserName</label>
+                    @*<span asp-validation-for="FirstName" class="text-danger " style="font-size: 11px;"></span>*@
+                </div>
+                <div class="col-sm-12 col-md-12 col-lg-6 form-floating my-3">
+                    <input type="password"
+                           asp-for="Password"
+                           class="form-control shadow-none"
+                           placeholder="Password" />
+                    <label for="floatingInput" class="ms-2">Password</label>
+                    @*<span asp-validation-for="LastName" class="text-danger" style="font-size: 11px;"></span>*@
+                </div>
+                <div class="col-sm-12 col-md-12 col-lg-6 form-floating my-3">
+
+                    <select class="form-control py-2" asp-for="@Model.state" name="SelectedStateId" disabled>
+                        <option hidden selected>Select State</option>
+                        @foreach (var state in Model.Region)
+                        {
+                            <option value="@state.RegionId">@state.Name</option>
+                        }
+                    </select>
+                </div>
+                <div class="col-sm-12 col-md-12 col-lg-6 form-floating my-3">
+
+                    <select class="form-control py-2" @*asp-for="State"*@>
+                        <option>Select Role</option>
+                        @*@foreach (var state in Model.Region)
+                        {
                         <option value="@state.RegionId">@state.Name</option>
-                    }*@
-                </select>
+                        }*@
+                    </select>
+                </div>
+                <div class="my-3 d-flex justify-content-end">
+                    <button type="submit" class="btn btn-outline-info px-3 py-2">Reset Password</button>
+                </div>
             </div>
-            <div class="col-sm-12 col-md-12 col-lg-6 form-floating my-3">
+        </form>
+        <form class="form-floating" method="post" asp-action="changeAccInfo">
+            <div class="row p-0 m-0">
+                <h4 class="text-body">Account Information</h4>
+                <div class="col-sm-12 col-md-12 col-lg-6 form-floating my-3">
+                    <input type="text"
+                           asp-for="FirstName"
+                           class="form-control shadow-none inputs1"
+                           placeholder="FirstName" disabled />
+                    <label for="floatingInput" class="ms-2">FirstName</label>
+                    @*<span asp-validation-for="FirstName" class="text-danger " style="font-size: 11px;"></span>*@
+                </div>
+                <div class="col-sm-12 col-md-12 col-lg-6 form-floating my-3">
+                    <input type="text"
+                           asp-for="LastName"
+                           class="form-control shadow-none inputs1"
+                           placeholder="LastName" disabled />
+                    <label for="floatingInput" class="ms-2">LastName</label>
+                    @*<span asp-validation-for="FirstName" class="text-danger " style="font-size: 11px;"></span>*@
+                </div>
+                <div class="col-sm-12 col-md-12 col-lg-6 form-floating my-3">
+                    <input type="email"
+                           asp-for="Email"
+                           class="form-control shadow-none inputs1"
+                           placeholder="Email" disabled />
+                    <label for="floatingInput" class="ms-2">Email</label>
+                    @*<span asp-validation-for="FirstName" class="text-danger " style="font-size: 11px;"></span>*@
+                </div>
+                <div class="col-sm-12 col-md-12 col-lg-6 form-floating my-3">
+                    <input type="text"
+                           asp-for="Confirmemail"
+                           class="form-control shadow-none inputs1"
+                           placeholder="Confirmemail" disabled />
+                    <label for="floatingInput" class="ms-2">Confirm Email</label>
+                    @*<span asp-validation-for="FirstName" class="text-danger " style="font-size: 11px;"></span>*@
+                </div>
+                <div class="col-sm-12 col-md-12 col-lg-6 form-floating my-3">
+                    <input type="tel"
+                           asp-for="phone"
+                           class="form-control shadow-none inputs1"
+                           placeholder="phone" disabled />
+                    <label for="floatingInput" class="ms-2">Phone No.</label>
+                    @*<span asp-validation-for="FirstName" class="text-danger " style="font-size: 11px;"></span>*@
+                </div>
+                @*<div class="col-sm-12 col-md-12 col-lg-6 my-3 ">
+                    <input class="form-check-input text-body" type="checkbox" id="box1" />
+                    <label class="form-check-label fs-6" for="box1">
+                        Default checkbox
+                    </label>
+                    <input class="form-check-input" type="checkbox" id="box2" />
+                    <label class="form-check-label" for="box2">
+                        Default checkbox
+                    </label>
+                    <input class="form-check-input" type="checkbox" id="box3" />
+                    <label class="form-check-label" for="box3">
+                        Default checkbox
+                    </label>
+                    <input class="form-check-input" type="checkbox" id="box4" />
+                    <label class="form-check-label" for="box4">
+                        Default checkbox
+                    </label>
+                </div>*@
+                <div class="dropdown col-sm-12 col-md-12 col-lg-6 my-3 form-floating">
+                    <button class="btn bg-transparent dropdown-toggle form-control py-3 inputs1 btn-outline-secondary shadow-none" type="button" data-bs-toggle="dropdown" aria-expanded="false" disabled>
+                        Select States
+                    </button>
+                    <ul class="dropdown-menu w-75 px-1">
+                        @{
+                            var k = 0;
+                        }
+                        @foreach (var state in Model.Region)
+                        {
+                            <div class="d-flex justify-content-between">
+                                <div class="d-block" >
+                                    <input class="form-check-input text-body" type="checkbox" id="box_@k" />
+                                    <label class="form-check-label " for="box_@k" >
+                                        @state.Name
+                                    </label>
+                                </div>
+                                
+                            </div>
+                           
+                            k=k+1;
+                        }
+                    </ul>
+                </div>
+                <div class="my-3 d-flex justify-content-end">
+                    <button type="button" class="btn btn-info px-4 py-3" id="buttoninput1">Edit</button>
+                    <button type="submit" class="btn btn-info px-4 py-3 me-3" id="savebutton1" style="display: none;">Save</button>
+                    <button type="button" class="btn btn-danger px-4 py-3" style="display: none;" id="canceledit1">Cancel</button>
+                </div>
 
-                <select class="form-control py-2" @*asp-for="State"*@>
-                    <option>Select State</option>
-                    @*@foreach (var state in Model.Region)
-                    {
-                        <option value="@state.RegionId">@state.Name</option>
-                    }*@
-                </select>
             </div>
-            <div class="my-3 d-flex justify-content-end">
-                <button class="btn btn-outline-info px-3 py-2">Reset Password</button>
-            </div>
+        </form>
+        <form class="form-floating" method="post" asp-action="changeBillingInfo">
+            <div class="row m-0 p-0">
+                <h4 class="text-body">Mailing & Billing Information</h4>
+                <div class="col-sm-12 col-md-12 col-lg-6 form-floating my-3">
+                    <input type="text"
+                           asp-for="Address1"
+                           class="form-control shadow-none inputs2"
+                           placeholder="Address1" disabled />
+                    <label for="floatingInput" class="ms-2">Address1</label>
+                    @*<span asp-validation-for="FirstName" class="text-danger " style="font-size: 11px;"></span>*@
+                </div>
+                <div class="col-sm-12 col-md-12 col-lg-6 form-floating my-3">
+                    <input type="text"
+                           asp-for="Address2"
+                           class="form-control shadow-none inputs2"
+                           placeholder="Address2" disabled />
+                    <label for="floatingInput" class="ms-2">Address2</label>
+                    @*<span asp-validation-for="LastName" class="text-danger" style="font-size: 11px;"></span>*@
+                </div>
+                <div class="col-sm-12 col-md-12 col-lg-6 form-floating my-3">
+                    <input type="city"
+                           asp-for="city"
+                           class="form-control shadow-none inputs2"
+                           placeholder="city" disabled />
+                    <label for="floatingInput" class="ms-2">city</label>
+                    @*<span asp-validation-for="LastName" class="text-danger" style="font-size: 11px;"></span>*@
+                </div>
+                <div class="col-sm-12 col-md-12 col-lg-6 form-floating my-3">
 
-            <h4 class="text-body">Account Information</h4>
-            <div class="col-sm-12 col-md-12 col-lg-6 form-floating my-3">
-                <input type="text"
-                       asp-for="FirstName"
-                       class="form-control shadow-none"
-                       placeholder="FirstName" />
-                <label for="floatingInput" class="ms-2">FirstName</label>
-                @*<span asp-validation-for="FirstName" class="text-danger " style="font-size: 11px;"></span>*@
+                    <select class="form-control py-2 inputs2" asp-for="state" name="SelectedStateId" disabled>
+                        <option value="0" hidden selected>Select State</option>
+                        @foreach (var state in Model.Region)
+                        {
+                            <option value="@state.RegionId">@state.Name</option>
+                        }
+                    </select>
+                </div>
+                <div class="col-sm-12 col-md-12 col-lg-6 form-floating my-3">
+                    <input type="text"
+                           asp-for="zipcode"
+                           class="form-control shadow-none inputs2"
+                           placeholder="zipcode" disabled />
+                    <label for="floatingInput" class="ms-2">Zip Code</label>
+                    @*<span asp-validation-for="LastName" class="text-danger" style="font-size: 11px;"></span>*@
+                </div>
+                <div class="col-sm-12 col-md-12 col-lg-6 form-floating my-3">
+                    <input type="tel"
+                           asp-for="billingphone"
+                           class="form-control shadow-none inputs2"
+                           placeholder="phone no." disabled />
+                    <label for="floatingInput" class="ms-2">Phone No.</label>
+                    @*<span asp-validation-for="LastName" class="text-danger" style="font-size: 11px;"></span>*@
+                </div>
+                <div class="my-3 d-flex justify-content-end">
+                    <button type="button" class="btn btn-info px-4 py-3" id="buttoninput2">Edit</button>
+                    <button type="submit" class="btn btn-info px-4 py-3 me-3" id="savebutton2" style="display: none;">Save</button>
+                    <button type="button" class="btn btn-danger px-4 py-3" style="display: none;" id="canceledit2">Cancel</button>
+                </div>
             </div>
-            <div class="col-sm-12 col-md-12 col-lg-6 form-floating my-3">
-                <input type="text"
-                       asp-for="LastName"
-                       class="form-control shadow-none"
-                       placeholder="LastName" />
-                <label for="floatingInput" class="ms-2">LastName</label>
-                @*<span asp-validation-for="FirstName" class="text-danger " style="font-size: 11px;"></span>*@
-            </div>
-            <div class="col-sm-12 col-md-12 col-lg-6 form-floating my-3">
-                <input type="email"
-                       asp-for="Email"
-                       class="form-control shadow-none"
-                       placeholder="Email" />
-                <label for="floatingInput" class="ms-2">Email</label>
-                @*<span asp-validation-for="FirstName" class="text-danger " style="font-size: 11px;"></span>*@
-            </div>
-            <div class="col-sm-12 col-md-12 col-lg-6 form-floating my-3">
-                <input type="text"
-                       asp-for="Confirmemail"
-                       class="form-control shadow-none"
-                       placeholder="Confirmemail" />
-                <label for="floatingInput" class="ms-2">Confirm Email</label>
-                @*<span asp-validation-for="FirstName" class="text-danger " style="font-size: 11px;"></span>*@
-            </div>
-            <div class="col-sm-12 col-md-12 col-lg-6 form-floating my-3">
-                <input type="tel"
-                       asp-for="phone"
-                       class="form-control shadow-none"
-                       placeholder="phone" />
-                <label for="floatingInput" class="ms-2">Phone No.</label>
-                @*<span asp-validation-for="FirstName" class="text-danger " style="font-size: 11px;"></span>*@
-            </div>
-            <div class="col-sm-12 col-md-12 col-lg-6 my-3 ">
-                <input class="form-check-input text-body" type="checkbox" id="box1"/>  
-                <label class="form-check-label fs-6" for="box1">
-                    Default checkbox
-                </label>
-                <input class="form-check-input" type="checkbox" id="box2"/>  
-                <label class="form-check-label" for="box2">
-                    Default checkbox
-                </label>
-                <input class="form-check-input" type="checkbox" id="box3"/>  
-                <label class="form-check-label" for="box3">
-                    Default checkbox
-                </label>
-                <input class="form-check-input" type="checkbox" id="box4"/>
-                <label class="form-check-label" for="box4">
-                    Default checkbox
-                </label>
-            </div>
-            <div class="my-3 d-flex justify-content-end">
-                <button class="btn btn-info px-4 py-3">Edit</button>
-            </div>
-
-            <h4 class="text-body">Mailing & Billing Information</h4>
-            <div class="col-sm-12 col-md-12 col-lg-6 form-floating my-3">
-                <input type="text"
-                       asp-for="UserName"
-                       class="form-control shadow-none"
-                       placeholder="UserName" />
-                <label for="floatingInput" class="ms-2">UserName</label>
-                @*<span asp-validation-for="FirstName" class="text-danger " style="font-size: 11px;"></span>*@
-            </div>
-            <div class="col-sm-12 col-md-12 col-lg-6 form-floating my-3">
-                <input type="password"
-                       asp-for="Password"
-                       class="form-control shadow-none"
-                       placeholder="Password" />
-                <label for="floatingInput" class="ms-2">Password</label>
-                @*<span asp-validation-for="LastName" class="text-danger" style="font-size: 11px;"></span>*@
-            </div>
-            <div class="col-sm-12 col-md-12 col-lg-6 form-floating my-3">
-                <input type="password"
-                       asp-for="Password"
-                       class="form-control shadow-none"
-                       placeholder="Password" />
-                <label for="floatingInput" class="ms-2">Password</label>
-                @*<span asp-validation-for="LastName" class="text-danger" style="font-size: 11px;"></span>*@
-            </div>
-            <div class="col-sm-12 col-md-12 col-lg-6 form-floating my-3">
-
-                <select class="form-control py-2" @*asp-for="State"*@ name="SelectedStateId">
-                    <option>Select State</option>
-                    @*@foreach (var state in Model.Region)
-                    {
-                    <option value="@state.RegionId">@state.Name</option>
-                    }*@
-                </select>
-            </div>
-            <div class="col-sm-12 col-md-12 col-lg-6 form-floating my-3">
-                <input type="password"
-                       asp-for="Password"
-                       class="form-control shadow-none"
-                       placeholder="Password" />
-                <label for="floatingInput" class="ms-2">Password</label>
-                @*<span asp-validation-for="LastName" class="text-danger" style="font-size: 11px;"></span>*@
-            </div>
-            <div class="col-sm-12 col-md-12 col-lg-6 form-floating my-3">
-                <input type="password"
-                       asp-for="Password"
-                       class="form-control shadow-none"
-                       placeholder="Password" />
-                <label for="floatingInput" class="ms-2">Password</label>
-                @*<span asp-validation-for="LastName" class="text-danger" style="font-size: 11px;"></span>*@
-            </div>
-            <div class="my-3 d-flex justify-content-end">
-                <button class="btn btn-info px-4 py-3">Edit</button>
-            </div>
-        </div>
-    </form>
+        </form>
+    </div>
 </div>
+
+<script>
+    $("#buttoninput1").click(function () {
+        event.preventDefault();
+        $('.inputs1').removeAttr("disabled");
+        $('#canceledit1').css("display", "block");
+        $('#savebutton1').css("display", "block");
+        $('#buttoninput1').css("display", "none");
+    });
+    $('#canceledit1').click(function () {
+        event.preventDefault();
+        $('.inputs1').attr("disabled", true);
+        $('#canceledit1').css("display", "none");
+        $('#savebutton1').css("display", "none");
+        $('#buttoninput1').css("display", "block");
+    });
+    $("#buttoninput2").click(function () {
+        event.preventDefault();
+        $('.inputs2').removeAttr("disabled");
+        $('#canceledit2').css("display", "block");
+        $('#savebutton2').css("display", "block");
+        $('#buttoninput2').css("display", "none");
+    });
+    $('#canceledit2').click(function () {
+        event.preventDefault();
+        $('.inputs2').attr("disabled", true);
+        $('#canceledit2').css("display", "none");
+        $('#savebutton2').css("display", "none");
+        $('#buttoninput2').css("display", "block");
+    });
+</script>

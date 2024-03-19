@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
+﻿using DAL.DataModels;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -22,8 +23,10 @@ namespace DAL.ViewModels
         public string Address1 { get; set; }
         public string Address2 { get; set; }    
         public string city { get; set; }
-        public string state { get; set; }
+        public int state { get; set; }
         public string zipcode { get; set; }
         public string billingphone { get; set; }
+        public List<Region> Region { get; set; }
+        public int SelectedStateId { get; set; }
     }
 }
