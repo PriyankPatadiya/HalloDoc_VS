@@ -13,5 +13,7 @@ namespace BAL.Interface
         public Task<string> GetStateAccordingToRegionId(int regionId);
 
         public string GenerateConfirmationNumber(PatientReqVM model);
+
+        public void AddAdminCreateRequest(PatientReqVM model, string email);
     }
 }

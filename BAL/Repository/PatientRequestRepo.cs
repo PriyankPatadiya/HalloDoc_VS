@@ -4,6 +4,7 @@ using DAL.DataModels;
 using DAL.ViewModels;
 using Microsoft.AspNetCore.Identity;
 using System.Collections;
+using System.Net.NetworkInformation;
 
 namespace BAL.Repository
 {
@@ -175,6 +176,55 @@ namespace BAL.Repository
             _context.SaveChanges();
         }
 
+        public void AddAdminCreateRequest(PatientReqVM pInfo, string email)
+        {
+            var adminuser = _context.Admins.Where(x => x.Email == email).FirstOrDefault();
+            if(pInfo != null)
+            {
+                pInfo.CreatedDate = DateTime.Now;
+                var request = new Request();
+
+                request.FirstName = adminuser.FirstName;
+                request.LastName = adminuser.LastName;
+                request.CreatedDate = DateTime.Now;
+                request.PhoneNumber = adminuser.Mobile;
+                request.Email = email;
+                request.ConfirmationNumber = GenerateConfirmationNumber(pInfo);
+
+                _context.Requests.Add(request);
+                _context.SaveChanges();
+
+
+                var requestClient = new RequestClient();
+
+                requestClient.RequestId = request.RequestId;
+                requestClient.FirstName = pInfo.FirstName;
+                requestClient.LastName = pInfo.LastName;
+                requestClient.Email = pInfo.Email;
+                requestClient.PhoneNumber = pInfo.PhoneNumber;
+                requestClient.Street = pInfo.Street;
+                requestClient.City = pInfo.City;
+                requestClient.State = pInfo.State;
+                requestClient.ZipCode = pInfo.ZipCode;
+                requestClient.IntDate = pInfo.BirthDate.Value.Day;
+                requestClient.IntYear = pInfo.BirthDate.Value.Year;
+                requestClient.StrMonth = pInfo.BirthDate.Value.Month.ToString();
+                requestClient.RegionId = pInfo.SelectedStateId;
+
+
+                _context.RequestClients.Add(requestClient);
+                _context.SaveChanges();
+
+                var reqnotes = new RequestNote();
+                reqnotes.RequestId = request.RequestId;
+                reqnotes.AdminNotes = pInfo.AdminNote;
+                reqnotes.CreatedDate = DateTime.Now;
+                reqnotes.CreatedBy = request.FirstName + request.LastName;
+                reqnotes.PhysicianNotes = "-";
+                _context.RequestNotes.Add(reqnotes);
+                _context.SaveChanges();
+            }
+        }
 
         public async Task<string> GetStateAccordingToRegionId(int regionId)
         {
@@ -185,7 +235,7 @@ namespace BAL.Repository
         public string GenerateConfirmationNumber(PatientReqVM model)
         {
             string abr = _context.Regions.Where(s => s.Name == model.State).FirstOrDefault().Abbreviation;
-            int numofrequests = _context.Requests.Where(s => s.CreatedDate.Date == model.CreatedDate).Count();
+            int numofrequests = _context.Requests.Where(s => s.CreatedDate.Date == model.CreatedDate).Count()+1;
             string confirmationnum = abr + model.CreatedDate.Value.ToString("MMdd") + model.LastName.Substring(0, 2) + model.FirstName.Substring(0, 2) + numofrequests.ToString("D4");
             return confirmationnum;
         }

@@ -85,7 +85,7 @@ namespace BAL.Repository
         public void AddConciergeForm(OthersReqVM model)
         {
             var user = _context.AspNetUsers.FirstOrDefault(u => u.Email == model.Email);
-            if (user== null)
+            if (user == null)
             {
                 //send mail and add data
             }

@@ -10,6 +10,8 @@ using Rotativa.AspNetCore;
 using Microsoft.AspNetCore.Identity;
 using iTextSharp.text;
 using System.Drawing.Printing;
+using NuGet.Common;
+using Org.BouncyCastle.Asn1.Ocsp;
 
 namespace HalloDoc.Controllers
 {
@@ -89,7 +91,7 @@ namespace HalloDoc.Controllers
                     currentpage = 1;
                 }
             }
-            var paginatedData = result.Skip((currentpage - 1) * pagesize).Take(pagesize).ToList();
+            var paginatedData = result.ToList().Skip((currentpage - 1) * pagesize).Take(pagesize).ToList();  
             if (result != null)
             {
                 if (!String.IsNullOrEmpty(StatusButton))
@@ -495,11 +497,14 @@ namespace HalloDoc.Controllers
 
             if(to != null)
             {
+                TempData["Message"] = "Aggrement Sent";
+                TempData["MessageType"] = "success";
                 _emailService.SendEmail(to, subject, Body);
-                return Ok("Agreement sent");
+                return RedirectToAction("MainPage");
             }
-
-            return Ok("Failed to send agreement");
+            TempData["Message"] = "can't send Aggrement";
+            TempData["MessageType"] = "warning";
+            return RedirectToAction("MainPage");
         }
 
         // Admin Profile
@@ -509,6 +514,7 @@ namespace HalloDoc.Controllers
             string email = HttpContext.Session.GetString("Email");
             ViewBag.username = _context.Admins.First(u => u.Email == email).FirstName;
             var admin = _admin.getProfileData(email);
+
             return View(admin);
         }
 
@@ -520,11 +526,13 @@ namespace HalloDoc.Controllers
             {
                 _admin.changeAccountInfo(model, email, regions);
                 HttpContext.Session.SetString("Email", email);
-                ViewBag.Message = "Edited Successfully";
-                ViewBag.MessageType = "success";
+                TempData["Message"] = "Edited Successfully";
+                TempData["MessageType"] = "success";
                 return RedirectToAction("AdminProfile");
             }
-            return Content("can't edit");
+            TempData["Message"] = "Not able to change information";
+            TempData["MessageType"] = "success";
+            return RedirectToAction("AdminProfile");
         }
 
         public IActionResult changeBillingInfo(AdminProfileVM model)
@@ -533,21 +541,75 @@ namespace HalloDoc.Controllers
             if(email != "")
             {
                 _admin.changeBillingInfo(model, email);
+                TempData["Message"] = "Edited Successfully";
+                TempData["MessageType"] = "success";
                 return RedirectToAction("AdminProfile");
             }
-            return Content("can't edit");
+            TempData["Message"] = "Not able to change information";
+            TempData["MessageType"] = "success";
+            return RedirectToAction("AdminProfile");
         }
 
         public IActionResult changePass([FromForm] string Password)
         {
             string email = HttpContext.Session.GetString("Email");
-            Password = _passwordHasher.HashPassword(null , Password);
+            Password = _passwordHasher.HashPassword(null, Password);
             if (email != "")
             {
                 _admin.changePassword(email, Password);
+                TempData["Message"] = "Password Changed....";
+                TempData["MessageType"] = "success";
                 return RedirectToAction("PatientLoginn", "Home");
             }
-            return Content("Can't change password");
+            TempData["Message"] = "Not Able to change password";
+            TempData["MessageType"] = "warning";
+            return RedirectToAction("AdminProfile");
+        }
+
+
+        // Send Link
+
+        public IActionResult sendLinkofSubmitreq(string PatientFirstname, string PatientLastname, string PatientEmail)
+        {
+            var link = Url.ActionLink("SubmitRequest", "Home", protocol: HttpContext.Request.Scheme);
+
+            string to = PatientEmail;
+            string subject = "Submit A Request To Connect With Our Physicians";
+            var body = new StringBuilder();
+            body.AppendFormat("Hello");
+            body.AppendLine(@"Please Submit Your Request here");
+            body.AppendLine("<a href=\"" + link + "\">Click here</a>");
+
+            string Body = body.ToString();
+
+            if (to != null)
+            {
+                TempData["Message"] = "email Sent Successfully";
+                TempData["MessageType"] = "success";
+                _emailService.SendEmail(to, subject, Body);
+                return RedirectToAction("MainPage");
+            }
+            TempData["Message"] = "Can't Send Email";
+            TempData["MessageType"] = "warning";
+            return RedirectToAction("MainPage");
+        }
+
+        // Create Request
+
+        public IActionResult CreateRequestAdmin()
+        {
+            PatientReqVM model = new PatientReqVM();
+            model.Region = _context.Regions.ToList();
+            return PartialView("CreateRequestAdmin", model);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> CreateRequestAdmin(PatientReqVM model) 
+        {
+            var email = HttpContext.Session.GetString("Email");
+            model.State = await _request.GetStateAccordingToRegionId(model.SelectedStateId);
+            _request.AddAdminCreateRequest(model, email);
+            return RedirectToAction("CreateRequestAdmin");
         }
     }
 }

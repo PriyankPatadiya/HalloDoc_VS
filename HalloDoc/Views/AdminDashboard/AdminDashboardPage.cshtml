@@ -1,5 +1,43 @@
 ﻿@model DAL.ViewModels.AdminDashboardVM
 
+@*  --------------------Modal Send Link------------------   *@
+
+ <div class="modal fade" id="sendLinkModal" tabindex="-1" aria-labelledby="sendLinkModalLabel" aria-hidden="true">
+     <div class="modal-dialog modal-dialog-centered">
+         <div class="modal-content">
+             <div class="modal-header bg-info text-white">
+                 <h2 class="modal-title fs-5" id="sendLinkModalLabel">Send Mail to Patient for Submitting request</h2>
+                 <button type="button" class="btn-close text-white" data-bs-dismiss="modal" aria-label="Close"></button>
+             </div>
+            <form id="sendLinkForm" asp-action="sendLinkofSubmitreq">
+                 <div class="modal-body">
+                     <div class="form-floating py-2">
+                         <input type="text" class="form-control shadow-none" id="sendLinkFirstname" name="PatientFirstname" placeholder="Firstname">
+                         <label class="text-muted floating-label">Firstname</label>
+                         <span class="text-danger"></span>
+                     </div>
+                    <div class="form-floating py-2">
+                        <input type="text" class="form-control shadow-none" id="sendLinkLarstname" name="PatientLastname" placeholder="Lastname">
+                         <label class="text-muted floating-label">Lastname</label>
+                         <span class="text-danger"></span>
+                     </div>
+                    <div class="form-floating py-2">
+                        <input type="email" class="form-control shadow-none" id="sendLinkEmail" name="PatientEmail" placeholder="Email">
+                         <label class="text-muted floating-label">Email</label>
+                         <span class="text-danger"></span>
+                     </div>
+
+                 </div>
+                 <div class="modal-footer border-top-0">
+                    <button type="submit" class="btn btn-info text-white" data-bs-dismiss="modal">Submit</button>
+                     <button type="button" class="btn btn-outline-info" data-bs-dismiss="modal">Cancel</button>
+                 </div>
+             </form>
+         </div>
+     </div>
+ </div>
+
+
 
 <div class="container-fluid bg-secondary-subtle tab-pane fade show active px-2 px-sm-4" style="min-height: 77vh;" >
 
@@ -62,15 +100,15 @@
             <p class="fs-4 ps-2 fw-bolder">Patients <span class="text-primary fs-6" id="statusspan"></span></p>
         </div>
         <div class="col-12 col-sm-7 py-1 d-sm-flex justify-content-end ">
-            <button type="button" class="btn btn-info text-white me-md-2 me-1 ms-2">
+            <button type="button" class="btn btn-info text-white me-md-2 me-1 ms-2 shadow-none" data-bs-toggle="modal" data-bs-target="#sendLinkModal">
                 <i class="bi bi-send  me-md-2 "></i><span class="d-none d-lg-inline">Send Link</span>
             </button>
-            <button type="button" class="btn btn-info  text-white me-md-2 me-1">
+            <a asp-action="CreateRequestAdmin" type="button" class="btn btn-info  text-white me-md-2 me-1">
                 <i class="bi bi-pencil-square me-md-2"></i><span class="d-none d-lg-inline">
                     Create
                     Requests
                 </span>
-            </button>
+            </a>
             <button type="button" class="btn btn-info  text-white me-md-2 me-1">
                 <i class="bi bi-arrow-up-right "></i>
                 <span class="d-none d-lg-inline ">Export</span>

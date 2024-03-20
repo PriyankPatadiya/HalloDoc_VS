@@ -41,7 +41,8 @@ $(document).ready(function () {
         ChangeTable(path, StatusButton, currentpage, pagesize);
     });
 
-    $('.buttonOfFilter').click(function () { 
+    $('.buttonOfFilter').click(function () {
+        currentpage = 1;
         $('.buttonOfFilter').removeClass('active');
         $(this).addClass('active');
         ChangeTable(path, StatusButton, currentpage, pagesize);
@@ -49,11 +50,13 @@ $(document).ready(function () {
 
     //Search filter
     $("#SearchString").on("input", function () {
+        currentpage = 1;
         ChangeTable(path, StatusButton, currentpage, pagesize);
     });
 
     // Status button 
-    $("#SelectedStateId").on("change", function () {  
+    $("#SelectedStateId").on("change", function () {
+        currentpage = 1;
         ChangeTable(path, StatusButton, currentpage, pagesize);
     });
 
@@ -90,6 +93,7 @@ $(document).ready(function () {
 
     // Status buttons , set in local storage and some designs 
     $(".Status-btn").click(function () {
+        currentpage = 1;
         $(".Status-btn").removeClass('active');
         $(".Status-btn").removeClass('activee');
         $(this).addClass('active');

@@ -61,6 +61,9 @@ namespace DAL.ViewModels
 
         [StringLength(10)]
         public string? ZipCode { get; set; }
+
+        [StringLength(100)]
+        public string? AdminNote { get; set; }
         [StringLength(10)]
         public string? ImageUrl { get; set; }
 
