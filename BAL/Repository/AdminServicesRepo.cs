@@ -153,12 +153,11 @@ namespace BAL.Repository
 
         public AdminProfileVM getProfileData(string email)
         {
-            
             AdminProfileVM profile = (from admin in _context.Admins
                                      join AspNetUser in _context.AspNetUsers
                                      on admin.AspNetUserId equals AspNetUser.Id
                                      join adminregion in _context.AdminRegions
-                                     on admin.RegionId equals adminregion.RegionId
+                                     on admin.AdminId equals adminregion.AdminId
                                      where admin.Email == email
                                      select new AdminProfileVM()
                                      {
@@ -176,16 +175,37 @@ namespace BAL.Repository
                                          city = admin.City,
                                          state = _context.Regions.First(u => u.RegionId == admin.RegionId).RegionId,
                                          zipcode = admin.Zip,
-                                         billingphone = admin.AltPhone
+                                         billingphone = admin.AltPhone,
+                                         statess = (from adminregion in _context.AdminRegions where adminregion.AdminId == admin.AdminId select new CheckboxList_model
+                                         {
+                                             Value = adminregion.RegionId,
+                                             Selected = true
+                                         }).ToList(),
 
                                      }).First();
             profile.Region = _context.Regions.ToList();
             return profile;
         }
 
-        public void changeAccountInfo(AdminProfileVM model, string email)
+        public void changeAccountInfo(AdminProfileVM model, string email, List<string> regions)
         {
             var admin = _context.Admins.First(u => u.Email == email);
+            var aspnetuser = _context.AspNetUsers.First(u => u.Email == email);
+            var List = _context.AdminRegions.Where(s => s.AdminId == admin.AdminId).ToList();
+
+            _context.AdminRegions.RemoveRange(List);
+
+            //add on the adminid 
+            foreach (var item in regions)
+            {
+                AdminRegion adminRegion = new AdminRegion();
+                adminRegion.AdminId = admin.AdminId;
+                adminRegion.RegionId = int.Parse(item);
+                _context.Add(adminRegion);
+                _context.SaveChanges();
+            }
+
+            
             admin.Email = model.Email;
             admin.FirstName = model.FirstName;
             admin.LastName = model.LastName;
@@ -193,7 +213,7 @@ namespace BAL.Repository
             _context.Admins.Update(admin);
             _context.SaveChanges();
 
-            var aspnetuser = _context.AspNetUsers.First(u => u.Email == email);
+            
             aspnetuser.Email = model.Email;
             _context.AspNetUsers.Update(aspnetuser);
             _context.SaveChanges();

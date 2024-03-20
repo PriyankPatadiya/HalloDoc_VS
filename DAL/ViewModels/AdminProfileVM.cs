@@ -28,5 +28,11 @@ namespace DAL.ViewModels
         public string billingphone { get; set; }
         public List<Region> Region { get; set; }
         public int SelectedStateId { get; set; }
+        public List<CheckboxList_model>? statess { get; set; }
+    }
+    public class CheckboxList_model
+    {
+        public int? Value { get; set; }
+        public Boolean? Selected { get; set; }
     }
 }

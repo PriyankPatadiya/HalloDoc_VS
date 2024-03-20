@@ -78,13 +78,17 @@ namespace HalloDoc.Controllers
             var result = _admin.GetRequestsQuery(StatusButton);
             result = result.Where(s => (String.IsNullOrEmpty(SearchString) || s.PatientName.Contains(SearchString)) && (String.IsNullOrEmpty(selectButton) || s.requestId == int.Parse(selectButton)) && ((SelectedStateId == "0" || SelectedStateId == null) || s.regionId == int.Parse(SelectedStateId)));
 
-            if (SearchString != null || selectButton != null || SelectedStateId != "0")
-            {
-                currentpage = 1;
-            }
+            
 
             int totalItems = result.Count();
             int totalPages = (int)Math.Ceiling((double)totalItems / pagesize);
+            if (SearchString != null || selectButton != null || SelectedStateId != "0")
+            {
+                if(totalPages <= 1)
+                {
+                    currentpage = 1;
+                }
+            }
             var paginatedData = result.Skip((currentpage - 1) * pagesize).Take(pagesize).ToList();
             if (result != null)
             {
@@ -508,13 +512,13 @@ namespace HalloDoc.Controllers
             return View(admin);
         }
 
-        public IActionResult changeAccInfo(AdminProfileVM model)
+        public IActionResult changeAccInfo(AdminProfileVM model, List<string>regions)
         {
             string email = HttpContext.Session.GetString("Email");
 
             if(email != "")
             {
-                _admin.changeAccountInfo(model, email);
+                _admin.changeAccountInfo(model, email, regions);
                 HttpContext.Session.SetString("Email", email);
                 ViewBag.Message = "Edited Successfully";
                 ViewBag.MessageType = "success";

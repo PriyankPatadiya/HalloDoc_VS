@@ -3,7 +3,7 @@ $(document).ready(function () {
 
     // Local Storage
     var currentpage = 1;
-    var pagesize = 4;
+    var pagesize = 3;
     var path;
     var StatusButton;
     var span = localStorage.getItem("statusspan");
@@ -35,7 +35,8 @@ $(document).ready(function () {
 
     $(document).on("click", "#pagination a.page-link", function () {
         console.log("Pagination link clicked!");
-        currentpage = $(this).text().trim();
+        var id = $(this).attr("id");
+        currentpage = $("#" + id).data("page");
         console.log("Current Page: " + currentpage);
         ChangeTable(path, StatusButton, currentpage, pagesize);
     });
