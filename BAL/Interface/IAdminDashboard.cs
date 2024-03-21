@@ -1,10 +1,20 @@
-﻿using DAL.ViewModels;
+﻿using DAL.DataModels;
+using DAL.ViewModels;
 
 
 namespace BAL.Interface
 {
     public interface IAdminDashboard
     {
+        public string username(string email);
+        public Request reqbyreqid(int id);
+        public List<RequestWiseFile> filesbyrequestid(int requestid);
+        public RequestWiseFile filebyReqidandName(int reqid, string filename);
+        public RequestWiseFile filebyName(string name);
+        public List<HealthProfessional> getprofessionalsbyvendorid(string businessId);
+        public void deleteSingleFile(RequestWiseFile file);
+        public bool deleteAllFiles(List<string> selectedFiles);
+        public List<Region> regions();
         public IQueryable<AdminDashboardTableVM> GetRequestsQuery(string status);
         public AdminDashboardTableVM GetRequestModel();
         public int CountRequests(string StatusButton);
@@ -14,6 +24,5 @@ namespace BAL.Interface
         public void changeAccountInfo(AdminProfileVM model, string email, List<string> regions);
         public void changeBillingInfo(AdminProfileVM model, string email);
         public void changePassword(string password, string email);
-        
     }
 }

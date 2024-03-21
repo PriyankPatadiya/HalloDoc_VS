@@ -53,6 +53,7 @@
 
                 <!-- Login form  -->
                 <form asp-controller="Home" asp-action="PatientCreateAcc">
+                    <input asp-for="UserName" hidden />
                 <div class="loginform py-2 text-start mx-auto" style="width: 50%">
                     <div id="backtologin " class="mx-auto">
                         <a asp-action="PatientSite" class="btn p-0 text-decoration-none">
@@ -65,10 +66,10 @@
                     <div class="mx-auto my-2">
                         <div class="form-floating d-flex border rounded bg-white logininputdiv">
                             <input type="text"
-                                asp-for="UserName"
                                    class="form-control no-border"
                                    id="floatingInputGroup1"
-                                   placeholder="Username" /><img src="Images/user_circle.svg" alt="" class="pe-3" />
+                                   value = "@Model.UserName"
+                                   placeholder="Username" disabled/><img src="Images/user_circle.svg" alt="" class="pe-3"/>
                             <label for="floatingInputGroup1">Username</label>
                             
                         </div>

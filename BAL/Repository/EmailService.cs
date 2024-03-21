@@ -17,7 +17,6 @@ namespace BAL.Repository
 
         public  void SendEmail(string to, string subject, string body)
         {
-
             var smtpClient = new SmtpClient("smtp.office365.com")
             {
                 Port = 587,
@@ -26,7 +25,6 @@ namespace BAL.Repository
                 DeliveryMethod = SmtpDeliveryMethod.Network,
                 UseDefaultCredentials = false
             };
-
             var mailMessage = new MailMessage
             {
                 From = new MailAddress("tatva.dotnet.priyankpatadiya@outlook.com"),
@@ -35,12 +33,8 @@ namespace BAL.Repository
                 IsBodyHtml = true,
                 
             };
-
             mailMessage.To.Add(to);
-
             smtpClient.Send(mailMessage);
-
-
         }
 
         public void SendMailWithAttachments(string to , string subject, string body , List<string> filePaths)

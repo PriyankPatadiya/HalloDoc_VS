@@ -5,6 +5,7 @@ using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 using System.ComponentModel;
 using DAL.DataModels;
 using Microsoft.AspNetCore.Identity;
+using Org.BouncyCastle.Ocsp;
 
 namespace BAL.Repository
 {
@@ -18,6 +19,72 @@ namespace BAL.Repository
              _context = context;
         }
 
+        public Request reqbyreqid(int id)
+        {
+            var request = _context.Requests.Where(i => i.RequestId == id).FirstOrDefault();
+            return request;
+        }
+        public string username(string email)
+        {
+            string username = _context.Admins.First(u => u.Email == email).FirstName;
+            return username;
+        }
+
+        public List<Region> regions()
+        {
+            var regions = _context.Regions.ToList();
+            return regions;
+        }
+
+        public List<RequestWiseFile> filesbyrequestid(int requestid)
+        {
+            var requestfiles = _context.RequestWiseFiles.Where(x => x.RequestId == requestid).ToList();
+            return requestfiles;
+        }
+
+        public RequestWiseFile filebyName(string name)
+        {
+            var reqwisefile = _context.RequestWiseFiles.Where(u => u.FileName == name).FirstOrDefault();
+            return reqwisefile;
+        }
+
+        public RequestWiseFile filebyReqidandName(int reqid, string filename)
+        {
+            var requestwisefile = _context.RequestWiseFiles.Where(u => u.RequestId == reqid && u.FileName == filename).FirstOrDefault();
+            return requestwisefile;
+        }
+
+        public List<HealthProfessional> getprofessionalsbyvendorid(string businessId)
+        {
+            var data = _context.HealthProfessionals.Where(u => u.VendorId == int.Parse(businessId));
+            return data.ToList();
+        }
+
+        public void deleteSingleFile(RequestWiseFile file)
+        {
+            file.IsDeleted[0] = true;
+            _context.RequestWiseFiles.Update(file);
+            _context.SaveChanges();
+        }
+
+        public bool deleteAllFiles(List<string> selectedFiles)
+        {
+            foreach (var file in selectedFiles)
+            {
+                if(file == null)
+                {
+                    return false;
+                }
+            }
+            foreach (var file in selectedFiles)
+            {
+                var reqwisefile = filebyName(file);
+                reqwisefile.IsDeleted[0] = true;
+                _context.RequestWiseFiles.Update(reqwisefile);
+            }
+            _context.SaveChanges();
+            return true;
+        }
 
         public int CountRequests(string StatusButton)
         {

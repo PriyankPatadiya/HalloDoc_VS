@@ -26,11 +26,12 @@ namespace HalloDoc.Controllers
         private readonly IConfiguration _config;
         private readonly IPasswordHasher<LoginVM> _passwordHasher;
         private readonly IJwtToken _jwttoken;
+        private readonly IPasswordHasher<CreateAccVM> _passwordcreatehasher;
 
         //private readonly IJWTTokense
 
 
-        public HomeController(IConfiguration config, ApplicationDbContext db, ILogin login, ICreateAcc createacc, IEmailService emailService, IPasswordHasher<LoginVM> passwordHasher, IJwtToken token)
+        public HomeController(IConfiguration config, ApplicationDbContext db, ILogin login, ICreateAcc createacc, IEmailService emailService, IPasswordHasher<LoginVM> passwordHasher, IJwtToken token, IPasswordHasher<CreateAccVM> passwordcreatehasher)
         {
             _context = db;
             _login = login;
@@ -41,7 +42,7 @@ namespace HalloDoc.Controllers
             //_jwtTokenService = jwtservice
             _config = config;
             _key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]));
-
+            _passwordcreatehasher = passwordcreatehasher;
         }
         public IActionResult Privacy(string name, int numTimes = 1)
         {
@@ -72,13 +73,21 @@ namespace HalloDoc.Controllers
 
             return View();
         }
-
-
-        public IActionResult PatientCreateAcc()
+        public IActionResult AccessDenied()
         {
             return View();
         }
 
+        //public IActionResult PatientCreateAcc()
+        //{
+        //    return View();
+        //}
+        public IActionResult PatientCreateAcc(string email)
+        {
+            CreateAccVM model = new CreateAccVM();
+            model.UserName = email;
+            return View(model);
+        }
         public IActionResult Logout()
         {
             HttpContext.Session.Remove("Email");
@@ -143,14 +152,56 @@ namespace HalloDoc.Controllers
                     ModelState.AddModelError("ConfirmPassword", "The Password and Confirm Password do not match");
                     return View(Obj);
                 }
-                var newUser = new AspNetUser
+                //var newUser = new AspNetUser
+                //{
+                //    Id = Guid.NewGuid().ToString(),
+                //    UserName = Obj.UserName,
+                //    PasswordHash = _passwordcreatehasher.HashPassword(null, Obj.Password),
+                //};
+
+                var client = _context.RequestClients.FirstOrDefault(u => u.Email == Obj.UserName);
+                var aspnetuser = new AspNetUser();
+
+
+                aspnetuser.Id = Guid.NewGuid().ToString();
+                aspnetuser.Email = Obj.UserName;
+                aspnetuser.CreatedDate = DateTime.Now;
+                aspnetuser.UserName = Obj.UserName;
+                aspnetuser.PasswordHash = _passwordcreatehasher.HashPassword(null, Obj.Password);
+                aspnetuser.PhoneNumber = client.PhoneNumber;
+
+
+                _context.AspNetUsers.Add(aspnetuser);
+                _context.SaveChanges();
+
+                var user = new User();
+                user.AspNetUserId = aspnetuser.Id;
+                user.FirstName = client.FirstName;
+                user.LastName = client.LastName;
+                user.Mobile = client.PhoneNumber;
+                user.Street = client.Street;
+                user.City = client.City;
+                user.State = client.State;
+                user.ZipCode = client.ZipCode;
+                user.Email = Obj.UserName;
+                user.CreatedBy = client.FirstName;
+                user.IntYear = client.IntYear;
+                user.IntDate = client.IntDate;
+                user.StrMonth = client.StrMonth;
+                user.RegionId = client.RegionId;
+
+                _context.Users.Add(user);
+                _context.SaveChanges();
+
+                var aspnetuserrole = new AspNetUserRole
                 {
-                    Id = Guid.NewGuid().ToString(),
-                    UserName = Obj.UserName,
-                    PasswordHash = Obj.Password,
+                    UserId = aspnetuser.Id,
+                    RoleId = 2
                 };
 
-                _createacc.AddUser(newUser);
+                _context.AspNetUserRoles.Add(aspnetuserrole);
+                _context.SaveChanges();
+
                 return RedirectToAction(nameof(Privacy));
             }
             return View(Obj);

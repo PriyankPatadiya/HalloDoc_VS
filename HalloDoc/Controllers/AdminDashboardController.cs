@@ -12,13 +12,14 @@ using iTextSharp.text;
 using System.Drawing.Printing;
 using NuGet.Common;
 using Org.BouncyCastle.Asn1.Ocsp;
+using Microsoft.EntityFrameworkCore;
 
 namespace HalloDoc.Controllers
 {
     [CustomAuthorize("Administrator")] 
     public class AdminDashboardController : Controller
     {
-        private readonly ApplicationDbContext _context;
+        //private readonly ApplicationDbContext _context;
         private readonly IAdminDashboard _admin;
         private readonly IAdminActions _adminActions;
         [Obsolete]
@@ -31,7 +32,7 @@ namespace HalloDoc.Controllers
         [Obsolete]
         public AdminDashboardController(ApplicationDbContext context, IAdminDashboard admin, IAdminActions action, IHostingEnvironment env, IuploadFile uploadfile, IPatientRequest request, IEmailService emailService, IPasswordHasher<AdminProfileVM> password)
         {
-            _context = context;
+            //_context = context;
             _admin = admin;
             _adminActions = action;
             _hostingEnvironment = env;
@@ -44,7 +45,7 @@ namespace HalloDoc.Controllers
         public IActionResult MainPage()
         {
             var email = HttpContext.Session.GetString("Email");
-            ViewBag.username = _context.Admins.First(u => u.Email == email).FirstName;
+            ViewBag.username = _admin.username(email);
             AdminMainPageVM MainModel = new AdminMainPageVM()
             {
                 PageName = PageName.Dashboard
@@ -69,7 +70,7 @@ namespace HalloDoc.Controllers
             model.ConcludeCount = _admin.CountRequests("4");
             model.ToCloseCount = _admin.CountRequests("5");
             model.UnpaidCount = _admin.CountRequests("6");
-            model.Region = _context.Regions.ToList();
+            model.Region = _admin.regions();
             return model;
         }
 
@@ -166,7 +167,7 @@ namespace HalloDoc.Controllers
             int status = _admin.getStatusByRequetId(requestid);
             result.Status = status;
             result.requestid = requestid;
-            result.regiontable = _context.Regions.ToList();
+            result.regiontable = _admin.regions();
             MainModel.Casemodel = result;
             return View("MainPage", MainModel);
         }
@@ -185,48 +186,45 @@ namespace HalloDoc.Controllers
         [HttpPost]
         public IActionResult CloseCase(CloseCaseVM model)
         {
-            var client = _context.RequestClients.Where(u => u.RequestId == model.requestid).FirstOrDefault();
-            if(client != null)
+            bool isclosed = _adminActions.closecase(model);
+            if(isclosed == true)
             {
-                client.FirstName = model.FirstName;
-                client.LastName = model.LastName;
-                client.PhoneNumber = model.Phonenum;
-                client.IntDate = model.DateOfBirth.Day;
-                client.IntYear = model.DateOfBirth.Year;
-                client.StrMonth = model.DateOfBirth.Month.ToString();
-                _context.RequestClients.Update(client);
-                _context.SaveChanges();
+                TempData["Message"] = "Request Closed";
+                TempData["MessageType"] = "success";
                 return RedirectToAction("CloseCase", new { reqid = model.requestid });
             }
-            return Ok("can't save details");
+            TempData["Message"] = "Unable to close request";
+            TempData["MessageType"] = "warning";
+            return RedirectToAction("CloseCase", new { reqid = model.requestid });
         }
 
         public IActionResult ClosecasePost(int reqid)
         {
-            var request =_context.Requests.Where(i => i.RequestId == reqid).FirstOrDefault();
+            var request =_admin.reqbyreqid(reqid);
             if(request != null)
             {
-                request.Status = 9;
-                request.ModifiedDate = DateTime.Now;
-                _context.Requests.Update(request);
-                _context.SaveChanges();
-
-                RequestStatusLog log = new RequestStatusLog
-                {
-                    Status = request.Status,
-                    RequestId = reqid,
-                    CreatedDate = DateTime.Now,
-                };
-                _context.RequestStatusLogs.Add(log);
-                _context.SaveChanges();
-
+                _adminActions.closeRequest(request, reqid);
+                TempData["Message"] = "closed Request";
+                TempData["MessageType"] = "success";
                 return RedirectToAction("MainPage");
             }
-            return Ok("can't close the request");
+            TempData["Message"] = ".";
+            TempData["MessageType"] = "warning";
+            return RedirectToAction("MainPage");
         }
 
         // View Notes Actions
 
+        public IActionResult ViewNotesAdminn(int reqid)
+        {
+            AdminMainPageVM MainModel = new AdminMainPageVM()
+            {
+                PageName = PageName.ViewNotes
+            };
+            var result = _adminActions.viewnotes(reqid);
+            MainModel.NotesVM = result;
+            return View("MainPage", MainModel);
+        }
         public IActionResult ViewNotesAdmin()
         {
             var requestId = HttpContext.Request.Query["reqid"];
@@ -238,7 +236,6 @@ namespace HalloDoc.Controllers
             MainModel.NotesVM = result;
             return View("MainPage", MainModel);
         }
-
         // Send Order Actions
 
         public IActionResult SendOrder(int requestid)
@@ -248,7 +245,7 @@ namespace HalloDoc.Controllers
                 PageName = PageName.SendOrder
             };
             SendOrderVM SendOrderVM = new SendOrderVM();
-            SendOrderVM.Professions = _context.HealthProfessionalTypes.ToList();
+            SendOrderVM.Professions = _adminActions.healthProfessionalTypes();
             SendOrderVM.requestid = requestid;
             MainModel.SendOrderVM = SendOrderVM;
             return View("MainPage", MainModel);
@@ -257,19 +254,18 @@ namespace HalloDoc.Controllers
         [HttpPost]
         public IActionResult SendOrder(SendOrderVM model)
         {
-            OrderDetail order = new OrderDetail
+            if (ModelState.IsValid)
             {
-                RequestId = model.requestid,
-                VendorId = model.vendorid,
-                FaxNumber = model.Fax,
-                Email = model.Email,
-                BusinessContact = model.BusinessContact,
-                Prescription = model.prescription,
-                NoOfRefill = model.Noofretail,
-                CreatedDate = DateTime.Now,
-            };
-            _context.OrderDetails.Add(order);
-            _context.SaveChanges();
+                bool issend = _adminActions.sendOrder(model);
+                if(issend == true)
+                {
+                    TempData["Message"] = "Successfully sent Your order!...";
+                    TempData["MessageType"] = "success";
+                    return RedirectToAction("MainPage");
+                }
+            }
+            TempData["Message"] = "Unable to send order";
+            TempData["MessageType"] = "warning";
             return RedirectToAction("MainPage");
         }
 
@@ -280,8 +276,13 @@ namespace HalloDoc.Controllers
         public IActionResult CancelCase(int reeqid, string Reason)
         {
             string Notes = Request.Form["Notes"];
-            _adminActions.changeStatusOnCancleCase(reeqid, Reason, Notes);
-            return Ok();
+            bool iscancel = _adminActions.changeStatusOnCancleCase(reeqid, Reason, Notes);
+            if (iscancel)
+            {
+                TempData["Message"] = "success";
+                TempData["MessageType"] = "success";
+            }
+            return RedirectToAction("MainPage");
         }
 
         public IActionResult filterPhyByRegion(string RegionId)
@@ -294,7 +295,7 @@ namespace HalloDoc.Controllers
         public IActionResult AssignCase(int reeqid, string physicianId, string Notes)
         {
             _adminActions.ChangeOnAssign(reeqid, int.Parse(physicianId), Notes);
-            return View("MainPage");
+            return RedirectToAction("MainPage");
         }
 
         // Block Request Actions
@@ -302,7 +303,9 @@ namespace HalloDoc.Controllers
         public IActionResult BlockCase(int reeqid, string reason)
         {
             _adminActions.BlockCase(reeqid, reason);
-            return View("MainPage");
+            TempData["Message"] = "Blocked Successfully";
+            TempData["MessageType"] = "success";
+            return RedirectToAction("MainPage");
         }
 
         // View Document Actions
@@ -314,7 +317,7 @@ namespace HalloDoc.Controllers
                 PageName = PageName.viewdocument
             };
             ViewdocumentVM model = new ViewdocumentVM();
-            var requestfiles = _context.RequestWiseFiles.Where(x => x.RequestId == reeqid).ToList();
+            var requestfiles = _admin.filesbyrequestid(reeqid);
             model.RequestWiseFile = requestfiles;
             model.requestid = reeqid;
             //model.confirmationNumber = _context.Requests.Where(s => s.RequestId == reeqid).FirstOrDefault().ConfirmationNumber.ToUpper();
@@ -362,34 +365,41 @@ namespace HalloDoc.Controllers
 
                 _request.Addrequestwisefile(fileName, requestid);
                 ViewBag.IsUpload = true;
+                TempData["Message"] = "file uploaded successfully....";
+                TempData["MessageType"] = "success";
                 return RedirectToAction("ViewDocuments", new { reeqid = requestid });
             }
         }
 
         
         public IActionResult deleteFile(int reqid, string filename) { 
-            var requestwisefile = _context.RequestWiseFiles.Where(u => u.RequestId == reqid && u.FileName == filename).FirstOrDefault();
-            requestwisefile.IsDeleted[0] = true;
-
-            _context.RequestWiseFiles.Update(requestwisefile);
-            _context.SaveChanges();
-
-            ViewBag.Isdelete = true;
+            var requestwisefile = _admin.filebyReqidandName(reqid, filename);
+            if(requestwisefile != null)
+            {
+                _admin.deleteSingleFile(requestwisefile);
+                ViewBag.Isdelete = true;
+                TempData["Message"] = "file deleted successfully....";
+                TempData["MessageType"] = "success";
+                return RedirectToAction("ViewDocuments", new { reeqid = reqid });
+            }
+            TempData["Message"] = "Unable To delete file";
+            TempData["MessageType"] = "warning";
             return RedirectToAction("ViewDocuments", new { reeqid = reqid });
         }
 
         [HttpPost]
-        public IActionResult deleteAllFiles( List<string> selectedFiles)
+        public IActionResult deleteAllFiles( List<string> selectedFiles, string reqid)
         {
-            foreach(var file in selectedFiles)
+            bool isdeleteall = _admin.deleteAllFiles(selectedFiles);
+            if (isdeleteall)
             {
-                var reqwisefile = _context.RequestWiseFiles.Where(u => u.FileName == file).FirstOrDefault();
-                reqwisefile.IsDeleted[0] = true;
-                _context.RequestWiseFiles.Update(reqwisefile);
+                TempData["Message"] = "files deleted successfully....";
+                TempData["MessageType"] = "success";
+                return RedirectToAction("ViewDocuments", new { reeqid = reqid });
             }
-            _context.SaveChanges();
-            return Ok();
-
+            TempData["Message"] = "Can't find file or unable to delete the file";
+            TempData["MessageType"] = "warning";
+            return RedirectToAction("ViewDocuments", new { reeqid = reqid });
         }
 
         public IActionResult SendEmailWithAttachments(List<string> selectedFilesPath, string email, string reqid)
@@ -402,6 +412,8 @@ namespace HalloDoc.Controllers
                 _emailService.SendMailWithAttachments(to, subject, body, selectedFilesPath);
 
                 ViewBag.PatientMailalert = true;
+                TempData["Message"] = "Files successfully send by mail";
+                TempData["MessageType"] = "success";
                 return RedirectToAction("ViewDocuments", new { reeqid = reqid });
             }
             catch (Exception ex)
@@ -432,22 +444,20 @@ namespace HalloDoc.Controllers
         }
         public IActionResult getvendordata(string businessId)
         {
-            var data = _context.HealthProfessionals.Where(u => u.VendorId == int.Parse(businessId));
+            var data = _admin.getprofessionalsbyvendorid(businessId);
             return Json(data);
         }
 
         [HttpPost]
         public IActionResult addAdminnote(ViewNotesVM model, int reqid)
         {
-            RequestNote notes = _context.RequestNotes.FirstOrDefault(u => u.RequestId == reqid);
+            RequestNote notes = _adminActions.reqnotebyreqid(reqid) ;
             if(notes != null)
             {
-                notes.AdminNotes = model.AdminNotes;
-                _context.RequestNotes.Update(notes);
-                _context.SaveChanges();
-                return RedirectToAction("ViewNotesAdmin");
+                _adminActions.addrequnotes(model, notes);
+                return RedirectToAction("ViewNotesAdminn", new { reqid = reqid });
             }
-            return RedirectToAction("ViewNotesAdmin");
+            return RedirectToAction("ViewNotesAdminn", new { reqid = reqid });
         }
         public IActionResult TransferNotes(int reeqid)
         {
@@ -485,7 +495,7 @@ namespace HalloDoc.Controllers
             string token = Guid.NewGuid().ToString() + ":" + requestid.ToString() + ":" + DateTime.Now.ToString();
             var link = Url.Action("ReviewAgreement","PatientDashBoard", new { token = token } , protocol: HttpContext.Request.Scheme);
 
-            string to = _context.RequestClients.Where(r => r.RequestId == requestid).First().Email;
+            string to = _adminActions.clientsbyreqid(requestid).First().Email;
             to = "priyank.patadiya@etatvasoft.com";
             string subject = "Agreement";
             var body = new StringBuilder();
@@ -512,7 +522,7 @@ namespace HalloDoc.Controllers
         public IActionResult AdminProfile()
         {
             string email = HttpContext.Session.GetString("Email");
-            ViewBag.username = _context.Admins.First(u => u.Email == email).FirstName;
+            ViewBag.username = _admin.username(email);
             var admin = _admin.getProfileData(email);
 
             return View(admin);
@@ -599,7 +609,7 @@ namespace HalloDoc.Controllers
         public IActionResult CreateRequestAdmin()
         {
             PatientReqVM model = new PatientReqVM();
-            model.Region = _context.Regions.ToList();
+            model.Region =_admin.regions();
             return PartialView("CreateRequestAdmin", model);
         }
 

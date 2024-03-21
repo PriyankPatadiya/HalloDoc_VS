@@ -7,7 +7,7 @@ namespace DAL.ViewModels
     public class CreateAccVM
     {
         [StringLength(256)]
-        public string UserName { get; set; } = null!;
+        public string? UserName { get; set; }
 
         [Column(TypeName = "character varying")]
         [Required]

@@ -64,25 +64,33 @@
 
                     <ul class="nav nav-underline" id="pills-tab" role="tablist">
                         <li class="nav-item " role="presentation">
-                            <a class="px-2 btn shadow-none nav-link text-decoration-none text-body @(ViewContext.ActionDescriptor.RouteValues["action"] == "MainPage" ? "active" : "")" asp-action="MainPage">Dashboard</a>
+                            <a class="px-2 shadow-none nav-link text-decoration-none text-body @(ViewContext.ActionDescriptor.RouteValues["action"] == "MainPage" ? "active" : "")" asp-action="MainPage">Dashboard</a>
                         </li>
                         <li class="nav-item" role="presentation">
-                            <a class="px-2 btn nav-link text-decoration-none text-body shadow-none">Provider Location</a>
+                            <a class="px-2 nav-link text-decoration-none text-body shadow-none">Provider Location</a>
                         </li>
                         <li class="nav-item" role="presentation">
-                            <a class="px-2 btn shadow-none nav-link text-decoration-none text-body @(ViewContext.ActionDescriptor.RouteValues["action"] == "AdminProfile" ? "active" : "")" asp-action="AdminProfile">My Profile</a>
+                            <a class="px-2 shadow-none nav-link text-decoration-none text-body @(ViewContext.ActionDescriptor.RouteValues["action"] == "AdminProfile" ? "active" : "")" asp-action="AdminProfile">My Profile</a>
                         </li>
                         <li class="nav-item" role="presentation">
-                            <button class="px-2 shadow-none nav-link btn text-decoration-none text-body">Providers</button>
+                            <button class="px-2 shadow-none nav-link text-decoration-none text-body" id="dropdownMenu2" data-bs-toggle="dropdown" aria-expanded="false">Providers</button>
+                            <div class="dropdown">
+                                <ul class="dropdown-menu" aria-labelledby="dropdownMenu2">
+                                    <li><button class="dropdown-item" type="button">Provider</button></li>
+                                    <li><button class="dropdown-item" type="button">Scheduling</button></li>
+                                    <li><button class="dropdown-item" type="button">Invoicing</button></li>
+                                </ul>
+                            </div>
                         </li>
                         <li class="nav-item" role="presentation">
-                            <button class="px-2 shadow-none btn nav-link btn text-decoration-none text-body">Partners</button>
+                            <button class="px-2 shadow-none btn nav-link text-decoration-none text-body">Partners</button>
                         </li>
                         <li class="nav-item" role="presentation">
-                            <button class="px-2 shadow-none btn nav-link text-decoration-none text-body">Access</button>
+                            <button type="button" class="px-2  shadow-none nav-link text-decoration-none text-body">Access</button>
+                            
                         </li>
                         <li class="nav-item" role="presentation">
-                            <button class="px-2 shadow-none btn nav-link text-decoration-none text-body">Records</button>
+                            <button class="px-2 shadow-none nav-link text-decoration-none text-body">Records</button>
                         </li>
                     </ul>
                 </div>

@@ -4,7 +4,6 @@ using DAL.DataModels;
 using DAL.ViewModels;
 using Microsoft.AspNetCore.Identity;
 using System.Collections;
-using System.Net.NetworkInformation;
 
 namespace BAL.Repository
 {
@@ -25,16 +24,12 @@ namespace BAL.Repository
             if (status == null)
             {
                 var aspnetuser = new AspNetUser();
-
-                
                 aspnetuser.Id = Guid.NewGuid().ToString();
                 aspnetuser.Email = pInfo.Email;
                 aspnetuser.CreatedDate = DateTime.Now;
                 aspnetuser.UserName = pInfo.FirstName + pInfo.LastName;
                 aspnetuser.PasswordHash = _passwordHasher.HashPassword(null , pInfo.PasswordHash);
                 aspnetuser.PhoneNumber = pInfo.PhoneNumber;
-
-
                 _context.AspNetUsers.Add(aspnetuser);
                 _context.SaveChanges();
 
@@ -53,7 +48,6 @@ namespace BAL.Repository
                 user.IntDate = pInfo.BirthDate.Value.Day;
                 user.StrMonth = pInfo.BirthDate.Value.Month.ToString();
                 user.RegionId = pInfo.SelectedStateId;
-
                 _context.Users.Add(user);
                 _context.SaveChanges();
 
@@ -66,7 +60,6 @@ namespace BAL.Repository
                 _context.SaveChanges();
 
                 var request = new Request();
-
                 request.RequestTypeId = 1;
                 request.UserId = user.UserId;
                 request.FirstName = pInfo.FirstName;
@@ -75,7 +68,6 @@ namespace BAL.Repository
                 request.PhoneNumber = pInfo.PhoneNumber;
                 request.Email = pInfo.Email;
                 request.ConfirmationNumber = pInfo.confirmationnumber;
-
                 _context.Requests.Add(request);
                 _context.SaveChanges();
 

@@ -40,11 +40,11 @@
                                 <h1 class="modal-title fs-5  text-white" id="exampleModalLabel">Assign Request</h1>
                                 <button type="button" class="btn-close shadow-none" data-bs-dismiss="modal" aria-label="Close"></button>
                             </div>
-                            <form asp-action="AssignCase" asp-route-reeqid="@item.reqid" enctype="multipart/form-data">
+                            <form asp-action="AssignCase" asp-route-reeqid="@item.reqid" enctype="multipart/form-data" id="assignform_@j">
                                 <div class="modal-body">
                                     <p> To assign this request search and select another physician</p>
                                     @*for ajax*@
-                                    <select class="form-select py-2 my-2 shadow-none border border-info" id="Regionnid">
+                                    <select class="form-select py-2 my-2 shadow-none border border-info Regionnid" id="Regionnid" onchange="filterPhysicianByRegion(this.value)">
                                         <option value="0" selected>Narrow Search By Region</option>
                                         @foreach (var items in item.regionTable)
                                         {
@@ -65,7 +65,7 @@
                                 </div>
                                 <div class="modal-footer">
                                     <div class="d-flex justify-content-end mt-3">
-                                        <button type="submit" class="btn btn-info">Confirm</button>
+                                        <a asp-action="AssignCase" asp-route-reeqid="@item.reqid" class="btn btn-info">Confirm</a>
                                         <button type="button" data-bs-dismiss="modal" class="btn btn-outline-info ms-3">cancle</button>
                                     </div>
                                 </div>
@@ -121,7 +121,7 @@
                                 <h1 class="modal-title fs-5  text-white" id="exampleModalLabel">Block Case</h1>
                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                             </div>
-                            <form asp-action="BlockCase" asp-route-reeqid="@item.reqid" enctype="multipart/form-data">
+                            
                                 <div class="modal-body">
                                     <p> Patient Name : <span id="text">@item.PatientName</span></p>
 
@@ -133,11 +133,11 @@
                                 </div>
                                 <div class="modal-footer">
                                     <div class="d-flex justify-content-end mt-3">
-                                        <button type="submit" class="btn btn-info">Confirm</button>
+                                        <a asp-action="BlockCase" asp-route-reeqid="@item.reqid" class="btn btn-info">Confirm</a>
                                         <button type="button" data-bs-dismiss="modal" class="btn btn-outline-info ms-3">cancle</button>
                                     </div>
                                 </div>
-                            </form>
+                          
                         </div>
                     </div>
                 </div>
@@ -486,8 +486,6 @@
         </div>
         i++;
     }
-    
-
 </div>
 <div class="pb-3 w-100">
     <nav id="pagination" aria-label="Page navigation">
@@ -500,9 +498,8 @@
                 if (ViewBag.CurrentPage > 1)
                 {
                     <li class="page-item">
-                        <a class="page-link " id="previous" data-page="@(prevpage)" aria-label="Previous">
-                            <span aria-hidden="true">&laquo;</span>
-                            <span class="visually-hidden">Previous</span>
+                        <a class="page-link btn rounded-4 btn-outline-info mx-1" id="previous" data-page="@(prevpage)" aria-label="Previous">
+                            &laquo;
                         </a>
                     </li>
                 }
@@ -511,40 +508,28 @@
                     if (currpage + z <= ViewBag.TotalPages)
                     {
                         <li class="page-item">
-                            <a class="page-link" id="current_@z" data-page="@(currpage + z)" aria-label="Current">
-                                <span>@(ViewBag.CurrentPage + z)</span>
-                            </a>
+                        <a class="page-link btn rounded-4 btn-outline-info mx-1" id="current_@z" data-page="@(currpage + z)" aria-label="Current">
+                                @(ViewBag.CurrentPage + z)
+                        </a>
                         </li>
                     }
                 }
                 if (ViewBag.CurrentPage < ViewBag.TotalPages)
                 {
                     <li class="page-item">
-                        <a class="page-link" id="next" data-page="@(nextpage)" aria-label="Next">
-                            <span aria-hidden="true">&raquo;</span>
-                            <span class="visually-hidden">Next</span>
+                        <a class="page-link btn rounded-4 btn-outline-info mx-1" id="next" data-page="@(nextpage)" aria-label="Next">
+                            &raquo;
                         </a>
                     </li>
                 }
-
             }
         </ul>
     </nav>
 </div>
 
 <script>
-    $("#Regionid").on("change", function () {
-        var RegionId = $("#Regionid").val();
-        filterPhysicianByRegion(RegionId);
-    });
-
-    $("#Regionnid").on("change", function () {
-        var RegionId = $("#Regionnid").val();
-        filterPhysicianByRegion(RegionId);
-    });
-
     function filterPhysicianByRegion(RegionId) {
-        
+        debugger;
         if (RegionId != "0") {
             $.ajax({
                 type: "GET",
@@ -555,7 +540,7 @@
                     $('#physicianDrop').empty();
                     $('#physicianDrop1').empty();
                     $.each(data, function (index, item) {
-                        
+
                         $('#physicianDrop').append($('<option>').text(item.firstName).attr('value', item.physicianId));
                         $('#physicianDrop1').append($('<option>').text(item.firstName).attr('value', item.physicianId));
                     });
@@ -564,6 +549,33 @@
             });
         }
     }
+    $(document).ready(function(){
+    //$("#Regionid").on("change", function () {
+    //    var RegionId = $(this).val();
+    //    filterPhysicianByRegion(RegionId);
+    //});
 
+    //$("#Regionnid").on("change", function () {
+    //    debugger;
+    //    var RegionId = $(this).val();
+    //    filterPhysicianByRegion(RegionId);
+    //});
+
+    
+            var numberOfModals = @Model.Count;
+            for (var i = 0; i < numberOfModals; i++) {
+                $('#AssignCaseModal_' + i).on('hide.bs.modal', function (e) {
+                    debugger;
+                    $(".regionnid").val('');
+                $(this)
+                    .find("input,textarea,select")
+                    .val('')
+                    .end()
+                    .find("input[type=checkbox], input[type=radio]")
+                    .prop("checked", "")
+                    .end();
+                });
+            }
+    });
 
 </script>

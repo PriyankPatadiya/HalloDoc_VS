@@ -6,6 +6,7 @@ using DAL.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using System.Net;
 using System.Net.NetworkInformation;
 using IHostingEnvironment = Microsoft.AspNetCore.Hosting.IHostingEnvironment;
 
@@ -139,7 +140,7 @@ namespace HalloDoc.Controllers
                                    {
                                        FirstName = user.FirstName,
                                        LastName = user.LastName,
-                                       BirthDate = DateTime.Now,
+                                       BirthDate = new DateTime((int)user.IntYear, int.Parse(user.StrMonth), (int)user.IntDate),
                                        PhoneNumber = user.Mobile,
                                        Email = user.Email,
                                        Street = user.Street,
@@ -184,8 +185,9 @@ namespace HalloDoc.Controllers
                 _context.Update(user);
                 _context.SaveChanges();
 
+                TempData["Message"] = "Profile Edited Successfully";
+                TempData["MessageType"] = "success";
                 return RedirectToAction("PatientDashboard");
-            
             }
             else
             {

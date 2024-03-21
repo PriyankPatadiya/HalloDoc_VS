@@ -19,6 +19,17 @@ namespace BAL.Repository
         {
             _context = context;
         }
+        public RequestNote reqnotebyreqid(int requestid)
+        {
+            RequestNote notes = _context.RequestNotes.FirstOrDefault(u => u.RequestId == requestid);
+            return notes;
+
+        }
+        public List<RequestClient> clientsbyreqid(int requestid)
+        {
+            var clients = _context.RequestClients.Where(r => r.RequestId == requestid).ToList();
+            return clients;
+        }
         public void ChangeOnAssign(int reeqid, int phyid, string notes)
         {
             var Request = _context.Requests.Where(s => s.RequestId == reeqid).FirstOrDefault();
@@ -63,7 +74,7 @@ namespace BAL.Repository
             return result;
         }
 
-        public void changeStatusOnCancleCase(int requesid, string reason, string Notes)
+        public bool changeStatusOnCancleCase(int requesid, string reason, string Notes)
         {
             var request = _context.Requests.FirstOrDefault(h => h.RequestId == requesid);
             if (request != null)
@@ -84,7 +95,9 @@ namespace BAL.Repository
 
                 _context.Update(request);
                 _context.SaveChanges();
+                return true;
             }
+            return false;
         }
         public List<Physician> GetPhysicianByRegion(string RegionId)
         {
@@ -108,6 +121,14 @@ namespace BAL.Repository
             model.RequestId = id;
             return model;
         }
+
+        public void addrequnotes(ViewNotesVM model, RequestNote notes)
+        {
+            notes.AdminNotes = model.AdminNotes;
+            _context.RequestNotes.Update(notes);
+            _context.SaveChanges();
+        }
+
         public void BlockCase(int requestId, string reason)
         {
             var request = _context.Requests.Where(h => h.RequestId == requestId).First();
@@ -222,6 +243,41 @@ namespace BAL.Repository
                 model.requestid = reqid;
             }
             return model;
+        }
+
+        public bool closecase(CloseCaseVM model)
+        {
+            var client = _context.RequestClients.Where(u => u.RequestId == model.requestid).FirstOrDefault();
+            if (client != null)
+            {
+                client.FirstName = model.FirstName;
+                client.LastName = model.LastName;
+                client.PhoneNumber = model.Phonenum;
+                client.IntDate = model.DateOfBirth.Day;
+                client.IntYear = model.DateOfBirth.Year;
+                client.StrMonth = model.DateOfBirth.Month.ToString();
+                _context.RequestClients.Update(client);
+                _context.SaveChanges();
+                return true;
+            }
+            return false;
+        }
+
+        public void closeRequest(DAL.DataModels.Request request, int reqid)
+        {
+            request.Status = 9;
+            request.ModifiedDate = DateTime.Now;
+            _context.Requests.Update(request);
+            _context.SaveChanges();
+
+            RequestStatusLog log = new RequestStatusLog
+            {
+                Status = request.Status,
+                RequestId = reqid,
+                CreatedDate = DateTime.Now,
+            };
+            _context.RequestStatusLogs.Add(log);
+            _context.SaveChanges();
         }
 
         public List<EncounterFormVM> getEncounterformdata(int requestid)
@@ -353,5 +409,34 @@ namespace BAL.Repository
             }
             return false;
         }
+
+        public List<HealthProfessionalType> healthProfessionalTypes()
+        {
+            var healthpros = _context.HealthProfessionalTypes.ToList();
+            return healthpros;
+        }
+
+        public bool sendOrder(SendOrderVM model)
+        {
+            if (model != null)
+            {
+                OrderDetail order = new OrderDetail
+                {
+                    RequestId = model.requestid,
+                    VendorId = model.vendorid,
+                    FaxNumber = model.Fax,
+                    Email = model.Email,
+                    BusinessContact = model.BusinessContact,
+                    Prescription = model.prescription,
+                    NoOfRefill = model.Noofretail,
+                    CreatedDate = DateTime.Now,
+                };
+                _context.OrderDetails.Add(order);
+                _context.SaveChanges();
+                return true;
+            }
+            return false;
+        }
     }
 }
+

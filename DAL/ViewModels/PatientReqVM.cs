@@ -25,7 +25,7 @@ namespace DAL.ViewModels
         [Key]
         [StringLength(256)]
         [Required(ErrorMessage = " Email Is Required")]
-
+        [RegularExpression(@"^[a-zA-Z0-9._%+-]+@(gmail\.com|yahoo\.com|gov\.in)$", ErrorMessage = "Enter a valid email address with valid domain")]
         public string? Email { get; set; } = null!;
 
         [Column(TypeName = "character varying")]
@@ -40,14 +40,15 @@ namespace DAL.ViewModels
         [Required(ErrorMessage = " BirthDate Is Required")]
         public DateTime? BirthDate { get; set; } = null!;
 
-        [StringLength(100)]
-        [Required(ErrorMessage = " Patient FirstName Is Required")]
 
+        [Required(ErrorMessage = " Patient FirstName Is Required")]
+        [StringLength(50, ErrorMessage = "First Name should be between {2} and {1} characters.", MinimumLength = 2)]
+        [RegularExpression(@"^[^\s]+$", ErrorMessage = "Invalid Name")]
         public string? FirstName { get; set; } = null!;
 
         [StringLength(100)]
         [Required(ErrorMessage = " Patient LastName Is Required")]
-
+        [RegularExpression(@"^[^\s]+$", ErrorMessage = "Invalid Name")]
         public string? LastName { get; set; } = null!;
 
         [StringLength(100)]
@@ -60,6 +61,7 @@ namespace DAL.ViewModels
         public string? State { get; set; }
 
         [StringLength(10)]
+        [RegularExpression(@"^\d{6}$", ErrorMessage = "Enter a valid 6-digit zip code")]
         public string? ZipCode { get; set; }
 
         [StringLength(100)]

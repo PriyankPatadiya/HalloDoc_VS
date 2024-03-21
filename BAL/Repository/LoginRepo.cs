@@ -28,10 +28,15 @@ namespace BAL.Repository
 
         public bool LoginVarify(LoginVM model)
         {
-            var user = _context.AspNetUsers.Where(u => u.Email == model.Email).First();
+            bool isexistuser = _context.AspNetUsers.Any(u => u.Email == model.Email);
+            if (!isexistuser)
+            {
+                return false;
+            }
+            var user = _context.AspNetUsers.FirstOrDefault(u => u.Email == model.Email);
             var result = _passwordHasher.VerifyHashedPassword(model, user.PasswordHash, model.PasswordHash);
             bool IsTruePassword = result == PasswordVerificationResult.Success;
-            if(user != null && IsTruePassword)
+            if(isexistuser && IsTruePassword)
             {
                 return true;
             }

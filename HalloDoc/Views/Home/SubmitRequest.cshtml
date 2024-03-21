@@ -46,3 +46,38 @@
         </a>
     </div>
 
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
+<script>
+    if ('@TempData["Message"]' != '') {
+        showToast('@TempData["Message"]', '@TempData["MessageType"]');
+        '@TempData.Remove("Message")'
+    }
+    function showToast(message, messageType) {
+        const Toast = Swal.mixin({
+            toast: true,
+            position: "top-end",
+            showConfirmButton: false,
+            timer: 3000,
+            timerProgressBar: true,
+            didOpen: (toast) => {
+                toast.onmouseenter = Swal.stopTimer;
+                toast.onmouseleave = Swal.resumeTimer;
+            }
+        });
+
+        let icon = "info";
+        if (messageType === "success") {
+            icon = "success";
+        } else if (messageType === "error") {
+            icon = "error";
+        } else if (messageType === "warning") {
+            icon = "warning";
+        }
+
+        Toast.fire({
+            icon: icon,
+            title: message
+        });
+    }
+</script>

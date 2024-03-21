@@ -32,7 +32,7 @@
 
 <!--     Modal over      -->
 
-<div class="bg-body-secondary " style="min-height: 82vh;">
+<div class="bg-secondary-subtle " style="min-height: 82vh;">
     <div class="mx-auto pb-3" style="width:70%; padding-top: 3%;">
         <div class="d-flex justify-content-between my-2">
             <h3>Documents</h3><br />
@@ -43,7 +43,7 @@
                 Back
             </button></a>
         </div>
-        <div class="PatientInfoTable border rounded-top shadow bg-white p-4">
+        <div class="PatientInfoTable border rounded-top shadow bg-light-subtle p-4">
             <h6> patient name</h6>
             <span class="text-info fs-3 fw-bold">@ViewBag.username </span><span class="text-secondary fw-bold"> (@*@Model.confirmationNumber*@)</span><br />
 
@@ -74,14 +74,14 @@
             <div class="d-flex justify-content-between mt-4">
                 <h4>Documents</h4>
                 <div class="d-flex justify-content-end">
-                    <button type="button" id="downloadAllBtn" class="btn btn-primary btn text-decoration-none border border-info bg-white text-info shadow-none mx-2">Download All</button>
-                    <button type="button" id="deleteAllBtn"  class="btn btn-primary btn text-decoration-none border border-info bg-white text-info shadow-none mx-2">Delete All</button>
-                    <button type="button" class="btn btn-primary btn text-decoration-none border border-info bg-white text-info shadow-none ms-2" data-bs-toggle="modal" data-bs-target="#SendEmailAttachmentModal">Send mail</button>
+                    <button type="button" id="downloadAllBtn" class="btn btn-outline-info text-info shadow-none mx-2">Download All</button>
+                    <button type="button" id="deleteAllBtn" class="btn btn-outline-info text-info shadow-none mx-2">Delete All</button>
+                    <button type="button" class="btn btn-outline-info text-info shadow-none ms-2" data-bs-toggle="modal" data-bs-target="#SendEmailAttachmentModal">Send mail</button>
                 </div>
             </div>
         </div>
             <table class="table table-borderless">
-            <thead class=" table-secondary">
+            <thead class=" ">
                 <tr class=" table-secondary" >
                     <td scope="col" class="text-start fw-bold text-secondary ps-4"><input type="checkbox" name="maincheck" class="form-check-input" id="maincheck" value=""></td>
                     <td scope="col" class="text-start fw-bold text-secondary">DocumentName</td>
@@ -112,7 +112,7 @@
                                 @item.CreatedDate
                             </td>
                             <td class="text-end pe-4">
-                                <a asp-action="downloadfile" asp-route-filename="@item.FileName" class="btn btn-primary btn text-decoration-none border border-info bg-white text-info shadow-none " target="_blank">
+                                <a asp-action="downloadfile" asp-route-filename="@item.FileName" class="btn btn-outline-info text-info shadow-none " target="_blank">
                                     <svg xmlns="http://www.w3.org/2000/svg"
                                     width="24"
                                     height="24"
@@ -126,7 +126,7 @@
                                 </a>
                                 <form asp-action="deleteFile" asp-route-reqid="@item.RequestId" enctype="multipart/form-data" class="btn p-0">
                                     <input type="hidden" name="filename" value="@item.FileName">
-                                    <button type="submit"  class="btn btn-primary text-decoration-none border border-info bg-white text-info shadow-none ">
+                                    <button type="submit"  class="btn btn-outline-info text-info shadow-none ">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
                                         <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z" />
                                         <path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z" />
@@ -181,7 +181,7 @@
 
         document.getElementById("deleteAllBtn").addEventListener("click", function(){
             var selectedFiles = [];
-            
+            var reqid = @Model.requestid;
             var checkboxes = document.querySelectorAll('.checks:checked');
             checkboxes.forEach(function (checkbox) {
                 selectedFiles.push(checkbox.dataset.files);
@@ -194,7 +194,7 @@
                 $.ajax({
                     type: "POST",
                     url: "/AdminDashboard/deleteAllFiles",
-                    data: { selectedFiles : selectedFiles },
+                    data: { selectedFiles : selectedFiles , reqid : reqid },
 
                     success: function (data) {
                         window.location.href = '/AdminDashboard/ViewDocuments/?reeqid=' + @Model.requestid
@@ -254,5 +254,40 @@
         });
 
 
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
+    <script>
+        if ('@TempData["Message"]' != '') {
+            showToast('@TempData["Message"]', '@TempData["MessageType"]');
+            '@TempData.Remove("Message")'
+        }
+        function showToast(message, messageType) {
+            const Toast = Swal.mixin({
+                toast: true,
+                position: "top-end",
+                showConfirmButton: false,
+                timer: 3000,
+                timerProgressBar: true,
+                didOpen: (toast) => {
+                    toast.onmouseenter = Swal.stopTimer;
+                    toast.onmouseleave = Swal.resumeTimer;
+                }
+            });
+
+            let icon = "info";
+            if (messageType === "success") {
+                icon = "success";
+            } else if (messageType === "error") {
+                icon = "error";
+            } else if (messageType === "warning") {
+                icon = "warning";
+            }
+
+            Toast.fire({
+                icon: icon,
+                title: message
+            });
+        }
     </script>
 </div>
