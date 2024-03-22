@@ -40,11 +40,12 @@
                                 <h1 class="modal-title fs-5  text-white" id="exampleModalLabel">Assign Request</h1>
                                 <button type="button" class="btn-close shadow-none" data-bs-dismiss="modal" aria-label="Close"></button>
                             </div>
-                            <form asp-action="AssignCase" asp-route-reeqid="@item.reqid" enctype="multipart/form-data" id="assignform_@j">
+                            <form action="@Url.Action("AssignCase")" method="post" enctype="multipart/form-data" id="assignform_@j">
+                                <input value="@item.reqid" name="requestid" hidden/>
                                 <div class="modal-body">
                                     <p> To assign this request search and select another physician</p>
                                     @*for ajax*@
-                                    <select class="form-select py-2 my-2 shadow-none border border-info Regionnid" id="Regionnid" onchange="filterPhysicianByRegion(this.value)">
+                                    <select class="form-select py-2 my-2 shadow-none border border-info Regionnid" id="Regionnid" onchange="filterPhysicianByRegion(this.value, @j)">
                                         <option value="0" selected>Narrow Search By Region</option>
                                         @foreach (var items in item.regionTable)
                                         {
@@ -53,7 +54,7 @@
                                     </select>
                                     @*for action post*@
 
-                                    <select class="form-select py-2 my-2 shadow-none border border-info" id="physicianDrop" name="physicianId">
+                                    <select class="form-select py-2 my-2 shadow-none border border-info" id="physicianDrop_@j" name="physicianId">
                                         @*using ajax*@
                                     </select>
 
@@ -65,7 +66,7 @@
                                 </div>
                                 <div class="modal-footer">
                                     <div class="d-flex justify-content-end mt-3">
-                                        <a asp-action="AssignCase" asp-route-reeqid="@item.reqid" class="btn btn-info">Confirm</a>
+                                        <button type="submit" class="btn btn-info">Confirm</button>
                                         <button type="button" data-bs-dismiss="modal" class="btn btn-outline-info ms-3">cancle</button>
                                     </div>
                                 </div>
@@ -103,7 +104,7 @@
                                 </div>
                                 <div class="modal-footer">
                                     <div class="d-flex justify-content-end mt-3">
-                                        <button type="submit" class="btn btn-info">Confirm</button>
+                                        <a asp-action="CancelCase" asp-route-reeqid="@item.reqid" class="btn btn-info">Confirm</a>
                                         <button type="button" data-bs-dismiss="modal" class="btn btn-outline-info ms-3">cancle</button>
                                     </div>
                                 </div>
@@ -249,7 +250,7 @@
                         <div class="modal-body">
                             <p> To assign this request search and select another physician</p>
                             @*for ajax*@
-                            <select class="form-select py-2 my-2 shadow-none border border-info" id="Regionid">
+                            <select class="form-select py-2 my-2 shadow-none border border-info" id="Regionid" onchange="filterPhysicianByRegion(this.value, @i)">
                                 <option value="0" selected>Narrow Search By Region</option>
                                 @foreach (var items in item.regionTable)
                                 {
@@ -258,7 +259,7 @@
                             </select>
                             @*for action post*@
 
-                            <select class="form-select py-2 my-2 shadow-none border border-info" id="physicianDrop1" name="physicianId">
+                            <select class="form-select py-2 my-2 shadow-none border border-info" id="physicianDrop1_@i" name="physicianId">
                                 @*using ajax*@
                             </select>
 
@@ -528,8 +529,8 @@
 </div>
 
 <script>
-    function filterPhysicianByRegion(RegionId) {
-        debugger;
+
+    function filterPhysicianByRegion(RegionId, i) {
         if (RegionId != "0") {
             $.ajax({
                 type: "GET",
@@ -537,11 +538,11 @@
                 data: { RegionId: RegionId },
 
                 success: function (data) {
-                    $('#physicianDrop').empty();
+                    $('#physicianDrop_' + i).empty();
                     $('#physicianDrop1').empty();
                     $.each(data, function (index, item) {
 
-                        $('#physicianDrop').append($('<option>').text(item.firstName).attr('value', item.physicianId));
+                        $('#physicianDrop_' + i).append($('<option>').text(item.firstName).attr('value', item.physicianId));
                         $('#physicianDrop1').append($('<option>').text(item.firstName).attr('value', item.physicianId));
                     });
                     $('#physicianDrop option:first').prop('selected', true);
@@ -549,33 +550,5 @@
             });
         }
     }
-    $(document).ready(function(){
-    //$("#Regionid").on("change", function () {
-    //    var RegionId = $(this).val();
-    //    filterPhysicianByRegion(RegionId);
-    //});
-
-    //$("#Regionnid").on("change", function () {
-    //    debugger;
-    //    var RegionId = $(this).val();
-    //    filterPhysicianByRegion(RegionId);
-    //});
-
-    
-            var numberOfModals = @Model.Count;
-            for (var i = 0; i < numberOfModals; i++) {
-                $('#AssignCaseModal_' + i).on('hide.bs.modal', function (e) {
-                    debugger;
-                    $(".regionnid").val('');
-                $(this)
-                    .find("input,textarea,select")
-                    .val('')
-                    .end()
-                    .find("input[type=checkbox], input[type=radio]")
-                    .prop("checked", "")
-                    .end();
-                });
-            }
-    });
 
 </script>

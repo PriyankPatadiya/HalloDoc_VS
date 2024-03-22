@@ -26,6 +26,7 @@ builder.Services.AddScoped<IPasswordHasher<LoginVM>, PasswordHasher<LoginVM>>();
 builder.Services.AddScoped<IJwtToken, JwtTokenServices>();
 builder.Services.AddScoped<IPasswordHasher<AdminProfileVM>, PasswordHasher<AdminProfileVM>>();
 builder.Services.AddScoped<IPasswordHasher<CreateAccVM>, PasswordHasher<CreateAccVM>>();
+builder.Services.AddScoped<IProviders, ProviderService>();
 //builder.Services.AddScoped<IJWTTokenservice, JWTTokenservicerepo>();
 
 

@@ -9,11 +9,12 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/HalloDoc.styles.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/RequestForms.css" asp-append-version="true" />
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <style>
         input:-webkit-autofill {
             transition: background-color 0s 600000s, color 0s 600000s !important;
@@ -42,7 +43,7 @@
             </svg>
         </button>
     </nav>
-    
+
     <div class="container-fluid pb-4">
         <div class="mx-auto pt-3 mb-3" id="secondDiv">
             <div class="backbtn d-flex justify-content-end">
@@ -62,7 +63,7 @@
             </div>
 
             <div id="FormOfPatientRequest" class="mt-3 p-3 gx-4 mb-3 bg-gradient shadow">
-                <form class="form-floating" method="post" enctype="multipart/form-data" novalidate>
+                <form class="form-floating needs-validation" method="post" enctype="multipart/form-data" novalidate>
                     <!-- Patient Information -->
                     <div class="row gx-4">
                         <h4 class="fw-semibold text-body">Patient Information</h4>
@@ -71,36 +72,38 @@
                                       placeholder="Leave a comment here"
                                       id="floatingTextarea2"
                                       style="height: 100px"></textarea>
-                            <label for="floatingTextarea2 control-label" class="ms-2 floating-label">Enter Brief Details of symptoms (Optional)</label>
-                        </div>
-                        <div class="col-sm-12 col-md-12 col-lg-6 form-floating my-3">   
-                            <input type="text"
-                                asp-for="FirstName"
-                                   class="form-control"
-                                   id="floatingInput"
-                                   placeholder="First Name" />
-                            <label for="floatingInput" class="ms-2">First Name</label>
-                            <span asp-validation-for="FirstName" class="text-danger" style="font-size: 11px;"></span>
+                            <label for="floatingTextarea2" class="ms-2 floating-label">Enter Brief Details of symptoms (Optional)</label>
                         </div>
                         <div class="col-sm-12 col-md-12 col-lg-6 form-floating my-3">
                             <input type="text"
-                                asp-for="LastName"
+                                   asp-for="FirstName"
                                    class="form-control"
-                                   id="floatingInput"
-                                   placeholder="Last Name" />
-                            <label for="floatingInput" class="ms-2">Last Name</label>
+                                   id="floatingInput1"
+                                   placeholder="First Name" required />
+                            <label for="floatingInput1" class="ms-2">First Name</label>
+                            <div class="valid-feedback">
+                                Looks good!
+                            </div>
+                        </div>
+                        <div class="col-sm-12 col-md-12 col-lg-6 form-floating my-3">
+                            <input type="text"
+                                   asp-for="LastName"
+                                   class="form-control"
+                                   id="floatingInput2"
+                                   placeholder="Last Name" required/>
+                            <label for="floatingInput2" class="ms-2">Last Name</label>
                             <span asp-validation-for="LastName" class="text-danger" style="font-size: 11px;"></span>
                         </div>
 
                         <div class="col-sm-12 col-md-12 col-lg-6 form-floating my-3">
                             <input type="date"
-                                asp-for="BirthDate"
+                                   asp-for="BirthDate"
                                    class="form-control"
-                                   max="@DateTime.Now.ToString("yyyy-MM-dd")" 
+                                   max="@DateTime.Now.ToString("yyyy-MM-dd")"
                                    min="@DateTime.Now.AddYears(-80).ToString("yyyy-MM-dd")"
-                                   id="floatingInput"
-                                   placeholder="Date Of Birth" />
-                            <label for="floatingInput" class="ms-2">Date Of Birth</label>
+                                   id="floatingInput3"
+                                   placeholder="Date Of Birth" required />
+                            <label for="floatingInput3" class="ms-2">Date Of Birth</label>
                             <span asp-validation-for="BirthDate" class="text-danger" style="font-size: 11px;">  </span>
                         </div>
 
@@ -111,33 +114,35 @@
                         </h4>
                         <div class="col-sm-12 col-md-12 col-lg-6 form-floating my-3">
                             <input type="email"
-                                asp-for="Email"
+                                   asp-for="Email"
                                    class="form-control"
                                    id="email1"
-                                   placeholder="name@InputType.com"
-                                   onchange="CheckEmail()" />
-                            <label for="floatingInput" class="ms-2">Email</label>
-                            <span asp-validation-for="Email" class="text-danger" style="font-size: 11px;"></span>
+                                   mailto:placeholder="name@inputtype.com"
+                                   onchange="CheckEmail()" required/>
+                            <label for="email1" class="ms-2">Email</label>
+                            <span asp-validation-for="Email" class="text-danger" class="invalid-feedback">
+                                
+                            </span>
                         </div>
 
                         <div class="col-sm-12 col-md-12 col-lg-6 form-floating my-3">
                             <input type="tel"
-                                asp-for="PhoneNumber"
+                                   asp-for="PhoneNumber"
                                    class="form-control"
-                                   id="floatingInput"
-                                   placeholder="PhoneNumber" />
-                            <label for="floatingInput" class="ms-2">Mobile Number</label>
-                        <span asp-validation-for="PhoneNumber" class="text-danger" style="font-size: 11px;"></span>
+                                   id="floatingInput4"
+                                   placeholder="PhoneNumber" required/>
+                            <label for="floatingInput4" class="ms-2">Mobile Number</label>
+                            <span asp-validation-for="PhoneNumber" class="text-danger" style="font-size: 11px;"></span>
                         </div>
 
-                        <div class ="row" id="passwordFields" style="display : none;">
+                        <div class="row" id="passwordFields" style="display : none;">
                             <div class="col-sm-12 col-md-12 col-lg-6 form-floating my-3">
                                 <input type="password"
                                        asp-for="PasswordHash"
                                        class="form-control"
                                        id="password"
                                        placeholder="Password" />
-                                <label for="floatingInput" class="ms-2">Password</label>
+                                <label for="password" class="ms-2">Password</label>
                                 <span asp-validation-for="PasswordHash" class="text-danger" style="font-size: 11px;"></span>
                             </div>
 
@@ -147,7 +152,7 @@
                                        class="form-control"
                                        id="ConfirmPassword"
                                        placeholder="ConfirmPassword" />
-                                <label for="floatingInput" class="ms-2">ConfirmPassword</label>
+                                <label for="ConfirmPassword" class="ms-2">ConfirmPassword</label>
                             </div>
 
                         </div>
@@ -159,22 +164,22 @@
                         </h4>
                         <div class="col-sm-12 col-md-12 col-lg-6 form-floating my-3">
                             <input type="text"
-                                asp-for="Street"
+                                   asp-for="Street"
                                    class="form-control"
-                                   id="floatingInput"
-                                   placeholder="First Name" />
-                            <label for="floatingInput" class="ms-2">Street</label>
+                                   id="floatingInput7"
+                                   placeholder="Street" required/>
+                            <label for="floatingInput7" class="ms-2">Street</label>
                         </div>
                         <div class="col-sm-12 col-md-12 col-lg-6 form-floating my-3">
                             <input type="text"
-                                asp-for="City"
+                                   asp-for="City"
                                    class="form-control"
-                                   id="floatingInput"
-                                   placeholder="Last Name" />
-                            <label for="floatingInput" class="ms-2">City</label>
+                                   id="floatingInput8"
+                                   placeholder="Last Name" required/>
+                            <label for="floatingInput8" class="ms-2">City</label>
                         </div>
                         <div class="col-sm-12 col-md-12 col-lg-6 form-floating my-3">
-                            <select class="form-control d-flex align-items-center py-2 bg-body" asp-for="State" name="SelectedStateId">
+                            <select class="form-control d-flex align-items-center py-2 bg-body" asp-for="State" name="SelectedStateId" required>
                                 <option>Select State</option>
                                 @foreach (var state in Model.Region)
                                 {
@@ -184,18 +189,18 @@
                         </div>
                         <div class="col-sm-12 col-md-12 col-lg-6 form-floating my-3">
                             <input type="text"
-                                    asp-for="ZipCode"
+                                   asp-for="ZipCode"
                                    class="form-control"
-                                   id="floatingInput"
+                                   id="floatingInput9"
                                    placeholder="Last Name" />
-                            <label for="floatingInput" class="ms-2">Zip Code</label>
+                            <label for="floatingInput9" class="ms-2">Zip Code</label>
                         </div>
                         <div class="col-sm-12 col-md-12 col-lg-6 form-floating my-3">
                             <input type="text"
                                    class="form-control"
-                                   id="floatingInput"
+                                   id="floatingInput10"
                                    placeholder="Last Name" />
-                            <label for="floatingInput" class="ms-2">Room # / Suite (Optional)</label>
+                            <label for="floatingInput10" class="ms-2">Room # / Suite (Optional)</label>
                         </div>
 
                         <!-- Upload File -->
@@ -244,31 +249,50 @@
 
     @section scripts {
         <!-- jQuery script -->
-        
     }
-    
-    
-    
+
+
+
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11" asp-append-version="true"></script>
     <script src="~/js/RequestForms.js" asp-append-version="true"></script>
-
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js" integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy" crossorigin="anonymous"></script>
     <script type="text/javascript">
-       var passfield = "#passwordFields"
+        // Example starter JavaScript for disabling form submissions if there are invalid fields
+        (() => {
+            'use strict'
 
-       var input = document.getElementById("fileInput");
-       var info  = document.getElementById("infoarea");
+            // Fetch all the forms we want to apply custom Bootstrap validation styles to
+            const forms = document.querySelectorAll('.needs-validation')
 
-       input.addEventListener('change', showFilename);
+            // Loop over them and prevent submission
+            Array.from(forms).forEach(form => {
+                form.addEventListener('submit', event => {
+                    debugger;
+                    if (!form.checkValidity()) {
+                        event.preventDefault()
+                        event.stopPropagation()
+                    }
 
-       function showFilename(){
-           var fileinp = event.srcElement;
-           var fileName = fileinp.files[0].name;
-           info.textContent = fileName;
-       }
+                    form.classList.add('was-validated')
+                }, false)
+            })
+        })()
+        var passfield = "#passwordFields"
+
+        var input = document.getElementById("fileInput");
+        var info = document.getElementById("infoarea");
+
+        input.addEventListener('change', showFilename);
+
+        function showFilename() {
+            var fileinp = event.srcElement;
+            var fileName = fileinp.files[0].name;
+            info.textContent = fileName;
+        }
 
         function uploadfile() {
             document.getElementById("inputGroupFile04").click();
@@ -278,9 +302,9 @@
             $.ajax({
                 type: "POST",
                 url: "@Url.Action("CheckMail", "PatientForms")",
-                data: {email:email},
-                
-                
+                data: { email: email },
+
+
                 success: function (response) {
                     if (!response) {
                         // Email not available.
@@ -296,23 +320,23 @@
             });
         };
 
-        function validateInput(){
+        function validateInput() {
             if (document.getElementById("inputGroupFile04").value == "") {
                 Swal.fire({
                     icon: "error",
                     title: "Oops...",
                     text: "Please Upload File!",
-                    
+
                 });
                 return false;
             }
             return true;
         }
 
-        
+
     </script>
 
 
 </body>
 </html>
-    
+

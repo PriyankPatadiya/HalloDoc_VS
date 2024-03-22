@@ -8,11 +8,6 @@ using System.Text;
 using IHostingEnvironment = Microsoft.AspNetCore.Hosting.IHostingEnvironment;
 using Rotativa.AspNetCore;
 using Microsoft.AspNetCore.Identity;
-using iTextSharp.text;
-using System.Drawing.Printing;
-using NuGet.Common;
-using Org.BouncyCastle.Asn1.Ocsp;
-using Microsoft.EntityFrameworkCore;
 
 namespace HalloDoc.Controllers
 {
@@ -20,6 +15,7 @@ namespace HalloDoc.Controllers
     public class AdminDashboardController : Controller
     {
         //private readonly ApplicationDbContext _context;
+        private readonly IProviders _provider;
         private readonly IAdminDashboard _admin;
         private readonly IAdminActions _adminActions;
         [Obsolete]
@@ -30,7 +26,8 @@ namespace HalloDoc.Controllers
         private readonly IPasswordHasher<AdminProfileVM> _passwordHasher;
 
         [Obsolete]
-        public AdminDashboardController(ApplicationDbContext context, IAdminDashboard admin, IAdminActions action, IHostingEnvironment env, IuploadFile uploadfile, IPatientRequest request, IEmailService emailService, IPasswordHasher<AdminProfileVM> password)
+        public AdminDashboardController(ApplicationDbContext context, IAdminDashboard admin, IAdminActions action, IHostingEnvironment env, IuploadFile uploadfile, IPatientRequest request, IEmailService emailService, IPasswordHasher<AdminProfileVM> password, 
+                    IProviders providers)
         {
             //_context = context;
             _admin = admin;
@@ -40,6 +37,7 @@ namespace HalloDoc.Controllers
             _request = request;
             _emailService = emailService;
             _passwordHasher = password; 
+            _provider = providers;
         }
 
         public IActionResult MainPage()
@@ -292,9 +290,9 @@ namespace HalloDoc.Controllers
         }
 
         [HttpPost]
-        public IActionResult AssignCase(int reeqid, string physicianId, string Notes)
+        public IActionResult AssignCase([FromForm] int requestid, [FromForm] string physicianId, [FromForm] string Notes)
         {
-            _adminActions.ChangeOnAssign(reeqid, int.Parse(physicianId), Notes);
+            _adminActions.ChangeOnAssign(requestid, int.Parse(physicianId), Notes);
             return RedirectToAction("MainPage");
         }
 
@@ -620,6 +618,21 @@ namespace HalloDoc.Controllers
             model.State = await _request.GetStateAccordingToRegionId(model.SelectedStateId);
             _request.AddAdminCreateRequest(model, email);
             return RedirectToAction("CreateRequestAdmin");
+        }
+
+        // Provider Menu
+
+        public IActionResult Provider()
+        {
+            ProviderMenuVM model = new ProviderMenuVM();
+            model.regions = _admin.regions();
+            return View("ProviderMenu/Provider", model);
+        }
+
+        public IActionResult filterProviderTable(string stateid)
+        {
+            var result = _provider.getfilteredPhysicians(int.Parse(stateid));
+            return PartialView("ProviderMenu/_ProviderPartialTable", result);
         }
     }
 }

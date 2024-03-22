@@ -350,7 +350,7 @@
     }
 
 </div>
-<div class="pb-3">
+<div class="pb-3 w-100">
     <nav id="pagination" aria-label="Page navigation">
         <ul class="pagination justify-content-center mb-0">
             @if (ViewBag.CurrentPage >= 1 && ViewBag.CurrentPage <= ViewBag.TotalPages)
@@ -361,9 +361,8 @@
                 if (ViewBag.CurrentPage > 1)
                 {
                     <li class="page-item">
-                        <a class="page-link" id="previous" data-page="@(prevpage)" aria-label="Previous">
-                            <span aria-hidden="true">&laquo;</span>
-                            <span class="visually-hidden">Previous</span>
+                        <a class="page-link btn rounded-4 btn-outline-info mx-1" id="previous" data-page="@(prevpage)" aria-label="Previous">
+                            &laquo;
                         </a>
                     </li>
                 }
@@ -372,8 +371,8 @@
                     if (currpage + z <= ViewBag.TotalPages)
                     {
                         <li class="page-item">
-                            <a class="page-link" id="current_@z" data-page="@(currpage + z)" aria-label="Current">
-                                <span>@(ViewBag.CurrentPage + z)</span>
+                            <a class="page-link btn rounded-4 btn-outline-info mx-1" id="current_@z" data-page="@(currpage + z)" aria-label="Current">
+                                @(ViewBag.CurrentPage + z)
                             </a>
                         </li>
                     }
@@ -381,13 +380,11 @@
                 if (ViewBag.CurrentPage < ViewBag.TotalPages)
                 {
                     <li class="page-item">
-                        <a class="page-link" id="next" data-page="@(nextpage)" aria-label="Next">
-                            <span aria-hidden="true">&raquo;</span>
-                            <span class="visually-hidden">Next</span>
+                        <a class="page-link btn rounded-4 btn-outline-info mx-1" id="next" data-page="@(nextpage)" aria-label="Next">
+                            &raquo;
                         </a>
                     </li>
                 }
-
             }
         </ul>
     </nav>

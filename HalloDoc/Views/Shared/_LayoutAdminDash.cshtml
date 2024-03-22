@@ -76,7 +76,7 @@
                             <button class="px-2 shadow-none nav-link text-decoration-none text-body" id="dropdownMenu2" data-bs-toggle="dropdown" aria-expanded="false">Providers</button>
                             <div class="dropdown">
                                 <ul class="dropdown-menu" aria-labelledby="dropdownMenu2">
-                                    <li><button class="dropdown-item" type="button">Provider</button></li>
+                                    <li><a asp-action="Provider" asp-controller="AdminDashboard" class="dropdown-item" type="button">Provider</a></li>
                                     <li><button class="dropdown-item" type="button">Scheduling</button></li>
                                     <li><button class="dropdown-item" type="button">Invoicing</button></li>
                                 </ul>
@@ -101,15 +101,15 @@
     </div>
 
     
-    <div class="container-fluid px-0">
-        <main role="main" class="">
+    <div class="container-fluid px-0 bg-secondary-subtle">
+        <main role="main" class="overflow-auto" style="max-height: 78vh; min-height: 78vh;">
             @RenderBody()
         </main>
     </div>
     
 
 
-    <footer class="border-top footer text-muted">
+    <footer class="border-top footer text-muted position-fixed bottom-0 start-0 w-100">
         <div style="height: 8vh;" class="bg-dark d-flex flex-row-reverse align-items-center pe-3" id="submitfooter">
             <span class="text-light fw-semibold">Terms of conditions | Privacy Policy</span>
         </div>
