@@ -193,7 +193,7 @@ $(document).ready(function () {
     // Main function that filters and load partial view in admin dashboard
     function ChangeTable(partialviewpath, StatusButton, currentpage, pagesize) {
 
-         $.get('/AdminDashboard/CheckSession', function (sessioncheck) {
+         $.get('/Home/CheckSession', function (sessioncheck) {
             if (sessioncheck.sessionExists) {
 
                 var Searchstring = $("#SearchString").val();

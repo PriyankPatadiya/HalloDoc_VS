@@ -223,7 +223,7 @@ namespace HalloDoc.Controllers
         }
 
 
-        [HttpGet("{requestid}")]
+        [HttpGet]
         public async Task<IActionResult> ViewDocumentsPatdash(int requestid)
         {
             var email = HttpContext.Session.GetString("Email");

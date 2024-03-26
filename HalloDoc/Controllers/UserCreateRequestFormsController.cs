@@ -1,4 +1,5 @@
 ﻿using BAL.Interface;
+using BAL.Repository;
 using DAL.DataContext;
 using DAL.DataModels;
 using DAL.ViewModels;
@@ -7,6 +8,7 @@ using IHostingEnvironment = Microsoft.AspNetCore.Hosting.IHostingEnvironment;
 
 namespace HalloDoc.Controllers
 {
+    [CustomAuthorize("Patient")]
     public class UserCreateRequestFormsController : Controller
     {
 

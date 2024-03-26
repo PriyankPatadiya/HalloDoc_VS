@@ -4,7 +4,7 @@
 @model DAL.ViewModels.PatientReqVM
 
 <div class="container-fluid pb-4">
-    <div class="mx-auto pt-3 mb-3" id="secondDiv">
+    <div class="mx-auto pt-3 mb-5" id="secondDiv">
         <div class="backbtn container-sm px-3 d-flex justify-content-between">
             <h4 class="text-body">Submit Information</h4>
             <a asp-controller="PatientDashBoard" asp-action="PatientDashboard"
@@ -41,7 +41,7 @@
                                id="floatingInput"
                                placeholder="First Name" />
                         <label for="floatingInput" class="ms-2">First Name</label>
-                        @*<span asp-validation-for="FirstName" class="text-danger " style="font-size: 11px;"></span>*@
+                        <span asp-validation-for="FirstName" class="text-danger " style="font-size: 11px;"></span>
                     </div>
                     <div class="col-sm-12 col-md-12 col-lg-6 form-floating my-3">
                         <input type="text"
@@ -50,7 +50,7 @@
                                id="floatingInput"
                                placeholder="Last Name" />
                         <label for="floatingInput" class="ms-2">Last Name</label>
-                        @*<span asp-validation-for="LastName" class="text-danger" style="font-size: 11px;"></span>*@
+                        <span asp-validation-for="LastName" class="text-danger" style="font-size: 11px;"></span>
                     </div>
 
                     <div class="col-sm-12 col-md-12 col-lg-6 form-floating my-3">
@@ -62,7 +62,7 @@
                                id="floatingInput"
                                placeholder="Date Of Birth" />
                         <label for="floatingInput" class="ms-2">Date Of Birth</label>
-                        @*<span asp-validation-for="BirthDate" class="text-danger" style="font-size: 11px;">  </span>*@
+                        <span asp-validation-for="BirthDate" class="text-danger" style="font-size: 11px;">  </span>
                     </div>
 
                     <!-- Patient Contact Information -->
@@ -79,7 +79,7 @@
                                placeholder="name@InputType.com"
                                onchange="CheckEmail()" />
                         <label for="floatingInput" class="ms-2">Email</label>
-                        @*<span asp-validation-for="" class="text-danger" style="font-size: 11px;"></span>*@
+                        <span asp-validation-for="Email" class="text-danger" style="font-size: 11px;"></span>
                     </div>
 
                     <div class="col-sm-12 col-md-12 col-lg-6 form-floating my-3">
@@ -89,7 +89,7 @@
                                id="floatingInput"
                                placeholder="PhoneNumber" />
                         <label for="floatingInput" class="ms-2">Mobile Number</label>
-                        @*<span asp-validation-for="" class="text-danger" style="font-size: 11px;"></span>*@
+                        <span asp-validation-for="PhoneNumber" class="text-danger" style="font-size: 11px;"></span>
                     </div>
 
                     <!-- Patient Location-->
@@ -104,6 +104,7 @@
                                id="floatingInput"
                                placeholder="Street" />
                         <label for="floatingInput" class="ms-2">Street</label>
+                        <span asp-validation-for="Street" class="text-danger" style="font-size: 11px;"></span>
                     </div>
                     <div class="col-sm-12 col-md-12 col-lg-6 form-floating my-3">
                         <input type="text"
@@ -112,6 +113,7 @@
                                id="floatingInput"
                                placeholder="city" />
                         <label for="floatingInput" class="ms-2">City</label>
+                        <span asp-validation-for="City" class="text-danger" style="font-size: 11px;"></span>
                     </div>
                     <div class="col-sm-12 col-md-12 col-lg-6 form-floating my-3">
                         <select class="form-control d-flex align-items-center py-2" asp-for="State" name="SelectedStateId">
@@ -129,6 +131,7 @@
                                id="floatingInput"
                                placeholder="Last Name" />
                         <label for="floatingInput" class="ms-2">Zip Code</label>
+                        <span asp-validation-for="ZipCode" class="text-danger" style="font-size: 11px;"></span>
                     </div>
                     <div class="col-sm-12 col-md-12 col-lg-6 form-floating my-3">
                         <input type="text"
@@ -139,7 +142,7 @@
 
                     </div>
                     <div class="col-sm-12 col-md-12 col-lg-6 form-floating my-3">
-                        <button class=" btn btn-outline-info p-3 ">
+                        <button type="button" class=" btn btn-outline-info p-3 shadow-none">
                             <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" class="bi bi-geo-alt-fill" viewBox="0 0 16 16">
                                 <path d="M8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10m0-7a3 3 0 1 1 0-6 3 3 0 0 1 0 6" />
                             </svg>
@@ -174,7 +177,7 @@
                         </label>
 
                         <input type="file" asp-for="Document" class="form-control" id="fileInput" hidden multiple />
-                        <button class="input-group-text btn btn-info text-light">
+                        <button type="button" class="input-group-text btn btn-info text-light">
                             <svg xmlns="http://www.w3.org/2000/svg"
                                  width="24"
                                  height="24"
@@ -190,10 +193,10 @@
 
                     </div>
                     <div class="d-flex justify-content-end my-3">
-                        <button onclick="return validateInput()" type="submit" class="btn border-none bg-info p-3 text-light fw-semibold me-4" id="submitBtn">
+                        <button type="submit" class="btn border-none bg-info p-3 text-light fw-semibold me-4" id="submitBtn">
                             submit
                         </button>
-                        <button class="btn border-none bg-danger border-danger text-light p-3 fw-semibold">
+                        <button type="button" class="btn border-none bg-danger border-danger text-light p-3 fw-semibold">
                             cancel
                         </button>
                     </div>

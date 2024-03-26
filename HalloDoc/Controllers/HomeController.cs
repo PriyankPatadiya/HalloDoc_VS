@@ -11,6 +11,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Authorization;
 
 namespace HalloDoc.Controllers
 {
@@ -76,7 +77,7 @@ namespace HalloDoc.Controllers
         public IActionResult AccessDenied()
         {
             return View();
-        }
+           }
 
         //public IActionResult PatientCreateAcc()
         //{
@@ -89,7 +90,7 @@ namespace HalloDoc.Controllers
             return View(model);
         }
         public IActionResult Logout()
-        {
+        { 
             HttpContext.Session.Remove("Email");
             HttpContext.Session.Remove("Role");
             Response.Cookies.Delete("jwt");
@@ -311,6 +312,21 @@ namespace HalloDoc.Controllers
                 }
             }
             return Content("Model is not valid");
+        }
+
+        [AllowAnonymous]
+        public JsonResult CheckSession()
+        {
+            var request = HttpContext.Request;
+            var token = request.Cookies["jwt"];
+            if (string.IsNullOrEmpty(token))
+            {
+                return Json(new { sessionExists = false });
+            }
+            else
+            {
+                return Json(new { sessionExists = true });
+            }
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

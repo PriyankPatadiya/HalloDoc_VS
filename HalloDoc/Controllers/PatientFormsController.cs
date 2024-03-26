@@ -97,8 +97,6 @@ namespace HalloDoc.Controllers
                     return RedirectToAction("SubmitRequest", "Home");
                 }
             }
-            TempData["Message"] = "Unable to add your request";
-            TempData["MessageType"] = "warning";
             pInfo.Region = _context.Regions.ToList();
             return View("PatientRequestForm", pInfo);
         }
@@ -108,19 +106,20 @@ namespace HalloDoc.Controllers
         public async Task<IActionResult> Friend_FamilyRequest(OthersReqVM model)
         {
             var user = _context.AspNetUsers.Where(u => u.Email == model.Email).FirstOrDefault();
-            if (user == null)
-            {
-                var link = Url.ActionLink("PatientCreateAcc", "Home", new { email = model.Email }, protocol: HttpContext.Request.Scheme);
-                string to = model.Email;
-                string subject = "Create Your Account On HalloDoc";
-                var body = new StringBuilder();
-                body.AppendLine("Please Create Your Request On HalloDoc To show status of your request here");
-                body.AppendLine("<a href=\"" + link + "\">Click here to create Acc</a>");
-                string Body = body.ToString();
-                _email.SendEmail(to, subject, Body);
-            }
+            
             if (ModelState.IsValid)
             {
+                if (user == null)
+                {
+                    var link = Url.ActionLink("PatientCreateAcc", "Home", new { email = model.Email }, protocol: HttpContext.Request.Scheme);
+                    string to = model.Email;
+                    string subject = "Create Your Account On HalloDoc";
+                    var body = new StringBuilder();
+                    body.AppendLine("Please Create Your Request On HalloDoc To show status of your request here");
+                    body.AppendLine("<a href=\"" + link + "\">Click here to create Acc</a>");
+                    string Body = body.ToString();
+                    _email.SendEmail(to, subject, Body);
+                }
                 model.State = await _patreq.GetStateAccordingToRegionId(model.SelectedStateId);
                 model.CreatedDate = DateTime.Now.Date;
                 model.confirmationnumber = _otherreq.GenerateConfirmationNumber(model);
@@ -140,8 +139,6 @@ namespace HalloDoc.Controllers
                 TempData["MessageType"] = "success";
                 return RedirectToAction("SubmitRequest", "Home");
             }
-            TempData["Message"] = "Unable to add your request";
-            TempData["MessageType"] = "warning";
             model.Region = _context.Regions.ToList();
             return View("Friend_FamilyRequestForm", model);
         }
@@ -150,19 +147,20 @@ namespace HalloDoc.Controllers
         public async Task<IActionResult> ConciergeRequestForm(OthersReqVM model)
         {
             var user = _context.AspNetUsers.Where(u => u.Email == model.Email).FirstOrDefault();
-            if (user == null)
-            {
-                var link = Url.ActionLink("PatientCreateAcc", "Home", new { email = model.Email }, protocol: HttpContext.Request.Scheme);
-                string to = model.Email;
-                string subject = "Create Your Account On HalloDoc";
-                var body = new StringBuilder();
-                body.AppendLine("Please Create Your Request On HalloDoc To show status of your request here");
-                body.AppendLine("<a href=\"" + link + "\">Click here to create Acc</a>");
-                string Body = body.ToString();
-                _email.SendEmail(to, subject, Body);
-            }
+            
             if (ModelState.IsValid)
             {
+                if (user == null)
+                {
+                    var link = Url.ActionLink("PatientCreateAcc", "Home", new { email = model.Email }, protocol: HttpContext.Request.Scheme);
+                    string to = model.Email;
+                    string subject = "Create Your Account On HalloDoc";
+                    var body = new StringBuilder();
+                    body.AppendLine("Please Create Your Request On HalloDoc To show status of your request here");
+                    body.AppendLine("<a href=\"" + link + "\">Click here to create Acc</a>");
+                    string Body = body.ToString();
+                    _email.SendEmail(to, subject, Body);
+                }
                 model.State = await _patreq.GetStateAccordingToRegionId(model.SelectedStateId);
                 model.CreatedDate = DateTime.Now.Date;
                 model.confirmationnumber = _otherreq.GenerateConfirmationNumber(model);
@@ -171,8 +169,6 @@ namespace HalloDoc.Controllers
                 TempData["MessageType"] = "success";
                 return RedirectToAction("SubmitRequest", "Home");
             }
-            TempData["Message"] = "Unable to add your request";
-            TempData["MessageType"] = "warning";
             model.Region = _context.Regions.ToList();
             return View("ConciergeRequestForm", model);
         }
@@ -182,18 +178,19 @@ namespace HalloDoc.Controllers
         public async Task<IActionResult> BusinessRequestForm(OthersReqVM model)
         {
             var user = _context.AspNetUsers.Where(u => u.Email == model.Email).FirstOrDefault();
-            if (user == null)
-            {
-                var link = Url.ActionLink("PatientCreateAcc", "Home", new { email = model.Email }, protocol: HttpContext.Request.Scheme);
-                string to = model.Email;
-                string subject = "Create Your Account On HalloDoc";
-                var body = new StringBuilder();
-                body.AppendLine("Please Create Your Request On HalloDoc To show status of your request here");
-                body.AppendLine("<a href=\"" + link + "\">Click here to create Acc</a>");
-                string Body = body.ToString();
-                _email.SendEmail(to, subject, Body);
-            }
+           
             if (ModelState.IsValid) {
+                if (user == null)
+                {
+                    var link = Url.ActionLink("PatientCreateAcc", "Home", new { email = model.Email }, protocol: HttpContext.Request.Scheme);
+                    string to = model.Email;
+                    string subject = "Create Your Account On HalloDoc";
+                    var body = new StringBuilder();
+                    body.AppendLine("Please Create Your Request On HalloDoc To show status of your request here");
+                    body.AppendLine("<a href=\"" + link + "\">Click here to create Acc</a>");
+                    string Body = body.ToString();
+                    _email.SendEmail(to, subject, Body);
+                }
                 model.State = await _patreq.GetStateAccordingToRegionId(model.SelectedStateId);
                 model.CreatedDate = DateTime.Now.Date;
                 model.confirmationnumber = _otherreq.GenerateConfirmationNumber(model);
@@ -202,8 +199,6 @@ namespace HalloDoc.Controllers
                 TempData["MessageType"] = "success";
                 return RedirectToAction("SubmitRequest", "Home");
             }
-            TempData["Message"] = "Unable to add your request";
-            TempData["MessageType"] = "warning";
             model.Region = _context.Regions.ToList();
             return View("BusinessRequestForm", model);
         }

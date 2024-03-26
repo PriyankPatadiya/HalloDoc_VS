@@ -18,14 +18,12 @@ namespace HalloDoc.Controllers
         private readonly IProviders _provider;
         private readonly IAdminDashboard _admin;
         private readonly IAdminActions _adminActions;
-        [Obsolete]
         private readonly IHostingEnvironment _hostingEnvironment;
         private readonly IuploadFile _uploadfile;
         private readonly IPatientRequest _request;
         private readonly IEmailService _emailService;
         private readonly IPasswordHasher<AdminProfileVM> _passwordHasher;
 
-        [Obsolete]
         public AdminDashboardController(ApplicationDbContext context, IAdminDashboard admin, IAdminActions action, IHostingEnvironment env, IuploadFile uploadfile, IPatientRequest request, IEmailService emailService, IPasswordHasher<AdminProfileVM> password, 
                     IProviders providers)
         {
@@ -289,10 +287,11 @@ namespace HalloDoc.Controllers
             return Json(physician);
         }
 
-        [HttpPost]
-        public IActionResult AssignCase([FromForm] int requestid, [FromForm] string physicianId, [FromForm] string Notes)
+        [HttpGet]
+        public IActionResult AssignCase(FormCollection form)
         {
-            _adminActions.ChangeOnAssign(requestid, int.Parse(physicianId), Notes);
+            string requestid = form["requestid"];
+            //_adminActions.ChangeOnAssign(requestid, int.Parse(physicianId), Notes);
             return RedirectToAction("MainPage");
         }
 
@@ -419,19 +418,7 @@ namespace HalloDoc.Controllers
                 return BadRequest(ex.Message);
             }
         }
-        public JsonResult CheckSession()
-        {
-            var request = HttpContext.Request;
-            var token = request.Cookies["jwt"];
-            if (string.IsNullOrEmpty(token))
-            {
-                return Json(new { sessionExists = false });
-            }
-            else
-            {
-                return Json(new { sessionExists = true });
-            }
-        }
+        
 
         // View Notes
 

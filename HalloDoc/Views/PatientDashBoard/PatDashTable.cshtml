@@ -4,7 +4,7 @@
     var uniqueid = new HashSet<int?>();
     var uniqueidaccordion = new HashSet<int?>();
 }
-<div class="tab-pane fade show active " id="pills-home" style="min-height: 77vh;" role="tabpanel" aria-labelledby="pills-home-tab" tabindex="0">
+<div class="tab-pane fade show active " id="pills-home" role="tabpanel" aria-labelledby="pills-home-tab" tabindex="0">
     <div class="p-0 m-0 NoAccordion d-sm-block d-none">
         <div class="modal fade" role="dialog" tabindex="-1" id="modal" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered">
@@ -40,7 +40,7 @@
                         <col span="1" style="width: 20%;">
                         <col span="1" style="width: 60%;">
                         <col span="1" style="width: 20%;">
-                    </colgroup> 
+                    </colgroup>
                     <thead>
                         <tr class="table-secondary">
 
@@ -74,10 +74,11 @@
                                             @if (item.Document.Count() > 0)
                                             {
 
-                                                <a asp-action="ViewDocumentsPatdash" asp-route-requestid="@item.requestid" class="btn btn-outline-info shadow-none mx-3">
-
+                                                <a asp-action="ViewDocumentsPatdash" asp-controller="PatientDashBoard" asp-route-requestid="@item.requestid">
+                                                    <button type="button" class="btn btn-outline-info shadow-none mx-3">
                                                         <span>(@item.count)</span>
                                                         View Document
+                                                    </button>
                                                 </a>
 
                                             }
@@ -178,6 +179,6 @@
             j++;
         }
     </div>
-</div> 
+</div>
 
 

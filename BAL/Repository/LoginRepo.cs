@@ -8,7 +8,6 @@ using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
 using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
 
 namespace BAL.Repository
 {
@@ -51,7 +50,7 @@ namespace BAL.Repository
     {
         private readonly string _role;
         private readonly ApplicationDbContext _context;
-        public CustomAuthorize(string role = "")
+        public CustomAuthorize(string role = "Patient")
         {
             this._role = role;
         }
@@ -65,8 +64,7 @@ namespace BAL.Repository
             {
                 context.Result = new RedirectToRouteResult(new RouteValueDictionary(new { Controller = "Home", Action = "PatientLoginn" }));
                 return;
-            }
-                     
+            }        
             var request = context.HttpContext.Request;
             var token = request.Cookies["jwt"];
             // Redirect to login if not logged in 
@@ -75,7 +73,6 @@ namespace BAL.Repository
                 context.Result = new RedirectToRouteResult(new RouteValueDictionary(new { Controller = "Home", Action = "PatientLoginn" }));
                 return;
             }
-
             var roleClaim = jwtToken.Claims.FirstOrDefault(c => c.Type == "Role");
             // Access Denied if Role Not matched
             if(roleClaim == null)
@@ -83,8 +80,6 @@ namespace BAL.Repository
                 context.Result = new RedirectToRouteResult(new RouteValueDictionary(new { Controller = "Home", Action = "PatientLoginn" }));
                 return;
             }
-
-
             if(string.IsNullOrWhiteSpace(_role) || roleClaim.Value != _role) { 
                     context.Result = new RedirectToRouteResult(new RouteValueDictionary(new { Controller = "Home", Action = "AccessDenied" }));
             }
