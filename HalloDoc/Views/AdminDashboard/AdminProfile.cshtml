@@ -75,7 +75,7 @@
         <span class="mx-2 text-info">Back</span>
     </a>
 </div>
-<div class="container p-sm-3 p-1 mt-3 bg-light-subtle shadow rounded-3" style="width: 95%; margin-bottom: 76.3px !important">
+<div class="container p-sm-3 p-1 mt-3 bg-body shadow rounded-3" style="width: 95%; margin-bottom: 76.3px !important">
 
     <div class="row gx-4">
         <form class="form-floating" method="post" asp-action="changePass">
@@ -94,7 +94,7 @@
                            asp-for="Password"
                            class="form-control shadow-none"
                            autocomplete="new-password"
-                           placeholder="Password" />
+                           placeholder="Password" required/>
                     <label for="floatingInput" class="ms-2">Password</label>
                     @*<span asp-validation-for="LastName" class="text-danger" style="font-size: 11px;"></span>*@
                 </div>

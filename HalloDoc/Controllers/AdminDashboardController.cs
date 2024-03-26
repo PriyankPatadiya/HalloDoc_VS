@@ -267,10 +267,10 @@ namespace HalloDoc.Controllers
 
 
         // Assign Case Actions
-
         [HttpPost]
-        public IActionResult CancelCase(int reeqid, string Reason)
+        public IActionResult CancelCase(int reeqid)
         {
+            string Reason = Request.Form["Reason"];
             string Notes = Request.Form["Notes"];
             bool iscancel = _adminActions.changeStatusOnCancleCase(reeqid, Reason, Notes);
             if (iscancel)
@@ -287,7 +287,7 @@ namespace HalloDoc.Controllers
             return Json(physician);
         }
 
-        [HttpGet]
+        [HttpPost]
         public IActionResult AssignCase(FormCollection form)
         {
             string requestid = form["requestid"];

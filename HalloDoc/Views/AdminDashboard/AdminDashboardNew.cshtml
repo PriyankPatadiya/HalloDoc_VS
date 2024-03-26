@@ -41,7 +41,7 @@
                                 <h1 class="modal-title fs-5  text-white" id="exampleModalLabel">Assign Request</h1>
                                 <button type="button" class="btn-close shadow-none" data-bs-dismiss="modal" aria-label="Close"></button>
                             </div>
-                            <form action="@Url.ActionLink("AssignCase")" method="get" enctype="multipart/form-data" id="assignform_@j">
+                            <form asp-action="AssignCase" asp-route-reeqid="@item.reqid" method="post" enctype="multipart/form-data" id="assignform_@j">
                                 <input value="@item.reqid" name="requestid" hidden/>
                                 <div class="modal-body">
                                     <p> To assign this request search and select another physician</p>
@@ -68,7 +68,7 @@
                                 <div class="modal-footer">
                                     <div class="d-flex justify-content-end mt-3">
                                         <button type="submit" class="btn btn-info" id="submitassign">Confirm</button>
-                                        <button type="button" data-bs-dismiss="modal" class="btn btn-outline-info ms-3">cancle</button>
+                                        <button type="button" data-bs-dismiss="modal" class="btn btn-outline-info ms-3">cancel</button>
                                     </div>
                                 </div>
                             </form>
@@ -85,7 +85,7 @@
                                 <h1 class="modal-title fs-5  text-white" id="exampleModalLabel">Confirm Cancellation</h1>
                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                             </div>
-                            <form asp-action="CancelCase" asp-route-reeqid="@item.reqid" enctype="multipart/form-data">
+                            <form asp-action="CancelCase" asp-route-reeqid="@item.reqid" method="post">
                                 <div class="modal-body">
                                     <p> Patient Name : <span >@item.PatientName</span></p>
                                     <select class="form-select" aria-label="Default select example" name="Reason">
@@ -105,8 +105,8 @@
                                 </div>
                                 <div class="modal-footer">
                                     <div class="d-flex justify-content-end mt-3">
-                                        <a asp-action="CancelCase" asp-route-reeqid="@item.reqid" class="btn btn-info">Confirm</a>
-                                        <button type="button" data-bs-dismiss="modal" class="btn btn-outline-info ms-3">cancle</button>
+                                        <button type="submit" class="btn btn-info">Confirm</button> 
+                                        <button type="button" data-bs-dismiss="modal" class="btn btn-outline-info ms-3">cancel</button>
                                     </div>
                                 </div>
                             </form>
@@ -136,7 +136,7 @@
                                 <div class="modal-footer">
                                     <div class="d-flex justify-content-end mt-3">
                                         <a asp-action="BlockCase" asp-route-reeqid="@item.reqid" class="btn btn-info">Confirm</a>
-                                        <button type="button" data-bs-dismiss="modal" class="btn btn-outline-info ms-3">cancle</button>
+                                    <button type="button" data-bs-dismiss="modal" class="btn btn-outline-info ms-3">cancel</button>
                                     </div>
                                 </div>
                           
@@ -207,7 +207,7 @@
                                 <li><a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#AssignCaseModal_@j">Assign Case</a></li>
                                 <li>
                                     <a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#staticBackdrop_@j">
-                                        Cancle
+                                        cancel
                                     </a>
                                 </li>
                                 <li><a class="dropdown-item" asp-action="ViewCaseAdmin" asp-route-reqcliId="@item.reqclientId">View Case</a></li>
@@ -247,7 +247,7 @@
                         <h1 class="modal-title fs-5  text-white" id="exampleModalLabel">Assign Request</h1>
                         <button type="button" class="btn-close shadow-none" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
-                    <form asp-action="AssignCase" asp-route-reeqid="@item.reqid" enctype="multipart/form-data">
+                    <form asp-action="AssignCase" asp-route-reeqid="@item.reqid" method="post" enctype="multipart/form-data">
                         <div class="modal-body">
                             <p> To assign this request search and select another physician</p>
                             @*for ajax*@
@@ -273,7 +273,7 @@
                         <div class="modal-footer">
                             <div class="d-flex justify-content-end mt-3">
                                 <button type="submit" class="btn btn-info">Confirm</button>
-                                <button type="button" data-bs-dismiss="modal" class="btn btn-outline-info ms-3">cancle</button>
+                                <button type="button" data-bs-dismiss="modal" class="btn btn-outline-info ms-3">cancel</button>
                             </div>
                         </div>
                     </form>
@@ -311,7 +311,7 @@
                                 <div class="modal-footer">
                                     <div class="d-flex justify-content-end mt-3">
                                         <button type="submit" class="btn btn-info">Confirm</button>
-                                        <button type="button" data-bs-dismiss="modal" class="btn btn-outline-info ms-3">cancle</button>
+                                        <button type="button" data-bs-dismiss="modal" class="btn btn-outline-info ms-3">cancel</button>
                                     </div>
                                 </div>
                             </form>
@@ -341,7 +341,7 @@
                                 <div class="modal-footer">
                                     <div class="d-flex justify-content-end mt-3">
                                         <button type="submit" class="btn btn-info">Confirm</button>
-                                        <button type="button" data-bs-dismiss="modal" class="btn btn-outline-info ms-3">cancle</button>
+                                <button type="button" data-bs-dismiss="modal" class="btn btn-outline-info ms-3">cancel</button>
                                     </div>
                                 </div>
                             </form>

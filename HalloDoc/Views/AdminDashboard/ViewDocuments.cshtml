@@ -36,7 +36,7 @@
     <div class="mx-auto pb-3" style="width:70%; padding-top: 3%;">
         <div class="d-flex justify-content-between my-2">
             <h3>Documents</h3><br />
-            <a asp-action="PatientDashboard"><button type="button" class="btn btn-primary btn text-decoration-none border border-info bg-transparent text-info shadow  ">
+            <a asp-action="MainPage"><button type="button" class="btn btn-primary btn text-decoration-none border border-info bg-transparent text-info shadow  ">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-left" viewBox="0 0 16 16">
                         <path fill-rule="evenodd" d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0" />
                     </svg>
@@ -55,7 +55,7 @@
                 </label>
                 <form method="post" asp-action="uploadFile" asp-route-requestid="@Model.requestid" enctype="multipart/form-data">
                     <input type="file" name="Document" class="form-control" id="fileInput" hidden multiple />
-                    <button class="btn btn-info text-light py-2">
+                    <button type="button" class="btn btn-info text-light py-2" onclick="checkfile()">
                         <svg xmlns="http://www.w3.org/2000/svg"
                              width="24"
                              height="24"
@@ -74,9 +74,9 @@
             <div class="d-flex justify-content-between mt-4">
                 <h4>Documents</h4>
                 <div class="d-flex justify-content-end">
-                    <button type="button" id="downloadAllBtn" class="btn btn-outline-info text-info shadow-none mx-2">Download All</button>
-                    <button type="button" id="deleteAllBtn" class="btn btn-outline-info text-info shadow-none mx-2">Delete All</button>
-                    <button type="button" class="btn btn-outline-info text-info shadow-none ms-2" data-bs-toggle="modal" data-bs-target="#SendEmailAttachmentModal">Send mail</button>
+                    <button type="button" id="downloadAllBtn" class="btn btn-outline-info  shadow-none mx-2">Download All</button>
+                    <button type="button" id="deleteAllBtn" class="btn btn-outline-info shadow-none mx-2">Delete All</button>
+                    <button type="button" class="btn btn-outline-info shadow-none ms-2" data-bs-toggle="modal" data-bs-target="#SendEmailAttachmentModal">Send mail</button>
                 </div>
             </div>
         </div>
@@ -146,6 +146,16 @@
         var info = document.getElementById("infoarea");
 
         input.addEventListener('change', showFilename);
+
+        function checkfile() {
+            if (document.getElementById("fileInput").value == null || document.getElementById("fileInput").value == '') {
+                document.getElementById("filesubmitbtn").type = "button";
+                alert("please select file");
+            }
+            else {
+                document.getElementById("filesubmitbtn").type = "submit";
+            }
+        }
 
         function showFilename() {
             var fileinp = event.srcElement;
