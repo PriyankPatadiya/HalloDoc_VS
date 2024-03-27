@@ -1,6 +1,6 @@
 ﻿using DAL.DataModels;
 using DAL.ViewModels;
-
+using Microsoft.AspNetCore.Http;
 
 namespace BAL.Interface
 {
@@ -24,5 +24,7 @@ namespace BAL.Interface
         public void changeAccountInfo(AdminProfileVM model, string email, List<string> regions);
         public void changeBillingInfo(AdminProfileVM model, string email);
         public void changePassword(string password, string email);
+
+        public void UpdateProviderProfile(int id, string businessName, string businessWebsite, IFormFile signatureFile, IFormFile photoFile);
     }
 }

@@ -8,13 +8,14 @@ using System.Text;
 using IHostingEnvironment = Microsoft.AspNetCore.Hosting.IHostingEnvironment;
 using Rotativa.AspNetCore;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 
 namespace HalloDoc.Controllers
 {
     [CustomAuthorize("Administrator")] 
     public class AdminDashboardController : Controller
     {
-        //private readonly ApplicationDbContext _context;
+        private readonly ApplicationDbContext _context;
         private readonly IProviders _provider;
         private readonly IAdminDashboard _admin;
         private readonly IAdminActions _adminActions;
@@ -23,11 +24,12 @@ namespace HalloDoc.Controllers
         private readonly IPatientRequest _request;
         private readonly IEmailService _emailService;
         private readonly IPasswordHasher<AdminProfileVM> _passwordHasher;
+        private readonly IUploadProvider _uploadProvider;
 
         public AdminDashboardController(ApplicationDbContext context, IAdminDashboard admin, IAdminActions action, IHostingEnvironment env, IuploadFile uploadfile, IPatientRequest request, IEmailService emailService, IPasswordHasher<AdminProfileVM> password, 
-                    IProviders providers)
+                    IProviders providers, IUploadProvider upload)
         {
-            //_context = context;
+            _context = context;
             _admin = admin;
             _adminActions = action;
             _hostingEnvironment = env;
@@ -36,6 +38,7 @@ namespace HalloDoc.Controllers
             _emailService = emailService;
             _passwordHasher = password; 
             _provider = providers;
+            _uploadProvider = upload;
         }
 
         public IActionResult MainPage()
@@ -288,10 +291,13 @@ namespace HalloDoc.Controllers
         }
 
         [HttpPost]
-        public IActionResult AssignCase(FormCollection form)
+        public IActionResult AssignCase(IFormCollection form)
         {
-            string requestid = form["requestid"];
-            //_adminActions.ChangeOnAssign(requestid, int.Parse(physicianId), Notes);
+
+            string reeqid = form["reqid"];
+            string physicianId = form["physicianId"];
+            string Notes = form["Notes"];
+            _adminActions.ChangeOnAssign(int.Parse(reeqid), int.Parse(physicianId), Notes);
             return RedirectToAction("MainPage");
         }
 
@@ -602,9 +608,18 @@ namespace HalloDoc.Controllers
         public async Task<IActionResult> CreateRequestAdmin(PatientReqVM model) 
         {
             var email = HttpContext.Session.GetString("Email");
-            model.State = await _request.GetStateAccordingToRegionId(model.SelectedStateId);
-            _request.AddAdminCreateRequest(model, email);
-            return RedirectToAction("CreateRequestAdmin");
+            if (ModelState.IsValid)
+            {
+                model.State = await _request.GetStateAccordingToRegionId(model.SelectedStateId);
+                _request.AddAdminCreateRequest(model, email);
+                TempData["Message"] = "Request Added!";
+                TempData["MessageType"] = "success";
+                return RedirectToAction("MainPage");
+            }
+            
+            model.Region = _admin.regions();
+            return PartialView("CreateRequestAdmin", model);
+
         }
 
         // Provider Menu
@@ -618,8 +633,167 @@ namespace HalloDoc.Controllers
 
         public IActionResult filterProviderTable(string stateid)
         {
-            var result = _provider.getfilteredPhysicians(int.Parse(stateid));
+            var result = _provider.getfilteredPhysicians(int.Parse(stateid)).ToList();
             return PartialView("ProviderMenu/_ProviderPartialTable", result);
+        }
+
+
+        public IActionResult ProviderProfile(int id)
+        {
+            Physician? physician = _context.Physicians.FirstOrDefault(item => item.PhysicianId == id);
+
+            PhysicianProfileVM physicanProfile = new PhysicianProfileVM();
+            physicanProfile.FirstName = physician.FirstName;
+            physicanProfile.LastName = physician.LastName ?? "";
+            physicanProfile.Email = physician.Email;
+            physicanProfile.Address1 = physician.Address1 ?? "";
+            physicanProfile.Address2 = physician.Address2 ?? "";
+            physicanProfile.City = physician.City ?? "";
+            physicanProfile.ZipCode = physician.Zip ?? "";
+            physicanProfile.MobileNo = physician.Mobile ?? "";
+            physicanProfile.Regions = _context.Regions.ToList();
+            physicanProfile.MedicalLicense = physician.MedicalLicense;
+            physicanProfile.NPINumber = physician.Npinumber;
+            physicanProfile.SynchronizationEmail = physician.SyncEmailAddress;
+            physicanProfile.physicianid = physician.PhysicianId;
+            physicanProfile.WorkingRegions = _context.PhysicianRegions.Where(item => item.PhysicianId == physician.PhysicianId).ToList();
+            physicanProfile.State = physician.RegionId;
+            physicanProfile.SignatureFilename = physician.Signature;
+            physicanProfile.BusinessWebsite = physician.BusinessWebsite;
+            physicanProfile.BusinessName = physician.BusinessName;
+            physicanProfile.PhotoFileName = physician.Photo;
+            physicanProfile.IsAgreement = physician.IsAgreementDoc;
+            physicanProfile.IsBackground = physician.IsBackgroundDoc;
+            physicanProfile.IsHippa = physician.IsAgreementDoc;
+            physicanProfile.NonDiscoluser = physician.IsNonDisclosureDoc;
+            physicanProfile.License = physician.IsLicenseDoc;
+            return View("ProviderMenu/ProviderProfile", physicanProfile);
+        }
+
+        public IActionResult ResetPhysicianPassword(string Password, int physicianid)
+        {
+
+            Physician? physician = _context.Physicians.FirstOrDefault(item => item.PhysicianId == physicianid);
+            AspNetUser? account = _context.AspNetUsers.FirstOrDefault(item => item.Email == physician.Email);
+
+
+            if (account != null && Password != null)
+            {
+                string passwordhash = _passwordHasher.HashPassword(null, Password);
+                account.PasswordHash = passwordhash;
+                _context.AspNetUsers.Update(account);
+                _context.SaveChanges();
+                TempData["Message"] = "Password Changed Successfully!";
+                TempData["MessageType"] = "success";
+                
+            }
+            else
+            {
+                TempData["Message"] = "Can't Change Password!";
+                TempData["MessageType"] = "success";
+            }
+
+            return RedirectToAction("ProviderProfile", new { id = physicianid });
+        }
+
+        public IActionResult PhysicianInformation(int id, string MobileNo, string[] Region, string SynchronizationEmail, string NPINumber, string MedicalLicense)
+        {
+            Physician? physician = _context.Physicians.FirstOrDefault(item => item.PhysicianId == id);
+
+            AspNetUser? account = _context.AspNetUsers.FirstOrDefault(item => item.Email == physician.Email);
+            if (physician != null)
+            {
+                physician.Mobile = MobileNo;
+                physician.Npinumber = NPINumber;
+                physician.MedicalLicense = MedicalLicense;
+                physician.SyncEmailAddress = SynchronizationEmail;
+                _context.Physicians.Update(physician);
+                _context.SaveChanges();
+
+
+                List<PhysicianRegion> region = _context.PhysicianRegions.
+                    Where(item => item.PhysicianId == physician.PhysicianId).ToList();
+
+                _context.PhysicianRegions.RemoveRange(region);
+                _context.SaveChanges();
+
+                foreach (var item in Region)
+                {
+                    PhysicianRegion physicianRegion = new PhysicianRegion();
+                    physicianRegion.PhysicianId = id;
+                    physicianRegion.RegionId = int.Parse(item);
+                    _context.Add(physicianRegion);
+                    _context.SaveChanges();
+                }
+            }
+            else
+            {
+                
+            }
+            return RedirectToAction("PhysicianProfile", new { id = id });
+
+        }
+
+
+        public IActionResult MailingBillingInformationProvider(int physicianid, string MobileNo, string Address1, string Address2, string City, int State, string Zipcode)
+        {
+
+            Physician? physician = _context.Physicians.FirstOrDefault(item => item.PhysicianId == physicianid);
+            if (physician != null)
+            {
+                physician.Address1 = Address1;
+                physician.Address2 = Address2;
+                physician.City = City;
+                physician.Mobile = MobileNo;
+                physician.RegionId = State;
+                physician.Zip = Zipcode;
+                _context.Physicians.Update(physician);
+                _context.SaveChanges();
+               
+            }
+            else
+            {
+                
+
+            }
+            return RedirectToAction("ProviderProfile", new { id = physicianid });
+        }
+
+        public IActionResult Physicianprofile(int id, string businessName, string businessWebsite, IFormFile signatureFile, IFormFile photoFile)
+        {
+            try
+            {
+                _admin.UpdateProviderProfile(id, businessName, businessWebsite, signatureFile, photoFile);
+                
+            }
+            catch (InvalidOperationException ex)
+            {
+                
+                Console.WriteLine(ex.Message);
+            }
+
+            return RedirectToAction("ProviderProfile", new { id = id });
+        }
+
+        [HttpPost]
+        public IActionResult SaveSignatureImage(IFormFile signatureImage, int id)
+        {
+
+            if (signatureImage != null && signatureImage.Length > 0)
+            {
+                string fileName = _uploadProvider.UploadSignature(signatureImage, id);
+                var physician = _context.Physicians.FirstOrDefault(item => item.PhysicianId == id);
+                physician.Signature = fileName;
+                _context.Physicians.Update(physician);
+                _context.SaveChanges();
+                return Ok();
+            }
+            else
+            {
+                return BadRequest();
+            }
+
+
         }
     }
 }

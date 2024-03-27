@@ -6,17 +6,19 @@ using System.ComponentModel;
 using DAL.DataModels;
 using Microsoft.AspNetCore.Identity;
 using Org.BouncyCastle.Ocsp;
+using Microsoft.AspNetCore.Http;
 
 namespace BAL.Repository
 {
     public class AdminServicesRepo : IAdminDashboard
     { 
-
+        private readonly IUploadProvider _uploadProvider;
         private readonly ApplicationDbContext _context;
 
-        public AdminServicesRepo(ApplicationDbContext context)
+        public AdminServicesRepo(ApplicationDbContext context , IUploadProvider upload)
         {
              _context = context;
+             _uploadProvider = upload;
         }
 
         public Request reqbyreqid(int id)
@@ -312,6 +314,36 @@ namespace BAL.Repository
                 admin.PasswordHash = password;
                 _context.AspNetUsers.Update(admin);
                 _context.SaveChanges();
+            }
+        }
+
+        public void UpdateProviderProfile(int id, string businessName, string businessWebsite, IFormFile signatureFile, IFormFile photoFile)
+        {
+            var physician = _context.Physicians.FirstOrDefault(item => item.PhysicianId == id);
+
+            if (physician != null)
+            {
+                physician.BusinessName = businessName;
+                physician.BusinessWebsite = businessWebsite;
+
+                if (signatureFile != null && signatureFile.FileName != null)
+                {
+                    string signatureFileName = _uploadProvider.UploadSignature(signatureFile, id);
+                    physician.Signature = signatureFileName;
+                }
+
+                if (photoFile != null && photoFile.FileName != null)
+                {
+                    string photoFileName = _uploadProvider.UploadPhoto(photoFile, id);
+                    physician.Photo = photoFileName;
+                }
+
+                _context.Physicians.Update(physician);
+                _context.SaveChanges();
+            }
+            else
+            {
+                throw new InvalidOperationException("Physician not found");
             }
         }
     }

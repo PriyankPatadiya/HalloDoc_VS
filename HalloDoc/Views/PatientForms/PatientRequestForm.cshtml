@@ -84,6 +84,9 @@
                             <div class="valid-feedback">
                                 Looks good!
                             </div>
+                            <span asp-validation-for="FirstName" class="invalid-feedback">
+                                
+                            </span>
                         </div>
                         <div class="col-sm-12 col-md-12 col-lg-6 form-floating my-3">
                             <input type="text"
@@ -92,6 +95,9 @@
                                    id="floatingInput2"
                                    placeholder="Last Name" required/>
                             <label for="floatingInput2" class="ms-2">Last Name</label>
+                        <div class="valid-feedback">
+                            Looks good!
+                        </div>
                             <span asp-validation-for="LastName" class="text-danger" style="font-size: 11px;"></span>
                         </div>
 
@@ -104,6 +110,9 @@
                                    id="floatingInput3"
                                    placeholder="Date Of Birth" required />
                             <label for="floatingInput3" class="ms-2">Date Of Birth</label>
+                        <div class="valid-feedback">
+                            Looks good!
+                        </div>
                             <span asp-validation-for="BirthDate" class="text-danger" style="font-size: 11px;">  </span>
                         </div>
 
@@ -120,6 +129,9 @@
                                    mailto:placeholder="name@inputtype.com"
                                    onchange="CheckEmail()" required/>
                             <label for="email1" class="ms-2">Email</label>
+                            <div class="valid-feedback">
+                                Looks good!
+                            </div>
                             <span asp-validation-for="Email" class="text-danger" class="invalid-feedback">
                                 
                             </span>
@@ -132,6 +144,9 @@
                                    id="floatingInput4"
                                    placeholder="PhoneNumber" required/>
                             <label for="floatingInput4" class="ms-2">Mobile Number</label>
+                            <div class="valid-feedback">
+                                Looks good!
+                            </div>
                             <span asp-validation-for="PhoneNumber" class="text-danger" style="font-size: 11px;"></span>
                         </div>
 
@@ -169,6 +184,9 @@
                                    id="floatingInput7"
                                    placeholder="Street" required/>
                             <label for="floatingInput7" class="ms-2">Street</label>
+                            <div class="valid-feedback">
+                                Looks good!
+                            </div>
                         </div>
                         <div class="col-sm-12 col-md-12 col-lg-6 form-floating my-3">
                             <input type="text"
@@ -177,6 +195,9 @@
                                    id="floatingInput8"
                                    placeholder="Last Name" required/>
                             <label for="floatingInput8" class="ms-2">City</label>
+                            <div class="valid-feedback">
+                                Looks good!
+                            </div>
                         </div>
                         <div class="col-sm-12 col-md-12 col-lg-6 form-floating my-3">
                             <select class="form-control d-flex align-items-center py-2 bg-body" asp-for="State" name="SelectedStateId" required>
@@ -194,6 +215,9 @@
                                    id="floatingInput9"
                                    placeholder="Last Name" />
                             <label for="floatingInput9" class="ms-2">Zip Code</label>
+                            <div class="valid-feedback">
+                                Looks good!
+                            </div> 
                         </div>
                         <div class="col-sm-12 col-md-12 col-lg-6 form-floating my-3">
                             <input type="text"
