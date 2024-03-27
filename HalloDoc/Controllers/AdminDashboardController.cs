@@ -9,6 +9,7 @@ using IHostingEnvironment = Microsoft.AspNetCore.Hosting.IHostingEnvironment;
 using Rotativa.AspNetCore;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using System.Collections;
 
 namespace HalloDoc.Controllers
 {
@@ -730,7 +731,7 @@ namespace HalloDoc.Controllers
             {
                 
             }
-            return RedirectToAction("PhysicianProfile", new { id = id });
+            return RedirectToAction("ProviderProfile", new { id = id });
 
         }
 
@@ -792,8 +793,55 @@ namespace HalloDoc.Controllers
             {
                 return BadRequest();
             }
+        }
 
+        [HttpPost]
+        public IActionResult UploadDocs(string fileName, IFormFile File, int physicianid)
+        {
+            Physician? physician = _context.Physicians.FirstOrDefault(item => item.PhysicianId == physicianid);
+            if (physician != null)
+            {
 
+                if (fileName == "ICA")
+                {
+                    var docfile = _uploadProvider.UploadDocFile(File, physicianid, fileName);
+                    physician.IsAgreementDoc = new BitArray(new[] { true });
+                }
+                if (fileName == "Background")
+                {
+                    var docfile = _uploadProvider.UploadDocFile(File, physicianid, fileName);
+                    physician.IsBackgroundDoc = new BitArray(new[] { true });
+                }
+                if (fileName == "Hippa")
+                {
+                    var docfile = _uploadProvider.UploadDocFile(File, physicianid, fileName);
+                    physician.IsTrainingDoc = new BitArray(new[] { true });
+                }
+                if (fileName == "NonDiscoluser")
+                {
+                    var docfile = _uploadProvider.UploadDocFile(File, physicianid, fileName);
+                    physician.IsNonDisclosureDoc = new BitArray(new[] { true });
+                }
+                if (fileName == "License")
+                {
+                    var docfile = _uploadProvider.UploadDocFile(File, physicianid, fileName);
+                    physician.IsLicenseDoc = new BitArray(new[] { true });
+                }
+                _context.Physicians.Update(physician);
+                _context.SaveChanges();
+                return Ok();
+            }
+            else
+            {
+                return BadRequest("No Doc File received.");
+            }
+        }
+
+        public IActionResult CreateProviderAcc()
+        {
+            PhysicianProfileVM model = new PhysicianProfileVM();
+            model.Regions = _context.Regions.ToList();
+            return View("ProviderMenu/CreateProviderAccount", model);
         }
     }
 }
