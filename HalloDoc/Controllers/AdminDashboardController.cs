@@ -697,7 +697,7 @@ namespace HalloDoc.Controllers
             return RedirectToAction("ProviderProfile", new { id = physicianid });
         }
 
-        public IActionResult PhysicianInformation(int id, string MobileNo, string[] Region, string SynchronizationEmail, string NPINumber, string MedicalLicense)
+        public IActionResult PhysicianInformation(int id, string MobileNo, string[]Region, string SynchronizationEmail, string NPINumber, string MedicalLicense)
         {
             Physician? physician = _context.Physicians.FirstOrDefault(item => item.PhysicianId == id);
 
