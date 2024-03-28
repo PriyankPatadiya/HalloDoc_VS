@@ -8,6 +8,49 @@
 
 @*<link href="https://getbootstrap.com/docs/5.0/dist/css/bootstrap.min.css" rel="stylesheet" />*@
 
+@*Assign Case Modal*@
+
+<div class="modal fade" id="AssignCaseModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header bg-info">
+                <h1 class="modal-title fs-5  text-white" id="exampleModalLabel">Assign Request</h1>
+                <button type="button" class="btn-close shadow-none" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form method="post" enctype="multipart/form-data" id="AssignForm">
+                <input id="assignRequestidInput" name="requestid" class="d-none" hidden />
+                <div class="modal-body">
+                    <p> To assign this request search and select another physician</p>
+                    @*for ajax*@
+                    <select class="form-select py-2 my-2 shadow-none border border-info" id="Regionnid" onchange="filterPhysicianByRegionn(this.value)">
+                        <option value="0" selected>Narrow Search By Region</option>
+
+                    </select>
+                    @*for action post*@
+
+                    <select class="form-select py-2 my-2 shadow-none border border-info" id="physicianDrop" name="physicianId">
+                        @*using ajax*@
+                    </select>
+
+                    <div class="form-floating mt-3">
+                        <textarea class="form-control border border-info" name="Notes" placeholder="Leave a comment here" id="floatingTextarea2" style="height: 100px"></textarea>
+                        <label for="floatingTextarea2">Description</label>
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <div class="d-flex justify-content-end mt-3">
+                        <button type="submit" class="btn btn-info">Confirm</button>
+                        <button type="button" data-bs-dismiss="modal" class="btn btn-outline-info ms-3">cancel</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+
 @*Table*@
 
 <div style="height: 340px !important" class="mx-2 mb-2   tab-pane fade show active table-responsive  " id="pills-Dashboard" role="tabpanel" aria-labelledby="pills-Dashboard-tab" tabindex="0">
@@ -32,48 +75,7 @@
         <tbody>
             @foreach (var item in Model)
             {
-                @*Assign Case Modal*@
 
-                <div class="modal fade" id="AssignCaseModal_@j" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-                    <div class="modal-dialog modal-dialog-centered">
-                        <div class="modal-content">
-                            <div class="modal-header bg-info">
-                                <h1 class="modal-title fs-5  text-white" id="exampleModalLabel">Assign Request</h1>
-                                <button type="button" class="btn-close shadow-none" data-bs-dismiss="modal" aria-label="Close"></button>
-                            </div>
-                            <form asp-action="AssignCase" asp-route-reeqid="@item.reqid" method="post" enctype="multipart/form-data" id="AssignForm_@j">
-                                <div class="modal-body">
-                                    <p> To assign this request search and select another physician</p>
-                                    @*for ajax*@
-                                    <select class="form-select py-2 my-2 shadow-none border border-info" id="Regionnid" onchange="filterPhysicianByRegionn(this.value, @j)">
-                                        <option value="0" selected>Narrow Search By Region</option>
-                                        @foreach (var items in item.regionTable)
-                                        {
-                                            <option value="@items.RegionId">@items.Name</option>
-                                        }
-                                    </select>
-                                    @*for action post*@
-
-                                    <select class="form-select py-2 my-2 shadow-none border border-info" id="physicianDrop_@j" name="physicianId">
-                                        @*using ajax*@
-                                    </select>
-
-                                    <div class="form-floating mt-3">
-                                        <textarea class="form-control border border-info" name="Notes" placeholder="Leave a comment here" id="floatingTextarea2" style="height: 100px"></textarea>
-                                        <label for="floatingTextarea2">Description</label>
-                                    </div>
-
-                                </div>
-                                <div class="modal-footer">
-                                    <div class="d-flex justify-content-end mt-3">
-                                        <button type="submit" class="btn btn-info" onclick="submitassign(@j)">Confirm</button>
-                                        <button type="button" data-bs-dismiss="modal" class="btn btn-outline-info ms-3">cancel</button>
-                                    </div>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-                </div>
 
                 @*Cancel Modal*@
 
@@ -202,7 +204,7 @@
                                 Action
                             </button>
                             <ul class="dropdown-menu">
-                                <li><a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#AssignCaseModal_@j">Assign Case</a></li>
+                                <li><button type="button" onclick="openAssignModal(@item.reqid)" data-asignreqid="@item.reqid">Assign Case</button></li>
                                 <li>
                                     <a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#staticBackdrop_@j">
                                         cancel
@@ -226,7 +228,6 @@
 </div>
 
 
-
 @*Accordion*@
 
 
@@ -245,7 +246,8 @@
                         <h1 class="modal-title fs-5  text-white" id="exampleModalLabel">Assign Request</h1>
                         <button type="button" class="btn-close shadow-none" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
-                    <form asp-action="AssignCase" asp-route-reeqid="@item.reqid" method="post" enctype="multipart/form-data">
+                    <form asp-action="AssignCase" method="post" enctype="multipart/form-data">
+                        <input class="d-none" value="@item.reqid" name="requestid" hidden>
                         <div class="modal-body">
                             <p> To assign this request search and select another physician</p>
                             @*for ajax*@
@@ -531,7 +533,7 @@
 
 <script>
 
-    function filterPhysicianByRegionn(RegionId, i) {
+    function filterPhysicianByRegionn(RegionId) {
         if (RegionId != "0") {
             $.ajax({
                 type: "GET",
@@ -539,16 +541,19 @@
                 data: { RegionId: RegionId },
 
                 success: function (data) {
-                    $('#physicianDrop_' + i).empty();
+                    $('#physicianDrop').empty();
                     $.each(data, function (index, item) {
-                        $('#physicianDrop_' + i).append($('<option>').text(item.firstName).attr('value', item.physicianId));
+                        $('#physicianDrop').append($('<option>').text(item.firstName).attr('value', item.physicianId));
 
                     });
-                    $('#physicianDrop_' + i + 'option:first').prop('selected', true);
+                    $('#physicianDrop option:first').prop('selected', true);
                 }
             });
         }
-    } function filterPhysicianByRegion(RegionId, i) {
+    }
+
+
+    function filterPhysicianByRegion(RegionId, i) {
         if (RegionId != "0") {
             $.ajax({
                 type: "GET",
@@ -567,23 +572,16 @@
             });
         }
     }
-
-    function submitassign(j){
-
-            debugger
-            
-        var Form = $("#AssignForm_" + j).serialize();
-            $.ajax({
-                url: '/AdminDashboard/AssignCase',
-                type: 'POST',
-                data: Form:Form,
-                success: function (response) {
-                    console.log(response);
-                }
-            });
-      
+</script>
+<script>
+    function openAssignModal(requestid) {
+        debugger
+        var regions = @Json.Serialize(Model[0].regionTable.ToList());
+        regions.forEach(region => {
+            $('#Regionnid').append($('<option>').text(region.name).attr('value', region.regionId));
+        });
+        $('#assignRequestidInput').attr('value', requestid);
+        $('#AssignForm').attr('action', '/AdminDashboard/AssignCase?reqid=' + requestid);
+        $('#AssignCaseModal').modal('show');
     }
-
-        
-    
 </script>

@@ -298,7 +298,7 @@ namespace HalloDoc.Controllers
         public IActionResult AssignCase(IFormCollection form)
         {
 
-            string reeqid = form["reqid"];
+            string reeqid = form["requestid"];
             string physicianId = form["physicianId"];
             string Notes = form["Notes"];
             _adminActions.ChangeOnAssign(int.Parse(reeqid), int.Parse(physicianId), Notes);
