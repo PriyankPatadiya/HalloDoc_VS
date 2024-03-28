@@ -8,12 +8,13 @@ using System.Text;
 using IHostingEnvironment = Microsoft.AspNetCore.Hosting.IHostingEnvironment;
 using Rotativa.AspNetCore;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
 using System.Collections;
+using Microsoft.IdentityModel.Abstractions;
+using Microsoft.EntityFrameworkCore;
 
 namespace HalloDoc.Controllers
 {
-    [CustomAuthorize("Administrator")] 
+    [CustomAuthorize("Administrator")]
     public class AdminDashboardController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -25,10 +26,11 @@ namespace HalloDoc.Controllers
         private readonly IPatientRequest _request;
         private readonly IEmailService _emailService;
         private readonly IPasswordHasher<AdminProfileVM> _passwordHasher;
+        private readonly IPasswordHasher<PhysicianProfileVM> _passHasher;
         private readonly IUploadProvider _uploadProvider;
 
-        public AdminDashboardController(ApplicationDbContext context, IAdminDashboard admin, IAdminActions action, IHostingEnvironment env, IuploadFile uploadfile, IPatientRequest request, IEmailService emailService, IPasswordHasher<AdminProfileVM> password, 
-                    IProviders providers, IUploadProvider upload)
+        public AdminDashboardController(ApplicationDbContext context, IAdminDashboard admin, IAdminActions action, IHostingEnvironment env, IuploadFile uploadfile, IPatientRequest request, IEmailService emailService, IPasswordHasher<AdminProfileVM> password,
+                    IProviders providers, IUploadProvider upload, IPasswordHasher<PhysicianProfileVM> hasher)
         {
             _context = context;
             _admin = admin;
@@ -37,9 +39,10 @@ namespace HalloDoc.Controllers
             _uploadfile = uploadfile;
             _request = request;
             _emailService = emailService;
-            _passwordHasher = password; 
+            _passwordHasher = password;
             _provider = providers;
             _uploadProvider = upload;
+            _passHasher = hasher;
         }
 
         public IActionResult MainPage()
@@ -80,19 +83,19 @@ namespace HalloDoc.Controllers
         {
             var result = _admin.GetRequestsQuery(StatusButton);
             result = result.Where(s => (String.IsNullOrEmpty(SearchString) || s.PatientName.Contains(SearchString)) && (String.IsNullOrEmpty(selectButton) || s.requestId == int.Parse(selectButton)) && ((SelectedStateId == "0" || SelectedStateId == null) || s.regionId == int.Parse(SelectedStateId)));
-
             
+
 
             int totalItems = result.Count();
             int totalPages = (int)Math.Ceiling((double)totalItems / pagesize);
             if (SearchString != null || selectButton != null || SelectedStateId != "0")
             {
-                if(totalPages <= 1)
+                if (totalPages <= 1)
                 {
                     currentpage = 1;
                 }
             }
-            var paginatedData = result.ToList().Skip((currentpage - 1) * pagesize).Take(pagesize).ToList();  
+            var paginatedData = result.ToList().Skip((currentpage - 1) * pagesize).Take(pagesize).ToList();
             if (result != null)
             {
                 if (!String.IsNullOrEmpty(StatusButton))
@@ -123,7 +126,7 @@ namespace HalloDoc.Controllers
         public IActionResult EncounterForm(EncounterFormVM model)
         {
             _adminActions.addencounterdata(model);
-            return RedirectToAction("EncounterForm", new { requestid = model.requestid});
+            return RedirectToAction("EncounterForm", new { requestid = model.requestid });
         }
         public IActionResult finalizeForm(int requestid)
         {
@@ -187,7 +190,7 @@ namespace HalloDoc.Controllers
         public IActionResult CloseCase(CloseCaseVM model)
         {
             bool isclosed = _adminActions.closecase(model);
-            if(isclosed == true)
+            if (isclosed == true)
             {
                 TempData["Message"] = "Request Closed";
                 TempData["MessageType"] = "success";
@@ -200,8 +203,8 @@ namespace HalloDoc.Controllers
 
         public IActionResult ClosecasePost(int reqid)
         {
-            var request =_admin.reqbyreqid(reqid);
-            if(request != null)
+            var request = _admin.reqbyreqid(reqid);
+            if (request != null)
             {
                 _adminActions.closeRequest(request, reqid);
                 TempData["Message"] = "closed Request";
@@ -257,7 +260,7 @@ namespace HalloDoc.Controllers
             if (ModelState.IsValid)
             {
                 bool issend = _adminActions.sendOrder(model);
-                if(issend == true)
+                if (issend == true)
                 {
                     TempData["Message"] = "Successfully sent Your order!...";
                     TempData["MessageType"] = "success";
@@ -375,10 +378,11 @@ namespace HalloDoc.Controllers
             }
         }
 
-        
-        public IActionResult deleteFile(int reqid, string filename) { 
+
+        public IActionResult deleteFile(int reqid, string filename)
+        {
             var requestwisefile = _admin.filebyReqidandName(reqid, filename);
-            if(requestwisefile != null)
+            if (requestwisefile != null)
             {
                 _admin.deleteSingleFile(requestwisefile);
                 ViewBag.Isdelete = true;
@@ -392,7 +396,7 @@ namespace HalloDoc.Controllers
         }
 
         [HttpPost]
-        public IActionResult deleteAllFiles( List<string> selectedFiles, string reqid)
+        public IActionResult deleteAllFiles(List<string> selectedFiles, string reqid)
         {
             bool isdeleteall = _admin.deleteAllFiles(selectedFiles);
             if (isdeleteall)
@@ -425,7 +429,7 @@ namespace HalloDoc.Controllers
                 return BadRequest(ex.Message);
             }
         }
-        
+
 
         // View Notes
 
@@ -443,8 +447,8 @@ namespace HalloDoc.Controllers
         [HttpPost]
         public IActionResult addAdminnote(ViewNotesVM model, int reqid)
         {
-            RequestNote notes = _adminActions.reqnotebyreqid(reqid) ;
-            if(notes != null)
+            RequestNote notes = _adminActions.reqnotebyreqid(reqid);
+            if (notes != null)
             {
                 _adminActions.addrequnotes(model, notes);
                 return RedirectToAction("ViewNotesAdminn", new { reqid = reqid });
@@ -457,7 +461,7 @@ namespace HalloDoc.Controllers
             string transNote = Request.Form["Notes"];
 
             if (_adminActions.transferNotes(reeqid, phyid, transNote) == true)
-            { 
+            {
                 return RedirectToAction("MainPage");
             }
             else
@@ -483,9 +487,9 @@ namespace HalloDoc.Controllers
         [HttpPost]
         public IActionResult SendAgreement(int requestid)
         {
-           
+
             string token = Guid.NewGuid().ToString() + ":" + requestid.ToString() + ":" + DateTime.Now.ToString();
-            var link = Url.Action("ReviewAgreement","PatientDashBoard", new { token = token } , protocol: HttpContext.Request.Scheme);
+            var link = Url.Action("ReviewAgreement", "PatientDashBoard", new { token = token }, protocol: HttpContext.Request.Scheme);
 
             string to = _adminActions.clientsbyreqid(requestid).First().Email;
             to = "priyank.patadiya@etatvasoft.com";
@@ -497,7 +501,7 @@ namespace HalloDoc.Controllers
 
             string Body = body.ToString();
 
-            if(to != null)
+            if (to != null)
             {
                 TempData["Message"] = "Aggrement Sent";
                 TempData["MessageType"] = "success";
@@ -520,11 +524,11 @@ namespace HalloDoc.Controllers
             return View(admin);
         }
 
-        public IActionResult changeAccInfo(AdminProfileVM model, List<string>regions)
+        public IActionResult changeAccInfo(AdminProfileVM model, List<string> regions)
         {
             string email = HttpContext.Session.GetString("Email");
 
-            if(email != "")
+            if (email != "")
             {
                 _admin.changeAccountInfo(model, email, regions);
                 HttpContext.Session.SetString("Email", email);
@@ -540,7 +544,7 @@ namespace HalloDoc.Controllers
         public IActionResult changeBillingInfo(AdminProfileVM model)
         {
             string email = HttpContext.Session.GetString("Email");
-            if(email != "")
+            if (email != "")
             {
                 _admin.changeBillingInfo(model, email);
                 TempData["Message"] = "Edited Successfully";
@@ -601,12 +605,12 @@ namespace HalloDoc.Controllers
         public IActionResult CreateRequestAdmin()
         {
             PatientReqVM model = new PatientReqVM();
-            model.Region =_admin.regions();
+            model.Region = _admin.regions();
             return PartialView("CreateRequestAdmin", model);
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateRequestAdmin(PatientReqVM model) 
+        public async Task<IActionResult> CreateRequestAdmin(PatientReqVM model)
         {
             var email = HttpContext.Session.GetString("Email");
             if (ModelState.IsValid)
@@ -617,7 +621,7 @@ namespace HalloDoc.Controllers
                 TempData["MessageType"] = "success";
                 return RedirectToAction("MainPage");
             }
-            
+
             model.Region = _admin.regions();
             return PartialView("CreateRequestAdmin", model);
 
@@ -641,7 +645,7 @@ namespace HalloDoc.Controllers
 
         public IActionResult ProviderProfile(int id)
         {
-            Physician? physician = _context.Physicians.FirstOrDefault(item => item.PhysicianId == id);
+            Physician? physician = _provider.getPhysicianById(id);
 
             PhysicianProfileVM physicanProfile = new PhysicianProfileVM();
             physicanProfile.FirstName = physician.FirstName;
@@ -652,12 +656,12 @@ namespace HalloDoc.Controllers
             physicanProfile.City = physician.City ?? "";
             physicanProfile.ZipCode = physician.Zip ?? "";
             physicanProfile.MobileNo = physician.Mobile ?? "";
-            physicanProfile.Regions = _context.Regions.ToList();
+            physicanProfile.Regions = _admin.regions();
             physicanProfile.MedicalLicense = physician.MedicalLicense;
             physicanProfile.NPINumber = physician.Npinumber;
             physicanProfile.SynchronizationEmail = physician.SyncEmailAddress;
             physicanProfile.physicianid = physician.PhysicianId;
-            physicanProfile.WorkingRegions = _context.PhysicianRegions.Where(item => item.PhysicianId == physician.PhysicianId).ToList();
+            physicanProfile.WorkingRegions = _provider.getList(physician.PhysicianId);
             physicanProfile.State = physician.RegionId;
             physicanProfile.SignatureFilename = physician.Signature;
             physicanProfile.BusinessWebsite = physician.BusinessWebsite;
@@ -674,19 +678,17 @@ namespace HalloDoc.Controllers
         public IActionResult ResetPhysicianPassword(string Password, int physicianid)
         {
 
-            Physician? physician = _context.Physicians.FirstOrDefault(item => item.PhysicianId == physicianid);
-            AspNetUser? account = _context.AspNetUsers.FirstOrDefault(item => item.Email == physician.Email);
+            Physician? physician = _provider.getPhysicianById(physicianid);
+            AspNetUser? account = _provider.getAccByEmail(physician.Email);
 
 
             if (account != null && Password != null)
             {
                 string passwordhash = _passwordHasher.HashPassword(null, Password);
-                account.PasswordHash = passwordhash;
-                _context.AspNetUsers.Update(account);
-                _context.SaveChanges();
+                _provider.UpdatePassword(account, passwordhash);
                 TempData["Message"] = "Password Changed Successfully!";
                 TempData["MessageType"] = "success";
-                
+
             }
             else
             {
@@ -697,39 +699,18 @@ namespace HalloDoc.Controllers
             return RedirectToAction("ProviderProfile", new { id = physicianid });
         }
 
-        public IActionResult PhysicianInformation(int id, string MobileNo, string[]Region, string SynchronizationEmail, string NPINumber, string MedicalLicense)
+        public IActionResult PhysicianInformation(int id, string MobileNo, string[] Region, string SynchronizationEmail, string NPINumber, string MedicalLicense)
         {
-            Physician? physician = _context.Physicians.FirstOrDefault(item => item.PhysicianId == id);
-
-            AspNetUser? account = _context.AspNetUsers.FirstOrDefault(item => item.Email == physician.Email);
+            Physician? physician = _provider.getPhysicianById(id);
+            AspNetUser? account = _provider.getAccByEmail(physician.Email);
+            string[] regions = Region;
             if (physician != null)
             {
-                physician.Mobile = MobileNo;
-                physician.Npinumber = NPINumber;
-                physician.MedicalLicense = MedicalLicense;
-                physician.SyncEmailAddress = SynchronizationEmail;
-                _context.Physicians.Update(physician);
-                _context.SaveChanges();
-
-
-                List<PhysicianRegion> region = _context.PhysicianRegions.
-                    Where(item => item.PhysicianId == physician.PhysicianId).ToList();
-
-                _context.PhysicianRegions.RemoveRange(region);
-                _context.SaveChanges();
-
-                foreach (var item in Region)
-                {
-                    PhysicianRegion physicianRegion = new PhysicianRegion();
-                    physicianRegion.PhysicianId = id;
-                    physicianRegion.RegionId = int.Parse(item);
-                    _context.Add(physicianRegion);
-                    _context.SaveChanges();
-                }
+                _provider.updatePhysicianInfo(physician, MobileNo, regions, SynchronizationEmail, NPINumber, MedicalLicense);
             }
             else
             {
-                
+
             }
             return RedirectToAction("ProviderProfile", new { id = id });
 
@@ -739,7 +720,7 @@ namespace HalloDoc.Controllers
         public IActionResult MailingBillingInformationProvider(int physicianid, string MobileNo, string Address1, string Address2, string City, int State, string Zipcode)
         {
 
-            Physician? physician = _context.Physicians.FirstOrDefault(item => item.PhysicianId == physicianid);
+            Physician? physician = _provider.getPhysicianById(physicianid);
             if (physician != null)
             {
                 physician.Address1 = Address1;
@@ -748,13 +729,11 @@ namespace HalloDoc.Controllers
                 physician.Mobile = MobileNo;
                 physician.RegionId = State;
                 physician.Zip = Zipcode;
-                _context.Physicians.Update(physician);
-                _context.SaveChanges();
-               
+                _provider.updateBilling(physician);
+
             }
             else
             {
-                
 
             }
             return RedirectToAction("ProviderProfile", new { id = physicianid });
@@ -765,11 +744,11 @@ namespace HalloDoc.Controllers
             try
             {
                 _admin.UpdateProviderProfile(id, businessName, businessWebsite, signatureFile, photoFile);
-                
+
             }
             catch (InvalidOperationException ex)
             {
-                
+
                 Console.WriteLine(ex.Message);
             }
 
@@ -783,10 +762,9 @@ namespace HalloDoc.Controllers
             if (signatureImage != null && signatureImage.Length > 0)
             {
                 string fileName = _uploadProvider.UploadSignature(signatureImage, id);
-                var physician = _context.Physicians.FirstOrDefault(item => item.PhysicianId == id);
+                var physician = _provider.getPhysicianById(id);
                 physician.Signature = fileName;
-                _context.Physicians.Update(physician);
-                _context.SaveChanges();
+                _provider.updateBilling(physician);
                 return Ok();
             }
             else
@@ -798,7 +776,7 @@ namespace HalloDoc.Controllers
         [HttpPost]
         public IActionResult UploadDocs(string fileName, IFormFile File, int physicianid)
         {
-            Physician? physician = _context.Physicians.FirstOrDefault(item => item.PhysicianId == physicianid);
+            Physician? physician = _provider.getPhysicianById(physicianid);
             if (physician != null)
             {
 
@@ -827,8 +805,7 @@ namespace HalloDoc.Controllers
                     var docfile = _uploadProvider.UploadDocFile(File, physicianid, fileName);
                     physician.IsLicenseDoc = new BitArray(new[] { true });
                 }
-                _context.Physicians.Update(physician);
-                _context.SaveChanges();
+                _provider.updateBilling(physician);
                 return Ok();
             }
             else
@@ -840,8 +817,143 @@ namespace HalloDoc.Controllers
         public IActionResult CreateProviderAcc()
         {
             PhysicianProfileVM model = new PhysicianProfileVM();
-            model.Regions = _context.Regions.ToList();
+            model.Regions = _admin.regions();
             return View("ProviderMenu/CreateProviderAccount", model);
+        }
+
+        [HttpPost]
+        public IActionResult CreateProviderAcc(PhysicianProfileVM model, string[] Region)
+        {
+            if (ModelState.IsValid)
+            {
+                AspNetUser user = new AspNetUser();
+                user.Id = Guid.NewGuid().ToString();
+                user.UserName = model.FirstName + model.LastName;
+                user.PasswordHash = _passHasher.HashPassword(null, model.Password);
+                user.Email = model.Username;
+                user.PhoneNumber = model.MobileNo;
+                user.CreatedDate = DateTime.Now;
+                _context.AspNetUsers.Add(user);
+                _context.SaveChanges();
+
+                var aspnetuserrole = new AspNetUserRole
+                {
+                    UserId = user.Id,
+                    RoleId = 3
+                };
+                _context.AspNetUserRoles.Add(aspnetuserrole);
+                _context.SaveChanges();
+
+                Physician physician = new Physician();
+                physician.AspNetUserId = user.Id;
+                physician.FirstName = model.FirstName;
+                physician.LastName = model.LastName;
+                physician.Email = model.Username;
+                physician.Mobile = model.MobileNo;
+                physician.MedicalLicense = model.MedicalLicense;
+                physician.IsCredentialDoc = new BitArray(new[] { false });
+                physician.IsLicenseDoc = new BitArray(new[] { false });
+                physician.Address1 = model.Address1;
+                physician.Address2 = model.Address2;
+                physician.City = model.City;
+                physician.RegionId = model.State;
+                physician.Zip = model.ZipCode;
+                physician.CreatedDate = DateTime.Now;
+                physician.Status = 1;
+                physician.BusinessName = model.BusinessName;
+                physician.BusinessWebsite = model.BusinessWebsite;
+                physician.RoleId = 2;
+                physician.Npinumber = model.NPINumber;
+                physician.Signature = model.SignatureFilename;
+                _context.Physicians.Add(physician);
+                _context.SaveChanges();
+                
+                if (model.File != null)
+                {
+                    _uploadProvider.UploadPhoto(model.File, physician.PhysicianId);
+                    physician.Photo = model.File.FileName;
+                }
+
+                if (model.ICAFile != null)
+                {
+                    _uploadProvider.UploadDocFile(model.File, physician.PhysicianId, "ICA");
+                    physician.IsAgreementDoc = new BitArray(new[] { true });
+                }
+                else
+                {
+                    physician.IsAgreementDoc = new BitArray(new[] { false });
+                }
+                if (model.BackFile != null)
+                {
+                    _uploadProvider.UploadDocFile(model.BackFile, physician.PhysicianId, "BackDoc");
+                    physician.IsBackgroundDoc = new BitArray(new[] { true });
+                }
+                else
+                {
+                    physician.IsBackgroundDoc = new BitArray(new[] { false });
+                }
+                if (model.HippaFile != null)
+                {
+                    _uploadProvider.UploadDocFile(model.HippaFile, physician.PhysicianId, "TrainingDoc");
+                    physician.IsTrainingDoc = new BitArray(new[] { true });
+                }
+                else
+                {
+                    physician.IsTrainingDoc = new BitArray(new[] { false });
+                }
+                if (model.NonFile != null)
+                {
+                    _uploadProvider.UploadDocFile(model.NonFile, physician.PhysicianId, "NonDisclosureDoc");
+                    physician.IsNonDisclosureDoc = new BitArray(new[] { true });
+                }
+                else
+                {
+                    physician.IsNonDisclosureDoc = new BitArray(new[] { false });
+                }
+                _context.Physicians.Update(physician);
+                _context.SaveChanges();
+
+                foreach (var item in Region)
+                {
+                    PhysicianRegion physicianRegion = new PhysicianRegion();
+                    physicianRegion.PhysicianId = physician.PhysicianId;
+                    physicianRegion.RegionId = int.Parse(item);
+                    _context.Add(physicianRegion);
+                    _context.SaveChanges();
+                }
+
+                PhysicianNotification notification = new PhysicianNotification
+                {
+                    PhysicianId = physician.PhysicianId,
+                    IsNotificationStopped = new BitArray(new[] { false })
+                };
+                _context.PhysicianNotifications.Add( notification );
+                _context.SaveChanges();
+
+
+            }
+            return RedirectToAction("Provider");
+        }
+
+        public IActionResult changeNotification(bool isChecked, string id)
+        {
+            var phynoty = _context.PhysicianNotifications.Where(u => u.PhysicianId == int.Parse(id)).FirstOrDefault();
+            if(phynoty != null)
+            {
+                if(isChecked == true)
+                {
+                    phynoty.IsNotificationStopped = new BitArray(new[] { true });
+                }
+                else
+                {
+                    phynoty.IsNotificationStopped = new BitArray(new[] { false });
+                }
+
+                _context.PhysicianNotifications.Update(phynoty);
+                _context.SaveChanges();
+                return RedirectToAction("Provider");
+            }
+            return RedirectToAction("Provider");
         }
     }
 }

@@ -160,6 +160,7 @@ namespace BAL.Repository
             var result = (from req in _context.Requests
                           join reqclient in _context.RequestClients
                           on req.RequestId equals reqclient.RequestId
+                          orderby req.CreatedDate
                           select new AdminDashboardTableVM()
                           {
                               PatientName = reqclient.FirstName + " " + reqclient.LastName,

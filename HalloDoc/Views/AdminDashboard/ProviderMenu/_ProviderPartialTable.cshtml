@@ -25,25 +25,40 @@
         @foreach (var physician in Model)
         {
             <tr>
-                <td class="align-middle">
-                    <input type="checkbox" />
+                <td scope="row" class="align-middle">
+                    <input type="checkbox" class="form-check-input" name="fileIds" id="locationBox" onchange="locationchange(@physician.physicianid)" @(physician.OnCallStatus[0] ? "checked" : "")>
                 </td>
 
                 <td class="align-middle">
-                    @physician.FirstName @physician.LastName
+                    @physician.Name
                 </td>
                 <td class="align-middle">
-                    @physician.RoleId
+                    @physician.Role
                 </td>
                 <td class="align-middle">
-                    Un Available
+                    UnAvailable
                 </td>
-                <td class="align-middle">
-                    @physician.Status
+                <td scope="row" class="align-middle">
+                    @if (physician.Status == 1)
+                    {
+                        <span class="badge bg-success">Active</span>
+                    }
+                    else if (physician.Status == 2)
+                    {
+                        <span class="badge bg-warning text-dark">Pending</span>
+                    }
+                    else if (physician.Status == 3)
+                    {
+                        <span class="badge bg-secondary">Conclude</span>
+                    }
+                    else
+                    {
+                        <span class="badge bg-danger">Unknown</span>
+                    }
                 </td>
                 <td>
-                    <button class="btn btn-outline-info contact-provider-btn shadow-none" data-physician-id="@*@physician.Physicianid*@">Contact</button>
-                    <a asp-action="ProviderProfile" asp-route-id="@physician.PhysicianId" class="btn btn-outline-info shadow-none ">Edit</a>
+                    <a asp-action="patientnoti" asp-route-id="@physician.physicianid" class="btn btn-outline-info contact-provider-btn shadow-none" data-physician-id="@*@physician.Physicianid*@">Contact</a>
+                    <a asp-action="ProviderProfile" asp-route-id="@physician.physicianid" class="btn btn-outline-info shadow-none ">Edit</a>
                 </td>
             </tr>
         }
@@ -51,3 +66,20 @@
     </tbody>
 
 </table>
+<script>
+    function locationchange(id){
+        var boxid = $("#locationBox");
+        var isChecked = boxid.is(':checked');
+        $.ajax({
+           type: 'Post',
+           url: 'changeNotification/AdminDashboard',
+           data : {isChecked: isChecked , id : id },
+           success : function (){
+               console.log("Checked");
+           },
+           error: function(error){
+               console.log("error to check");
+           }
+        });
+    }
+</script>
