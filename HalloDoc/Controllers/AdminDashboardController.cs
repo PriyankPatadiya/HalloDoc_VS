@@ -9,8 +9,7 @@ using IHostingEnvironment = Microsoft.AspNetCore.Hosting.IHostingEnvironment;
 using Rotativa.AspNetCore;
 using Microsoft.AspNetCore.Identity;
 using System.Collections;
-using Microsoft.IdentityModel.Abstractions;
-using Microsoft.EntityFrameworkCore;
+using OfficeOpenXml;
 
 namespace HalloDoc.Controllers
 {
@@ -28,9 +27,10 @@ namespace HalloDoc.Controllers
         private readonly IPasswordHasher<AdminProfileVM> _passwordHasher;
         private readonly IPasswordHasher<PhysicianProfileVM> _passHasher;
         private readonly IUploadProvider _uploadProvider;
+        private readonly IAccessMenu _accessMenu;
 
         public AdminDashboardController(ApplicationDbContext context, IAdminDashboard admin, IAdminActions action, IHostingEnvironment env, IuploadFile uploadfile, IPatientRequest request, IEmailService emailService, IPasswordHasher<AdminProfileVM> password,
-                    IProviders providers, IUploadProvider upload, IPasswordHasher<PhysicianProfileVM> hasher)
+                    IProviders providers, IUploadProvider upload, IPasswordHasher<PhysicianProfileVM> hasher, IAccessMenu menu)
         {
             _context = context;
             _admin = admin;
@@ -43,6 +43,7 @@ namespace HalloDoc.Controllers
             _provider = providers;
             _uploadProvider = upload;
             _passHasher = hasher;
+            _accessMenu = menu;
         }
 
         public IActionResult MainPage()
@@ -107,6 +108,74 @@ namespace HalloDoc.Controllers
                 return PartialView(partialviewpath, paginatedData);
             }
             return View("MainPage");
+        }
+
+        // Export
+
+        public IActionResult exportfile(string StatusButton, int pagesize, int currentpage)
+        {
+            var result = _admin.GetRequestsQuery(StatusButton);
+            result = result.Skip((currentpage - 1) * pagesize).Take(pagesize);
+
+            using (var excel = new ExcelPackage())
+            {
+                var worksheet = excel.Workbook.Worksheets.Add("sheet1");
+                worksheet.Cells[1, 1].Value = "PatientName";
+                worksheet.Cells[1, 2].Value = "BirthDate";
+                worksheet.Cells[1, 3].Value = "RequestorName";
+                worksheet.Cells[1, 4].Value = "RequestDate";
+                worksheet.Cells[1, 5].Value = "phone";
+                worksheet.Cells[1, 6].Value = "address";
+                worksheet.Cells[1, 7].Value = "Email";
+
+                var row = 2;
+                foreach (var item in result)
+                {
+                    worksheet.Cells[row, 1].Value = item.physicianname;
+                    worksheet.Cells[row, 2].Value = item.BirthDate;
+                    worksheet.Cells[row, 3].Value = item.RequestorName;
+                    worksheet.Cells[row, 4].Value = item.RequestDate;
+                    worksheet.Cells[row, 5].Value = item.phone;
+                    worksheet.Cells[row, 6].Value = item.address;
+                    worksheet.Cells[row, 7].Value = item.Email;
+                    row++;
+                }
+
+                var excelBytes = excel.GetAsByteArray();
+                return File(excelBytes, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "export.xlsx");
+            }
+        }
+
+        public IActionResult exportAll(string StatusButton)
+        {
+            var result = _admin.GetRequestsQuery(StatusButton);
+            using (var excel = new ExcelPackage())
+            {
+                var worksheet = excel.Workbook.Worksheets.Add("sheet1");
+                worksheet.Cells[1, 1].Value = "PatientName";
+                worksheet.Cells[1, 2].Value = "BirthDate";
+                worksheet.Cells[1, 3].Value = "RequestorName";
+                worksheet.Cells[1, 4].Value = "RequestDate";
+                worksheet.Cells[1, 5].Value = "phone";
+                worksheet.Cells[1, 6].Value = "address";
+                worksheet.Cells[1, 7].Value = "Email";
+
+                var row = 2;
+                foreach (var item in result)
+                {
+                    worksheet.Cells[row, 1].Value = item.physicianname;
+                    worksheet.Cells[row, 2].Value = item.BirthDate;
+                    worksheet.Cells[row, 3].Value = item.RequestorName;
+                    worksheet.Cells[row, 4].Value = item.RequestDate;
+                    worksheet.Cells[row, 5].Value = item.phone;
+                    worksheet.Cells[row, 6].Value = item.address;
+                    worksheet.Cells[row, 7].Value = item.Email;
+                    row++;
+                }
+
+                var excelBytes = excel.GetAsByteArray();
+                return File(excelBytes, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "exportAll.xlsx");
+            }
         }
 
         // Encounter Form Actions
@@ -826,134 +895,42 @@ namespace HalloDoc.Controllers
         {
             if (ModelState.IsValid)
             {
-                AspNetUser user = new AspNetUser();
-                user.Id = Guid.NewGuid().ToString();
-                user.UserName = model.FirstName + model.LastName;
-                user.PasswordHash = _passHasher.HashPassword(null, model.Password);
-                user.Email = model.Username;
-                user.PhoneNumber = model.MobileNo;
-                user.CreatedDate = DateTime.Now;
-                _context.AspNetUsers.Add(user);
-                _context.SaveChanges();
-
-                var aspnetuserrole = new AspNetUserRole
-                {
-                    UserId = user.Id,
-                    RoleId = 3
-                };
-                _context.AspNetUserRoles.Add(aspnetuserrole);
-                _context.SaveChanges();
-
-                Physician physician = new Physician();
-                physician.AspNetUserId = user.Id;
-                physician.FirstName = model.FirstName;
-                physician.LastName = model.LastName;
-                physician.Email = model.Username;
-                physician.Mobile = model.MobileNo;
-                physician.MedicalLicense = model.MedicalLicense;
-                physician.IsCredentialDoc = new BitArray(new[] { false });
-                physician.IsLicenseDoc = new BitArray(new[] { false });
-                physician.Address1 = model.Address1;
-                physician.Address2 = model.Address2;
-                physician.City = model.City;
-                physician.RegionId = model.State;
-                physician.Zip = model.ZipCode;
-                physician.CreatedDate = DateTime.Now;
-                physician.Status = 1;
-                physician.BusinessName = model.BusinessName;
-                physician.BusinessWebsite = model.BusinessWebsite;
-                physician.RoleId = 2;
-                physician.Npinumber = model.NPINumber;
-                physician.Signature = model.SignatureFilename;
-                _context.Physicians.Add(physician);
-                _context.SaveChanges();
-                
-                if (model.File != null)
-                {
-                    _uploadProvider.UploadPhoto(model.File, physician.PhysicianId);
-                    physician.Photo = model.File.FileName;
-                }
-
-                if (model.ICAFile != null)
-                {
-                    _uploadProvider.UploadDocFile(model.File, physician.PhysicianId, "ICA");
-                    physician.IsAgreementDoc = new BitArray(new[] { true });
-                }
-                else
-                {
-                    physician.IsAgreementDoc = new BitArray(new[] { false });
-                }
-                if (model.BackFile != null)
-                {
-                    _uploadProvider.UploadDocFile(model.BackFile, physician.PhysicianId, "BackDoc");
-                    physician.IsBackgroundDoc = new BitArray(new[] { true });
-                }
-                else
-                {
-                    physician.IsBackgroundDoc = new BitArray(new[] { false });
-                }
-                if (model.HippaFile != null)
-                {
-                    _uploadProvider.UploadDocFile(model.HippaFile, physician.PhysicianId, "TrainingDoc");
-                    physician.IsTrainingDoc = new BitArray(new[] { true });
-                }
-                else
-                {
-                    physician.IsTrainingDoc = new BitArray(new[] { false });
-                }
-                if (model.NonFile != null)
-                {
-                    _uploadProvider.UploadDocFile(model.NonFile, physician.PhysicianId, "NonDisclosureDoc");
-                    physician.IsNonDisclosureDoc = new BitArray(new[] { true });
-                }
-                else
-                {
-                    physician.IsNonDisclosureDoc = new BitArray(new[] { false });
-                }
-                _context.Physicians.Update(physician);
-                _context.SaveChanges();
-
-                foreach (var item in Region)
-                {
-                    PhysicianRegion physicianRegion = new PhysicianRegion();
-                    physicianRegion.PhysicianId = physician.PhysicianId;
-                    physicianRegion.RegionId = int.Parse(item);
-                    _context.Add(physicianRegion);
-                    _context.SaveChanges();
-                }
-
-                PhysicianNotification notification = new PhysicianNotification
-                {
-                    PhysicianId = physician.PhysicianId,
-                    IsNotificationStopped = new BitArray(new[] { false })
-                };
-                _context.PhysicianNotifications.Add( notification );
-                _context.SaveChanges();
-
-
+                string hashedpass = _passHasher.HashPassword(null, model.Password);
+                _provider.createproviderAcc(model, Region, hashedpass);
+                return RedirectToAction("Provider");
             }
-            return RedirectToAction("Provider");
+            model.Regions = _admin.regions();
+            return View("ProviderMenu/CreateProviderAccount", model);
         }
 
         public IActionResult changeNotification(bool isChecked, string id)
         {
-            var phynoty = _context.PhysicianNotifications.Where(u => u.PhysicianId == int.Parse(id)).FirstOrDefault();
-            if(phynoty != null)
+            bool ans = _provider.changeNotification(isChecked, id);
+            if (ans)
             {
-                if(isChecked == true)
-                {
-                    phynoty.IsNotificationStopped = new BitArray(new[] { true });
-                }
-                else
-                {
-                    phynoty.IsNotificationStopped = new BitArray(new[] { false });
-                }
-
-                _context.PhysicianNotifications.Update(phynoty);
-                _context.SaveChanges();
-                return RedirectToAction("Provider");
+                TempData["Message"] = "NotificationChanged";
+                TempData["MessageType"] = "success";
+            }
+            else
+            {
+                TempData["Message"] = "can't change notification!";
+                TempData["MessageType"] = "error";
             }
             return RedirectToAction("Provider");
+        }
+
+
+        // Access 
+
+        public IActionResult userAccess()
+        {
+            return View("AccessMenu/UserAccess");
+        }
+
+        public IActionResult filterUserAccessTable(string AccTypeId)
+        {
+            var result = _accessMenu.getUserAccessData(int.Parse(AccTypeId));
+            return PartialView("AccessMenu/_UserAccessPartial", result);
         }
     }
 }

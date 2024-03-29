@@ -15,9 +15,11 @@ namespace BAL.Repository
     public class ProviderService : IProviders
     {
         private readonly ApplicationDbContext _context;
-        public ProviderService(ApplicationDbContext context)
+        private readonly IUploadProvider _uploadProvider;
+        public ProviderService(ApplicationDbContext context, IUploadProvider uploadProvider)
         {
             _context = context;
+            this._uploadProvider = uploadProvider;
         }
         public List<AdminProvidersVM> getPhysicianList(int stateid)
         {
@@ -110,6 +112,138 @@ namespace BAL.Repository
         {
             _context.Physicians.Update(physician);
             _context.SaveChanges();
+        }
+
+
+
+        public void createproviderAcc(PhysicianProfileVM model, string[] Region, string password)
+        {
+            AspNetUser user = new AspNetUser();
+            user.Id = Guid.NewGuid().ToString();
+            user.UserName = model.FirstName + model.LastName;
+            user.PasswordHash = password;
+            user.Email = model.Username;
+            user.PhoneNumber = model.MobileNo;
+            user.CreatedDate = DateTime.Now;
+            _context.AspNetUsers.Add(user);
+            _context.SaveChanges();
+
+            var aspnetuserrole = new AspNetUserRole
+            {
+                UserId = user.Id,
+                RoleId = 3
+            };
+            _context.AspNetUserRoles.Add(aspnetuserrole);
+            _context.SaveChanges();
+
+            Physician physician = new Physician();
+            physician.AspNetUserId = user.Id;
+            physician.FirstName = model.FirstName;
+            physician.LastName = model.LastName;
+            physician.Email = model.Username;
+            physician.Mobile = model.MobileNo;
+            physician.MedicalLicense = model.MedicalLicense;
+            physician.IsCredentialDoc = new BitArray(new[] { false });
+            physician.IsLicenseDoc = new BitArray(new[] { false });
+            physician.Address1 = model.Address1;
+            physician.Address2 = model.Address2;
+            physician.City = model.City;
+            physician.RegionId = model.State;
+            physician.Zip = model.ZipCode;
+            physician.CreatedDate = DateTime.Now;
+            physician.Status = 1;
+            physician.BusinessName = model.BusinessName;
+            physician.BusinessWebsite = model.BusinessWebsite;
+            physician.RoleId = 2;
+            physician.Npinumber = model.NPINumber;
+            physician.Signature = model.SignatureFilename;
+            _context.Physicians.Add(physician);
+            _context.SaveChanges();
+
+            if (model.File != null)
+            {
+                _uploadProvider.UploadPhoto(model.File, physician.PhysicianId);
+                physician.Photo = model.File.FileName;
+            }
+
+            if (model.ICAFile != null)
+            {
+                _uploadProvider.UploadDocFile(model.File, physician.PhysicianId, "ICA");
+                physician.IsAgreementDoc = new BitArray(new[] { true });
+            }
+            else
+            {
+                physician.IsAgreementDoc = new BitArray(new[] { false });
+            }
+            if (model.BackFile != null)
+            {
+                _uploadProvider.UploadDocFile(model.BackFile, physician.PhysicianId, "BackDoc");
+                physician.IsBackgroundDoc = new BitArray(new[] { true });
+            }
+            else
+            {
+                physician.IsBackgroundDoc = new BitArray(new[] { false });
+            }
+            if (model.HippaFile != null)
+            {
+                _uploadProvider.UploadDocFile(model.HippaFile, physician.PhysicianId, "TrainingDoc");
+                physician.IsTrainingDoc = new BitArray(new[] { true });
+            }
+            else
+            {
+                physician.IsTrainingDoc = new BitArray(new[] { false });
+            }
+            if (model.NonFile != null)
+            {
+                _uploadProvider.UploadDocFile(model.NonFile, physician.PhysicianId, "NonDisclosureDoc");
+                physician.IsNonDisclosureDoc = new BitArray(new[] { true });
+            }
+            else
+            {
+                physician.IsNonDisclosureDoc = new BitArray(new[] { false });
+            }
+            _context.Physicians.Update(physician);
+            _context.SaveChanges();
+
+            foreach (var item in Region)
+            {
+                PhysicianRegion physicianRegion = new PhysicianRegion();
+                physicianRegion.PhysicianId = physician.PhysicianId;
+                physicianRegion.RegionId = int.Parse(item);
+                _context.Add(physicianRegion);
+                _context.SaveChanges();
+            }
+
+            PhysicianNotification notification = new PhysicianNotification
+            {
+                PhysicianId = physician.PhysicianId,
+                IsNotificationStopped = new BitArray(new[] { false })
+            };
+            _context.PhysicianNotifications.Add(notification);
+            _context.SaveChanges();
+
+        }
+
+        public bool changeNotification(bool ischecked, string id)
+        {
+            bool res;
+            var phynoty = _context.PhysicianNotifications.Where(u => u.PhysicianId == int.Parse(id)).FirstOrDefault();
+            if (phynoty != null)
+            {
+                if (ischecked == true)
+                {
+                    phynoty.IsNotificationStopped = new BitArray(new[] { true });
+                }
+                else
+                {
+                    phynoty.IsNotificationStopped = new BitArray(new[] { false });
+                }
+
+                _context.PhysicianNotifications.Update(phynoty);
+                _context.SaveChanges();
+                return true;
+            }
+            return false;
         }
     }
 }

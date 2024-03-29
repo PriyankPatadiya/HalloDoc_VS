@@ -1,4 +1,4 @@
-﻿$(document).ready(function () {
+﻿
     filterPartial("0");
     $("#SelectedStateId").on("change", function () {
         var stateid = $(this).val();
@@ -22,4 +22,3 @@
             }
         });
     }
-});

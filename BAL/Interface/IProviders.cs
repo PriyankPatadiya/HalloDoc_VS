@@ -18,5 +18,7 @@ namespace BAL.Interface
         public void UpdatePassword(AspNetUser user, string password);
         public void updatePhysicianInfo(Physician physician, string MobileNo, string[] Region, string SynchronizationEmail, string NPINumber, string MedicalLicense);
         public void updateBilling(Physician physician);
+        public void createproviderAcc(PhysicianProfileVM model, string[] Region, string password);
+        public bool changeNotification(bool ischecked, string id);
     }
 }

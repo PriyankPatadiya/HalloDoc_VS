@@ -189,7 +189,23 @@ $(document).ready(function () {
         }
     });
 
-    
+
+    // Export
+
+    $("#exportFilteredExcelBtn").click(function () {
+
+        // Set the URL for file download
+        var downloadUrl = "/AdminDashboard/exportfile?StatusButton=" + StatusButton + "&pagesize=" + pagesize + "&currentpage=" + currentpage;
+
+        // Navigate to the download URL
+        window.location.href = downloadUrl;
+    });
+
+    $("#exportAllExcelBtn").click(function () {
+        var downloadUrl = "/AdminDashboard/exportAll?StatusButton=" + StatusButton;
+        window.location.href = downloadUrl;
+    });
+
     // Main function that filters and load partial view in admin dashboard
     function ChangeTable(partialviewpath, StatusButton, currentpage, pagesize) {
 
