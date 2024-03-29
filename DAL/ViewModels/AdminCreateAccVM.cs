@@ -1,16 +1,14 @@
-﻿using System.ComponentModel.DataAnnotations;
-using DAL.DataModels;
-using Microsoft.AspNetCore.Http;
+﻿using DAL.DataModels;
 using System;
-using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace DAL.ViewModels
 {
-    public class PhysicianProfileVM
+    public class AdminCreateAccVM
     {
         [Required(ErrorMessage = "Username is required")]
         public string? Username { get; set; }
@@ -57,46 +55,6 @@ namespace DAL.ViewModels
         public string? ZipCode { get; set; }
 
         public List<Region>? Regions { get; set; }
-
-        public List<PhysicianRegion>? WorkingRegions { get; set; }
-
-        public int physicianid { get; set; }
-
-        public string? MedicalLicense { get; set; }
-
-        public string? NPINumber { get; set; }
-
-        public string? SynchronizationEmail { get; set; }
-
-        public string? BusinessName { get; set; }
-
-        public string? BusinessWebsite { get; set; }
-
-        public string? AdminNotes { get; set; }
-
-        public IFormFile? File { get; set; }
-
-        public string? PhotoFileName { get; set; }
-
-        public string? SignatureFilename { get; set; }
-
-        public BitArray? IsAgreement { get; set; }
-
-        public BitArray? IsBackground { get; set; }
-
-        public BitArray? IsHippa { get; set; }
-
-        public BitArray? NonDiscoluser { get; set; }
-
-        public BitArray? License { get; set; }
-
-        public IFormFile? ICAFile { get; set; }
-
-        public IFormFile? BackFile { get; set; }
-
-        public IFormFile? HippaFile { get; set; }
-
-        public IFormFile? NonFile { get; set; }
 
         public bool? isFromUserAccess { get; set; }
     }

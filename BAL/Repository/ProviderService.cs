@@ -5,6 +5,7 @@ using DAL.ViewModels;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
@@ -118,6 +119,11 @@ namespace BAL.Repository
 
         public void createproviderAcc(PhysicianProfileVM model, string[] Region, string password)
         {
+            if(model.isFromUserAccess == null)
+            {
+                model.isFromUserAccess = false;
+            }
+
             AspNetUser user = new AspNetUser();
             user.Id = Guid.NewGuid().ToString();
             user.UserName = model.FirstName + model.LastName;
@@ -244,6 +250,54 @@ namespace BAL.Repository
                 return true;
             }
             return false;
+        }
+
+        public void createAdminAcc(AdminCreateAccVM model, string password, int[] adminRegion)
+        {
+            AspNetUser user = new AspNetUser();
+            user.Id = Guid.NewGuid().ToString();
+            user.UserName = model.FirstName + model.LastName;
+            user.PasswordHash = password;
+            user.Email = model.Username;
+            user.PhoneNumber = model.MobileNo;
+            user.CreatedDate = DateTime.Now;
+            _context.AspNetUsers.Add(user);
+            _context.SaveChanges();
+
+            var aspnetuserrole = new AspNetUserRole
+            {
+                UserId = user.Id,
+                RoleId = 1
+            };
+            _context.AspNetUserRoles.Add(aspnetuserrole);
+            _context.SaveChanges();
+
+            Admin admin = new Admin();
+            admin.Email = model.Email;
+            admin.AspNetUserId = user.Id;
+            admin.FirstName = model.FirstName;
+            admin.LastName = model.LastName;
+            admin.Mobile = model.MobileNo;
+            admin.Address2 = model.Address2;
+            admin.Address1 = model.Address1;
+            admin.City = model.City;
+            admin.RegionId = model.State;
+            admin.Zip = model.ZipCode;
+            admin.CreatedBy = user.Id;
+            admin.Status = 1;
+
+            _context.Admins.Add(admin);
+            _context.SaveChanges();
+
+            foreach (var region in adminRegion)
+            {
+
+                AdminRegion adminregions = new AdminRegion();
+                adminregions.AdminId = admin.AdminId;
+                adminregions.RegionId = region;
+                _context.AdminRegions.Add(adminregions);
+                _context.SaveChanges();
+            }
         }
     }
 }

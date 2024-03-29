@@ -26,11 +26,12 @@ namespace HalloDoc.Controllers
         private readonly IEmailService _emailService;
         private readonly IPasswordHasher<AdminProfileVM> _passwordHasher;
         private readonly IPasswordHasher<PhysicianProfileVM> _passHasher;
+        private readonly IPasswordHasher<AdminCreateAccVM> _passAdminHasher;
         private readonly IUploadProvider _uploadProvider;
         private readonly IAccessMenu _accessMenu;
 
         public AdminDashboardController(ApplicationDbContext context, IAdminDashboard admin, IAdminActions action, IHostingEnvironment env, IuploadFile uploadfile, IPatientRequest request, IEmailService emailService, IPasswordHasher<AdminProfileVM> password,
-                    IProviders providers, IUploadProvider upload, IPasswordHasher<PhysicianProfileVM> hasher, IAccessMenu menu)
+                    IProviders providers, IUploadProvider upload, IPasswordHasher<PhysicianProfileVM> hasher, IAccessMenu menu, IPasswordHasher<AdminCreateAccVM> hasherr)
         {
             _context = context;
             _admin = admin;
@@ -44,6 +45,7 @@ namespace HalloDoc.Controllers
             _uploadProvider = upload;
             _passHasher = hasher;
             _accessMenu = menu;
+            _passAdminHasher = hasherr;
         }
 
         public IActionResult MainPage()
@@ -883,9 +885,17 @@ namespace HalloDoc.Controllers
             }
         }
 
-        public IActionResult CreateProviderAcc()
+        public IActionResult CreateProviderAcc(int id)
         {
             PhysicianProfileVM model = new PhysicianProfileVM();
+            if(id == 1)
+            {
+                model.isFromUserAccess = true;
+            }
+            else
+            {
+                model.isFromUserAccess = false;
+            }
             model.Regions = _admin.regions();
             return View("ProviderMenu/CreateProviderAccount", model);
         }
@@ -931,6 +941,26 @@ namespace HalloDoc.Controllers
         {
             var result = _accessMenu.getUserAccessData(int.Parse(AccTypeId));
             return PartialView("AccessMenu/_UserAccessPartial", result);
+        }
+
+        public IActionResult CreateAdminAcc()
+        {
+            AdminCreateAccVM model = new AdminCreateAccVM();
+            model.Regions = _admin.regions();
+            return View("ProviderMenu/CreateAdminAccount", model);
+        }
+
+        [HttpPost]
+        public IActionResult CreateAdminAcc(AdminCreateAccVM model, int[] adminRegion)
+        {
+            if (ModelState.IsValid)
+            {
+                string hashedPassword = _passAdminHasher.HashPassword(null, model.Password);
+                _provider.createAdminAcc(model, hashedPassword, adminRegion);
+                return RedirectToAction("userAccess");
+            }
+            model.Regions = _admin.regions();
+            return View("ProviderMenu/CreateAdminAccount",model);
         }
     }
 }

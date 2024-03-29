@@ -27,6 +27,7 @@ builder.Services.AddScoped<IJwtToken, JwtTokenServices>();
 builder.Services.AddScoped<IPasswordHasher<AdminProfileVM>, PasswordHasher<AdminProfileVM>>();
 builder.Services.AddScoped<IPasswordHasher<CreateAccVM>, PasswordHasher<CreateAccVM>>();
 builder.Services.AddScoped<IPasswordHasher<PhysicianProfileVM>, PasswordHasher<PhysicianProfileVM>>();
+builder.Services.AddScoped<IPasswordHasher<AdminCreateAccVM>, PasswordHasher < AdminCreateAccVM >> ();
 builder.Services.AddScoped<IProviders, ProviderService>();
 builder.Services.AddScoped<IUploadProvider, UploadProviderRepo>();
 builder.Services.AddScoped<IAccessMenu, AccessMenuRepo>();  

@@ -20,5 +20,6 @@ namespace BAL.Interface
         public void updateBilling(Physician physician);
         public void createproviderAcc(PhysicianProfileVM model, string[] Region, string password);
         public bool changeNotification(bool ischecked, string id);
+        public void createAdminAcc(AdminCreateAccVM model, string password, int[] adminRegion);
     }
 }
