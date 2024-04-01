@@ -1,0 +1,116 @@
+﻿@{
+    Layout = "~/Views/Shared/_LayoutAdminDash.cshtml";
+}
+
+<div class="justify-content-between d-flex container-fluid mb-2 position-relative container my-3">
+    <div class="">
+        <h3> Scheduling </h3>
+    </div>
+    <div>
+        <a asp-action="MainPage" class="btn btn-outline-info"> ❮  Back </a>
+    </div>
+</div>
+
+<div class="container bg-light-subtle pt-3 px-4 position-relative" style="height: 80% !important">
+    
+    <div class="p-0 m-0 d-flex justify-content-between">
+        <div class="d-flex border border-secondary bg-body rounded align-items-center my-2 col-3">
+            <select class="form-control shadow-none border-0" id="AccountTypeId" name="SelectedStateId">
+                <option value="0">All</option>
+                <option value="1">Admin</option>
+                <option value="3">Physician</option>
+            </select>
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-down me-2" viewBox="0 0 16 16">
+                <path fill-rule="evenodd" d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708" />
+            </svg>
+        </div>
+        <div class="d-flex mr-0 py-2 justify-content-end">
+            <button class="btn btn-info mx-2" id="providerBtn" style="width:fit-content">
+                <span>Providers On Call</span>
+            </button>
+            <button class="btn btn-info mx-2" id="adminBtn" style="width:fit-content">
+                <span>Shift for review</span>
+            </button>
+            <button class="btn btn-info mx-2" id="adminBtn" style="width:fit-content">
+                <span>Add New Shift</span>
+            </button>
+        </div>
+    </div>
+    <h4 class="w-100 my-0 py-3">Monday, Dec 4, 2023</h4>
+    <div class="m-0 pe-2 py-0 d-flex justify-content-end my-3">
+        <div class="m-0 p-0 text-danger">
+            <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" class="bi bi-circle-fill" viewBox="0 0 16 16">
+                <circle cx="8" cy="8" r="8" />
+            </svg>
+            <span class="text-body me-3">Pending Shifts</span>
+        </div>
+        <div class="m-0 p-0 text-success">
+            <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" class="bi bi-circle-fill" viewBox="0 0 16 16">
+                <circle cx="8" cy="8" r="8" />
+            </svg>
+            <span class="text-body">Approved Shifts</span>
+        </div>
+    </div>
+    <div class="my-3 p-0 d-flex justify-content-between">
+        <div>
+            <button class="rounded-5 btn btn-info text-white me-3">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-caret-left-fill" viewBox="0 0 16 16">
+                    <path d="m3.86 8.753 5.482 4.796c.646.566 1.658.106 1.658-.753V3.204a1 1 0 0 0-1.659-.753l-5.48 4.796a1 1 0 0 0 0 1.506z" />
+                </svg>
+            </button>
+            <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-calendar" viewBox="0 0 16 16">
+                <path d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5M1 4v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4z" />
+            </svg>
+            <button class="rounded-5 btn btn-info text-white ms-3">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-caret-right-fill" viewBox="0 0 16 16">
+                    <path d="m12.14 8.753-5.482 4.796c-.646.566-1.658.106-1.658-.753V3.204a1 1 0 0 1 1.659-.753l5.48 4.796a1 1 0 0 1 0 1.506z" />
+                </svg>
+            </button>
+        </div>
+        <div>
+            <button class="btn btn-info px-3">Day</button>
+            <button class="btn btn-info px-3">Week</button>
+            <button class="btn btn-info px-3">Month</button>
+        </div>
+    </div>
+    <div id="calendar" class="bottom-0"></div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar-scheduler@6.1.11/index.global.min.js"></script>
+<script>
+    var calendar;
+    document.addEventListener('DOMContentLoaded', function () {
+        var calendarEl = document.getElementById('calendar');
+        calendar = new FullCalendar.Calendar(calendarEl, {
+            height: 'auto',
+            schedulerLicenseKey: 'GPL-My-Project-Is-Open-Source',
+            themeSystem: 'bootstrap5',
+            headerToolbar: false,
+            initialView: 'resourceTimeline',
+            datesSet: function (info) {
+
+                var title = info.view.title;
+                $("#calendarTitle").html(title);
+
+            },
+            resources: [
+                { id: 'a', title: 'Room A' },
+                { id: 'b', title: 'Room B' },
+                { id: 'c', title: 'Room C' }
+            ],
+            events: [
+                { id: '1', resourceId: 'a', title: 'Meeting 1', start: '2024-03-28T08:00:00', end: '2024-03-28T10:00:00' },
+                { id: '2', resourceId: 'b', title: 'Meeting 2', start: '2024-03-28T09:00:00', end: '2024-03-28T11:00:00' },
+                { id: '3', resourceId: 'c', title: 'Meeting 3', start: '2024-03-28T10:00:00', end: '2024-03-28T12:00:00' }
+            ]
+        });
+
+        calendar.render();
+
+
+    });
+    let calendarNext = () => calendar.next();
+    let calendarPrev = () => calendar.prev();
+    let calendarToday = () => calendar.today();
+    let changeView = (type) => calendar.changeView(type);
+</script>

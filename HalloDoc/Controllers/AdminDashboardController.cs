@@ -702,6 +702,8 @@ namespace HalloDoc.Controllers
 
         public IActionResult Provider()
         {
+            var email = HttpContext.Session.GetString("Email");
+            ViewBag.username = _admin.username(email);
             ProviderMenuVM model = new ProviderMenuVM();
             model.regions = _admin.regions();
             return View("ProviderMenu/Provider", model);
@@ -716,6 +718,9 @@ namespace HalloDoc.Controllers
 
         public IActionResult ProviderProfile(int id)
         {
+            var email = HttpContext.Session.GetString("Email");
+            ViewBag.username = _admin.username(email);
+
             Physician? physician = _provider.getPhysicianById(id);
 
             PhysicianProfileVM physicanProfile = new PhysicianProfileVM();
@@ -887,6 +892,8 @@ namespace HalloDoc.Controllers
 
         public IActionResult CreateProviderAcc(int id)
         {
+            var email = HttpContext.Session.GetString("Email");
+            ViewBag.username = _admin.username(email);
             PhysicianProfileVM model = new PhysicianProfileVM();
             if (id == 1)
             {
@@ -934,6 +941,8 @@ namespace HalloDoc.Controllers
 
         public IActionResult userAccess()
         {
+            var email = HttpContext.Session.GetString("Email");
+            ViewBag.username = _admin.username(email);
             return View("AccessMenu/UserAccess");
         }
 
@@ -945,6 +954,8 @@ namespace HalloDoc.Controllers
 
         public IActionResult CreateAdminAcc()
         {
+            var email = HttpContext.Session.GetString("Email");
+            ViewBag.username = _admin.username(email);
             AdminCreateAccVM model = new AdminCreateAccVM();
             model.Regions = _admin.regions();
             return View("ProviderMenu/CreateAdminAccount", model);
@@ -968,6 +979,8 @@ namespace HalloDoc.Controllers
 
         public IActionResult roleAccess()
         {
+            var email = HttpContext.Session.GetString("Email");
+            ViewBag.username = _admin.username(email);
             var roles = _context.Roles.ToList();
             var list = roles.Where(item => item.IsDeleted != null && (item.IsDeleted.Length == 0 || !item.IsDeleted[0]));
             return View("AccessMenu/RoleAccess", list.ToList());
@@ -976,6 +989,8 @@ namespace HalloDoc.Controllers
 
         public IActionResult CreateAccess()
         {
+            var email = HttpContext.Session.GetString("Email");
+            ViewBag.username = _admin.username(email);
             return View("AccessMenu/CreateAccess");
         }
 
@@ -1071,6 +1086,23 @@ namespace HalloDoc.Controllers
             }
             
             return RedirectToAction("roleAccess");
+        }
+
+        // location 
+
+        public IActionResult ProviderLocation()
+        {
+            return View();
+        }
+
+
+        // Scheduling
+
+        public IActionResult Scheduling()
+        {
+            var email = HttpContext.Session.GetString("Email");
+            ViewBag.username = _admin.username(email);
+            return View("Scheduling/Scheduling");
         }
     }
 }
