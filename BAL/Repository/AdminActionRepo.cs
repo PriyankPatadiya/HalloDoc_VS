@@ -2,6 +2,7 @@
 using DAL.DataContext;
 using DAL.DataModels;
 using DAL.ViewModels;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.IdentityModel.Abstractions;
 using Org.BouncyCastle.Asn1.Mozilla;
 using Org.BouncyCastle.Asn1.Ocsp;
@@ -111,15 +112,23 @@ namespace BAL.Repository
         }
         public ViewNotesVM viewnotes(int id)
         {
-            ViewNotesVM model = new ViewNotesVM();
-            var transferedNotes = (from reqlog in _context.RequestStatusLogs
-                                   where reqlog.RequestId == id
-                                   select reqlog.Notes).ToList();
-            model.TransferNotes = transferedNotes;
-            model.AdminNotes = _context.RequestNotes.FirstOrDefault(s => s.RequestId == id).AdminNotes;
-            model.PhysicianNotes = _context.RequestNotes.FirstOrDefault(s => s.RequestId == id).PhysicianNotes;
-            model.RequestId = id;
-            return model;
+            try
+            {
+                ViewNotesVM model = new ViewNotesVM();
+                var transferedNotes = (from reqlog in _context.RequestStatusLogs
+                                       where reqlog.RequestId == id
+                                       select reqlog.Notes).ToList();
+                model.TransferNotes = transferedNotes;
+                model.AdminNotes = _context.RequestNotes.FirstOrDefault(s => s.RequestId == id).AdminNotes;
+                model.PhysicianNotes = _context.RequestNotes.FirstOrDefault(s => s.RequestId == id).PhysicianNotes;
+                model.RequestId = id;
+                return model;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("",ex);
+            }
+            
         }
 
         public void addrequnotes(ViewNotesVM model, RequestNote notes)

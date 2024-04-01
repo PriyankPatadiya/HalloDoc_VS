@@ -1,0 +1,93 @@
+﻿@model List<DAL.DataModels.Role>
+@{
+    Layout = "~/Views/Shared/_LayoutAdminDash.cshtml";
+}
+<div class="container pt-3" style="height: 100% !important">
+    <div class="justify-content-between d-flex container-fluid mb-2 position-relative ">
+        <div class="">
+            <h3>Account Access</h3>
+        </div>
+        <div>
+            <a asp-action="MainPage" class="btn btn-outline-info"> ❮  Back </a>
+        </div>
+    </div>
+    <div class="card border-0 p-4 mb-5 rounded" style="height: 80% !important;">
+        <div class="row justify-content-between ps-3">
+
+            
+            <div class="d-flex col-3 mr-0 py-2 justify-content-end w-100">
+                <a asp-action="CreateAccess" class="btn btn-outline-info mx-2" id="providerBtn" style="width:fit-content">
+                    <span>Create Access</span>
+                </a>
+            </div>
+            <div class="table-responsive">
+                <table class="table">
+                    <colgroup>
+                        <col style="width: 40% !important" />    
+                        <col style="width: 40% !important" />    
+                        <col style="width: 20% !important" />    
+                    </colgroup>
+                    <thead class="table-secondary">
+                        <tr>
+                            <th scope="col">Name</th>
+                            <th scope="col">AccountType</th>
+                            <th scope="col">Action</th>
+                        </tr>
+                    </thead>
+                    @foreach (var item in Model)
+                    {
+                        <tbody>
+                            <tr>
+                                <td>@item.Name</td>
+                                <td>@item.AccountType</td>
+                                <td>
+                                    <a asp-action="EditAccess" asp-route-roleid="@item.RoleId" class="btn btn-outline-info">Edit</a>
+                                    <a asp-action="DeleteRole" asp-route-roleid="@item.RoleId" class="btn btn-outline-info">Delete</a>
+
+                                </td>
+                            </tr>
+                        </tbody>
+                    }
+                </table>
+            </div>
+            
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
+<script>
+    if ('@TempData["Message"]' != '') {
+        showToast('@TempData["Message"]', '@TempData["MessageType"]');
+        '@TempData.Remove("Message")'
+    }
+    function showToast(message, messageType) {
+        const Toast = Swal.mixin({
+            toast: true,
+            position: "top-end",
+            showConfirmButton: false,
+            timer: 3000,
+            timerProgressBar: true,
+            didOpen: (toast) => {
+                toast.onmouseenter = Swal.stopTimer;
+                toast.onmouseleave = Swal.resumeTimer;
+            }
+        });
+
+        let icon = "info";
+        if (messageType === "success") {
+            icon = "success";
+        } else if (messageType === "error") {
+            icon = "error";
+        } else if (messageType === "warning") {
+            icon = "warning";
+        }
+
+        Toast.fire({
+            icon: icon,
+            title: message
+        });
+    }
+</script>
+

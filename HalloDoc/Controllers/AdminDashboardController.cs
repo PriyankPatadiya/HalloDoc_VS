@@ -86,7 +86,7 @@ namespace HalloDoc.Controllers
         {
             var result = _admin.GetRequestsQuery(StatusButton);
             result = result.Where(s => (String.IsNullOrEmpty(SearchString) || s.PatientName.Contains(SearchString)) && (String.IsNullOrEmpty(selectButton) || s.requestId == int.Parse(selectButton)) && ((SelectedStateId == "0" || SelectedStateId == null) || s.regionId == int.Parse(SelectedStateId)));
-            
+
 
 
             int totalItems = result.Count();
@@ -346,11 +346,11 @@ namespace HalloDoc.Controllers
 
         // Assign Case Actions
         [HttpPost]
-        public IActionResult CancelCase(int reeqid)
+        public IActionResult CancelCase(int requestid)
         {
             string Reason = Request.Form["Reason"];
             string Notes = Request.Form["Notes"];
-            bool iscancel = _adminActions.changeStatusOnCancleCase(reeqid, Reason, Notes);
+            bool iscancel = _adminActions.changeStatusOnCancleCase(requestid, Reason, Notes);
             if (iscancel)
             {
                 TempData["Message"] = "success";
@@ -888,7 +888,7 @@ namespace HalloDoc.Controllers
         public IActionResult CreateProviderAcc(int id)
         {
             PhysicianProfileVM model = new PhysicianProfileVM();
-            if(id == 1)
+            if (id == 1)
             {
                 model.isFromUserAccess = true;
             }
@@ -960,7 +960,117 @@ namespace HalloDoc.Controllers
                 return RedirectToAction("userAccess");
             }
             model.Regions = _admin.regions();
-            return View("ProviderMenu/CreateAdminAccount",model);
+            return View("ProviderMenu/CreateAdminAccount", model);
+        }
+
+
+        // Role Access
+
+        public IActionResult roleAccess()
+        {
+            var roles = _context.Roles.ToList();
+            var list = roles.Where(item => item.IsDeleted != null && (item.IsDeleted.Length == 0 || !item.IsDeleted[0]));
+            return View("AccessMenu/RoleAccess", list.ToList());
+        }
+
+
+        public IActionResult CreateAccess()
+        {
+            return View("AccessMenu/CreateAccess");
+        }
+
+        public IActionResult GetRoles(int role)
+        {
+            var menu = _context.Menus.Where(item => role == 0 || item.AccountType == role).ToList();
+            return PartialView("AccessMenu/_CreateAccessRole", menu);
+        }
+
+
+        [HttpPost]
+        public IActionResult CreateAccess(int[] rolemenu, string rolename, int accounttype)
+        {
+            Role role = new Role();
+            role.Name = rolename;
+            role.AccountType = (short)accounttype;
+            role.CreatedBy = "admin";
+            role.CreatedDate = DateTime.Now;
+            role.IsDeleted = new BitArray(new[] { false });
+            _context.Roles.Add(role);
+            _context.SaveChanges();
+
+            foreach (var menu in rolemenu)
+            {
+                RoleMenu rolemenu1 = new RoleMenu();
+                rolemenu1.MenuId = menu;
+                rolemenu1.RoleId = role.RoleId;
+                _context.RoleMenus.Add(rolemenu1);
+                _context.SaveChanges();
+            }
+            TempData["Message"] = "Created Successfully!";
+            TempData["MessageType"] = "success";
+            return RedirectToAction("roleAccess");
+        }
+        public IActionResult EditAccess(int roleid)
+        {
+            var role = _context.Roles.Where(u => u.RoleId == roleid).First();
+            EditRoleAccessVM model = new EditRoleAccessVM();
+            model.roleid = roleid;
+            model.Name = role.Name;
+            model.accountType = role.AccountType;
+            model.Menus = _context.Menus.Where(u => u.AccountType == role.AccountType).ToList();
+            model.selectedmenus = _context.RoleMenus.Where(u => u.RoleId == roleid).ToList();
+            return View("AccessMenu/EditRole", model);
+        }
+
+        [HttpPost]
+        public IActionResult EditAccess(int[] rolemenu, string rolename, int roleid)
+        {
+            if (roleid != null)
+            {
+                var role = _context.Roles.Where(u => u.RoleId == roleid).First();
+                role.Name = rolename;
+                role.ModifiedDate = DateTime.Now;
+                role.ModifiedBy = rolename;
+                _context.Roles.Update(role);
+                _context.SaveChanges();
+
+                var prevRoleMenu = _context.RoleMenus.Where(u => u.RoleId == roleid).ToList();
+                _context.RoleMenus.RemoveRange(prevRoleMenu);
+                _context.SaveChanges();
+                foreach (var menu in rolemenu)
+                {
+                    RoleMenu rolemenu1 = new RoleMenu();
+                    rolemenu1.MenuId = menu;
+                    rolemenu1.RoleId = role.RoleId;
+                    _context.RoleMenus.Add(rolemenu1);
+                    _context.SaveChanges();
+                }
+            }
+            TempData["Message"] = "Edited Successfully!";
+            TempData["MessageType"] = "success";
+            return RedirectToAction("roleAccess");
+        }
+
+        public IActionResult DeleteRole(int roleid)
+        {
+            if(roleid != null)
+            {
+                var role = _context.Roles.Where(u => u.RoleId == roleid).First();
+                var prevRoleMenu = _context.RoleMenus.Where(u => u.RoleId == roleid).ToList();
+                _context.RoleMenus.RemoveRange(prevRoleMenu);
+                _context.Roles.Remove(role);
+                _context.SaveChanges();
+                TempData["Message"] = "Removed Successfully!";
+                TempData["MessageType"] = "success";
+                
+            }
+            else
+            {
+                TempData["Message"] = "Can't Remove!";
+                TempData["MessageType"] = "error";
+            }
+            
+            return RedirectToAction("roleAccess");
         }
     }
 }
