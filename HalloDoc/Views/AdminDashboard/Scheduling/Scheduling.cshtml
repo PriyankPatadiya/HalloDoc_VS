@@ -25,18 +25,18 @@
             </svg>
         </div>
         <div class="d-flex mr-0 py-2 justify-content-end">
-            <button class="btn btn-info mx-2" id="providerBtn" style="width:fit-content">
+            <button class="btn btn-info text-white mx-2" id="providerBtn" style="width:fit-content">
                 <span>Providers On Call</span>
             </button>
-            <button class="btn btn-info mx-2" id="adminBtn" style="width:fit-content">
+            <button class="btn btn-info text-white mx-2" id="adminBtn" style="width:fit-content">
                 <span>Shift for review</span>
             </button>
-            <button class="btn btn-info mx-2" id="adminBtn" style="width:fit-content">
+            <button class="btn btn-info text-white mx-2" id="adminBtn" style="width:fit-content">
                 <span>Add New Shift</span>
             </button>
         </div>
     </div>
-    <h4 class="w-100 my-0 py-3">Monday, Dec 4, 2023</h4>
+    <h4 class="w-100 my-0 py-3">Monday, Dec 4, 2024</h4>
     <div class="m-0 pe-2 py-0 d-flex justify-content-end my-3">
         <div class="m-0 p-0 text-danger">
             <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" class="bi bi-circle-fill" viewBox="0 0 16 16">
@@ -68,9 +68,9 @@
             </button>
         </div>
         <div>
-            <button class="btn btn-info px-3">Day</button>
-            <button class="btn btn-info px-3">Week</button>
-            <button class="btn btn-info px-3">Month</button>
+            <button class="btn btn-info text-white px-3">Day</button>
+            <button class="btn btn-info text-white px-3">Week</button>
+            <button class="btn btn-info text-white px-3">Month</button>
         </div>
     </div>
     <div id="calendar" class="bottom-0"></div>
@@ -80,6 +80,7 @@
 <script>
     var calendar;
     document.addEventListener('DOMContentLoaded', function () {
+        
         var calendarEl = document.getElementById('calendar');
         calendar = new FullCalendar.Calendar(calendarEl, {
             height: 'auto',
