@@ -1,6 +1,130 @@
 ﻿@{
     Layout = "~/Views/Shared/_LayoutAdminDash.cshtml";
 }
+@model DAL.ViewModels.SchedulingVM
+
+@* ----------------Create Shift Modal----------------- *@
+
+<div class="modal fade" id="createShiftModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <div class="modal-content border-0">
+            <div class="modal-header bg-info text-white">
+                <h5 class="modal-title" id="exampleModalLongTitle">Add New Shift </h5>
+                <button type="button" class="close btn " data-bs-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true"><i class="bi bi-x-lg text-white"></i></span>
+                </button>
+            </div>
+            <form asp-action="CreateShift" method="post" class="row p-3">
+                @*<input type="hidden" asp-for="Shiftid" />*@
+
+                <div class="form-floating my-3">
+                    <select asp-for="Regionid" class="p-2 px-3 form-control w-100 regionDropdown" onchange="filterPhysicianByRegion(this.value)" id="selectregion">
+                        <option value="" selected disabled>Regions</option>
+                        @foreach (var region in Model.Region)
+                        {
+                            <option value="@region.RegionId">@region.Name - (@region.Abbreviation)</option>
+                        }
+                    </select>
+                </div>
+
+                <div class="form-floating mb-3">
+                    <select class="form-select pt-1 physicianDropdown" asp-for="Physicianid" id="physicianDrop" aria-label="Default select example">
+                        <option value="0" selected disabled>Physician</option>
+                    </select>
+                </div>
+
+                <div class="col-md-12 form-floating mb-3">
+                    <input id="StartDate" asp-for="Startdate" class="form-control rounded vcs" name="Startdate" type="date" placeholder=Suchtext autocomplete=off>
+                    <label for="floatingInput">Starting Date</label>
+                </div>
+                <div class="col-md-6 form-floating mb-3">
+                    <input id="StartTime" asp-for="Starttime" class="form-control rounded vcs" name="Starttime" type="time" placeholder=Suchtext autocomplete=off>
+                    <label for="floatingInput">Start</label>
+                </div>
+                <div class="col-md-6 form-floating mb-3">
+                    <input id="EndTime" asp-for="Endtime" class="form-control rounded vcs" name="Endtime" type="time" placeholder=Suchtext autocomplete=off>
+                    <label for="floatingInput">End</label>
+                </div>
+                <div class="col-md-6 d-flex align-items-center justify-content-start mb-3">
+                    <label for="floatingInput" >Repeat</label>
+                    <label class="switch">
+                        <input type="checkbox" asp-for="Isrepeat" id="Isrepeat" class="switch-input form-check-input mx-3" onchange="toggleCheckboxes()">
+                        <span class="slider round"></span>
+                    </label>
+                </div>
+
+                <label class="my-2" for="Sunday">Repeat Days</label>
+                <input type="hidden" asp-for="checkWeekday" id="checkWeekday" />
+
+                <div class="col-md-12 row form-floating">
+
+                    <div class="col-md-4">
+                        <div class="form-check mx-2 d-flex align-items-center">
+                            <input onchange="menubox()" class="form-check-input Every disabled" disabled type="checkbox" name="Sunday" value="0">
+                            <label class="form-check-label" for="Sunday">Every Sunday</label>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4 ">
+                        <div class="form-check mx-2 d-flex align-items-center">
+                            <input onchange="menubox()" class="form-check-input Every" disabled type="checkbox" name="Monday" value="1">
+                            <label class="form-check-label" for="Monday">Every Monday</label>
+                        </div>
+                    </div>
+                    <div class="col-md-4 ">
+                        <div class="form-check mx-2 d-flex align-items-center">
+                            <input onchange="menubox()" class="form-check-input Every" disabled type="checkbox" name="Tuesday" value="2">
+                            <label class="form-check-label" for="Tuesday">Every Tuesday</label>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-check mx-2">
+                            <input onchange="menubox()" class="form-check-input Every" disabled type="checkbox" name="Wednesday" value="3">
+                            <label class="form-check-label" for="Wednesday">Every Wednesday</label>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-check mx-2 d-flex align-items-center">
+                            <input onchange="menubox()" class="form-check-input Every" disabled type="checkbox" name="Thursday" value="4">
+                            <label class="form-check-label" for="Thursday">Every Thursday</label>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-check mx-2 d-flex align-items-center">
+                            <input onchange="menubox()" class="form-check-input Every" disabled type="checkbox" name="Friday" value="5">
+                            <label class="form-check-label" for="Friday">Every Friday</label>
+                        </div>
+                    </div>
+                    <div class="col-md-3 ">
+                        <div class="form-check mx-2 d-flex align-items-center">
+                            <input onchange="menubox()" class="form-check-input Every" disabled type="checkbox" name="Saturday" value="6">
+                            <label class="form-check-label" for="Saturday">Every Saturday</label>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="col-md-12 form-floating  my-2">
+                    <select asp-for="Repeatupto" class="form-select form-select-sm mt-3 p-2" id="Refile" disabled data-allow-clear="true" tabindex="-1" data-control="select2" data-placeholder=" ">
+                        <option selected hidden>Reapet End</option>
+                        <option>1</option>
+                        <option>2</option>
+                        <option>3</option>
+                    </select>
+                </div>
+                <hr class="form-button-divider" />
+                <input type="hidden" id="checkWeekday" />
+
+                <div class="row">
+                    <div class="col-12 d-flex justify-content-end">
+                        <input type="submit" value="Save" class="btn btn-info text-white mx-2" />
+                        <button type="button" class="btn btn-outline-info hover_white" data-bs-dismiss="modal">Cancel</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
 
 <div class="justify-content-between d-flex container-fluid mb-2 position-relative container my-3">
     <div class="">
@@ -12,13 +136,15 @@
 </div>
 
 <div class="container bg-light-subtle pt-3 px-4 position-relative" style="height: 80% !important">
-    
+
     <div class="p-0 m-0 d-flex justify-content-between">
         <div class="d-flex border border-secondary bg-body rounded align-items-center my-2 col-3">
-            <select class="form-control shadow-none border-0" id="AccountTypeId" name="SelectedStateId">
-                <option value="0">All</option>
-                <option value="1">Admin</option>
-                <option value="3">Physician</option>
+            <select class="form-control shadow-none border-0" id="SelectedStateId" name="SelectedStateId">
+                <option value="0">All Region</option>
+                @foreach (var state in Model.Region)
+                {
+                    <option value="@state.RegionId">@state.Name</option>
+                }
             </select>
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-down me-2" viewBox="0 0 16 16">
                 <path fill-rule="evenodd" d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708" />
@@ -31,12 +157,16 @@
             <button class="btn btn-info text-white mx-2" id="adminBtn" style="width:fit-content">
                 <span>Shift for review</span>
             </button>
-            <button class="btn btn-info text-white mx-2" id="adminBtn" style="width:fit-content">
+            <button class="btn btn-info text-white mx-2" id="adminBtn" style="width:fit-content" data-bs-toggle="modal" data-bs-target="#createShiftModal">
                 <span>Add New Shift</span>
             </button>
         </div>
     </div>
-    <h4 class="w-100 my-0 py-3">Monday, Dec 4, 2024</h4>
+
+
+    <h4 class="w-100 my-0 py-3" id="dateOfShift"></h4>
+
+
     <div class="m-0 pe-2 py-0 d-flex justify-content-end my-3">
         <div class="m-0 p-0 text-danger">
             <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" class="bi bi-circle-fill" viewBox="0 0 16 16">
@@ -53,7 +183,7 @@
     </div>
     <div class="my-3 p-0 d-flex justify-content-between">
         <div>
-            <button class="rounded-5 btn btn-info text-white me-3">
+            <button type="button" class="rounded-5 btn btn-info text-white me-3" onclick="calendar.prev()">
                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-caret-left-fill" viewBox="0 0 16 16">
                     <path d="m3.86 8.753 5.482 4.796c.646.566 1.658.106 1.658-.753V3.204a1 1 0 0 0-1.659-.753l-5.48 4.796a1 1 0 0 0 0 1.506z" />
                 </svg>
@@ -61,57 +191,181 @@
             <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-calendar" viewBox="0 0 16 16">
                 <path d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5M1 4v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4z" />
             </svg>
-            <button class="rounded-5 btn btn-info text-white ms-3">
+            <button type="button" class="rounded-5 btn btn-info text-white ms-3" onclick="calendar.next()">
                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-caret-right-fill" viewBox="0 0 16 16">
                     <path d="m12.14 8.753-5.482 4.796c-.646.566-1.658.106-1.658-.753V3.204a1 1 0 0 1 1.659-.753l5.48 4.796a1 1 0 0 1 0 1.506z" />
                 </svg>
             </button>
         </div>
         <div>
-            <button class="btn btn-info text-white px-3">Day</button>
-            <button class="btn btn-info text-white px-3">Week</button>
-            <button class="btn btn-info text-white px-3">Month</button>
+            <button id="day" class="btn btn-outline-info  mx-2" onclick="calendar.changeView('resourceTimeline')">
+                Day
+            </button>
+            <!-- Button trigger modal -->
+            <button id="week" class="btn btn-outline-info mx-2" onclick="calendar.changeView('resourceTimelineWeek')">
+                Week
+            </button>
+            <button id="month" class="btn btn-outline-info mx-2" onclick="calendar.changeView('dayGridMonth')">
+                Month
+            </button>
         </div>
     </div>
-    <div id="calendar" class="bottom-0"></div>
+    <div id="calendar" class="bottom-0" style="height: 100vh !important"></div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/fullcalendar-scheduler@6.1.11/index.global.min.js"></script>
 <script>
-    var calendar;
-    document.addEventListener('DOMContentLoaded', function () {
-        
-        var calendarEl = document.getElementById('calendar');
-        calendar = new FullCalendar.Calendar(calendarEl, {
-            height: 'auto',
-            schedulerLicenseKey: 'GPL-My-Project-Is-Open-Source',
-            themeSystem: 'bootstrap5',
-            headerToolbar: false,
-            initialView: 'resourceTimeline',
-            datesSet: function (info) {
-
-                var title = info.view.title;
-                $("#calendarTitle").html(title);
-
-            },
-            resources: [
-                { id: 'a', title: 'Room A' },
-                { id: 'b', title: 'Room B' },
-                { id: 'c', title: 'Room C' }
-            ],
-            events: [
-                { id: '1', resourceId: 'a', title: 'Meeting 1', start: '2024-03-28T08:00:00', end: '2024-03-28T10:00:00' },
-                { id: '2', resourceId: 'b', title: 'Meeting 2', start: '2024-03-28T09:00:00', end: '2024-03-28T11:00:00' },
-                { id: '3', resourceId: 'c', title: 'Meeting 3', start: '2024-03-28T10:00:00', end: '2024-03-28T12:00:00' }
-            ]
-        });
-
-        calendar.render();
-
-
-    });
+    
+    
+    // Define functions to navigate the calendar and change the view
     let calendarNext = () => calendar.next();
     let calendarPrev = () => calendar.prev();
     let calendarToday = () => calendar.today();
     let changeView = (type) => calendar.changeView(type);
+
+    fetchPhysicianShifts("0");
+
+    function fetchPhysicianShifts(region) {
+        // Fetch physician shifts data
+        fetch(`/AdminDashboard/GetPhysicianShift?region=${region}`)
+            .then(response => response.json())
+            .then(data => {
+                // Create an array of resources using the physician data
+                const resources = data.map(physician => ({
+                    id: physician.physicianId,
+                    title: physician.firstName,
+                }));
+                fetch(`/AdminDashboard/getEvents?regionId=${region}`)
+                .then(response => response.json())
+                .then(data => {
+                    debugger
+                        const events = data.map(event => ({
+                            id: event.shiftDetailId,
+                            resourceId: event.physicianid,
+                            title: event.title,
+                            start: event.starttime,
+                            end: event.endtime,
+                            eventBackgroundColor: event.status === 1 ? '#32d97d' : '#e39de8',
+                            color: event.status === 1 ? '#e39de8' : '#32d97d',
+                            ShiftDetailId: event.shiftDetailId,
+                            region: event.region,
+                            status: event.status
+
+                    }));
+
+                        var calendarEl = document.getElementById('calendar');
+                        calendar = new FullCalendar.Calendar(calendarEl, {
+                            height: 'auto',
+                            schedulerLicenseKey: 'GPL-My-Project-Is-Open-Source',
+                            themeSystem: 'bootstrap5',
+                            headerToolbar: false,
+                            initialView: 'resourceTimeline',
+                            resourceAreaWidth: '15%',
+                            resources: resources,
+                            events: events,
+                            datesSet: function (info) {
+                                var title = info.view.title;
+                                $("#dateOfShift").html(title);
+                            },
+                            views: {
+                                resourceTimelineDay: {
+                                    buttonText: 'Day',
+                                },
+                                resourceTimelineWeek: {
+                                    buttonText: 'Week',
+                                    slotDuration: { days: 1 },
+                                    slotLabelInterval: { days: 1 },
+                                    slotMinTime: '00:00:00',
+                                    slotMaxTime: '23:59:59',
+                                    slotLabelFormat: {
+                                        omitWeekday: false,
+                                        weekday: 'short',
+                                        day: '2-digit',
+                                        omitCommas: true,
+                                        meridiem: 'short'
+                                    }
+                                },
+                                resourceTimelineMonth: {
+                                    buttonText: 'Month',
+                                    eventLimit: true, // Set the event limit to 3
+                                    eventLimitText: "More"
+                                }
+                            },
+                            // ... other calendar options ...
+                        });
+                        calendar.render();
+
+                });
+                 //Create an array of events using the physician shift data
+                //const events = data.map(shift => ({
+                //    id: shift.shiftId,
+                //    resourceId: shift.physicianId,
+                //    start: shift.startTime,
+                //    end: shift.endTime,
+                //    title: `${shift.startTime} - ${shift.endTime}`,
+                //    backgroundColor: '#4caf50',
+                //}));
+
+                // Initialize the calendar with the resources and events
+
+               
+            });
+    }
+
+    function filterPhysicianByRegion(RegionId) {
+        if (RegionId != "0") {
+            $.ajax({
+                type: "GET",
+                url: "/AdminDashboard/filterPhyByRegion",
+                data: { RegionId: RegionId },
+
+                success: function (data) {
+                    $('#physicianDrop').empty();
+                    $.each(data, function (index, item) {
+
+                        $('#physicianDrop').append($('<option>').text(item.firstName).attr('value', item.physicianId));
+                    });
+                    $('#physicianDrop option:first').prop('selected', true);
+                }
+            });
+        }
+    }
+
+    window.onload = toggleCheckboxes;
+    function toggleCheckboxes() {
+        var repeatCheckbox = document.getElementById('Isrepeat');
+        var refile = document.getElementById('Refile');
+        var checkboxes = document.querySelectorAll('.Every');
+
+        if (!repeatCheckbox.checked) {
+            checkboxes.forEach(function (checkbox) {
+                checkbox.checked = false;
+                checkbox.disabled = true;
+                refile.disabled = true;
+            });
+        } else {
+            checkboxes.forEach(function (checkbox) {
+                checkbox.disabled = false;
+                refile.disabled = false;
+            });
+        }
+    }
+
+    $("#day").click(function () {
+        calendar.changeView('resourceTimelineDay');
+        localStorage.setItem("calendarView", "resourceTimelineDay");
+
+    });
+
+    $("#week").click(function () {
+        calendar.changeView('resourceTimelineWeek');
+        localStorage.setItem("calendarView", "resourceTimelineWeek");
+
+    });
+
+    $("#month").click(function () {
+        calendar.changeView('dayGridMonth');
+        localStorage.setItem("calendarView", "dayGridMonth");
+
+    });
 </script>

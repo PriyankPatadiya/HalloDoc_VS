@@ -10,6 +10,10 @@ using Rotativa.AspNetCore;
 using Microsoft.AspNetCore.Identity;
 using System.Collections;
 using OfficeOpenXml;
+using System.Transactions;
+using static System.Runtime.InteropServices.JavaScript.JSType;
+using String = System.String;
+using System.Drawing;
 
 namespace HalloDoc.Controllers
 {
@@ -85,7 +89,7 @@ namespace HalloDoc.Controllers
         public IActionResult SearchByName(string SearchString, string selectButton, string StatusButton, string SelectedStateId, string partialviewpath, int pagesize, int currentpage)
         {
             var result = _admin.GetRequestsQuery(StatusButton);
-            result = result.Where(s => (String.IsNullOrEmpty(SearchString) || s.PatientName.Contains(SearchString)) && (String.IsNullOrEmpty(selectButton) || s.requestId == int.Parse(selectButton)) && ((SelectedStateId == "0" || SelectedStateId == null) || s.regionId == int.Parse(SelectedStateId)));
+            result = result.Where(s => (String.IsNullOrEmpty(SearchString) || s.PatientName.Contains(SearchString)) && (System.String.IsNullOrEmpty(selectButton) || s.requestId == int.Parse(selectButton)) && ((SelectedStateId == "0" || SelectedStateId == null) || s.regionId == int.Parse(SelectedStateId)));
 
 
 
@@ -1102,7 +1106,111 @@ namespace HalloDoc.Controllers
         {
             var email = HttpContext.Session.GetString("Email");
             ViewBag.username = _admin.username(email);
-            return View("Scheduling/Scheduling");
+            SchedulingVM model = new SchedulingVM();
+            model.Region = _admin.regions();
+            return View("Scheduling/Scheduling", model);
+        }
+
+
+        public IActionResult GetPhysicianShift(string region)
+        {
+            var physicians = (from physicianRegion in _context.PhysicianRegions
+                              where int.Parse(region) == 0 || physicianRegion.RegionId == int.Parse(region)
+                              select physicianRegion.Physician)
+                             .ToList();
+            return Json(physicians);
+        }
+        #region create
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult CreateShift(SchedulingVM model)
+        {
+            var email = HttpContext.Session.GetString("Email");
+            var admin = _context.Admins.First(u => u.Email == email);
+
+            bool isShiftExist = (from sD in _context.ShiftDetails
+                                where sD.Shift.PhysicianId == model.Physicianid
+                                && (sD.Shift.StartDate != model.Starttime.Date ||
+                                (sD.StartTime > TimeOnly.FromTimeSpan(model.Starttime.TimeOfDay) && sD.EndTime < TimeOnly.FromTimeSpan(model.Endtime.TimeOfDay) ||
+                                sD.StartTime < TimeOnly.FromTimeSpan(model.Starttime.TimeOfDay) && sD.EndTime > TimeOnly.FromTimeSpan(model.Starttime.TimeOfDay) ||
+                                sD.StartTime < TimeOnly.FromTimeSpan(model.Endtime.TimeOfDay) && sD.EndTime > TimeOnly.FromTimeSpan(model.Endtime.TimeOfDay))
+                                )
+                                select sD).Any(u => u.Shift.PhysicianId == model.Physicianid);
+
+
+            if (!isShiftExist)
+            {
+                Shift shift = new Shift();
+                shift.PhysicianId = model.Physicianid;
+                shift.StartDate = model.Startdate;
+                shift.IsRepeat = new BitArray(new[] { model.Isrepeat });
+                shift.RepeatUpto = model.Repeatupto;
+                shift.CreatedDate = DateTime.Now;
+                shift.CreatedBy = admin.AspNetUserId;
+                _context.Shifts.Add(shift);
+                _context.SaveChanges();
+
+                ShiftDetail sd = new ShiftDetail();
+                sd.ShiftId = shift.ShiftId;
+                sd.ShiftDate = new DateTime(model.Startdate.Year, model.Startdate.Month, model.Startdate.Day);
+                sd.StartTime = TimeOnly.FromDateTime(model.Starttime);
+                sd.EndTime = TimeOnly.FromDateTime(model.Endtime);
+                sd.RegionId = model.Regionid;
+                sd.Status = model.Status;
+                sd.IsDeleted = new BitArray(new[] { false });
+                _context.ShiftDetails.Add(sd);
+                _context.SaveChanges();
+
+                ShiftDetailRegion sr = new ShiftDetailRegion();
+                sr.ShiftDetailId = sd.ShiftDetailId;
+                sr.RegionId = (int)model.Regionid;
+                sr.IsDeleted = new BitArray(new[] { false });
+                _context.ShiftDetailRegions.Add(sr);
+                _context.SaveChanges();
+
+                if (model.Isrepeat)
+                {
+
+                }
+                
+                return RedirectToAction("Scheduling");
+
+            }
+            else
+            {
+                return BadRequest("Physician is Already in shift for entered Time");
+            }    
+            
+        }
+
+        public IActionResult getEvents(int regionId)
+        {
+            var events = (from s in _context.Shifts
+                                      join pd in _context.Physicians on s.PhysicianId equals pd.PhysicianId
+                                      join sd in _context.ShiftDetails on s.ShiftId equals sd.ShiftId into shiftGroup
+                                      from sd in shiftGroup.DefaultIfEmpty()
+
+                                      select new SchedulingVM
+                                      {
+                                          title= string.Concat(sd.StartTime , " " , sd.EndTime, " ", pd.FirstName, " " , pd.LastName),
+                                          Shiftid = sd.ShiftDetailId,
+                                          Starttime = new DateTime(sd.ShiftDate.Year, sd.ShiftDate.Month, sd.ShiftDate.Day, sd.StartTime.Hour, sd.StartTime.Minute, sd.StartTime.Second),
+                                          Endtime = new DateTime(sd.ShiftDate.Year, sd.ShiftDate.Month, sd.ShiftDate.Day, sd.EndTime.Hour, sd.EndTime.Minute, sd.EndTime.Second),
+                                          Status = sd.Status,
+                                          Physicianid = pd.PhysicianId,
+                                          PhysicianName = pd.FirstName + ' ' + pd.LastName,
+                                          Shiftdate = sd.ShiftDate,
+                                          ShiftDetailId = sd.ShiftDetailId,
+                                          Regionid = sd.RegionId,
+                                          ShiftDeleted = sd.IsDeleted[0]
+
+                                      }).Where(item => regionId == 0 || item.Regionid == regionId).ToList();
+            events = events.Where(item => !item.ShiftDeleted).ToList();
+
+            return Json(events);
         }
     }
+    #endregion create
+
 }
