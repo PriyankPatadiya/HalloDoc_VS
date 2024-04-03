@@ -446,6 +446,32 @@ namespace BAL.Repository
             }
             return false;
         }
+
+        public List<SchedulingVM> getEvents(int regionId)
+        {
+            var events = (from s in _context.Shifts
+                          join pd in _context.Physicians on s.PhysicianId equals pd.PhysicianId
+                          join sd in _context.ShiftDetails on s.ShiftId equals sd.ShiftId into shiftGroup
+                          from sd in shiftGroup.DefaultIfEmpty()
+                          select new SchedulingVM
+                          {
+                              title = string.Concat(sd.StartTime, " ", sd.EndTime, " ", pd.FirstName, " ", pd.LastName),
+                              Shiftid = sd.ShiftDetailId,
+                              Startdate = sd.ShiftDate.Date.Add(sd.StartTime.ToTimeSpan()),
+                              Enddate = sd.ShiftDate.Date.Add(sd.EndTime.ToTimeSpan()),
+                              Status = sd.Status,
+                              Physicianid = pd.PhysicianId,
+                              PhysicianName = pd.FirstName + ' ' + pd.LastName,
+                              Shiftdate = sd.ShiftDate,
+                              ShiftDetailId = sd.ShiftDetailId,
+                              Regionid = sd.RegionId,
+                              ShiftDeleted = sd.IsDeleted[0]
+
+                          }).Where(item => regionId == 0 || item.Regionid == regionId).ToList();
+            events = events.Where(item => !item.ShiftDeleted).ToList();
+
+            return events;
+        }
     }
 }
 

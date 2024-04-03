@@ -1,6 +1,8 @@
 ﻿using DAL.DataModels;
+using DAL.ViewModels;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -19,9 +21,13 @@ namespace DAL.ViewModels
         public string? RegionName { get; set; }
 
         public DateTime Startdate { get; set; }
+        public DateTime Enddate { get; set; }   
         public DateTime? Shiftdate { get; set; }
-        public DateTime Starttime { get; set; }
-        public DateTime Endtime { get; set; }
+        [CustomValidation(typeof(TimeValidation), "ValidateTime")]
+        public TimeOnly Starttime { get; set; }
+
+        [CustomValidation(typeof(TimeValidation), "ValidateTime")]
+        public TimeOnly Endtime { get; set; }
 
         public bool Isrepeat { get; set; }
 
@@ -30,7 +36,20 @@ namespace DAL.ViewModels
         public bool ShiftDeleted { get; set; }
         public int? Repeatupto { get; set; }
         public short Status { get; set; }
-        public List<SchedulingVM> DayList { get; set; }
+        public List<SchedulingVM>? DayList { get; set; }
         public List<Region>? Region { get; set; }
+    }
+}
+
+public class TimeValidation
+{
+    public static ValidationResult ValidateTime(TimeOnly time, ValidationContext context)
+    {
+        var viewModel = context.ObjectInstance as SchedulingVM;
+        if (viewModel.Starttime > viewModel.Endtime)
+        {
+            return new ValidationResult("Start time cannot be later than end time.");
+        }
+        return ValidationResult.Success;
     }
 }

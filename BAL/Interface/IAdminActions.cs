@@ -49,5 +49,6 @@ namespace BAL.Interface
         public bool sendOrder(SendOrderVM model);
 
         public List<HealthProfessionalType> healthProfessionalTypes();
+        public List<SchedulingVM> getEvents(int regionId);
     }
 }

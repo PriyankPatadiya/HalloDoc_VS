@@ -1114,9 +1114,9 @@ namespace HalloDoc.Controllers
 
         public IActionResult GetPhysicianShift(string region)
         {
-            var physicians = (from physicianRegion in _context.PhysicianRegions
-                              where int.Parse(region) == 0 || physicianRegion.RegionId == int.Parse(region)
-                              select physicianRegion.Physician)
+            var physicians = (from physician in _context.Physicians
+                              where int.Parse(region) == 0 || physician.RegionId == int.Parse(region)
+                              select physician)
                              .ToList();
             return Json(physicians);
         }
@@ -1126,62 +1126,93 @@ namespace HalloDoc.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult CreateShift(SchedulingVM model)
         {
-            var email = HttpContext.Session.GetString("Email");
-            var admin = _context.Admins.First(u => u.Email == email);
-
-            bool isShiftExist = (from sD in _context.ShiftDetails
-                                where sD.Shift.PhysicianId == model.Physicianid
-                                && (sD.Shift.StartDate != model.Starttime.Date ||
-                                (sD.StartTime > TimeOnly.FromTimeSpan(model.Starttime.TimeOfDay) && sD.EndTime < TimeOnly.FromTimeSpan(model.Endtime.TimeOfDay) ||
-                                sD.StartTime < TimeOnly.FromTimeSpan(model.Starttime.TimeOfDay) && sD.EndTime > TimeOnly.FromTimeSpan(model.Starttime.TimeOfDay) ||
-                                sD.StartTime < TimeOnly.FromTimeSpan(model.Endtime.TimeOfDay) && sD.EndTime > TimeOnly.FromTimeSpan(model.Endtime.TimeOfDay))
-                                )
-                                select sD).Any(u => u.Shift.PhysicianId == model.Physicianid);
-
-
-            if (!isShiftExist)
+            if (ModelState.IsValid)
             {
-                Shift shift = new Shift();
-                shift.PhysicianId = model.Physicianid;
-                shift.StartDate = model.Startdate;
-                shift.IsRepeat = new BitArray(new[] { model.Isrepeat });
-                shift.RepeatUpto = model.Repeatupto;
-                shift.CreatedDate = DateTime.Now;
-                shift.CreatedBy = admin.AspNetUserId;
-                _context.Shifts.Add(shift);
-                _context.SaveChanges();
+                var email = HttpContext.Session.GetString("Email");
+                var admin = _context.Admins.First(u => u.Email == email);
 
-                ShiftDetail sd = new ShiftDetail();
-                sd.ShiftId = shift.ShiftId;
-                sd.ShiftDate = new DateTime(model.Startdate.Year, model.Startdate.Month, model.Startdate.Day);
-                sd.StartTime = TimeOnly.FromDateTime(model.Starttime);
-                sd.EndTime = TimeOnly.FromDateTime(model.Endtime);
-                sd.RegionId = model.Regionid;
-                sd.Status = model.Status;
-                sd.IsDeleted = new BitArray(new[] { false });
-                _context.ShiftDetails.Add(sd);
-                _context.SaveChanges();
+                bool isShiftExist = _context.ShiftDetails.Any(sD =>
+                                    sD.Shift.PhysicianId == model.Physicianid &&
+                                    sD.ShiftDate.Date == model.Startdate.Date && // Shifts must start on the same day
+                                    ((sD.StartTime < model.Endtime && sD.EndTime > model.Starttime) || // Check for overlap
+                                    (sD.StartTime < model.Starttime && sD.EndTime > model.Starttime) ||
+                                    (sD.StartTime < model.Endtime && sD.EndTime > model.Endtime) ||
+                                    (sD.StartTime > model.Starttime && sD.EndTime < model.Endtime)));
 
-                ShiftDetailRegion sr = new ShiftDetailRegion();
-                sr.ShiftDetailId = sd.ShiftDetailId;
-                sr.RegionId = (int)model.Regionid;
-                sr.IsDeleted = new BitArray(new[] { false });
-                _context.ShiftDetailRegions.Add(sr);
-                _context.SaveChanges();
 
-                if (model.Isrepeat)
+                if (!isShiftExist)
                 {
+                    Shift shift = new Shift();
+                    shift.PhysicianId = model.Physicianid;
+                    shift.StartDate = model.Startdate;
+                    shift.IsRepeat = new BitArray(new[] { model.Isrepeat });
+                    shift.RepeatUpto = model.Repeatupto;
+                    shift.CreatedDate = DateTime.Now;
+                    shift.CreatedBy = admin.AspNetUserId;
+                    _context.Shifts.Add(shift);
+                    _context.SaveChanges();
+
+                    ShiftDetail sd = new ShiftDetail();
+                    sd.ShiftId = shift.ShiftId;
+                    sd.ShiftDate = new DateTime(model.Startdate.Year, model.Startdate.Month, model.Startdate.Day);
+                    sd.StartTime = model.Starttime;
+                    sd.EndTime = model.Endtime;
+                    sd.RegionId = model.Regionid;
+                    sd.Status = model.Status;
+                    sd.IsDeleted = new BitArray(new[] { false });
+                    _context.ShiftDetails.Add(sd);
+                    _context.SaveChanges();
+
+                    ShiftDetailRegion sr = new ShiftDetailRegion();
+                    sr.ShiftDetailId = sd.ShiftDetailId;
+                    sr.RegionId = (int)model.Regionid;
+                    sr.IsDeleted = new BitArray(new[] { false });
+                    _context.ShiftDetailRegions.Add(sr);
+                    _context.SaveChanges();
+
+                    if (model.Isrepeat)
+                    {
+                        var stringArray = model.checkWeekday.Split(",");
+                        foreach (var weekday in stringArray)
+                        {
+
+                            DateTime startDateForWeekday = model.Startdate.AddDays((7 + int.Parse(weekday) - (int)model.Startdate.DayOfWeek) % 7);
+
+                            if (startDateForWeekday < model.Startdate.Date.Add(DateTime.Now.TimeOfDay))
+                            {
+                                startDateForWeekday = startDateForWeekday.AddDays(7);
+                            }
+
+
+                            for (int i = 0; i < shift.RepeatUpto; i++)
+                            {
+
+                                ShiftDetail shiftDetail = new ShiftDetail
+                                {
+                                    ShiftId = shift.ShiftId,
+                                    ShiftDate = startDateForWeekday.AddDays(i * 7),
+                                    RegionId = (int)model.Regionid,
+                                    StartTime = model.Starttime,
+                                    EndTime = model.Endtime,
+                                    Status = 0,
+                                    IsDeleted = new BitArray(new[] { false })
+                                };
+
+                                _context.Add(shiftDetail);
+                                _context.SaveChanges();
+                            }
+                        }
+                    }
+
+                    return RedirectToAction("Scheduling");
 
                 }
-                
-                return RedirectToAction("Scheduling");
-
+                else
+                {
+                    return BadRequest("Physician is Already in shift for entered Time");
+                }
             }
-            else
-            {
-                return BadRequest("Physician is Already in shift for entered Time");
-            }    
-            
+            return RedirectToAction("Scheduling");
         }
 
         public IActionResult getEvents(int regionId)
@@ -1195,8 +1226,8 @@ namespace HalloDoc.Controllers
                                       {
                                           title= string.Concat(sd.StartTime , " " , sd.EndTime, " ", pd.FirstName, " " , pd.LastName),
                                           Shiftid = sd.ShiftDetailId,
-                                          Starttime = new DateTime(sd.ShiftDate.Year, sd.ShiftDate.Month, sd.ShiftDate.Day, sd.StartTime.Hour, sd.StartTime.Minute, sd.StartTime.Second),
-                                          Endtime = new DateTime(sd.ShiftDate.Year, sd.ShiftDate.Month, sd.ShiftDate.Day, sd.EndTime.Hour, sd.EndTime.Minute, sd.EndTime.Second),
+                                          Startdate = sd.ShiftDate.Date.Add(sd.StartTime.ToTimeSpan()),
+                                          Enddate = sd.ShiftDate.Date.Add(sd.EndTime.ToTimeSpan()),
                                           Status = sd.Status,
                                           Physicianid = pd.PhysicianId,
                                           PhysicianName = pd.FirstName + ' ' + pd.LastName,
@@ -1209,6 +1240,73 @@ namespace HalloDoc.Controllers
             events = events.Where(item => !item.ShiftDeleted).ToList();
 
             return Json(events);
+        }
+
+        [HttpPost]
+        public IActionResult saveShiftChanges(int shiftDetailId, DateTime startDate, TimeOnly startTime, TimeOnly endTime, int region)
+        {
+            // Find the shift detail by its ID
+            ShiftDetail shiftdetail = _context.ShiftDetails.Find(shiftDetailId);
+
+            // If shift detail is not found, return a 404 Not Found response
+            if (shiftdetail == null)
+            {
+                return BadRequest();
+            }
+            try
+            {
+                // Update the shift detail properties
+                shiftdetail.ShiftDate = startDate;
+                shiftdetail.StartTime = startTime;
+                shiftdetail.EndTime = endTime;
+
+                // Update the database
+                _context.ShiftDetails.Update(shiftdetail);
+                _context.SaveChanges();
+                var events = _adminActions.getEvents(region);
+                return Ok(new { message = "Shift detail updated successfully.", events = events });
+            }
+            catch (Exception ex)
+            {
+                // Return a 400 Bad Request response with the error message
+                return BadRequest("Error updating shift detail: " + ex.Message);
+            }
+        }
+        public IActionResult DeleteShift(int shiftDetailId, int region)
+        {
+            ShiftDetail shiftdetail = _context.ShiftDetails.Find(shiftDetailId);
+            if (shiftdetail == null)
+            {
+                return NotFound("Shift detail not found.");
+            }
+            shiftdetail.IsDeleted = new BitArray(new[] { true });
+            _context.ShiftDetails.Update(shiftdetail);
+            _context.SaveChanges();
+            var events = _adminActions.getEvents(region);
+            
+            return Ok(new { message = "Shift detail Deleted successfully.", events = events });
+
+        }
+
+        public IActionResult changeShiftStatus(int shiftDetailId, int region)
+        {
+            ShiftDetail shiftDetail = _context.ShiftDetails.Find(shiftDetailId);
+            if (shiftDetail == null)
+            {
+                return NotFound("Shift detail not found.");
+            }
+            if(shiftDetail.Status == 0)
+            {
+                shiftDetail.Status = 1;
+            }
+            else
+            {
+                shiftDetail.Status = 0;
+            }
+            _context.ShiftDetails.Update(shiftDetail); _context.SaveChanges();
+            var events = _adminActions.getEvents(region);
+
+            return Ok(new { message = "Shift Returned successfully.", events = events });
         }
     }
     #endregion create
