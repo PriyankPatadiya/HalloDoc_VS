@@ -1308,6 +1308,11 @@ namespace HalloDoc.Controllers
 
             return Ok(new { message = "Shift Returned successfully.", events = events });
         }
+
+        public IActionResult requestedShifts()
+        {
+            return View("Scheduling/shiftForReview");
+        }
     }
     #endregion create
 
