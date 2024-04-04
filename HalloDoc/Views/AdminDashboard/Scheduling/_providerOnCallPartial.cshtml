@@ -1,0 +1,51 @@
+﻿@model DAL.ViewModels.ProviderOncallOfdutyVM
+
+<h4 class="my-4">Md's On Call</h4>
+
+<div class="container-fluid">
+    <div class="row">
+        
+        @foreach (var item in Model.OnDuty)
+        {
+           
+                <div class="col-4">
+                    <div class="mx-2 p-2 ">
+                        <img src="~/Physician/@item.PhysicianId/@item.Photo" class="mx-2" style="height: 40px !important; width: 40px !important" />
+                        <span class="fs-5">@item.FirstName</span>
+                    </div>
+                </div>
+           
+            
+        }
+        @if (ViewBag.EmptyMessage != "")
+        {
+            <div class="fs-1">@ViewBag.EmptyMessage</div>
+        }
+    </div>
+
+</div>
+
+<h4 class="my-4">Md's On Call</h4>
+
+<div class="container-fluid">
+    <div class="row">
+
+        @foreach (var item in Model.OffDuty)
+        {
+            
+                <div class="col-4">
+                    <div class="mx-2 p-2 ">
+                        <img src="~/Physician/@item.PhysicianId/profile.png" class="mx-2" style="height: 40px !important; width: 40px !important" />
+                        <span class="fs-5">@item.FirstName</span>
+                    </div>
+                </div>
+            
+
+        }
+        @if (ViewBag.EmptyMessage != "")
+        {
+            <div class="fs-1">@ViewBag.EmptyMessage</div>
+        }
+    </div>
+
+</div>

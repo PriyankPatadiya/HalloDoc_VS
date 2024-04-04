@@ -92,8 +92,8 @@
                                 </ul>
                             </div>
                         </li>
-                        <li class="nav-item" role="presentation">
-                            <button class="px-2 shadow-none nav-link text-decoration-none text-info">Partners</button>
+                        <li class="nav-item " role="presentation">
+                            <a asp-action="Partners" class="px-2 shadow-none nav-link text-decoration-none text-info @(ViewContext.ActionDescriptor.RouteValues["action"] == "Partners" ? "active" : "")">Partners</a>
                         </li>
                         <li class="nav-item" role="presentation">
                             <button type="button" class="px-2  shadow-none nav-link text-decoration-none text-info @(ViewContext.ActionDescriptor.RouteValues["action"] == "userAccess" || ViewContext.ActionDescriptor.RouteValues["action"] == "CreateProviderAcc" || ViewContext.ActionDescriptor.RouteValues["action"] == "roleAccess" || ViewContext.ActionDescriptor.RouteValues["action"] == "CreateAccess" ? "active" : "")" id="dropdownMenu3" data-bs-toggle="dropdown" aria-expanded="false">Access</button>

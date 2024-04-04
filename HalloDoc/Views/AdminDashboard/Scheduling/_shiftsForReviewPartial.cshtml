@@ -1,0 +1,38 @@
+﻿@model List<DAL.ViewModels.ShiftReviewVM>
+
+
+
+<Table class="table">
+
+    <tbody class="Secondary">
+        <tr>
+            <th scope="col"><input type="checkbox" class="form-check " /></th>
+            <th scope="col">Staff</th>
+            <th scope="col">Day</th>
+            <th scope="col">Time</th>
+            <th scope="col">Region</th>
+        </tr>
+    </tbody>
+    <tbody>
+
+        @foreach (var item in Model)
+        {
+            <tr>
+
+                <td> <input type="checkbox" name="pendingShifts" value="@item.shiftDetailId" class="form-check" /></td>
+                <td>@item.physicianName</td>
+                <td>@item.day</td>
+                <td>@item.startTime - @item.endTime </td>
+                <td>@item.Regioname</td>
+
+            </tr>
+        }
+    </tbody>
+    
+</Table>
+@if (ViewBag.EmptyMessage != "")
+{
+    <div class="fs-1">
+        @ViewBag.EmptyMessage
+    </div>
+}

@@ -232,10 +232,10 @@ $(document).ready(function () {
                             $(".SearchPartial").html(data);
                         },
                         failure: function (data) {
-                            alert(data.d);
+                            $(".SearchPartial").html(data);
                         },
                         error: function (data) {
-                            alert(data.d);
+                            $(".SearchPartial").html(data);
                         }
                     });
 

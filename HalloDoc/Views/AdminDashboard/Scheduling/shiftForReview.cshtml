@@ -4,38 +4,120 @@
 <div class="container pt-3" style="height: 100% !important">
     <div class="justify-content-between d-flex container-fluid mb-2 position-relative ">
         <div class="">
-            <h3>User Access</h3>
+            <h3>Requested Shifts</h3>
         </div>
         <div>
-            <a asp-action="MainPage" class="btn btn-outline-info"> ❮  Back </a>
+            <a asp-action="Scheduling" class="btn btn-outline-info"> ❮  Back </a>
         </div>
     </div>
     <div class="card border-0 p-4 mb-5 rounded" style="height: 80% !important;">
-        <div class="row justify-content-between ps-3">
+        <div class="d-flex justify-content-between">
 
-            <div class="d-flex border border-secondary bg-body rounded align-items-center mx-sm-2 ps-2 my-2 col-3">
-                <select class="form-control shadow-none border-0" id="AccountTypeId" name="SelectedStateId">
+            <div class="d-flex border border-secondary bg-body rounded align-items-center mx-sm-2 my-2 w-25">
+                <select class="form-control shadow-none border-0" id="AccountTypeId" name="SelectedStateId" onchange="changeTable(this.value)">
                     <option value="0">All</option>
-                    <option value="1">Admin</option>
-                    <option value="3">Physician</option>
+                    @foreach(var region in ViewBag.Regions)
+                    {
+                        <option value="@region.RegionId">@region.Name - (@region.Abbreviation)</option>
+                    }
                 </select>
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-down me-2" viewBox="0 0 16 16">
                     <path fill-rule="evenodd" d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708" />
                 </svg>
             </div>
-            <div class="d-flex col-3 mr-0 py-2 justify-content-end">
-                <a asp-action="CreateProviderAcc" asp-route-id="1" class="btn btn-outline-info mx-2" id="providerBtn" style="width:fit-content">
-                    <span>Create Provider</span>
-                </a>
-                <a asp-action="CreateAdminAcc" asp-route-id="1" class="btn btn-outline-info mx-2" id="adminBtn" style="width:fit-content">
-                    <span>Create Admin</span>
-                </a>
+            <div class="d-flex mr-0 py-2 justify-content-end w-75">
+                <button class="btn btn-success mx-2" id="providerBtn" style="width:fit-content">
+                    <span>View Current Month Shifts</span>
+                </button>
+                <button class="btn btn-success mx-2" id="shiftToApprove" style="width:fit-content">
+                    <span>Approved Shifts</span>
+                </button>
+                <button class="btn btn-danger mx-2" id="deleteShift" style="width:fit-content">
+                    <span>Deleted Shifts</span>
+                </button>
             </div>
 
         </div>
 
-        <div class="my-3 table-responsive " id="UserAccessPartialDiv">
+        <div class="my-3 table-responsive " id="ReviewShiftsPartialView">
         </div>
 
     </div>
 </div>
+<script>
+
+        changeTable("0");
+
+        function changeTable(regionId) {
+            $.ajax({
+                type: "GET",
+                url: "/AdminDashboard/changeShiftReviewTable",
+                data: { region: regionId },
+                success: function (response) {
+                    $("#ReviewShiftsPartialView").html(response);
+                }
+                ,
+                error: function (response) {
+                    alert(response);
+                }
+            });
+        }
+
+        $('#shiftToApprove').click(function () {
+            var selectedShifts = [];
+            $('input[name="pendingShifts"]:checked').each(function () {
+                selectedShifts.push($(this).val());
+            });
+            console.log(selectedShifts);
+            if (selectedShifts.length <= 0) {
+                alert("please Select at least one provider");
+            }
+            else {
+                // AJAX request to send selected shift IDs to the server for approval
+                $.ajax({
+                    url: '/AdminDashboard/ApproveShifts', // Replace 'YourController' with actual controller name
+                    type: 'POST',
+                    data: { shiftIds: selectedShifts },
+                    success: function (response) {
+                        location.reload();
+                        // Handle success response
+                        console.log(response);
+                    },
+                    error: function (xhr, status, error) {
+                        // Handle error
+                        console.log(xhr.responseText);
+                    }
+                });
+            }
+
+        });
+
+        $('#deleteShift').click(function () {
+            var selectedShifts = [];
+            $('input[name="pendingShifts"]:checked').each(function () {
+                selectedShifts.push($(this).val());
+            });
+            console.log(selectedShifts);
+            if (selectedShifts.length <= 0) {
+                alert("please Select at least one provider");
+            }
+            else {
+                // AJAX request to send selected shift IDs to the server for approval
+                $.ajax({
+                    url: '/AdminDashboard/deleteShifts', // Replace 'YourController' with actual controller name
+                    type: 'POST',
+                    data: { shiftIds: selectedShifts },
+                    success: function (response) {
+                        location.reload();
+                        // Handle success response
+                        console.log(response);
+                    },
+                    error: function (xhr, status, error) {
+                        // Handle error
+                        console.log(xhr.responseText);
+                    }
+                });
+            }
+
+        });
+</script>

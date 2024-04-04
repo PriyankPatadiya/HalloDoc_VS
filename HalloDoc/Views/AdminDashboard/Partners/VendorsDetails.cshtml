@@ -1,0 +1,71 @@
+﻿@model DAL.ViewModels.PatientDashboardVM
+@{
+    ViewData["Title"] = "Vendors";
+    Layout = "~/Views/Shared/_LayoutAdminDash.cshtml"; 
+}
+
+<div class="mx-4 mt-5" style="height: 90%!important">
+    <h4 class="my-3">Vendor(s)</h4>
+    <div class="mx-0 d-flex justify-content-between px-4 border-bottom-0 border border-secondary rounded-top pt-3 pb-4 bg-body">
+        <div class="d-flex">
+            <div class="rounded d-flex align-items-center border border-secondary bg-body px-3">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 50 50">
+                    <path d="M 21 3 C 11.654545 3 4 10.654545 4 20 C 4 29.345455 11.654545 37 21 37 C 24.701287 37 28.127393 35.786719 30.927734 33.755859 L 44.085938 46.914062 L 46.914062 44.085938 L 33.875 31.046875 C 36.43682 28.068316 38 24.210207 38 20 C 38 10.654545 30.345455 3 21 3 z M 21 5 C 29.254545 5 36 11.745455 36 20 C 36 28.254545 29.254545 35 21 35 C 12.745455 35 6 28.254545 6 20 C 6 11.745455 12.745455 5 21 5 z">
+                    </path>
+                </svg>
+                <input type="text" class="form-control ms-2 shadow-none border-none border-0 bg-transparent" id="SearchString" placeholder="Search Vendors" onkeyup="getVendors()">
+            </div>
+            <div class="d-flex border border-secondary bg-body rounded align-items-center mx-sm-2 ps-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 50 50">
+                    <path d="M 21 3 C 11.654545 3 4 10.654545 4 20 C 4 29.345455 11.654545 37 21 37 C 24.701287 37 28.127393 35.786719 30.927734 33.755859 L 44.085938 46.914062 L 46.914062 44.085938 L 33.875 31.046875 C 36.43682 28.068316 38 24.210207 38 20 C 38 10.654545 30.345455 3 21 3 z M 21 5 C 29.254545 5 36 11.745455 36 20 C 36 28.254545 29.254545 35 21 35 C 12.745455 35 6 28.254545 6 20 C 6 11.745455 12.745455 5 21 5 z">
+                    </path>
+                </svg>
+                <select class="form-control shadow-none border-0" id="SelectedRegion" name="SelectedRegion" onchange="getVendors()">
+                    <option value="0">All Region</option>
+                    @foreach (var region in ViewBag.Regions)
+                    {
+                        <option value="@region.RegionId">@region.Name - (@region.Abbreviation)</option>
+                    }
+                </select>
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-down me-2" viewBox="0 0 16 16">
+                    <path fill-rule="evenodd" d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708" />
+                </svg>
+            </div>
+        </div>
+        <div class="d-flex align-items-center">
+            
+            <button class="btn btn-outline-info py-2 shadow-none">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-plus" viewBox="0 0 16 16">
+                    <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4" />
+                </svg> Add Business
+            </button>
+        </div>
+    </div>
+    <div class=" border-top-0 border border-secondary rounded-bottom bg-body px-3 overflow-auto" style="height: 80% !important" id="VendorsPartialDiv">
+
+    </div>
+</div>
+<script>
+
+    getVendors();   
+
+    function getVendors(){
+
+        var search = $("#SearchString").val();
+        var filterByRegion = $("#SelectedRegion").val();
+        if(search == null){
+            search = "";    
+        }
+        $.ajax({
+           type: 'GET',
+           url: '/AdminDashboard/GetVendorsDetails',
+           data: { search : search , regionId : filterByRegion },
+           success : function(response){
+                $("#VendorsPartialDiv").html(response);
+           },
+           error : function (data){
+               alert(data.d);
+           }
+        });
+    }
+</script>
