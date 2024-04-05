@@ -1,10 +1,10 @@
-﻿@model DAL.ViewModels.PatientDashboardVM
+﻿
 @{
     ViewData["Title"] = "Vendors";
     Layout = "~/Views/Shared/_LayoutAdminDash.cshtml"; 
 }
 
-<div class="mx-4 mt-5" style="height: 90%!important">
+<div class="mx-4 mt-5" style="height: 90%!important" id="vendorsDivId">
     <h4 class="my-3">Vendor(s)</h4>
     <div class="mx-0 d-flex justify-content-between px-4 border-bottom-0 border border-secondary rounded-top pt-3 pb-4 bg-body">
         <div class="d-flex">
@@ -34,7 +34,7 @@
         </div>
         <div class="d-flex align-items-center">
             
-            <button class="btn btn-outline-info py-2 shadow-none">
+            <button class="btn btn-outline-info py-2 shadow-none" onclick="openAddBusiness()">
                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-plus" viewBox="0 0 16 16">
                     <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4" />
                 </svg> Add Business
@@ -45,9 +45,22 @@
 
     </div>
 </div>
+<div id="addBusinessPartial" style="display: none !important">
+    <partial name="Partners/_addBusiness"></partial>
+</div>
 <script>
 
     getVendors();   
+    
+    $("#backButtonVendors").click(function (){
+        $("#addBusinessPartial").hide();
+        $("#vendorsDivId").show();
+    });
+
+    function openAddBusiness(){
+        $("#addBusinessPartial").show();
+        $("#vendorsDivId").hide();
+    }
 
     function getVendors(){
 
@@ -69,3 +82,4 @@
         });
     }
 </script>
+

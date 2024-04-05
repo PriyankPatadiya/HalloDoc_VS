@@ -1,0 +1,207 @@
+﻿@model DAL.ViewModels.AddBusinessVM
+
+<div class="container px-3">
+    <div class="d-flex justify-content-between mt-4 mb-3 ">
+        <h4>Add Business</h4>
+        <button class="btn btn-outline-info" id="backButtonVendors"> ❮  Back </button>
+    </div>
+    <div class="bg-body p-3">
+        <span class="fs-5 fw-bold w-100">Submit Information</span>
+        <form id="businessForm" asp-action="addBusiness" method="post" data-val="true">
+            <div class="row gx-4">
+                <div class="col-sm-12 col-md-12 col-lg-6 form-floating my-3">
+                    <input type="text"
+                           class="form-control shadow-none inputs1"
+                           placeholder="Business Name"
+                           name="BusinessName"
+                           data-val="true"
+                           data-val-required="Business Name is required." />
+                    <label for="BusinessName" class="ms-2">Business Name</label>
+                <span class="text-danger error-BusinessName"></span>
+                </div>
+                <div class="col-sm-12 col-md-12 col-lg-6 form-floating my-3">
+                    <select class="form-control py-2" name="SelecteProfession">
+                        <option value="0">Select Profession</option>
+                        @foreach (var item in ViewBag.Professions)
+                        {
+                            <option value="@item.HealthProfessionalId">@item.ProfessionName</option>
+                        }
+                    </select>
+                    <label for="SelectedProfession" class="ms-2"></label>
+                <span class="text-danger error-SelectedRole"></span>
+                </div>
+                <div class="col-sm-12 col-md-12 col-lg-6 form-floating my-3">
+                    <input type="text"
+                           class="form-control"
+                           id="VenFax"
+                           name="FaxNumber"
+                           placeholder="Fax Number"
+                           data-val="true"
+                           data-val-required="Fax Number is required." />
+                    <label for="FaxNumber" class="ms-2">Fax Number</label>
+                <span class="text-danger error-FaxNumber"></span>
+                </div>
+                <div class="col-sm-12 col-md-12 col-lg-6 form-floating my-3">
+                    <input type="tel"
+                           class="form-control shadow-none inputs1"
+                           name="PhoneNumber"
+                           placeholder="Phone Number"
+                           data-val="true"
+                           data-val-required="Phone Number is required." />
+                    <label for="PhoneNumber" class="ms-2">Phone No.</label>
+                <span class="text-danger error-PhoneNumber"></span>
+                </div>
+                <div class="col-sm-12 col-md-12 col-lg-6 form-floating my-3">
+                    <input type="email"
+                           class="form-control shadow-none inputs1"
+                           name="EmailAddress"
+                           placeholder="Email"
+                           data-val="true"
+                           data-val-required="Email is required."
+                           data-val-email="Please enter a valid email address." />
+                    <label for="EmailAddress" class="ms-2">Email</label>
+                <span class="text-danger error-EmailAddress"></span>
+                </div>
+                <div class="col-sm-12 col-md-12 col-lg-6 form-floating my-3">
+                    <input type="text"
+                           class="form-control"
+                           id="Vencontact"
+                           name="BusinessContact"
+                           placeholder="Business Contact"
+                           data-val="true"
+                           data-val-required="Business Contact is required." />
+                    <label for="BusinessContact" class="ms-2">Business Contact</label>
+                <span class="text-danger error-BusinessContact"></span>
+                </div>
+                <div class="col-sm-12 col-md-12 col-lg-6 form-floating my-3">
+                    <input type="text"
+                           class="form-control shadow-none inputs2"
+                           name="StreetAddress"
+                           placeholder="Street Address" />
+                    <label for="StreetAddress" class="ms-2">Street</label>
+                <span class="text-danger error-StreetAddress"></span>
+                </div>
+                <div class="col-sm-12 col-md-12 col-lg-6 form-floating my-3">
+                    <input type="text"
+                           class="form-control shadow-none inputs2"
+                           name="City"
+                           placeholder="City" />
+                    <label for="City" class="ms-2">City</label>
+                <span class="text-danger error-City"></span>
+                </div>
+                <div class="col-sm-12 col-md-12 col-lg-6 form-floating my-3">
+                    <select class="form-control shadow-none border border-secondary-50" id="SelectedRegion" name="StateId">
+                        <option value="0">All Region</option>
+                        @foreach (var region in ViewBag.Regions)
+                        {
+                            <option value="@region.RegionId">@region.Name - (@region.Abbreviation)</option>
+                        }
+                    </select>
+                    <label for="StateId" class="ms-2">State</label>
+                </div>
+                <div class="col-sm-12 col-md-12 col-lg-6 form-floating my-3">
+                    <input type="text"
+                           class="form-control shadow-none inputs2"
+                           name="ZipCode"
+                           placeholder="Zip Code"
+                           data-val="true"
+                           data-val-required="Zip Code is required." />
+                    <label for="ZipCode" class="ms-2">Zip Code</label>
+                </div>
+            </div>
+            <div class="d-flex justify-content-end">
+                <button type="submit" class="btn btn-info text-white mx-2 p-3">Save</button>
+                <button type="button" class="btn btn-outline-info text-body ms-2 p-3">Cancel</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<script src="https://cdn.jsdelivr.net/jquery.validation/1.16.0/jquery.validate.min.js"></script>
+<script src="https://cdn.jsdelivr.net/jquery.validation/1.16.0/additional-methods.min.js"></script>
+<script>
+    $(document).ready(function () {
+        // Initialize jQuery Validation on the form
+        $('#businessForm').validate({
+            errorPlacement: function (error, element) {
+                var errorSpan = $("span.error-" + element.attr("name"));
+
+                if (errorSpan.length > 0) {
+                    // If the specific span is found, append the error message to it
+                    error.appendTo(errorSpan);
+                } else {
+                    // If not found, use the default placement (after the input field)
+                    error.appendTo(errorSpan);
+                }
+            },
+            rules: {
+                BusinessName: {
+                    required: true
+                },
+                SelectedRole: {
+                    required: true
+                },
+                FaxNumber: {
+                    required: true
+                },
+                PhoneNumber: {
+                    required: true
+                },
+                EmailAddress: {
+                    required: true,
+                    email: true
+                },
+                BusinessContact: {
+                    required: true
+                },
+                StreetAddress: {
+                    required: true
+                },
+                City: {
+                    required: true
+                },
+                StateId: {
+                    required: true
+                },
+                ZipCode: {
+                    required: true
+                }
+            },
+            messages: {
+                BusinessName: {
+                    required: "Business Name is required."
+                },
+                SelectedRole: {
+                    required: "Role is required."
+                },
+                FaxNumber: {
+                    required: "Fax Number is required."
+                },
+                PhoneNumber: {
+                    required: "Phone Number is required."
+                },
+                EmailAddress: {
+                    required: "Email is required.",
+                    email: "Please enter a valid email address."
+                },
+                BusinessContact: {
+                    required: "Business Contact is required."
+                },
+                StreetAddress: {
+                    required: "Street Address is required."
+                },
+                City: {
+                    required: "City is required."
+                },
+                StateId: {
+                    required: "State is required."
+                },
+                ZipCode: {
+                    required: "Zip Code is required."
+                }
+            },
+        });
+    });
+</script>

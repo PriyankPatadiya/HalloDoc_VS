@@ -1395,7 +1395,7 @@ namespace HalloDoc.Controllers
 
         public IActionResult getMdsOnCall(string regionId)
         {
-           var currentTime = DateTime.Now.Hour;
+            var currentTime = DateTime.Now.Hour;
             var onDutyQuery = from shiftDetail in _context.ShiftDetails
                               join physician in _context.Physicians on shiftDetail.Shift.PhysicianId equals physician.PhysicianId
                               join physicianRegion in _context.PhysicianRegions on physician.PhysicianId equals physicianRegion.PhysicianId
@@ -1403,23 +1403,23 @@ namespace HalloDoc.Controllers
                                     shiftDetail.ShiftDate.Date == DateTime.Now.Date &&
                                     currentTime >= shiftDetail.StartTime.Hour &&
                                     currentTime <= shiftDetail.EndTime.Hour &&
-                                    shiftDetail.IsDeleted == new BitArray(new[] { false }) && physician.IsDeleted == new BitArray ( new[] { false })
+                                    shiftDetail.IsDeleted == new BitArray(new[] { false }) && physician.IsDeleted == new BitArray(new[] { false })
                               select physician;
 
             var onDuty = onDutyQuery.Distinct().ToList();
 
-			var offDutyQuery = from physician in _context.Physicians
-							   join physicianRegion in _context.PhysicianRegions on physician.PhysicianId equals physicianRegion.PhysicianId
-							   where (regionId == "0" || physicianRegion.RegionId == int.Parse(regionId)) &&
-									 !_context.ShiftDetails.Any(item => item.Shift.PhysicianId == physician.PhysicianId &&
+            var offDutyQuery = from physician in _context.Physicians
+                               join physicianRegion in _context.PhysicianRegions on physician.PhysicianId equals physicianRegion.PhysicianId
+                               where (regionId == "0" || physicianRegion.RegionId == int.Parse(regionId)) &&
+                                     !_context.ShiftDetails.Any(item => item.Shift.PhysicianId == physician.PhysicianId &&
                                                                         item.ShiftDate.Date == DateTime.Now.Date &&
-																	   currentTime >= item.StartTime.Hour &&
-																	   currentTime <= item.EndTime.Hour &&
-																	   item.IsDeleted == new BitArray ( new [] {false}))
-							   select physician;
-			var offDuty = offDutyQuery.Distinct().ToList();
+                                                                       currentTime >= item.StartTime.Hour &&
+                                                                       currentTime <= item.EndTime.Hour &&
+                                                                       item.IsDeleted == new BitArray(new[] { false }))
+                               select physician;
+            var offDuty = offDutyQuery.Distinct().ToList();
 
-            var providers =  new ProviderOncallOfdutyVM 
+            var providers = new ProviderOncallOfdutyVM
             {
                 OnDuty = onDuty,
                 OffDuty = offDuty
@@ -1432,6 +1432,7 @@ namespace HalloDoc.Controllers
         public IActionResult Partners()
         {
             ViewBag.Regions = _admin.regions();
+            ViewBag.Professions = _context.HealthProfessionalTypes.ToList();
             return View("Partners/VendorsDetails");
         }
 
@@ -1460,6 +1461,89 @@ namespace HalloDoc.Controllers
             }
 
             return PartialView("Partners/_VendorsDetailsPartial", partners);
+        }
+
+        [HttpPost]
+        public IActionResult addBusiness(AddBusinessVM vendor)
+        {
+            if (ModelState.IsValid)
+            {
+                HealthProfessional model = new HealthProfessional()
+                {
+                    VendorName = vendor.BusinessName,
+                    Profession = vendor.SelecteProfession,
+                    FaxNumber = vendor.FaxNumber,
+                    Address = vendor.StreetAddress + ", " + vendor.City + ", " + _context.Regions.Where(u => u.RegionId == vendor.StateId).First().Name,
+                    City = vendor.City,
+                    State = _context.Regions.Where(u => u.RegionId == vendor.StateId).First().Name,
+                    Zip = vendor.ZipCode,
+                    RegionId = vendor.StateId,
+                    CreatedDate = DateTime.Now,
+                    PhoneNumber = vendor.PhoneNumber,
+                    Email = vendor.EmailAddress,
+                    BusinessContact = vendor.BusinessContact
+                };
+
+                _context.HealthProfessionals.Add(model);
+                _context.SaveChanges();
+            }
+
+            return RedirectToAction("Partners");
+        }
+
+        public IActionResult EditBusiness(int Vendorid)
+        {
+            var Vendor = _context.HealthProfessionals.First(u => u.VendorId == Vendorid);
+            AddBusinessVM model = new AddBusinessVM()
+            {
+                vendorId = Vendor.VendorId,
+                BusinessName = Vendor.VendorName,
+                FaxNumber = Vendor.FaxNumber,
+                PhoneNumber = Vendor.PhoneNumber,
+                EmailAddress = Vendor.Email,
+                BusinessContact = Vendor.BusinessContact,
+                StateId = Vendor.RegionId,
+                ZipCode = Vendor.Zip,
+                City = Vendor.City,
+
+            };
+            ViewBag.Regions = _admin.regions();
+            ViewBag.Professions = _context.HealthProfessionalTypes.ToList();
+            return PartialView("Partners/EditBusiness", model);
+        }
+
+        [HttpPost]
+        public IActionResult EditBusiness(AddBusinessVM vendor)
+        {
+            var Vendor = _context.HealthProfessionals.First(u => u.VendorId == vendor.vendorId);
+            if (ModelState.IsValid && Vendor != null)
+            {
+                Vendor.VendorName = vendor.BusinessName;
+                Vendor.Profession = vendor.SelecteProfession;
+                Vendor.FaxNumber = vendor.FaxNumber;
+                Vendor.Address =  vendor.City + ", " + _context.Regions.Where(u => u.RegionId == vendor.StateId).First().Name;
+                Vendor.City = vendor.City;
+                Vendor.State = _context.Regions.Where(u => u.RegionId == vendor.StateId).First().Name;
+                Vendor.Zip = vendor.ZipCode;
+                Vendor.RegionId = vendor.StateId;
+                Vendor.CreatedDate = DateTime.Now;
+                Vendor.PhoneNumber = vendor.PhoneNumber;
+                Vendor.Email = vendor.EmailAddress;
+                Vendor.BusinessContact = vendor.BusinessContact;
+                _context.HealthProfessionals.Update(Vendor);
+                _context.SaveChanges();
+            }
+            return RedirectToAction("Partners");
+        }
+
+        public IActionResult DeleteBusiness(int Vendorid)
+        {
+            var Vendor = _context.HealthProfessionals.First(u => u.VendorId == Vendorid);
+            if(Vendor != null) {
+                _context.Remove(Vendor);
+                _context.SaveChanges();
+            }
+            return RedirectToAction("Partners");
         }
         #endregion Partners
     }
