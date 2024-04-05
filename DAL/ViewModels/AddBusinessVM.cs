@@ -10,7 +10,7 @@ namespace DAL.ViewModels
     {
         public string BusinessName { get; set; }
         public int vendorId { get; set; }
-        public int SelecteProfession { get; set; }
+        public int? SelecteProfession { get; set; }
         public string? FaxNumber { get; set; }
         public string? PhoneNumber { get; set; }
         public string EmailAddress { get; set; }

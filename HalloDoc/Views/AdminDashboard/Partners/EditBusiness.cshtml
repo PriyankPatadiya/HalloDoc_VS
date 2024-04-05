@@ -18,7 +18,7 @@
                     <input type="text"
                            class="form-control shadow-none inputs1"
                            placeholder="Business Name"
-                           asp-for="BusinessName"
+                           asp-for="BusinessName"   
                            data-val="true"
                            data-val-required="Business Name is required." />
                     <label for="BusinessName" class="ms-2">Business Name</label>
@@ -28,7 +28,7 @@
                     <select class="form-control py-2" name="SelecteProfession">
                         @foreach (var item in ViewBag.Professions)
                         {
-                            <option value="@item.HealthProfessionalId">@item.ProfessionName</option>
+                            <option value="@item.HealthProfessionalId" selected="@(item.HealthProfessionalId == Model.SelecteProfession)">@item.ProfessionName</option>
                         }
                     </select>
                     <label for="SelectedProfession" class="ms-2"></label>

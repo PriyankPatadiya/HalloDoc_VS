@@ -1110,6 +1110,7 @@ namespace HalloDoc.Controllers
         }
 
         // Scheduling
+        #region Scheduling
 
         public IActionResult Scheduling()
         {
@@ -1131,7 +1132,6 @@ namespace HalloDoc.Controllers
         }
 
 
-        #region Scheduling
 
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -1505,7 +1505,7 @@ namespace HalloDoc.Controllers
                 StateId = Vendor.RegionId,
                 ZipCode = Vendor.Zip,
                 City = Vendor.City,
-
+                SelecteProfession = Vendor.Profession
             };
             ViewBag.Regions = _admin.regions();
             ViewBag.Professions = _context.HealthProfessionalTypes.ToList();
@@ -1546,6 +1546,24 @@ namespace HalloDoc.Controllers
             return RedirectToAction("Partners");
         }
         #endregion Partners
+
+        #region PatientHistory
+
+        public IActionResult PatientHistory()
+        {
+            return View("RecordsMenu/PatientRecords");
+        }
+
+        public IActionResult getPatientRecords(string firstName , string lastName, string email , string phoneNumber)
+        {
+            var user = _context.Users.ToList();
+            user = user.Where(u => (String.IsNullOrEmpty(firstName) || u.FirstName.Contains(firstName)) && 
+            (String.IsNullOrEmpty(lastName) || u.LastName.Contains(lastName)) &&
+            (String.IsNullOrEmpty(email) || u.Email.Contains(email)) &&
+            (String.IsNullOrEmpty(phoneNumber) || u.Mobile.Contains(phoneNumber))).ToList();
+            return PartialView("RecordsMenu/_patientRecordsPartial", user);
+        }
+        #endregion PatientHistory
     }
 }
 

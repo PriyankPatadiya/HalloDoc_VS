@@ -1,0 +1,33 @@
+﻿@model List<DAL.DataModels.User>
+<Table class="table mb-0">
+
+    <tbody class="table-secondary">
+        <tr>
+            <th scope="col">First Name</th>
+            <th scope="col">Last Name</th>
+            <th scope="col">Email</th>
+            <th scope="col">Phone</th>
+            <th scope="col">Address</th>
+            <th scope="col">Actions</th>
+        </tr>
+    </tbody>
+    <tbody>
+
+        @foreach (var item in Model)
+        {
+            <tr>
+
+                <td class="align-middle">@item.FirstName</td>
+                <td class="align-middle">@item.LastName</td>
+                <td class="align-middle">@item.Email</td>
+                <td class="align-middle">@item.Mobile</td>
+                <td class="align-middle">@item.Street, @item.City, @item.ZipCode</td>
+                <td class="align-middle">
+                    <button class="btn btn-outline-info">Explore</button>
+                </td>
+
+            </tr>
+        }
+    </tbody>
+
+</Table>

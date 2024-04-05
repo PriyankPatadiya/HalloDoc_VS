@@ -105,7 +105,16 @@
                             </div>
                         </li>
                         <li class="nav-item" role="presentation">
-                            <button class="px-2 shadow-none nav-link text-decoration-none text-info">Records</button>
+                            <button class="px-2 shadow-none nav-link text-decoration-none text-info" id="dropdownMenu4" data-bs-toggle="dropdown" aria-expanded="false">Records</button>
+                            <div class="dropdown">
+                                <ul class="dropdown-menu" aria-labelledby="dropdownMenu4">
+                                    <li><button  class="dropdown-item" type="button">Search Records </button></li>
+                                    <li><button  class="dropdown-item" type="button">Email Logs</button></li>
+                                    <li><button  class="dropdown-item" type="button">SMS Logs</button></li>
+                                    <li><a asp-action="PatientHistory" class="dropdown-item" type="button">Patient Records</a></li>
+                                    <li><button  class="dropdown-item" type="button">Blocked History</button></li>
+                                </ul>
+                            </div>
                         </li>
                     </ul>
                 </div>
