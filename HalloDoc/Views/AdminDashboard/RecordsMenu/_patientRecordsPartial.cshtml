@@ -23,7 +23,7 @@
                 <td class="align-middle">@item.Mobile</td>
                 <td class="align-middle">@item.Street, @item.City, @item.ZipCode</td>
                 <td class="align-middle">
-                    <button class="btn btn-outline-info">Explore</button>
+                    <a asp-action="explorePatientRequests" asp-route-userId="@item.UserId" class="btn btn-outline-info">Explore</a>
                 </td>
 
             </tr>

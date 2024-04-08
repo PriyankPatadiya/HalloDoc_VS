@@ -1521,7 +1521,7 @@ namespace HalloDoc.Controllers
                 Vendor.VendorName = vendor.BusinessName;
                 Vendor.Profession = vendor.SelecteProfession;
                 Vendor.FaxNumber = vendor.FaxNumber;
-                Vendor.Address =  vendor.City + ", " + _context.Regions.Where(u => u.RegionId == vendor.StateId).First().Name;
+                Vendor.Address = vendor.City + ", " + _context.Regions.Where(u => u.RegionId == vendor.StateId).First().Name;
                 Vendor.City = vendor.City;
                 Vendor.State = _context.Regions.Where(u => u.RegionId == vendor.StateId).First().Name;
                 Vendor.Zip = vendor.ZipCode;
@@ -1539,7 +1539,8 @@ namespace HalloDoc.Controllers
         public IActionResult DeleteBusiness(int Vendorid)
         {
             var Vendor = _context.HealthProfessionals.First(u => u.VendorId == Vendorid);
-            if(Vendor != null) {
+            if (Vendor != null)
+            {
                 _context.Remove(Vendor);
                 _context.SaveChanges();
             }
@@ -1554,16 +1555,93 @@ namespace HalloDoc.Controllers
             return View("RecordsMenu/PatientRecords");
         }
 
-        public IActionResult getPatientRecords(string firstName , string lastName, string email , string phoneNumber)
+        public IActionResult getPatientRecords(string firstName, string lastName, string email, string phoneNumber)
         {
             var user = _context.Users.ToList();
-            user = user.Where(u => (String.IsNullOrEmpty(firstName) || u.FirstName.Contains(firstName)) && 
+            user = user.Where(u => (String.IsNullOrEmpty(firstName) || u.FirstName.Contains(firstName)) &&
             (String.IsNullOrEmpty(lastName) || u.LastName.Contains(lastName)) &&
             (String.IsNullOrEmpty(email) || u.Email.Contains(email)) &&
             (String.IsNullOrEmpty(phoneNumber) || u.Mobile.Contains(phoneNumber))).ToList();
             return PartialView("RecordsMenu/_patientRecordsPartial", user);
         }
+
+        public IActionResult explorePatientRequests(int userId)
+        {
+            var requests = (from request in _context.Requests
+                            join requestClient in _context.RequestClients
+                            on request.RequestId equals requestClient.RequestId
+                            join physician in _context.Physicians
+                            on request.PhysicianId equals physician.PhysicianId into totalphy
+                            from leftphy in totalphy.DefaultIfEmpty()
+                            join Encounter in _context.EncounterForms
+                            on request.RequestId equals Encounter.RequestId into totalEnc
+                            from encLeft in totalEnc.DefaultIfEmpty()
+                            where request.UserId == userId
+                            select new explorePatientVM()
+                            {
+                                FirstName = request.FirstName + " " + request.LastName,
+                                RequestId = request.RequestId,
+                                CreatedDate = request.CreatedDate,
+                                ConfirmationNumber = request.ConfirmationNumber,
+                                ProvideName = leftphy.FirstName,
+                                ConcludeDate = _context.RequestStatusLogs.FirstOrDefault(u => u.RequestId == request.RequestId && u.Status == 9).CreatedDate,
+                                IsFinalize = encLeft.IsFinalize,
+                                RequestClientId = requestClient.RequestClientId
+                            }).ToList();
+            return View("RecordsMenu/explorePatientRecord", requests);
+        }
         #endregion PatientHistory
+
+        #region Search Records
+
+        public IActionResult SearchRecords()
+        {
+            return View("RecordsMenu/SearchRecords");
+        }
+        public IActionResult getSearchRecordsData(int [] status, string patientName,
+        string providerName, string phoneNum, string email, string requestType)
+        {
+            var record = (from request in _context.Requests
+                          join requestclient in _context.RequestClients
+                          on request.RequestId equals requestclient.RequestId
+                          join physician in _context.Physicians
+                          on request.PhysicianId equals physician.PhysicianId into physicians
+                          from allphysician in physicians.DefaultIfEmpty()
+                          select new
+                          {
+                              Request = request,
+                              RequestClient = requestclient,
+                              Physician = allphysician,
+
+                          }).ToList();
+
+            var searchedRecord = record.Select(item => new SearchRecordsVM
+            {
+                PatientName = item.RequestClient.FirstName + " " + item.RequestClient.LastName,
+                Requestor = item.Request.FirstName + " " + item.Request.LastName,
+                //DateOfService = ,
+                //CloseDate = ,
+                Email = item.RequestClient.Email,
+                PhoneNumber = item.RequestClient.PhoneNumber,
+                Address = item.RequestClient.Address,
+                Zip = item.RequestClient.ZipCode,
+                RequestStatus = item.Request.Status,
+                PhysicianName = item.Physician != null ? item.Physician.FirstName : " ",
+                PatientNote = item.RequestClient.Notes,
+                RequestTypeId = item.Request.RequestTypeId,
+                RequestId = item.Request.RequestId,
+                IsDeleted = item.Request.IsDeleted[0],
+            }).Where(item =>
+            (string.IsNullOrEmpty(email) || item.Email.Contains(email)) &&
+            (string.IsNullOrEmpty(phoneNum) || item.PhoneNumber.Contains(phoneNum)) &&
+            (string.IsNullOrEmpty(patientName) || item.PatientName.ToLower().Contains(patientName.ToLower())) &&
+            (string.IsNullOrEmpty(providerName) || item.PhysicianName.ToLower().Contains(providerName.ToLower())) &&
+            (status.Length == 0 || status.Contains(item.RequestStatus)) && item.IsDeleted == false &&
+            (requestType == "0" || item.RequestTypeId == int.Parse(requestType))).ToList();
+            return PartialView("RecordsMenu/_searchRecordsPartial", searchedRecord);
+        }
+
+        #endregion Search Records
     }
 }
 

@@ -1,0 +1,63 @@
+﻿@model List<DAL.ViewModels.explorePatientVM>
+@{
+    ViewData["Title"] = "Patient Records";
+    Layout = "~/Views/Shared/_LayoutAdminDash.cshtml";
+}
+
+<div class="container-fluid" style="height: 80%!important" id="vendorsDivId">
+    <div class="mx-0 d-flex justify-content-between py-3">
+    <h4 class="py-3">Patient Record</h4>
+        <a asp-action="PatientHistory" class="btn btn-outline-info my-3"> ❮ Back</a>
+    </div>
+    <div class="bg-body border border-secondary shadow rounded p-4">
+        <Table class="table mb-0">
+
+            <tbody class="table-secondary">
+                <tr>
+                    <th scope="col">Client/Member</th>
+                    <th scope="col">Created Date</th>
+                    <th scope="col">Confirmation</th>
+                    <th scope="col">Provider Name</th>
+                    <th scope="col">Concluded Date</th>
+                    <th scope="col">Status</th>
+                    <th scope="col">Final Report</th>
+                    <th scope="col">Actions</th>
+                </tr>
+            </tbody>
+            <tbody>
+
+                @foreach (var item in Model)
+                {
+                    <tr>
+
+                        <td class="align-middle">@item.FirstName</td>
+                        <td class="align-middle">@item.CreatedDate</td>
+                        <td class="align-middle">@item.ConfirmationNumber.ToUpper()</td>
+                        <td class="align-middle">@item.ProvideName</td>
+                        <td class="align-middle">@item.ConcludeDate</td>
+                        <td class="align-middle">@item.Status</td>
+                        <td>
+                            @if(item.IsFinalize == true)
+                            {
+                                <a asp-action="GeneratePdf" asp-route-requestid="@item.RequestId" class="btn btn-outline-info">View</a>
+                            }
+                            else
+                            {
+                                <span>--</span>
+                            }
+                        </td>
+                        <td>
+                            <button class="btn btn-outline-info" data-bs-toggle="dropdown" aria-expanded="false">Actions</button>
+                            <ul class="dropdown-menu">
+                                <li><a asp-action="ViewCaseAdmin" asp-route-reqcliId="@item.RequestClientId" class="dropdown-item">View Case</a></li>
+                                <li><a class="dropdown-item pe-auto">Chat</a></li>
+                                <li><a class="dropdown-item">Documents</a></li>
+                            </ul>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+
+        </Table>
+    </div>
+</div>

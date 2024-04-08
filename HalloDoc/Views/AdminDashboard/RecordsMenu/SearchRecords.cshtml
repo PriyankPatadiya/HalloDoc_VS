@@ -1,0 +1,137 @@
+﻿@{
+    ViewData["Title"] = "Patient Records";
+    Layout = "~/Views/Shared/_LayoutAdminDash.cshtml";
+}
+
+<div class="container-fluid" style="height: 70%!important" id="vendorsDivId">
+    <div class="mx-0 px-0 d-flex justify-content-between">
+        <h4 class="py-3">Search Records</h4>
+        <button class="btn btn-info text-white my-2">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-box-arrow-in-up-right" viewBox="0 0 16 16">
+                <path fill-rule="evenodd" d="M6.364 13.5a.5.5 0 0 0 .5.5H13.5a1.5 1.5 0 0 0 1.5-1.5v-10A1.5 1.5 0 0 0 13.5 1h-10A1.5 1.5 0 0 0 2 2.5v6.636a.5.5 0 1 0 1 0V2.5a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 .5.5v10a.5.5 0 0 1-.5.5H6.864a.5.5 0 0 0-.5.5" />
+                <path fill-rule="evenodd" d="M11 5.5a.5.5 0 0 0-.5-.5h-5a.5.5 0 0 0 0 1h3.793l-8.147 8.146a.5.5 0 0 0 .708.708L10 6.707V10.5a.5.5 0 0 0 1 0z" />
+            </svg> Export Data To Excel
+        </button>
+    </div>
+    <div class="mx-0 row px-2 border-bottom-0 border border-secondary rounded-top pt-2 pb-2 bg-body">
+        <div class="col-sm-12 col-md-12 col-lg-3 form-floating my-3">
+            <select class="form-control form-select py-2 shadow-none" id="requestStatus">
+                <option value="0">Select Request Status</option>
+                <option value="1">New</option>
+                <option value="2">Pending</option>
+                <option value="3">Active</option>
+                <option value="4">Conclude</option>
+                <option value="5">To Close</option>
+                <option value="6">Unpaid</option>
+            </select>
+        </div>
+        <div class="col-sm-12 col-md-12 col-lg-3 form-floating my-3">
+            <input type="text"
+                   class="form-control shadow-none"
+                   id="PatientName"
+                   placeholder="Last Name" />
+            <label for="floatingInput2" class="ms-2">Patient Name</label>
+        </div>
+        <div class="col-sm-12 col-md-12 col-lg-3 form-floating my-3">
+            <select class="form-control form-select py-2 shadow-none" id="requestType">
+                <option value="0">Select Request Type</option>
+                <option value="1">Patient</option>
+                <option value="2">Family/Friend</option>
+                <option value="3">Concierge</option>
+                <option value="4">Business</option>
+            </select>
+        </div>
+        <div class="col-sm-12 col-md-12 col-lg-3 form-floating my-3">
+            <input type="date"
+                   class="form-control shadow-none"
+                   id="FromDate"
+                   placeholder="From Date Of Service" />
+            <label for="floatingInput5" class="ms-2">From Date Of Service</label>
+        </div>
+        <div class="col-sm-12 col-md-12 col-lg-3 form-floating my-3">
+            <input type="date"
+                   class="form-control shadow-none"
+                   id="ToDate"
+                   placeholder="To Date Of Service" />
+            <label for="floatingInput5" class="ms-2">To Date Of Service</label>
+        </div>
+        <div class="col-sm-12 col-md-12 col-lg-3 form-floating my-3">
+            <input type="text"
+                   class="form-control shadow-none"
+                   id="ProviderName"
+                   placeholder="Last Name" />
+            <label for="floatingInput2" class="ms-2">Provider Name</label>
+        </div>
+        <div class="col-sm-12 col-md-12 col-lg-3 form-floating my-3">
+            <input type="text"
+                   class="form-control shadow-none"
+                   id="EmailString"
+                   placeholder="name@InputType.com" />
+            <label for="floatingInput4" class="ms-2">Email</label>
+        </div>
+        <div class="col-sm-12 col-md-12 col-lg-3 form-floating my-3">
+            <input type="tel"
+                   class="form-control shadow-none"
+                   id="PhoneNumber"
+                   placeholder="PhoneNumber" />
+            <label for="floatingInput5" class="ms-2">Mobile Number</label>
+        </div>
+    </div>
+    <div class="d-flex justify-content-end border-bottom-0 border-top-0 border border-secondary pb-2 bg-body pe-2">
+        <button class="btn btn-outline-info">Clear</button>
+        <button class="btn btn-info text-white mx-3" onclick="getRecords()">Search</button>
+    </div>
+    <div class=" border-top-0 border border-secondary rounded-bottom bg-body px-3 overflow-auto" style="height: 80% !important" id="SearchRecordsPartialDiv">
+    </div>
+</div>
+<script>
+    getRecords();
+    function getRecords(){
+        var patientName = $("#PatientName").val();
+        var requestType = $("#requestType").val();
+        var requestStatus = $("#requestStatus").val();
+        var fromDate = $("#FromDate").val();
+        var toDate = $("#ToDate").val();
+        var providerName = $("#ProviderName").val(); 
+        var phoneNumber = $("#PhoneNumber").val(); 
+        var email = $("#EmailString").val();
+        var status;
+        if (requestStatus == "1") {
+            status = [1];
+        } else if (requestStatus == "2") {
+            status = [2];
+        } else if (requestStatus == "3") {
+            status = [4, 5];
+        } else if (requestStatus == "4") {
+            status = [6];
+        } else if (requestStatus == "5") {
+            status = [3, 7, 8];
+        } else if (requestStatus == "6") {
+            status = [9];
+        } else {
+            status = [];
+        }
+
+        $.ajax({
+            type: 'GET',
+            url: '/AdminDashboard/getSearchRecordsData',
+            traditional: true,
+            data: { status: status, patientName: patientName, providerName: providerName, phoneNum: phoneNumber, email: email, requestType: requestType },
+          
+            success : function (response){
+                $("#SearchRecordsPartialDiv").html(response);
+            },
+            error: function (data){
+                alert(data.d);
+            }
+        });
+    }
+
+    //function removeFilters() {
+    //    $("#FirstNameString").val('');
+    //    $("#LastNameString").val('');
+    //    $("#EmailString").val('');
+    //    $("#PhoneNumber").val('');
+    //    getPatientRecord();
+    //}
+</script>
