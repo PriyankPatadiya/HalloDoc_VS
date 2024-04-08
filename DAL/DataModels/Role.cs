@@ -38,5 +38,8 @@ public partial class Role
     public string? Ip { get; set; }
 
     [InverseProperty("Role")]
+    public virtual ICollection<Physician> Physicians { get; set; } = new List<Physician>();
+
+    [InverseProperty("Role")]
     public virtual ICollection<RoleMenu> RoleMenus { get; set; } = new List<RoleMenu>();
 }

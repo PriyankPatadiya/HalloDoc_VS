@@ -24,9 +24,6 @@ public partial class BlockRequest
     [Column(TypeName = "character varying")]
     public string? Reason { get; set; }
 
-    [StringLength(50)]
-    public string RequestId { get; set; } = null!;
-
     [Column("IP")]
     [StringLength(20)]
     public string? Ip { get; set; }
@@ -36,4 +33,10 @@ public partial class BlockRequest
 
     [Column(TypeName = "timestamp without time zone")]
     public DateTime? ModifiedDate { get; set; }
+
+    public int RequestId { get; set; }
+
+    [ForeignKey("RequestId")]
+    [InverseProperty("BlockRequests")]
+    public virtual Request Request { get; set; } = null!;
 }

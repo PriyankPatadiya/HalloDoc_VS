@@ -1599,6 +1599,51 @@ namespace HalloDoc.Controllers
             return View("RecordsMenu/SearchRecords");
         }
         public IActionResult getSearchRecordsData(int [] status, string patientName,
+        string providerName, string phoneNum, string email, string requestType, string isExportExcel)
+        {
+            var record = (from request in _context.Requests
+                          join requestclient in _context.RequestClients
+                          on request.RequestId equals requestclient.RequestId
+                          join physician in _context.Physicians
+                          on request.PhysicianId equals physician.PhysicianId into physicians
+                          from allphysician in physicians.DefaultIfEmpty()
+                          select new
+                          {
+                              Request = request,
+                              RequestClient = requestclient,
+                              Physician = allphysician,
+
+                          }).ToList();
+
+            var searchedRecord = record.Select(item => new SearchRecordsVM
+            {
+                PatientName = item.RequestClient.FirstName + " " + item.RequestClient.LastName,
+                Requestor = item.Request.FirstName + " " + item.Request.LastName,
+                //DateOfService = ,
+                //CloseDate = ,
+                Email = item.RequestClient.Email,
+                PhoneNumber = item.RequestClient.PhoneNumber,
+                Address = item.RequestClient.Address,
+                Zip = item.RequestClient.ZipCode,
+                RequestStatus = item.Request.Status,
+                PhysicianName = item.Physician != null ? item.Physician.FirstName : " ",
+                PatientNote = item.RequestClient.Notes,
+                RequestTypeId = item.Request.RequestTypeId,
+                RequestId = item.Request.RequestId,
+                IsDeleted = item.Request.IsDeleted[0],
+            }).Where(item =>
+            (item.IsDeleted != true) &&
+            (string.IsNullOrEmpty(email) || item.Email.Contains(email)) &&
+            (string.IsNullOrEmpty(phoneNum) || item.PhoneNumber.Contains(phoneNum)) &&
+            (string.IsNullOrEmpty(patientName) || item.PatientName.ToLower().Contains(patientName.ToLower())) &&
+            (string.IsNullOrEmpty(providerName) || item.PhysicianName.ToLower().Contains(providerName.ToLower())) &&
+            (status.Length == 0 || status.Contains(item.RequestStatus)) && item.IsDeleted == false &&
+            (requestType == "0" || item.RequestTypeId == int.Parse(requestType))).ToList();
+
+                 return PartialView("RecordsMenu/_searchRecordsPartial", searchedRecord);
+            
+        }
+        public IActionResult exportSearchRecordfile(int[] status, string patientName,
         string providerName, string phoneNum, string email, string requestType)
         {
             var record = (from request in _context.Requests
@@ -1637,11 +1682,74 @@ namespace HalloDoc.Controllers
             (string.IsNullOrEmpty(patientName) || item.PatientName.ToLower().Contains(patientName.ToLower())) &&
             (string.IsNullOrEmpty(providerName) || item.PhysicianName.ToLower().Contains(providerName.ToLower())) &&
             (status.Length == 0 || status.Contains(item.RequestStatus)) && item.IsDeleted == false &&
-            (requestType == "0" || item.RequestTypeId == int.Parse(requestType))).ToList();
-            return PartialView("RecordsMenu/_searchRecordsPartial", searchedRecord);
+            (requestType == null || item.RequestTypeId == int.Parse(requestType))).ToList();
+            using (var excel = new ExcelPackage())
+            {
+                var worksheet = excel.Workbook.Worksheets.Add("sheet1");
+                worksheet.Cells[1, 1].Value = "PatientName";
+                worksheet.Cells[1, 3].Value = "RequestorName";
+                worksheet.Cells[1, 4].Value = "RequestDate";
+                worksheet.Cells[1, 5].Value = "phone";
+                worksheet.Cells[1, 6].Value = "address";
+                worksheet.Cells[1, 7].Value = "Email";
+                worksheet.Cells[1, 8].Value = "Zip";
+                worksheet.Cells[1, 9].Value = "Physician";
+
+                var row = 2;
+                foreach (var item in searchedRecord)
+                {
+                    worksheet.Cells[row, 1].Value = item.PatientName;
+                    worksheet.Cells[row, 3].Value = item.Requestor;
+                    worksheet.Cells[row, 4].Value = item.DateOfService;
+                    worksheet.Cells[row, 5].Value = item.PhoneNumber;
+                    worksheet.Cells[row, 6].Value = item.Address;
+                    worksheet.Cells[row, 7].Value = item.Email;
+                    worksheet.Cells[row, 8].Value = item.Zip;
+                    worksheet.Cells[row, 9].Value = item.PhysicianName;
+                    row++;
+                }
+
+                var excelBytes = excel.GetAsByteArray();
+                return File(excelBytes, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "export.xlsx");
+            }
         }
 
+        public IActionResult deleteRequest(int requestId)
+        {
+            var request = _context.Requests.FirstOrDefault(u => u.RequestId == requestId);
+            request.IsDeleted = new BitArray(new[] { true });
+            _context.Requests.Update(request);
+            _context.SaveChanges();
+            return RedirectToAction("SearchRecords");
+        }
         #endregion Search Records
+
+        #region Blocked History
+        
+        public IActionResult BlockedHistory()
+        {
+            return View("RecordsMenu/BlockedRequests");
+        }
+
+        public IActionResult getBlockedRequests(string Name, string email, string phoneNumber)
+        {
+            List<BlockedHistoryVM> blocked = (from blockedrequest in _context.BlockRequests
+                                          join reqclient in _context.RequestClients on blockedrequest.RequestId.ToString() equals reqclient.RequestId.ToString()
+                                          select new BlockedHistoryVM()
+                                          {
+                                              BlockedRequestID = blockedrequest.BlockRequestId,
+                                              RequestId = blockedrequest.RequestId,
+                                              PatientName = reqclient.FirstName,
+                                              CreatedDate = blockedrequest.CreatedDate,
+                                              PhoneNumber = blockedrequest.PhoneNumber,
+                                              Email = blockedrequest.Email,
+                                              Notes = reqclient.Notes,
+                                              IsActive = false
+                                          }).ToList();
+            
+            return PartialView("RecordsMenu/_blockedHistoryPartial", blocked);
+        }
+        #endregion Blocked History
     }
 }
 

@@ -1,0 +1,75 @@
+﻿@{
+    ViewData["Title"] = "Patient Records";
+    Layout = "~/Views/Shared/_LayoutAdminDash.cshtml";
+}
+
+<div class="container-fluid" style="height: 80%!important" id="vendorsDivId">
+    <h4 class="py-3">Patient History</h4>
+    <div class="mx-0 row px-2 border-bottom-0 border border-secondary rounded-top pt-2 pb-2 bg-body">
+        <div class="col-sm-12 col-md-12 col-lg-3 form-floating my-3">
+            <input type="text"
+                   class="form-control"
+                   id="NameString"
+                   placeholder="First Name" />
+            <label for="floatingInput1" class="ms-2">Name</label>
+        </div>
+        <div class="col-sm-12 col-md-12 col-lg-3 form-floating my-3">
+            <input type="date"
+                   class="form-control"
+                   id="Date"
+                   placeholder="Date" />
+            <label for="floatingInput2" class="ms-2">Date</label>
+        </div>
+        <div class="col-sm-12 col-md-12 col-lg-3 form-floating my-3">
+            <input type="text"
+                   class="form-control"
+                   id="EmailString"
+                   placeholder="name@InputType.com" />
+            <label for="floatingInput4" class="ms-2">Email</label>
+        </div>
+        <div class="col-sm-12 col-md-12 col-lg-3 form-floating my-3">
+            <input type="tel"
+                   class="form-control"
+                   id="PhoneNumber"
+                   placeholder="PhoneNumber" />
+            <label for="floatingInput5" class="ms-2">Mobile Number</label>
+        </div>
+    </div>
+    <div class="d-flex justify-content-end border-bottom-0 border-top-0 border border-secondary pb-2 bg-body pe-4">
+        <button class="btn btn-outline-info" onclick="removeFilters()">Clear</button>
+        <button class="btn btn-info mx-3" onclick="getBlockedRequests()">Search</button>
+    </div>
+    <div class=" border-top-0 border border-secondary rounded-bottom bg-body px-3 overflow-auto" style="height: 80% !important" id="BlockRequestsPartialDiv">
+    </div>
+</div>
+<script>
+
+    getBlockedRequests();
+
+    function getBlockedRequests() {
+
+        var Name = $("#NameString").val();
+        var LName = $("#Date").val();
+        var Email = $("#EmailString").val();
+        var phone = $("#PhoneNumber").val();
+
+        $.ajax({
+            type: 'GET',
+            url: '/AdminDashboard/getBlockedRequests',
+            data: { Name: Name, email: Email, phoneNumber: phone },
+            success: function (response) {
+                $("#BlockRequestsPartialDiv").html(response);
+            },
+            error: function (response) {
+                alert(response.d);
+            }
+        })
+    }
+    function removeFilters() {
+        $("#FirstNameString").val('');
+        $("#LastNameString").val('');
+        $("#EmailString").val('');
+        $("#PhoneNumber").val('');
+        getBlockedRequests();
+    }
+</script>

@@ -90,7 +90,10 @@ public partial class Request
     public int? CreatedUserId { get; set; }
 
     [InverseProperty("Request")]
-    public virtual ICollection<EncounterForm> EncounterForms { get; set; } = new List<EncounterForm>();
+    public virtual ICollection<BlockRequest> BlockRequests { get; set; } = new List<BlockRequest>();
+
+    [InverseProperty("Request")]
+    public virtual EncounterForm? EncounterForm { get; set; }
 
     [ForeignKey("PhysicianId")]
     [InverseProperty("Requests")]

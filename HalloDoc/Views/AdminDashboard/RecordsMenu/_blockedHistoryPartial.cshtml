@@ -1,0 +1,35 @@
+﻿@model List<DAL.ViewModels.BlockedHistoryVM>
+<Table class="table mb-0">
+
+    <tbody class="table-secondary">
+        <tr>
+            <th scope="col">Patient Name</th>
+            <th scope="col">Phone Number</th>
+            <th scope="col">Email</th>
+            <th scope="col">Created Date</th>
+            <th scope="col">Notes</th>
+            <th scope="col">Is Active</th>
+            <th scope="col">Action</th>
+        </tr>
+    </tbody>
+    <tbody>
+
+        @foreach (var item in Model)
+        {
+            <tr>
+
+                <td class="align-middle">@item.PatientName</td>
+                <td class="align-middle">@item.PhoneNumber</td>
+                <td class="align-middle">@item.Email</td>
+                <td class="align-middle">@item.CreatedDate</td>
+                <td class="align-middle">@item.Notes</td>
+                <td class="align-middle"><input class="form-check-input" type="checkbox" value="" id="flexCheckIndeterminateDisabled"></td>
+                <td class="align-middle">
+                    <a asp-action="unBlockRequest" asp-route-RequestID="@item.RequestId" class="btn btn-outline-info">unblock</a>
+                </td>
+
+            </tr>
+        }
+    </tbody>
+
+</Table>

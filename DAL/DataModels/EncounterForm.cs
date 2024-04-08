@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 namespace DAL.DataModels;
 
 [Table("EncounterForm")]
+[Index("RequestId", Name = "EncounterForm_Ukey_reqid", IsUnique = true)]
 public partial class EncounterForm
 {
     [Key]
@@ -81,6 +82,6 @@ public partial class EncounterForm
     public virtual Physician? Physician { get; set; }
 
     [ForeignKey("RequestId")]
-    [InverseProperty("EncounterForms")]
-    public virtual Request? Request { get; set; }
+    [InverseProperty("EncounterForm")]
+    public virtual Request Request { get; set; } = null!;
 }

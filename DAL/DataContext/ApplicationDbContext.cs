@@ -148,6 +148,10 @@ public partial class ApplicationDbContext : DbContext
         modelBuilder.Entity<BlockRequest>(entity =>
         {
             entity.HasKey(e => e.BlockRequestId).HasName("BlockRequests_pkey");
+
+            entity.HasOne(d => d.Request).WithMany(p => p.BlockRequests)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("RequestForeignKey");
         });
 
         modelBuilder.Entity<Business>(entity =>
@@ -188,7 +192,9 @@ public partial class ApplicationDbContext : DbContext
 
             entity.HasOne(d => d.Physician).WithMany(p => p.EncounterForms).HasConstraintName("EncounterForm_PhysicianId_fkey");
 
-            entity.HasOne(d => d.Request).WithMany(p => p.EncounterForms).HasConstraintName("EncounterForm_RequestId_fkey");
+            entity.HasOne(d => d.Request).WithOne(p => p.EncounterForm)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("EncounterForm_RequestId_fkey");
         });
 
         modelBuilder.Entity<HealthProfessional>(entity =>
@@ -222,6 +228,8 @@ public partial class ApplicationDbContext : DbContext
             entity.HasOne(d => d.CreatedByNavigation).WithMany(p => p.PhysicianCreatedByNavigations).HasConstraintName("Physician_CreatedBy_fkey");
 
             entity.HasOne(d => d.ModifiedByNavigation).WithMany(p => p.PhysicianModifiedByNavigations).HasConstraintName("Physician_ModifiedBy_fkey");
+
+            entity.HasOne(d => d.Role).WithMany(p => p.Physicians).HasConstraintName("Physician_RoleId_fkey");
         });
 
         modelBuilder.Entity<PhysicianLocation>(entity =>

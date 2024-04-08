@@ -146,7 +146,7 @@ namespace BAL.Repository
             if(request != null && requestClient != null)
             {
                 BlockRequest blockmodel = new BlockRequest();
-                blockmodel.RequestId = requestId.ToString();
+                blockmodel.RequestId = requestId;
                 blockmodel.Reason = reason;
                 blockmodel.CreatedDate = request.CreatedDate;
                 blockmodel.ModifiedDate = DateTime.Now;
