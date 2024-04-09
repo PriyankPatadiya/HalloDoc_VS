@@ -17,10 +17,12 @@ namespace HalloDoc.Controllers
         private readonly ApplicationDbContext _context;
         private readonly IPatientRequest _patreq;
         private readonly IRequests _otherreq;
+        [Obsolete]
         private IHostingEnvironment _environment;
         private readonly IuploadFile _uploadfile;
         private readonly IEmailService _email;
 
+        [Obsolete]
         public patientFormsController(ApplicationDbContext context, IPatientRequest patreq, IRequests otherreq, IHostingEnvironment environment, IuploadFile uploadFile, IEmailService email)
         {
             _context = context; 

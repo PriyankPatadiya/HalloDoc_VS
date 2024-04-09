@@ -22,16 +22,16 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" asp-append-version="true"></script>
     @*<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>*@
 
-<style>
+    <style>
         .nav-link:not(.active) {
-            color: lightslategrey !important; 
+            color: lightslategrey !important;
         }
-</style>    
+    </style>
 
 
     <title>@ViewData["Title"]</title>
 </head>
-<body style="min-height: 100%; height:100%;" class="position-relative" >
+<body style="min-height: 100%; height:100%;" class="position-relative">
     <header class="">
         <nav class="navbar navbar-expand-lg d-flex justify-content-between border border-bottom position-fixed w-100 bg-body" style=" z-index: 100 !important">
             <button type="button" id="menuadmin" class="navbar-toggler position-absolute start-0 top-0 shadow-none btn btn-outline-info ms-3 mt-4 d-sm-none d-block" data-bs-toggle="collapse" data-bs-target="#navbarTogglerDemo01" aria-controls="navbarTogglerDemo01" aria-expanded="false" aria-label="Toggle navigation">
@@ -49,7 +49,7 @@
                 <span class="fw-bold fs-6 text-body mt-1 ">@ViewBag.username</span>
                 <a asp-controller="Home" asp-action="Logout"> <button class="btn text-decoration-none border border-info bg-transparent text-info shadow-none mx-2">Logout</button></a>
                 <button class="btn bg-transparent pt-1 pb-2 border border-info text-info me-4 shadow-none"
-                        id="theme-toggle" >
+                        id="theme-toggle">
                     <svg xmlns="http://www.w3.org/2000/svg"
                          width="16"
                          height="16"
@@ -69,53 +69,24 @@
     <div class="w-100 shadow position-fixed bg-body" style="top: 93px !important; z-index: 100">
         <nav class="navbar navbar-expand-lg py-0 shadow">
             <div class="container-fluid">
-                
+
                 <div class="collapse navbar-collapse" id="navbarTogglerDemo01">
 
                     <ul class="nav nav-underline" id="pills-tab" role="tablist">
                         <li class="nav-item " role="presentation">
-                            <a class="px-2 shadow-none nav-link text-decoration-none text-info  @(ViewContext.ActionDescriptor.RouteValues["action"] == "MainPage" ? "active" : "")" asp-action="MainPage">Dashboard</a>
+                            <a class="px-2 shadow-none nav-link text-decoration-none text-info  @(ViewContext.ActionDescriptor.RouteValues["action"] == "Dashboard" ? "active" : "")" >Dashboard</a>
                         </li>
                         <li class="nav-item" role="presentation">
-                            <a asp-action="ProviderLocation" class="px-2 nav-link text-info text-decoration-none  shadow-none @(ViewContext.ActionDescriptor.RouteValues["action"] == "ProviderLocation" ? "active" : "")">Provider Location</a>
+                            <a class="px-2 nav-link text-info text-decoration-none  shadow-none @(ViewContext.ActionDescriptor.RouteValues["action"] == "ProviderLocation" ? "active" : "")">Invoicing</a>
                         </li>
                         <li class="nav-item" role="presentation">
-                            <a class="px-2 shadow-none nav-link text-decoration-none text-info @(ViewContext.ActionDescriptor.RouteValues["action"] == "AdminProfile" ? "active" : "")" asp-action="AdminProfile">My Profile</a>
+                            <a class="px-2 shadow-none nav-link text-decoration-none text-info @(ViewContext.ActionDescriptor.RouteValues["action"] == "AdminProfile" ? "active" : "")" >My Schedule</a>
                         </li>
                         <li class="nav-item" role="presentation">
-                            <button class="px-2 shadow-none nav-link text-decoration-none text-info @(ViewContext.ActionDescriptor.RouteValues["action"] == "Provider" || ViewContext.ActionDescriptor.RouteValues["action"] == "Scheduling" || ViewContext.ActionDescriptor.RouteValues["action"] == "CreateProviderAcc" ? "active" : "")" id="dropdownMenu2" data-bs-toggle="dropdown" aria-expanded="false">Providers</button>
-                            <div class="dropdown">
-                                <ul class="dropdown-menu" aria-labelledby="dropdownMenu2">
-                                    <li><a asp-action="Provider" asp-controller="AdminDashboard" class="dropdown-item" type="button">Provider</a></li>
-                                    <li><a asp-action="Scheduling" asp-controller="AdminDashboard" class="dropdown-item" type="button">Scheduling</a></li>
-                                    <li><button class="dropdown-item" type="button">Invoicing</button></li>
-                                </ul>
-                            </div>
+                            <button class="px-2 shadow-none nav-link text-decoration-none text-info @(ViewContext.ActionDescriptor.RouteValues["action"] == "Provider" || ViewContext.ActionDescriptor.RouteValues["action"] == "Scheduling" || ViewContext.ActionDescriptor.RouteValues["action"] == "CreateProviderAcc" ? "active" : "")" id="dropdownMenu2" data-bs-toggle="dropdown" aria-expanded="false">My Profile</button>
+                            
                         </li>
-                        <li class="nav-item " role="presentation">
-                            <a asp-action="Partners" class="px-2 shadow-none nav-link text-decoration-none text-info @(ViewContext.ActionDescriptor.RouteValues["action"] == "Partners" || ViewContext.ActionDescriptor.RouteValues["action"] == "EditBusiness" || ViewContext.ActionDescriptor.RouteValues["action"] == "ProviderProfile" ? "active" : "")">Partners</a>
-                        </li>
-                        <li class="nav-item" role="presentation">
-                            <button type="button" class="px-2  shadow-none nav-link text-decoration-none text-info @(ViewContext.ActionDescriptor.RouteValues["action"] == "userAccess" || ViewContext.ActionDescriptor.RouteValues["action"] == "CreateProviderAcc" || ViewContext.ActionDescriptor.RouteValues["action"] == "roleAccess" || ViewContext.ActionDescriptor.RouteValues["action"] == "CreateAccess" ? "active" : "")" id="dropdownMenu3" data-bs-toggle="dropdown" aria-expanded="false">Access</button>
-                            <div class="dropdown">
-                                <ul class="dropdown-menu" aria-labelledby="dropdownMenu3">
-                                    <li><a asp-action="userAccess" class="dropdown-item" type="button">UserAccess</a></li>
-                                    <li><a asp-action="roleAccess" class="dropdown-item" type="button">Role Access</a></li>
-                                </ul>
-                            </div>
-                        </li>
-                        <li class="nav-item" role="presentation">
-                            <button class="px-2 shadow-none nav-link text-decoration-none text-info @(ViewContext.ActionDescriptor.RouteValues["action"] == "PatientHistory" || ViewContext.ActionDescriptor.RouteValues["action"] == "BlockedHistory" || ViewContext.ActionDescriptor.RouteValues["action"] == "SearchRecords" || ViewContext.ActionDescriptor.RouteValues["action"] == "explorePatientRequests" ? "active" : "")" id="dropdownMenu4" data-bs-toggle="dropdown" aria-expanded="false">Records</button>
-                            <div class="dropdown">
-                                <ul class="dropdown-menu" aria-labelledby="dropdownMenu4">
-                                    <li><a asp-action="SearchRecords" class="dropdown-item" type="button">Search Records </a></li>
-                                    <li><button  class="dropdown-item" type="button">Email Logs</button></li>
-                                    <li><button  class="dropdown-item" type="button">SMS Logs</button></li>
-                                    <li><a asp-action="PatientHistory" class="dropdown-item" type="button">Patient Records</a></li>
-                                    <li><a asp-action="BlockedHistory" class="dropdown-item" type="button">Blocked History</a></li>
-                                </ul>
-                            </div>
-                        </li>
+                        
                     </ul>
                 </div>
             </div>
@@ -124,13 +95,13 @@
 
     </div>
 
-    
+
     <div class="container-fluid px-0 bg-secondary-subtle">
         <main role="main" class="overflow-auto" style="height: 92vh !important; padding-top: 136.3px !important">
             @RenderBody()
         </main>
     </div>
-    
+
 
 
     <footer class="border-top footer text-muted position-fixed bottom-0 start-0 w-100" style="z-index: 100 !important">
@@ -145,12 +116,8 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
 
-   
-    <script>
-        $(document).ready(function () {
-            $('ViewCaseAdmin').hide();
 
-        });
+    <script>
         const toggleButton = document.getElementById("theme-toggle");
         let currentTheme = localStorage.getItem("theme") || "light";
 

@@ -60,7 +60,7 @@
             </div>
             <div class="modal-body">
                 <form asp-action="CancelCase" method="post">
-                    <input class="d-none" name="requestid" id="cancelModalRequestId" hidden/>
+                    <input class="d-none" name="requestid" id="cancelModalRequestId" hidden />
 
                     <p> Patient Name : <span id="patientnamecancelmodal"></span></p>
                     <select class="form-select" aria-label="Default select example" name="Reason">
@@ -510,11 +510,11 @@
                 int prevpage = Convert.ToInt32(ViewBag.CurrentPage) - 1;
                 int currpage = Convert.ToInt32(ViewBag.CurrentPage);
                 int nextpage = Convert.ToInt32(ViewBag.CurrentPage) + 1;
-                    <li class="page-item">
-                        <a class="page-link btn rounded-4 btn-outline-info mx-1" id="previous" data-page="@(prevpage)" aria-label="Previous" @(ViewBag.CurrentPage <= 1 ? "hidden" : "")>
-                            &laquo;
-                        </a>
-                    </li>
+                <li class="page-item">
+                    <a class="page-link btn rounded-4 btn-outline-info mx-1" id="previous" data-page="@(prevpage)" aria-label="Previous" @(ViewBag.CurrentPage <= 1 ? "hidden" : "")>
+                        &laquo;
+                    </a>
+                </li>
                 for (int z = 0; z < 3; z++)
                 {
                     if (currpage + z <= ViewBag.TotalPages)
@@ -526,15 +526,15 @@
                         </li>
                     }
                 }
-                    <li class="page-item">
-                        <a class="page-link btn rounded-4 btn-outline-info mx-1" id="next" data-page="@(nextpage)" aria-label="Next" @(ViewBag.CurrentPage >= ViewBag.TotalPages ? "hidden" : "")>
-                            &raquo;
-                        </a>
-                    </li>
+                <li class="page-item">
+                    <a class="page-link btn rounded-4 btn-outline-info mx-1" id="next" data-page="@(nextpage)" aria-label="Next" @(ViewBag.CurrentPage >= ViewBag.TotalPages ? "hidden" : "")>
+                        &raquo;
+                    </a>
+                </li>
             }
         </ul>
     </nav>
-<span>@ViewBag.CurrentPage of @ViewBag.TotalPages</span>
+    <span>@ViewBag.CurrentPage of @ViewBag.TotalPages</span>
 </div>
 <script>
 

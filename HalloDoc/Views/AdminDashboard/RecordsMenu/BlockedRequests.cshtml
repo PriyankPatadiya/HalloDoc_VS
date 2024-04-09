@@ -17,7 +17,7 @@
             <input type="date"
                    class="form-control"
                    id="Date"
-                   placeholder="Date" />
+                   placeholder="Date" value="" />
             <label for="floatingInput2" class="ms-2">Date</label>
         </div>
         <div class="col-sm-12 col-md-12 col-lg-3 form-floating my-3">
@@ -49,14 +49,14 @@
     function getBlockedRequests() {
 
         var Name = $("#NameString").val();
-        var LName = $("#Date").val();
+        var CreatedDate = $("#Date").val();
         var Email = $("#EmailString").val();
         var phone = $("#PhoneNumber").val();
 
         $.ajax({
             type: 'GET',
             url: '/AdminDashboard/getBlockedRequests',
-            data: { Name: Name, email: Email, phoneNumber: phone },
+            data: { date : CreatedDate , Name: Name, email: Email, phoneNumber: phone },
             success: function (response) {
                 $("#BlockRequestsPartialDiv").html(response);
             },
@@ -66,8 +66,8 @@
         })
     }
     function removeFilters() {
-        $("#FirstNameString").val('');
-        $("#LastNameString").val('');
+        $("#NameString").val('');
+        $("#Date").val('');
         $("#EmailString").val('');
         $("#PhoneNumber").val('');
         getBlockedRequests();

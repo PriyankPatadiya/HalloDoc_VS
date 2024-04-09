@@ -10,13 +10,9 @@ $(document).ready(function () {
     var statuslink = localStorage.getItem("statuslink");
     var triangleid = localStorage.getItem("triangle");
     var trianglecolor = localStorage.getItem("color");
+    var storedpartial = localStorage.getItem("partialviewpath");
+    path = storedpartial ;
 
-    if (localStorage.getItem("partialviewpath") != undefined) {
-        path = localStorage.getItem("partialviewpath");
-    }
-    else {
-        path = "AdminDashboardNew";
-    }
     $(".Status-btn").removeClass('activee');
     $(".triangle").css('display', 'none');
     $("#statusspan").html(span);
@@ -38,7 +34,9 @@ $(document).ready(function () {
         var id = $(this).attr("id");
         currentpage = $("#" + id).data("page");
         console.log("Current Page: " + currentpage);
-        ChangeTable(path, StatusButton, currentpage, pagesize);
+        var storedpartial = localStorage.getItem("partialviewpath");
+
+        ChangeTable(storedpartial, StatusButton, currentpage, pagesize);
     });
 
     $('.buttonOfFilter').click(function () {

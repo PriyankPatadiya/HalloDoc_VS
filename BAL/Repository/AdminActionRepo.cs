@@ -7,7 +7,7 @@ using Microsoft.IdentityModel.Abstractions;
 using Org.BouncyCastle.Asn1.Mozilla;
 using Org.BouncyCastle.Asn1.Ocsp;
 using Org.BouncyCastle.Ocsp;
-
+using System.Collections;
 
 namespace BAL.Repository
 {
@@ -22,8 +22,15 @@ namespace BAL.Repository
         }
         public RequestNote reqnotebyreqid(int requestid)
         {
-            RequestNote notes = _context.RequestNotes.FirstOrDefault(u => u.RequestId == requestid);
-            return notes;
+            RequestNote? notes = _context.RequestNotes.FirstOrDefault(u => u.RequestId == requestid);
+            if(notes != null)
+            {
+                return notes;
+            }
+            else
+            {
+                return new RequestNote();
+            }
 
         }
         public List<RequestClient> clientsbyreqid(int requestid)
@@ -152,6 +159,7 @@ namespace BAL.Repository
                 blockmodel.ModifiedDate = DateTime.Now;
                 blockmodel.Email = requestClient.Email;
                 blockmodel.PhoneNumber = requestClient.PhoneNumber;
+                blockmodel.IsActive = new BitArray(new[] { false });
 
                 RequestStatusLog requeststatuslog = new RequestStatusLog();
 

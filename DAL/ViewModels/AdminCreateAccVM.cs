@@ -54,7 +54,7 @@ namespace DAL.ViewModels
         [RegularExpression(@"^\d{5}$", ErrorMessage = "Zip code must be 5 digits")]
         public string? ZipCode { get; set; }
 
-        public List<Region>? Regions { get; set; }
+        public List<Region> Regions { get; set; }
 
         public bool? isFromUserAccess { get; set; }
     }

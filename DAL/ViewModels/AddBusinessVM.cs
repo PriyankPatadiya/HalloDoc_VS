@@ -13,7 +13,7 @@ namespace DAL.ViewModels
         public int? SelecteProfession { get; set; }
         public string? FaxNumber { get; set; }
         public string? PhoneNumber { get; set; }
-        public string EmailAddress { get; set; }
+        public string? EmailAddress { get; set; }
         public string? BusinessContact { get; set; }
         public string? StreetAddress { get; set; }
         public string? City { get; set; }    

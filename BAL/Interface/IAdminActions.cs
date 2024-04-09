@@ -13,7 +13,7 @@ namespace BAL.Interface
 
         // View Case 
         public IQueryable<ViewCaseVM> getViewCaseData(int reqclientId);
-        public bool changeStatusOnCancleCase(int requesid, string reason, string Notes);
+        public bool changeStatusOnCancleCase(int requesid, string? reason, string? Notes);
 
         public List<Physician> GetPhysicianByRegion(string RegionId);
 

@@ -1,0 +1,396 @@
+﻿@model List<DAL.ViewModels.AdminDashboardTableVM>
+
+@{
+    var color = "";
+    var requestor = "";
+    var j = 1;
+}
+
+@*<link href="https://getbootstrap.com/docs/5.0/dist/css/bootstrap.min.css" rel="stylesheet" />*@
+
+@*Table*@
+
+<div style="height: 88% !important" class="mx-2 tab-pane fade show active  table-responsive" id="pills-Dashboard" role="tabpanel" aria-labelledby="pills-Dashboard-tab" tabindex="0">
+
+    <Table class="table">
+        <thead class="border-0" style="height: 60px;">
+            <tr>
+
+                <th class="align-middle text-secondary my-2">Name</th>
+                <th class="align-middle text-secondary">Date Of Birth</th>
+                <th class="align-middle text-secondary">Requestor</th>
+                <th class="align-middle text-secondary">PhysicianName</th>
+                <th class="align-middle text-secondary">DateOfService</th>
+                <th class="align-middle text-secondary">Phone</th>
+                <th class="align-middle text-secondary">Address</th>
+                <th class="align-middle text-secondary">Notes</th>
+                <th class="align-middle text-secondary">ChatWith</th>
+                <th class="align-middle text-secondary">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                @*finalyze model*@
+
+                <div class="modal fade rounded-2" id="isFinalize_@j" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content">
+                            <div class="modal-header bg-info">
+                                <h1 class="modal-title fs-5  text-white" id="exampleModalLabel">Confirm Cancellation</h1>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <span class="text-body">Encounter Form is finalized successfully!</span>
+                                <div class="d-flex justify-content-center my-3">
+
+                                    <a asp-action="GeneratePdf" asp-route-requestid="@item.reqid"><button type="button" class="btn btn-info" id="submitBtnEncounterForm"> Download </button></a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                @if (item.requestId == 1)
+                {
+                    color = "#14A44D";
+                    requestor = "Patient";
+                }
+                else if (item.requestId == 2)
+                {
+                    color = "#E4A11B";
+                    requestor = "Family";
+                }
+                else if (item.requestId == 3)
+                {
+                    color = "#54B4D3";
+                    requestor = "Concierge";
+                }
+                else if (item.requestId == 4)
+                {
+                    color = "#DC4C64";
+                    requestor = "Business";
+                }
+
+                <tr class="text-white" id="adminDashTableRow">
+
+                    <td class="align-middle text-white" style="background-color:@color!important">@item.PatientName</td>
+                    <td class="align-middle text-white" style="background-color:@color!important">@item.BirthDate</td>
+                    <td class="align-middle text-white" style="background-color:@color!important">@item.RequestorName</td>
+                    <td class="align-middle text-white" style="background-color:@color!important">@item.physicianname</td>
+                    <td class="align-middle text-white" style="background-color:@color!important">@item.DateOfService</td>
+                    <td class="d-flex flex-column  text-white" style="background-color:@color!important">
+                        <div class="border border-1 border-white py-1 text-center rounded">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-telephone-fill me-2" viewBox="0 0 16 16">
+                                <path fill-rule="evenodd" d="M1.885.511a1.745 1.745 0 0 1 2.61.163L6.29 2.98c.329.423.445.974.315 1.494l-.547 2.19a.68.68 0 0 0 .178.643l2.457 2.457a.68.68 0 0 0 .644.178l2.189-.547a1.75 1.75 0 0 1 1.494.315l2.306 1.794c.829.645.905 1.87.163 2.611l-1.034 1.034c-.74.74-1.846 1.065-2.877.702a18.6 18.6 0 0 1-7.01-4.42 18.6 18.6 0 0 1-4.42-7.009c-.362-1.03-.037-2.137.703-2.877z" />
+                            </svg>
+                            @item.phone
+                        </div>
+                        <span>(Patient)</span>
+                        @if (item.requestId != 1)
+                        {
+                            <div class="border border-1 border-white py-1 text-center rounded">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-telephone-fill me-2" viewBox="0 0 16 16">
+                                    <path fill-rule="evenodd" d="M1.885.511a1.745 1.745 0 0 1 2.61.163L6.29 2.98c.329.423.445.974.315 1.494l-.547 2.19a.68.68 0 0 0 .178.643l2.457 2.457a.68.68 0 0 0 .644.178l2.189-.547a1.75 1.75 0 0 1 1.494.315l2.306 1.794c.829.645.905 1.87.163 2.611l-1.034 1.034c-.74.74-1.846 1.065-2.877.702a18.6 18.6 0 0 1-7.01-4.42 18.6 18.6 0 0 1-4.42-7.009c-.362-1.03-.037-2.137.703-2.877z" />
+                                </svg>
+                                @item.YourPhone
+                            </div>
+                            <span>(@requestor)</span>
+                        }
+                    </td>
+                    <td class=" text-white" style="background-color:@color!important">@item.address</td>
+                    <td class="align-middle  text-white" style="background-color:@color!important">Notes</td>
+                    <td class="align-middle  text-white" style="background-color:@color!important">
+                        <button class="btn btn-outline-light ">
+                            <i class="bi bi-person"></i>
+                            Provider
+                        </button>
+                    </td>
+                    <td class="align-middle  text-white" style="background-color:@color!important">
+                        <div class="btn-group">
+                            <button type="button" class="btn btn-outline-light shadow-none dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                                Action
+                            </button>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" asp-action="ViewCaseAdmin" asp-route-reqcliId="@item.reqclientId">View Case</a></li>
+                                <li><a class="dropdown-item pe-auto" asp-action="ViewDocuments" asp-route-reeqid="@item.reqid">View Uploads</a></li>
+                                <li><a class="dropdown-item" asp-action="ViewNotesAdmin" asp-route-reqid="@item.reqid">ViewNotes</a></li>
+                                <li><a class="dropdown-item" asp-action="SendOrder" asp-route-requestid="@item.reqid">Orders</a></li>
+                                <li><a class="dropdown-item" href="#">Doctors Note</a></li>
+                                @if (item.IsEncounterFinalize != true)
+                                {
+                                    <li><a class="dropdown-item" asp-action="EncounterForm" asp-route-requestid="@item.reqid">Encounter</a></li>
+                                }
+                                else
+                                {
+                                    <li><a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#isFinalize_@j">Encounter</a></li>
+                                }
+                            </ul>
+                        </div>
+                    </td>
+
+                </tr>
+                j++;
+            }
+        </tbody>
+    </Table>
+</div>
+
+
+
+@*Accordion*@
+
+
+<div class="accordion mx-2 pb-3" id="accordionExample">
+    @{
+        int i = 0;
+    }
+    @foreach (var item in Model)
+    {
+        <div class="accordion-item bg-info-subtle">
+            <button class=" accordion-header btn w-100 px-4 shadow-none" type="button" data-bs-toggle="collapse" data-bs-target="#collapse_@i" aria-expanded="false" aria-controls="collapseTwo">
+                <div class="row w-100 pb-1">
+                    <div class="col-6 text-start pt-3 pe-0">
+                        <span>@item.PatientName</span>
+
+                        <p class="mt-4">@item.address</p>
+                    </div>
+                    <div class="col-6 d-flex flex-column pt-3 text-end pe-0">
+                        @if (item.requestId == 1)
+                        {
+                            <span class="mb-3">
+                                Patient
+
+                                <svg height="15" width="15" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                                    <circle fill="#5fbc61" r="45" cx="50" cy="50" stroke="grey" stroke-width="3" />
+                                </svg>
+                            </span>
+                        }
+                        @if (item.requestId == 2)
+                        {
+                            <span class="mb-3">
+                                Family/Friend
+
+                                <svg height="15" width="15" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                                    <circle fill="#ed9124" r="45" cx="50" cy="50" stroke="grey" stroke-width="3" />
+                                </svg>
+                            </span>
+                        }
+                        @if (item.requestId == 3)
+                        {
+                            <span class="mb-3">
+                                Concierge
+
+                                <svg height="15" width="15" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                                    <circle fill="#e26277" r="45" cx="50" cy="50" stroke="grey" stroke-width="3" />
+                                </svg>
+                            </span>
+                        }
+                        @if (item.requestId == 4)
+                        {
+                            <span class="mb-3">
+                                Business
+
+                                <svg height="15" width="15" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                                    <circle fill="#007fc6" r="45" cx="50" cy="50" stroke="grey" stroke-width="3" />
+                                </svg>
+                            </span>
+                        }
+                        <div class="d-flex justify-content-end">
+
+                            <a class="btn rounded-4 btn-outline-info my-3 px-0 w-75"><span class="fs-6">Map Location</span></a>
+                        </div>
+                    </div>
+                </div>
+
+            </button>
+            <div id="collapse_@i" class="accordion-collapse collapse border-top border-secondary" data-bs-parent="#accordionExample">
+                <div class="accordion-body position-relative">
+                    <a asp-action="ViewCaseAdmin" asp-route-reqcliId="@item.reqclientId">
+                        <button class="btn btn-light position-absolute rounded-4 border-1 border-dark-subtle" style="top: -18px; right: 5px;">
+                            view case
+                        </button>
+                    </a>
+                    <h6 class="w-100">
+
+                        <button class="btn border-1 rounded-5 border-info pt-0 ">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-calendar-week" viewBox="0 0 16 16">
+                                <path d="M11 6.5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5zm-3 0a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5zm-5 3a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5zm3 0a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5z" />
+                                <path d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5M1 4v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4z" />
+                            </svg>
+                        </button>
+
+                        Date Of Birth: @item.BirthDate
+                    </h6>
+                    <h6 class="w-100">
+                        <button class="btn border-1 rounded-5 border-info pt-0">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-envelope" viewBox="0 0 16 16">
+                                <path d="M0 4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2zm2-1a1 1 0 0 0-1 1v.217l7 4.2 7-4.2V4a1 1 0 0 0-1-1zm13 2.383-4.708 2.825L15 11.105zm-.034 6.876-5.64-3.471L8 9.583l-1.326-.795-5.64 3.47A1 1 0 0 0 2 13h12a1 1 0 0 0 .966-.741M1 11.105l4.708-2.897L1 5.383z" />
+                            </svg>
+                        </button>
+
+                        Email: @item.Email
+                    </h6>
+                    <h6 class="w-100">
+                        <button class="btn border-1 rounded-5 border-info pt-0">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-telephone" viewBox="0 0 16 16">
+                                <path d="M3.654 1.328a.678.678 0 0 0-1.015-.063L1.605 2.3c-.483.484-.661 1.169-.45 1.77a17.6 17.6 0 0 0 4.168 6.608 17.6 17.6 0 0 0 6.608 4.168c.601.211 1.286.033 1.77-.45l1.034-1.034a.678.678 0 0 0-.063-1.015l-2.307-1.794a.68.68 0 0 0-.58-.122l-2.19.547a1.75 1.75 0 0 1-1.657-.459L5.482 8.062a1.75 1.75 0 0 1-.46-1.657l.548-2.19a.68.68 0 0 0-.122-.58zM1.884.511a1.745 1.745 0 0 1 2.612.163L6.29 2.98c.329.423.445.974.315 1.494l-.547 2.19a.68.68 0 0 0 .178.643l2.457 2.457a.68.68 0 0 0 .644.178l2.189-.547a1.75 1.75 0 0 1 1.494.315l2.306 1.794c.829.645.905 1.87.163 2.611l-1.034 1.034c-.74.74-1.846 1.065-2.877.702a18.6 18.6 0 0 1-7.01-4.42 18.6 18.6 0 0 1-4.42-7.009c-.362-1.03-.037-2.137.703-2.877z" />
+                            </svg>
+                        </button>
+
+                        Patient: @item.phone
+                    </h6>
+                    <h6 class="w-100">
+                        <button class="btn border-1 rounded-5 border-info pt-0">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-journal-album" viewBox="0 0 16 16">
+                                <path d="M5.5 4a.5.5 0 0 0-.5.5v5a.5.5 0 0 0 .5.5h5a.5.5 0 0 0 .5-.5v-5a.5.5 0 0 0-.5-.5zm1 7a.5.5 0 0 0 0 1h3a.5.5 0 0 0 0-1z" />
+                                <path d="M3 0h10a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2v-1h1v1a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H3a1 1 0 0 0-1 1v1H1V2a2 2 0 0 1 2-2" />
+                                <path d="M1 5v-.5a.5.5 0 0 1 1 0V5h.5a.5.5 0 0 1 0 1h-2a.5.5 0 0 1 0-1zm0 3v-.5a.5.5 0 0 1 1 0V8h.5a.5.5 0 0 1 0 1h-2a.5.5 0 0 1 0-1zm0 3v-.5a.5.5 0 0 1 1 0v.5h.5a.5.5 0 0 1 0 1h-2a.5.5 0 0 1 0-1z" />
+                            </svg>
+                        </button>
+
+                        Transfer: Amin Transferred to @item.physicianname
+                    </h6>
+                    <h6 class="w-100">
+                        <button class="btn border-1 rounded-5 border-info pt-0">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-calendar-week" viewBox="0 0 16 16">
+                                <path d="M11 6.5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5zm-3 0a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5zm-5 3a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5zm3 0a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5z" />
+                                <path d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5M1 4v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4z" />
+                            </svg>
+                        </button>
+
+                        DateOfService: @item.DateOfService
+                    </h6>
+                    <h6 class="w-100">
+                        <button class="btn border-1 rounded-5 border-info pt-0">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-person-badge-fill" viewBox="0 0 16 16">
+                                <path d="M2 2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2zm4.5 0a.5.5 0 0 0 0 1h3a.5.5 0 0 0 0-1zM8 11a3 3 0 1 0 0-6 3 3 0 0 0 0 6m5 2.755C12.146 12.825 10.623 12 8 12s-4.146.826-5 1.755V14a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1z" />
+                            </svg>
+                        </button>
+
+                        Physician: @item.physicianname
+                    </h6>
+                    <h6 class="w-100">
+                        <button class="btn border-1 rounded-5 border-info pt-0">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-person" viewBox="0 0 16 16">
+                                <path d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6m2-3a2 2 0 1 1-4 0 2 2 0 0 1 4 0m4 8c0 1-1 1-1 1H3s-1 0-1-1 1-4 6-4 6 3 6 4m-1-.004c-.001-.246-.154-.986-.832-1.664C11.516 10.68 10.289 10 8 10s-3.516.68-4.168 1.332c-.678.678-.83 1.418-.832 1.664z" />
+                            </svg>
+                        </button>
+
+                        Requestor: @item.RequestorName
+                    </h6>
+
+                    <div class="row gy-2  py-3">
+                        <div class="col-6 px-3">
+                            <a asp-action="ViewNotesAdmin" asp-route-reqid="@item.reqid"><button class="border-1 btn-success rounded-5 btn w-100 ">View Notes</button></a>
+                        </div>
+                        <div class="col-6 px-3">
+                            <button class=" border-1 btn-success px-3 rounded-5 btn w-100">Doctor Notes</button>
+                        </div>
+                        <div class="col-6 px-3">
+                            <a asp-action="ViewDocuments" asp-route-reeqid="@item.reqid"><button class=" border-1 btn-success px-3 rounded-5 btn w-100">View Uploads</button></a>
+                        </div>
+                        <div class="col-6 px-3">
+                            <a asp-action="EncounterForm"><button class=" border-1 btn-success px-3 rounded-5 btn w-100">Encounter</button></a>
+                        </div>
+                        <div class="col-6 px-3">
+                            <a asp-action="SendOrder" asp-route-requestid="@item.reqid"><button class="border-1 btn-warning px-3 rounded-5 btn w-100">Orders</button></a>
+                        </div>
+                        <div class="col-6 px-3">
+                            <a href="mailto: @item.Email"><button class="border-1 btn-success px-3 rounded-5 btn w-100">Email</button></a>
+                        </div>
+                    </div>
+                    <div class="d-flex justify-content-end align-middle">
+                        <span class="fs-5">Chat With: </span>
+                        <button class="btn btn-outline-info mx-1">
+                            <i class="bi bi-person"></i>
+                            Patient
+                        </button>
+                        <button class="btn btn-outline-info mx-1">
+                            <i class="bi bi-person"></i>
+                            Provider
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        i++;
+    }
+
+</div>
+<div class="pb-2 w-100">
+    <nav id="pagination" aria-label="Page navigation">
+        <ul class="pagination justify-content-center mb-0">
+            @if (ViewBag.CurrentPage >= 1 && ViewBag.CurrentPage <= ViewBag.TotalPages)
+            {
+                int prevpage = Convert.ToInt32(ViewBag.CurrentPage) - 1;
+                int currpage = Convert.ToInt32(ViewBag.CurrentPage);
+                int nextpage = Convert.ToInt32(ViewBag.CurrentPage) + 1;
+                if (ViewBag.CurrentPage > 1)
+                {
+                    <li class="page-item">
+                        <a class="page-link btn rounded-4 btn-outline-info mx-1" id="previous" data-page="@(prevpage)" aria-label="Previous">
+                            &laquo;
+                        </a>
+                    </li>
+                }
+                for (int z = 0; z < 3; z++)
+                {
+                    if (currpage + z <= ViewBag.TotalPages)
+                    {
+                        <li class="page-item">
+                            <a class="page-link btn rounded-4 btn-outline-info mx-1" id="current_@z" data-page="@(currpage + z)" aria-label="Current">
+                                @(ViewBag.CurrentPage + z)
+                            </a>
+                        </li>
+                    }
+                }
+                if (ViewBag.CurrentPage < ViewBag.TotalPages)
+                {
+                    <li class="page-item">
+                        <a class="page-link btn rounded-4 btn-outline-info mx-1" id="next" data-page="@(nextpage)" aria-label="Next">
+                            &raquo;
+                        </a>
+                    </li>
+                }
+            }
+        </ul>
+    </nav>
+</div>
+
+<script>
+    $("#Regionid").on("change", function () {
+        var RegionId = $("#Regionid").val();
+        filterPhysicianByRegion(RegionId);
+    });
+
+    $("#Regionnid").on("change", function () {
+        var RegionId = $("#Regionnid").val();
+        filterPhysicianByRegion(RegionId);
+    });
+
+    function filterPhysicianByRegion(RegionId) {
+        debugger
+        console.log("hello")
+        console.log("hello")
+        console.log("hello")
+        if (RegionId != "0") {
+            $.ajax({
+                type: "GET",
+                url: "/AdminDashboard/filterPhyByRegion",
+                data: { RegionId: RegionId },
+
+                success: function (data) {
+                    $('#physicianDrop').empty();
+                    $.each(data, function (index, item) {
+                        $('#physicianDrop').append($('<option>').text(item.firstName).attr('value', item.physicianId));
+                    });
+                    $('#physicianDrop option:first').prop('selected', true);
+                }
+            });
+        }
+    }
+
+
+
+</script>

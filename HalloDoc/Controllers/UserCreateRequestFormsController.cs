@@ -14,10 +14,12 @@ namespace HalloDoc.Controllers
 
         private readonly ApplicationDbContext _context;
         private readonly IPatientRequest _request;
+        [Obsolete]
         private readonly IHostingEnvironment _environment;
         private readonly IuploadFile _uploadfile;
         private readonly IPatientRequest _patreq;
 
+        [Obsolete]
         public UserCreateRequestFormsController(ApplicationDbContext context, IPatientRequest req, IHostingEnvironment environment, IPatientRequest parreq)
         {
             _request = req;
@@ -58,7 +60,7 @@ namespace HalloDoc.Controllers
         {
             var email = HttpContext.Session.GetString("Email");
             var user = _context.AspNetUsers.Any(u => u.Email == email);
-            if(user != null && ModelState.IsValid)
+            if(user && ModelState.IsValid)
             {
                 model.State = await _patreq.GetStateAccordingToRegionId(model.SelectedStateId);
                 model.CreatedDate = DateTime.Now.Date;

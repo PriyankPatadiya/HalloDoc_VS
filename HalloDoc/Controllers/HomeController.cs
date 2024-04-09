@@ -128,6 +128,10 @@ namespace HalloDoc.Controllers
                     {
                         return RedirectToAction("PatientDashboard", "PatientDashBoard");
                     }
+                    if(roleid == 3)
+                    {
+                        return RedirectToAction("Dashboard", "ProviderDashboard");
+                    }
                 }
                 else
                 {
@@ -291,7 +295,7 @@ namespace HalloDoc.Controllers
                 return View();
 
             }
-            catch (Exception ex)
+            catch 
             {
                 return Content("Invalid token");
             }

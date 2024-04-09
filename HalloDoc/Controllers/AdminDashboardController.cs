@@ -25,6 +25,7 @@ namespace HalloDoc.Controllers
         private readonly IProviders _provider;
         private readonly IAdminDashboard _admin;
         private readonly IAdminActions _adminActions;
+        [Obsolete]
         private readonly IHostingEnvironment _hostingEnvironment;
         private readonly IuploadFile _uploadfile;
         private readonly IPatientRequest _request;
@@ -52,7 +53,7 @@ namespace HalloDoc.Controllers
             _accessMenu = menu;
             _passAdminHasher = hasherr;
         }
-
+        
         public IActionResult MainPage()
         {
             var email = HttpContext.Session.GetString("Email");
@@ -88,7 +89,7 @@ namespace HalloDoc.Controllers
         // Filter action 
 
         public IActionResult SearchByName(string SearchString, string selectButton, string StatusButton, string SelectedStateId, string partialviewpath, int pagesize, int currentpage)
-        {
+            {
             var result = _admin.GetRequestsQuery(StatusButton);
             result = result.Where(s => (String.IsNullOrEmpty(SearchString) || s.PatientName.Contains(SearchString)) && (System.String.IsNullOrEmpty(selectButton) || s.requestId == int.Parse(selectButton)) && ((SelectedStateId == "0" || SelectedStateId == null) || s.regionId == int.Parse(SelectedStateId)));
 
@@ -357,8 +358,8 @@ namespace HalloDoc.Controllers
         [HttpPost]
         public IActionResult CancelCase(int requestid)
         {
-            string Reason = Request.Form["Reason"];
-            string Notes = Request.Form["Notes"];
+            string? Reason = Request.Form["Reason"];
+            string? Notes = Request.Form["Notes"];
             bool iscancel = _adminActions.changeStatusOnCancleCase(requestid, Reason, Notes);
             if (iscancel)
             {
@@ -1049,8 +1050,6 @@ namespace HalloDoc.Controllers
         [HttpPost]
         public IActionResult EditAccess(int[] rolemenu, string rolename, int roleid)
         {
-            if (roleid != null)
-            {
                 var role = _context.Roles.Where(u => u.RoleId == roleid).First();
                 role.Name = rolename;
                 role.ModifiedDate = DateTime.Now;
@@ -1069,7 +1068,6 @@ namespace HalloDoc.Controllers
                     _context.RoleMenus.Add(rolemenu1);
                     _context.SaveChanges();
                 }
-            }
             TempData["Message"] = "Edited Successfully!";
             TempData["MessageType"] = "success";
             return RedirectToAction("roleAccess");
@@ -1077,8 +1075,6 @@ namespace HalloDoc.Controllers
 
         public IActionResult DeleteRole(int roleid)
         {
-            if (roleid != null)
-            {
                 var role = _context.Roles.Where(u => u.RoleId == roleid).First();
                 var prevRoleMenu = _context.RoleMenus.Where(u => u.RoleId == roleid).ToList();
                 _context.RoleMenus.RemoveRange(prevRoleMenu);
@@ -1087,12 +1083,6 @@ namespace HalloDoc.Controllers
                 TempData["Message"] = "Removed Successfully!";
                 TempData["MessageType"] = "success";
 
-            }
-            else
-            {
-                TempData["Message"] = "Can't Remove!";
-                TempData["MessageType"] = "error";
-            }
 
             return RedirectToAction("roleAccess");
         }
@@ -1599,7 +1589,7 @@ namespace HalloDoc.Controllers
             return View("RecordsMenu/SearchRecords");
         }
         public IActionResult getSearchRecordsData(int [] status, string patientName,
-        string providerName, string phoneNum, string email, string requestType, string isExportExcel)
+        string providerName, string phoneNum, string email, string requestType, DateTime fromDate , DateTime toDate, int currentPage , int pageSize)
         {
             var record = (from request in _context.Requests
                           join requestclient in _context.RequestClients
@@ -1640,7 +1630,14 @@ namespace HalloDoc.Controllers
             (status.Length == 0 || status.Contains(item.RequestStatus)) && item.IsDeleted == false &&
             (requestType == "0" || item.RequestTypeId == int.Parse(requestType))).ToList();
 
-                 return PartialView("RecordsMenu/_searchRecordsPartial", searchedRecord);
+            int totalPages = (int)Math.Ceiling((double)searchedRecord.Count() / pageSize);
+            var paginatedData = searchedRecord.Skip((currentPage - 1) * pageSize).Take(pageSize).ToList();
+            if (paginatedData.Count != 0)
+            {
+                    ViewBag.CurrentPage = currentPage;
+                    ViewBag.TotalPages = totalPages;
+            }
+            return PartialView("RecordsMenu/_searchRecordsPartial", paginatedData);
             
         }
         public IActionResult exportSearchRecordfile(int[] status, string patientName,
@@ -1731,7 +1728,7 @@ namespace HalloDoc.Controllers
             return View("RecordsMenu/BlockedRequests");
         }
 
-        public IActionResult getBlockedRequests(string Name, string email, string phoneNumber)
+        public IActionResult getBlockedRequests(DateTime date , string Name, string email, string phoneNumber)
         {
             List<BlockedHistoryVM> blocked = (from blockedrequest in _context.BlockRequests
                                           join reqclient in _context.RequestClients on blockedrequest.RequestId.ToString() equals reqclient.RequestId.ToString()
@@ -1744,10 +1741,28 @@ namespace HalloDoc.Controllers
                                               PhoneNumber = blockedrequest.PhoneNumber,
                                               Email = blockedrequest.Email,
                                               Notes = reqclient.Notes,
-                                              IsActive = false
+                                              IsActive = blockedrequest.IsActive[0]
                                           }).ToList();
-            
-            return PartialView("RecordsMenu/_blockedHistoryPartial", blocked);
+
+            var blockedrequests = blocked.Where(i => (String.IsNullOrEmpty(Name) || i.PatientName.Contains(Name)) &&
+                                                      (String.IsNullOrEmpty(email) || i.Email.Contains(email)) &&
+                                                      (String.IsNullOrEmpty(phoneNumber) || i.PhoneNumber.Contains(phoneNumber))
+                                                      ).ToList();
+            return PartialView("RecordsMenu/_blockedHistoryPartial", blockedrequests);
+        }
+
+        public IActionResult unBlockRequest(int RequestId)
+        {
+            var request = _context.Requests.FirstOrDefault(u => u.RequestId == RequestId);
+            if(request != null && request.Status == 11)
+            {
+                var blockedRequest = _context.BlockRequests.FirstOrDefault(u => u.RequestId == RequestId);
+                _context.BlockRequests.Remove(blockedRequest);
+                request.Status = 1;
+                _context.Requests.Update(request);
+                _context.SaveChanges();
+            }
+            return RedirectToAction("BlockedHistory");
         }
         #endregion Blocked History
     }

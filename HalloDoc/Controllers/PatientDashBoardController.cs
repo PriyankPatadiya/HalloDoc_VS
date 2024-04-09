@@ -20,9 +20,8 @@ namespace HalloDoc.Controllers
         private readonly IHostingEnvironment _environment;
         private readonly IuploadFile _uploadfile;
         private readonly IPatientRequest _request;
-        
-        
 
+        [Obsolete]
         public PatientDashBoardController(ApplicationDbContext context, IHostingEnvironment environment , IuploadFile file, IPatientRequest request)
         {
             _context = context;

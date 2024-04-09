@@ -12,7 +12,7 @@ namespace DAL.ViewModels
         public int? ToCloseCount { get; set; }
         public int? UnpaidCount { get; set; }
 
-        public List<AdminDashboardTableVM> DashboardTableVM { get; set; }
+        public List<AdminDashboardTableVM>? DashboardTableVM { get; set; }
 
         public List<Region>? Region { get; set; }
     }
