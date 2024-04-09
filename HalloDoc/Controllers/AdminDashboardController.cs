@@ -18,7 +18,6 @@ using Microsoft.EntityFrameworkCore;
 
 namespace HalloDoc.Controllers
 {
-    [CustomAuthorize("Administrator")]
     public class AdminDashboardController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -36,6 +35,7 @@ namespace HalloDoc.Controllers
         private readonly IUploadProvider _uploadProvider;
         private readonly IAccessMenu _accessMenu;
 
+    [CustomAuthorize( new string[] {"Administrator","Provider"} )]
         public AdminDashboardController(ApplicationDbContext context, IAdminDashboard admin, IAdminActions action, IHostingEnvironment env, IuploadFile uploadfile, IPatientRequest request, IEmailService emailService, IPasswordHasher<AdminProfileVM> password,
                     IProviders providers, IUploadProvider upload, IPasswordHasher<PhysicianProfileVM> hasher, IAccessMenu menu, IPasswordHasher<AdminCreateAccVM> hasherr)
         {
@@ -122,6 +122,7 @@ namespace HalloDoc.Controllers
             }
         }
 
+        #region Export
         // Export
 
         public IActionResult exportfile(string StatusButton, int pagesize, int currentpage)
@@ -190,6 +191,9 @@ namespace HalloDoc.Controllers
             }
         }
 
+        #endregion Export
+
+        #region Encounter
         // Encounter Form Actions
 
         public IActionResult EncounterForm(int requestid)
@@ -236,7 +240,9 @@ namespace HalloDoc.Controllers
 
         }
 
-        // View Case Actions
+        #endregion Encounter
+
+        #region View Case 
 
         [HttpGet]
         public IActionResult ViewCaseAdmin()
@@ -256,6 +262,9 @@ namespace HalloDoc.Controllers
             return View("MainPage", MainModel);
         }
 
+        #endregion View Case
+
+        #region Close Case
         // Close Case Actions
 
         public IActionResult CloseCase(int reqid)
@@ -297,7 +306,9 @@ namespace HalloDoc.Controllers
             return RedirectToAction("MainPage");
         }
 
-        // View Notes Actions
+        #endregion Close Case
+
+        #region View Notes
 
         public IActionResult ViewNotesAdminn(int reqid)
         {
@@ -320,7 +331,35 @@ namespace HalloDoc.Controllers
             MainModel.NotesVM = result;
             return View("MainPage", MainModel);
         }
-        // Send Order Actions
+
+        [HttpPost]
+        public IActionResult addAdminnote(ViewNotesVM model, int reqid)
+        {
+            RequestNote notes = _adminActions.reqnotebyreqid(reqid);
+            if (notes != null)
+            {
+                _adminActions.addrequnotes(model, notes);
+                return RedirectToAction("ViewNotesAdminn", new { reqid = reqid });
+            }
+            return RedirectToAction("ViewNotesAdminn", new { reqid = reqid });
+        }
+        public IActionResult TransferNotes(int reeqid)
+        {
+            int phyid = int.Parse(Request.Form["physicianId"]);
+            string transNote = Request.Form["Notes"];
+
+            if (_adminActions.transferNotes(reeqid, phyid, transNote) == true)
+            {
+                return RedirectToAction("MainPage");
+            }
+            else
+            {
+                return Ok("Cannot Add TransferNotes");
+            }
+        }
+        #endregion View Notes
+
+        #region Send Order
 
         public IActionResult SendOrder(int requestid)
         {
@@ -353,8 +392,9 @@ namespace HalloDoc.Controllers
             return RedirectToAction("MainPage");
         }
 
+        #endregion Send Order
 
-        // Assign Case Actions
+        #region Cancel Case
         [HttpPost]
         public IActionResult CancelCase(int requestid)
         {
@@ -369,12 +409,9 @@ namespace HalloDoc.Controllers
             return RedirectToAction("MainPage");
         }
 
-        public IActionResult filterPhyByRegion(string RegionId)
-        {
-            var physician = _adminActions.GetPhysicianByRegion(RegionId);
-            return Json(physician);
-        }
+        #endregion Cancel Case
 
+        #region Assign Case
         [HttpPost]
         public IActionResult AssignCase(IFormCollection form)
         {
@@ -385,7 +422,9 @@ namespace HalloDoc.Controllers
             _adminActions.ChangeOnAssign(int.Parse(reeqid), int.Parse(physicianId), Notes);
             return RedirectToAction("MainPage");
         }
+        #endregion Assign Case
 
+        #region Block Case
         // Block Request Actions
 
         public IActionResult BlockCase(int reeqid, string reason)
@@ -395,7 +434,9 @@ namespace HalloDoc.Controllers
             TempData["MessageType"] = "success";
             return RedirectToAction("MainPage");
         }
+        #endregion Block Case
 
+        #region View Document
         // View Document Actions
 
         public IActionResult ViewDocuments(int reeqid)
@@ -510,47 +551,9 @@ namespace HalloDoc.Controllers
                 return BadRequest(ex.Message);
             }
         }
+        #endregion View Document
 
-
-        // View Notes
-
-        public IActionResult filterVenByPro(string ProfessionId)
-        {
-            var list = _adminActions.getVenbypro(ProfessionId);
-            return Json(list);
-        }
-        public IActionResult getvendordata(string businessId)
-        {
-            var data = _admin.getprofessionalsbyvendorid(businessId);
-            return Json(data);
-        }
-
-        [HttpPost]
-        public IActionResult addAdminnote(ViewNotesVM model, int reqid)
-        {
-            RequestNote notes = _adminActions.reqnotebyreqid(reqid);
-            if (notes != null)
-            {
-                _adminActions.addrequnotes(model, notes);
-                return RedirectToAction("ViewNotesAdminn", new { reqid = reqid });
-            }
-            return RedirectToAction("ViewNotesAdminn", new { reqid = reqid });
-        }
-        public IActionResult TransferNotes(int reeqid)
-        {
-            int phyid = int.Parse(Request.Form["physicianId"]);
-            string transNote = Request.Form["Notes"];
-
-            if (_adminActions.transferNotes(reeqid, phyid, transNote) == true)
-            {
-                return RedirectToAction("MainPage");
-            }
-            else
-            {
-                return Ok("Cannot Add TransferNotes");
-            }
-        }
-
+        #region Clear Case
         public IActionResult ClearCaseee(int reqid)
         {
             bool result = _adminActions.ClearCase(reqid);
@@ -564,7 +567,9 @@ namespace HalloDoc.Controllers
                 return Ok("Can't Clear the case");
             }
         }
+        #endregion Clear Case
 
+        #region Send Aggrement
         [HttpPost]
         public IActionResult SendAgreement(int requestid)
         {
@@ -594,7 +599,9 @@ namespace HalloDoc.Controllers
             return RedirectToAction("MainPage");
         }
 
-        // Admin Profile
+        #endregion Send Aggrement
+
+        #region Admin Profile
 
         public IActionResult AdminProfile()
         {
@@ -653,7 +660,9 @@ namespace HalloDoc.Controllers
             return RedirectToAction("AdminProfile");
         }
 
+        #endregion Admin Profile
 
+        #region Send Link
         // Send Link
 
         public IActionResult sendLinkofSubmitreq(string PatientFirstname, string PatientLastname, string PatientEmail)
@@ -681,6 +690,9 @@ namespace HalloDoc.Controllers
             return RedirectToAction("MainPage");
         }
 
+        #endregion Send Link
+
+        #region Create Admin Request
         // Create Request
 
         public IActionResult CreateRequestAdmin()
@@ -708,8 +720,10 @@ namespace HalloDoc.Controllers
 
         }
 
-        // Provider Menu
+        #endregion Create Admin Request
 
+        #region Provider Menu
+        // Provider Menu
         public IActionResult Provider()
         {
             var email = HttpContext.Session.GetString("Email");
@@ -945,8 +959,9 @@ namespace HalloDoc.Controllers
             }
             return RedirectToAction("Provider");
         }
+        #endregion Provider Menu
 
-
+        #region Access
         // Access 
 
         public IActionResult userAccess()
@@ -1086,7 +1101,9 @@ namespace HalloDoc.Controllers
 
             return RedirectToAction("roleAccess");
         }
+        #endregion Access
 
+        #region Location
         // location 
 
         public IActionResult ProviderLocation()
@@ -1098,8 +1115,8 @@ namespace HalloDoc.Controllers
             List<PhysicianLocation> physicianLocations = _context.PhysicianLocations.ToList();
             return Json(physicianLocations);
         }
+        #endregion Location
 
-        // Scheduling
         #region Scheduling
 
         public IActionResult Scheduling()
@@ -1765,6 +1782,24 @@ namespace HalloDoc.Controllers
             return RedirectToAction("BlockedHistory");
         }
         #endregion Blocked History
+
+        #region Other
+        public IActionResult filterPhyByRegion(string RegionId)
+        {
+            var physician = _adminActions.GetPhysicianByRegion(RegionId);
+            return Json(physician);
+        }
+        public IActionResult filterVenByPro(string ProfessionId)
+        {
+            var list = _adminActions.getVenbypro(ProfessionId);
+            return Json(list);
+        }
+        public IActionResult getvendordata(string businessId)
+        {
+            var data = _admin.getprofessionalsbyvendorid(businessId);
+            return Json(data);
+        }
+        #endregion Other
     }
 }
 

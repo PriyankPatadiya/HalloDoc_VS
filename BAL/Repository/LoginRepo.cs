@@ -48,9 +48,9 @@ namespace BAL.Repository
 
     public class CustomAuthorize : Attribute , IAuthorizationFilter
     {
-        private readonly string _role;
+        private readonly string[] _role;
         private readonly ApplicationDbContext _context;
-        public CustomAuthorize(string role = "Patient")
+        public CustomAuthorize(string [] role )
         {
             this._role = role;
         }
@@ -80,7 +80,7 @@ namespace BAL.Repository
                 context.Result = new RedirectToRouteResult(new RouteValueDictionary(new { Controller = "Home", Action = "PatientLoginn" }));
                 return;
             }
-            if(string.IsNullOrWhiteSpace(_role) || roleClaim.Value != _role) { 
+            if(_role.Length < 1 || !_role.Contains(roleClaim.Value)) { 
                     context.Result = new RedirectToRouteResult(new RouteValueDictionary(new { Controller = "Home", Action = "AccessDenied" }));
             }
         }

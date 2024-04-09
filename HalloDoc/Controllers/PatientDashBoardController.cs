@@ -12,7 +12,7 @@ using IHostingEnvironment = Microsoft.AspNetCore.Hosting.IHostingEnvironment;
 
 namespace HalloDoc.Controllers
 {
-    [CustomAuthorize("Patient")]
+    [CustomAuthorize(new string[] { "Patient" })]
     public class PatientDashBoardController : Controller
     {
         private readonly ApplicationDbContext _context;
