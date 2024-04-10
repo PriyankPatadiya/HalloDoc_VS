@@ -98,8 +98,8 @@
                             <ul class="dropdown-menu">
                                 <li><button type="button" class="btn shadow-none dropdown-item">Accept</button></li>
                                 
-                                <li><a class="dropdown-item" asp-controller="AdminDashboard" asp-action="ViewCaseAdmin" asp-route-reqcliId="@item.reqclientId">View Case</a></li>
-                                <li><a class="dropdown-item" asp-action="ViewNotesAdmin" asp-route-reqid="@item.reqid">ViewNotes</a></li>
+                                <li><a class="dropdown-item" asp-controller="ProviderDashboard" asp-action="ViewCase" asp-route-reqcliId="@item.reqclientId">View Case</a></li>
+                                <li><a class="dropdown-item" asp-controller="ProviderDashboard" asp-action="ViewNotes" asp-route-id="@item.reqid">ViewNotes</a></li>
                                 
                             </ul>
                         </div>

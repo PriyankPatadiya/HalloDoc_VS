@@ -61,5 +61,13 @@ namespace HalloDoc.Controllers
                 return PartialView(partialviewpath);
             }
         }
+        public IActionResult ViewCase(string reqcliId)
+        {
+            return RedirectToAction("ViewCase", "AdminDashBoard", new { reqcliId = reqcliId });
+        }
+        public IActionResult ViewNotes (int id)
+        {
+            return RedirectToAction("ViewNotesAdminn", "AdminDashboard", new { reqid = id });
+        }
     }
 }

@@ -216,7 +216,7 @@
                                         cancel
                                     </button>
                                 </li>
-                                <li><a class="dropdown-item" asp-action="ViewCaseAdmin" asp-route-reqcliId="@item.reqclientId">View Case</a></li>
+                                <li><a class="dropdown-item" asp-controller="AdminDashboard" asp-action="ViewCase" asp-route-reqcliId="@item.reqclientId">View Case</a></li>
                                 <li><a class="dropdown-item" asp-action="ViewNotesAdmin" asp-route-reqid="@item.reqid">ViewNotes</a></li>
                                 <li>
                                     <a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#BlockCaseModal_@j">

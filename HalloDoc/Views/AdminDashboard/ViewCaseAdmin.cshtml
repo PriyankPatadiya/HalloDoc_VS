@@ -1,7 +1,5 @@
 ﻿@model DAL.ViewModels.ViewCaseVM
-@*@{
-    Layout = "~/Views/Shared/_LayoutAdminDash.cshtml";
-}*@
+
 <div class="bg-secondary-subtle">
 
     @*Assign Case Modal*@
@@ -89,7 +87,12 @@
     <div class="mx-auto w-80 pt-4 pb-3" id="ViewCasediv">
         <div class="d-flex justify-content-between my-2">
             <h3>New Request</h3><br />
-            <a asp-action="MainPage" class="btn btn-primary btn  border border-info bg-transparent text-info shadow-none text-decoration-none ">Back</a>
+            @if (ViewBag.IsPhysician == false)
+            {
+                <a asp-action="MainPage" class="btn btn-primary btn  border border-info bg-transparent text-info shadow-none text-decoration-none "> ❮  Back </a>
+            }else{
+                <a  asp-controller="ProviderDashboard" asp-action="Dashboard" class="btn btn-primary btn  border border-info bg-transparent text-info shadow-none text-decoration-none "> ❮  Back </a>
+            }
         </div>
         <div class=" bg-light-subtle shadow p-4">
             <h4 class="pt-3 mb-4">Patient Information</h4>

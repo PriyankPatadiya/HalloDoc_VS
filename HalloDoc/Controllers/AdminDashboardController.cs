@@ -18,7 +18,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace HalloDoc.Controllers
 {
-    [CustomAuthorize( new string[] {"Administrator","Provider"} )]
+    
     public class AdminDashboardController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -53,7 +53,7 @@ namespace HalloDoc.Controllers
             _accessMenu = menu;
             _passAdminHasher = hasherr;
         }
-        
+        [CustomAuthorize(new string[] { "Administrator"})]
         public IActionResult MainPage()
         {
             var email = HttpContext.Session.GetString("Email");
@@ -244,9 +244,12 @@ namespace HalloDoc.Controllers
 
         #region View Case 
 
-        [HttpGet]
-        public IActionResult ViewCaseAdmin(string reqcliId)
+        [CustomAuthorize(new string[] { "Administrator", "Provider" })]
+        [HttpGet("AdminDashBoard/ViewCase/{reqcliId}", Name = "AdminViewCase")]
+        [HttpGet("ProviderDashboard/ViewCase/reqcliId={reqcliId}", Name = "ProviderCase")]
+        public IActionResult ViewCase(string reqcliId)
         {
+            var physicianid = HttpContext.Session.GetInt32("PhysicianId");
             var requestclientId = reqcliId;
             AdminMainPageVM MainModel = new AdminMainPageVM()
             {
@@ -259,6 +262,14 @@ namespace HalloDoc.Controllers
             result.requestid = requestid;
             result.regiontable = _admin.regions();
             MainModel.Casemodel = result;
+            if(physicianid == null)
+            {
+                ViewBag.IsPhysician = false;
+            }
+            else
+            {
+                ViewBag.IsPhysician = true;
+            }
             return View("MainPage", MainModel);
         }
 
@@ -310,15 +321,26 @@ namespace HalloDoc.Controllers
 
         #region View Notes
 
+        [CustomAuthorize(new string[] { "Administrator", "Provider" })]
+        [HttpGet("AdminDashboard/ViewNotesAdminn/{reqid}", Name = "AdminViewNotes")]
+        [HttpGet("ProviderDashboard/ViewNotes/{id}", Name = "ProvideViewNotes")]
         public IActionResult ViewNotesAdminn(int reqid)
         {
+            var physicianid = HttpContext.Session.GetInt32("PhysicianId");
+            if (physicianid == null)
+            {
+                ViewBag.IsPhysician = false;
+            }
+            else
+            {
+                ViewBag.IsPhysician = true;
+            }
             AdminMainPageVM MainModel = new AdminMainPageVM()
             {
                 PageName = PageName.ViewNotes
             };
-            var result = _adminActions.viewnotes(reqid);
-            MainModel.NotesVM = result;
-            return View("MainPage", MainModel);
+            MainModel.NotesVM = _adminActions.viewnotes(reqid);
+            return View("MainPage",MainModel);
         }
         public IActionResult ViewNotesAdmin()
         {
