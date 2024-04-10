@@ -30,7 +30,8 @@ builder.Services.AddScoped<IPasswordHasher<PhysicianProfileVM>, PasswordHasher<P
 builder.Services.AddScoped<IPasswordHasher<AdminCreateAccVM>, PasswordHasher < AdminCreateAccVM >> ();
 builder.Services.AddScoped<IProviders, ProviderService>();
 builder.Services.AddScoped<IUploadProvider, UploadProviderRepo>();
-builder.Services.AddScoped<IAccessMenu, AccessMenuRepo>();  
+builder.Services.AddScoped<IAccessMenu, AccessMenuRepo>();
+builder.Services.AddScoped<IProviderSite, ProviderSite>();
 //builder.Services.AddScoped<IJWTTokenservice, JWTTokenservicerepo>();
 
 

@@ -170,7 +170,7 @@
 
                 <tr class="text-white " id="adminDashTableRow">
 
-                    <td class="align-middle text-white" style="background-color: @color !important">@item.PatientName</td>
+                    <td class="align-middle text-white" style="background-color:@color !important">@item.PatientName @if (item.physicianId != null) { <span class="bg-danger px-1 shadow rounded-3 py-1 text-center">assigned</span> }</td>
                     <td class="align-middle text-white" style="background-color: @color !important">@item.BirthDate</td>
                     <td class="align-middle text-white" style="background-color: @color !important">@item.RequestorName</td>
                     <td class="align-middle text-white" style="background-color: @color !important">@item.RequestDate</td>
@@ -207,7 +207,10 @@
                                 Action
                             </button>
                             <ul class="dropdown-menu">
-                                <li><button type="button" class="btn shadow-none dropdown-item" onclick="openAssignModal(@item.reqid)" data-asignreqid="@item.reqid">Assign Case</button></li>
+                                @if(item.physicianId == null)
+                                {
+                                    <li><button type="button" class="btn shadow-none dropdown-item" onclick="openAssignModal(@item.reqid)" data-asignreqid="@item.reqid">Assign Case</button></li>
+                                }
                                 <li>
                                     <button onclick="openCancelModal(@item.reqid, '@item.PatientName')" class="dropdown-item pointer-event">
                                         cancel

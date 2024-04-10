@@ -11,6 +11,7 @@ namespace DAL.ViewModels
         public string address { get; set; }
         public string YourPhone { get; set; }
         public int requestId { get; set; }
+        public int? physicianId { get; set; }
         public int requestStatus { get; set; }
         public int status { get; set; }
         public string? physicianname { get; set; }

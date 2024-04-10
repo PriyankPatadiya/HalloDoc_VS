@@ -180,7 +180,8 @@ namespace BAL.Repository
                               regionTable = _context.Regions.ToList(),
                               DateOfService = req.ModifiedDate,
                               physicianname = _context.Physicians.FirstOrDefault(u => u.PhysicianId == req.PhysicianId).FirstName,
-                              IsEncounterFinalize = _context.EncounterForms.FirstOrDefault(r => r.RequestId == req.RequestId).IsFinalize
+                              IsEncounterFinalize = _context.EncounterForms.FirstOrDefault(r => r.RequestId == req.RequestId).IsFinalize,
+                              physicianId = req.PhysicianId
 
                           }).Where(item=>myarray.Any(s=>item.requestStatus==s));
             

@@ -130,6 +130,8 @@ namespace HalloDoc.Controllers
                     }
                     if(roleid == 3)
                     {
+                        var physicianId = _context.Physicians.Where(u => u.AspNetUserId == userid.Id).FirstOrDefault().PhysicianId;
+                        HttpContext.Session.SetInt32("PhysicianId", physicianId);
                         return RedirectToAction("Dashboard", "ProviderDashboard");
                     }
                 }

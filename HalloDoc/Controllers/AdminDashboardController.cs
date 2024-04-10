@@ -18,6 +18,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace HalloDoc.Controllers
 {
+    [CustomAuthorize( new string[] {"Administrator","Provider"} )]
     public class AdminDashboardController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -35,7 +36,6 @@ namespace HalloDoc.Controllers
         private readonly IUploadProvider _uploadProvider;
         private readonly IAccessMenu _accessMenu;
 
-    [CustomAuthorize( new string[] {"Administrator","Provider"} )]
         public AdminDashboardController(ApplicationDbContext context, IAdminDashboard admin, IAdminActions action, IHostingEnvironment env, IuploadFile uploadfile, IPatientRequest request, IEmailService emailService, IPasswordHasher<AdminProfileVM> password,
                     IProviders providers, IUploadProvider upload, IPasswordHasher<PhysicianProfileVM> hasher, IAccessMenu menu, IPasswordHasher<AdminCreateAccVM> hasherr)
         {
@@ -245,9 +245,9 @@ namespace HalloDoc.Controllers
         #region View Case 
 
         [HttpGet]
-        public IActionResult ViewCaseAdmin()
+        public IActionResult ViewCaseAdmin(string reqcliId)
         {
-            var requestclientId = HttpContext.Request.Query["reqcliId"];
+            var requestclientId = reqcliId;
             AdminMainPageVM MainModel = new AdminMainPageVM()
             {
                 PageName = PageName.ViewCaseForm

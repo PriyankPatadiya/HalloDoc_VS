@@ -43,7 +43,6 @@ namespace BAL.Repository
             var Request = _context.Requests.Where(s => s.RequestId == reeqid).FirstOrDefault();
             if (Request != null)
             {
-                Request.Status = 2;
                 Request.ModifiedDate = DateTime.Now;
                 Request.PhysicianId = phyid;
                 _context.Update(Request);

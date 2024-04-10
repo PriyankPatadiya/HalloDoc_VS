@@ -10,26 +10,30 @@ namespace HalloDoc.Controllers
     public class ProviderDashboardController : Controller
     {
         private readonly IAdminDashboard _admin;
-        public ProviderDashboardController(IAdminDashboard admin)
+        private readonly IProviderSite _provider;
+        public ProviderDashboardController(IAdminDashboard admin, IProviderSite provider)
         {
             _admin = admin;
+            _provider = provider;
         }
         public IActionResult Dashboard()
         {
+            var physicianId = HttpContext.Session.GetInt32("PhysicianId");
             AdminDashboardVM model = new AdminDashboardVM();
-            model.NewCount = _admin.CountRequests("1");
-            model.PendingCount = _admin.CountRequests("2");
-            model.ActiveCount = _admin.CountRequests("3");
-            model.ConcludeCount = _admin.CountRequests("4");
-            model.ToCloseCount = _admin.CountRequests("5");
-            model.UnpaidCount = _admin.CountRequests("6");
+            model.NewCount = _provider.CountRequests("1", physicianId);
+            model.PendingCount = _provider.CountRequests("2", physicianId);
+            model.ActiveCount = _provider.CountRequests("3", physicianId);
+            model.ConcludeCount = _provider.CountRequests("4", physicianId);
+            model.ToCloseCount = _provider.CountRequests("5", physicianId);
+            model.UnpaidCount = _provider.CountRequests("6", physicianId);
             model.Region = _admin.regions();
             return View("Dashboard/DashboardPage", model);
         }
         public IActionResult filterDashboardTable(string SearchString, string selectButton, string StatusButton, string partialviewpath, int pagesize, int currentpage)
         {
+            var physicianId = HttpContext.Session.GetInt32("PhysicianId");
             var result = _admin.GetRequestsQuery(StatusButton);
-            result = result.Where(s => (String.IsNullOrEmpty(SearchString) || s.PatientName.Contains(SearchString)) && (System.String.IsNullOrEmpty(selectButton) || s.requestId == int.Parse(selectButton)));
+            result = result.Where(s => (s.physicianId == physicianId) && (String.IsNullOrEmpty(SearchString) || s.PatientName.Contains(SearchString)) && (System.String.IsNullOrEmpty(selectButton) || s.requestId == int.Parse(selectButton)));
 
             int totalItems = result.Count();
             int totalPages = (int)Math.Ceiling((double)totalItems / pagesize);
