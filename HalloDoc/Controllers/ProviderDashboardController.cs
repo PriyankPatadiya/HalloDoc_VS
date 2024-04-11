@@ -1,8 +1,11 @@
 ﻿using BAL.Interface;
 using BAL.Repository;
+using DAL.DataContext;
 using DAL.DataModels;
 using DAL.ViewModels;
 using Microsoft.AspNetCore.Mvc;
+using Org.BouncyCastle.Ocsp;
+using Org.BouncyCastle.Utilities;
 
 namespace HalloDoc.Controllers
 {
@@ -11,10 +14,12 @@ namespace HalloDoc.Controllers
     {
         private readonly IAdminDashboard _admin;
         private readonly IProviderSite _provider;
-        public ProviderDashboardController(IAdminDashboard admin, IProviderSite provider)
+        private readonly ApplicationDbContext _context;
+        public ProviderDashboardController(IAdminDashboard admin, IProviderSite provider, ApplicationDbContext context)
         {
             _admin = admin;
             _provider = provider;
+            _context = context;
         }
         public IActionResult Dashboard()
         {
@@ -65,9 +70,30 @@ namespace HalloDoc.Controllers
         {
             return RedirectToAction("ViewCase", "AdminDashBoard", new { reqcliId = reqcliId });
         }
-        public IActionResult ViewNotes (int id)
+        public IActionResult ViewNotes(int reqid)
         {
-            return RedirectToAction("ViewNotesAdminn", "AdminDashboard", new { reqid = id });
+            return RedirectToAction("ViewNotesAdminn", "AdminDashboard", new { reqid = reqid });
+        }
+        public IActionResult Accept(int reqid)
+        {
+            var result = _context.Requests.FirstOrDefault(u => u.RequestId == reqid);
+            result.Status = 2;
+            result.ModifiedDate = DateTime.Now;
+            _context.Requests.Update(result);
+            _context.SaveChanges();
+
+            RequestStatusLog requestStatusLog = new RequestStatusLog();
+            requestStatusLog.Status = result.Status;
+            requestStatusLog.RequestId = reqid;
+            requestStatusLog.CreatedDate = DateTime.Now;
+
+            _context.RequestStatusLogs.Add(requestStatusLog);
+            _context.SaveChanges();
+            return RedirectToAction("Dashboard");
+        }
+        public IActionResult ViewDocuments(int reeqid)
+        {
+            return RedirectToAction("ViewDocuments","AdminDashboard", new { reeqid = reeqid });
         }
     }
 }

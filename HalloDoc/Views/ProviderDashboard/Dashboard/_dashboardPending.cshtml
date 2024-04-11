@@ -14,20 +14,10 @@
                 <h1 class="modal-title fs-5  text-white" id="exampleModalLabel">Transfer Request</h1>
                 <button type="button" class="btn-close shadow-none" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <form asp-action="TransferNotes" enctype="multipart/form-data">
+            <form asp-action="TransferThisRequest" enctype="multipart/form-data">
                 <input id="transferModalRequestId" name="reeqid" hidden />
                 <div class="modal-body">
-                    <p> To assign this request search and select another physician</p>
-                    @*for ajax*@
-                    <select class="form-select py-2 my-2 shadow-none border border-info" id="Regionnid" onchange="filterPhysicianByRegion(this.value)">
-                        <option value="0" selected>Narrow Search By Region</option>
-
-                    </select>
-                    @*for action post*@
-
-                    <select class="form-select py-2 my-2 shadow-none border border-info" id="physicianDrop" name="physicianId">
-                        @*using ajax*@
-                    </select>
+                    
 
                     <div class="form-floating mt-3">
                         <textarea class="form-control border border-info" name="Notes" placeholder="Leave a comment here" id="floatingTextarea2" style="height: 100px"></textarea>
@@ -235,11 +225,10 @@
                                 Action
                             </button>
                             <ul class="dropdown-menu">
-                                <li><a class="dropdown-item pe-auto" asp-action="ViewCaseAdmin" asp-route-reqcliId="@item.reqclientId">View Case</a></li>
-                                <li><a class="dropdown-item pe-auto" asp-action="ViewDocuments" asp-route-reeqid="@item.reqid">View Uploads</a></li>
-                                <li><a class="dropdown-item pe-auto" asp-action="ViewNotesAdmin" asp-route-reqid="@item.reqid">ViewNotes</a></li>
+                                <li><a class="dropdown-item pe-auto" asp-action="ViewCase" asp-route-reqcliId="@item.reqclientId">View Case</a></li>
+                                <li><a class="dropdown-item pe-auto" asp-controller="ProviderDashboard" asp-action="ViewDocuments" asp-route-reeqid="@item.reqid">View Uploads</a></li>
+                                <li><a class="dropdown-item pe-auto" asp-action="ViewNotes" asp-route-reqid="@item.reqid">ViewNotes</a></li>
                                 <li><button type="button" class="dropdown-item pe-auto" onclick="openTransfterModal(@item.reqid)">Transfer</button></li>
-                                <li><a class="dropdown-item pe-auto" data-bs-toggle="modal" data-bs-target="#ClearModal_@j">Clear Case</a></li>
                                 <li><a class="dropdown-item pe-auto" data-bs-toggle="modal" data-bs-target="#SendAggrimentModal_@j">Send Agreement</a></li>
                             </ul>
                         </div>
@@ -660,14 +649,11 @@
     //}
 
 
-    //function openTransfterModal(requestid) {
-    //    
-    //    regions.forEach(region => {
-    //        $('#Regionnid').append($('<option>').text(region.name).attr('value', region.regionId));
-    //    });
-    //    $('#transferModalRequestId').attr('value', requestid);
-    //    $('#TransferRequestModal').modal('show');
-    //}
+    function openTransfterModal(requestid) {
+        
+        $('#transferModalRequestId').attr('value', requestid);
+        $('#TransferRequestModal').modal('show');
+    }
 
     function submitform() {
         document.getElementById("agreementform").submit();

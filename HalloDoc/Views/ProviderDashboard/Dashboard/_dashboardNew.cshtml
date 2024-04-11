@@ -9,112 +9,116 @@
 @*<link href="https://getbootstrap.com/docs/5.0/dist/css/bootstrap.min.css" rel="stylesheet" />*@
 
 
-@*Table*@
 
+
+
+
+@*Table*@
 <div style="height: 360px !important" class="mx-2 mb-2 tab-pane fade show active overflow-auto" id="pills-Dashboard" role="tabpanel" aria-labelledby="pills-Dashboard-tab" tabindex="0">
     @if (ViewBag.EmptyMessage == null)
     {
-        
-    
-    <Table class="table">
-        <thead class="border-0" style="height: 60px;">
-            <tr>
 
-                <th class="align-middle text-secondary my-2 ">Name</th>
 
-                <th class="align-middle text-secondary">Date Of Birth</th>
-                <th class="align-middle text-secondary">Requestor</th>
-                <th class="align-middle text-secondary">RequestedDate</th>
-                <th class="align-middle text-secondary">Phone</th>
-                <th class="align-middle text-secondary">Address</th>
-                <th class="align-middle text-secondary">Notes</th>
-                <th class="align-middle text-secondary">ChatWith</th>
-                <th class="align-middle text-secondary">Actions</th>
+        <Table class="table">
+            <thead class="border-0" style="height: 60px;">
+                <tr>
 
-            </tr>
-        </thead>
-        <tbody class=" overflow-auto">
-            @foreach (var item in Model)
-            {
-                @if (item.requestId == 1)
-                {
-                    color = "#14A44D";
-                    requestor = "Patient";
-                }
-                else if (item.requestId == 2)
-                {
-                    color = "#E4A11B";
-                    requestor = "Family";
-                }
-                else if (item.requestId == 3)
-                {
-                    color = "#54B4D3";
-                    requestor = "Concierge";
-                }
-                else if (item.requestId == 4)
-                {
-                    color = "#DC4C64";
-                    requestor = "Business";
-                }
+                    <th class="align-middle text-secondary my-2 ">Name</th>
 
-                <tr class="text-white " id="adminDashTableRow">
+                    <th class="align-middle text-secondary">Date Of Birth</th>
+                    <th class="align-middle text-secondary">Requestor</th>
+                    <th class="align-middle text-secondary">RequestedDate</th>
+                    <th class="align-middle text-secondary">Phone</th>
+                    <th class="align-middle text-secondary">Address</th>
+                    <th class="align-middle text-secondary">Notes</th>
+                    <th class="align-middle text-secondary">ChatWith</th>
+                    <th class="align-middle text-secondary">Actions</th>
 
-                    <td class="align-middle text-white" style="background-color: @color !important">@item.PatientName</td>
-                    <td class="align-middle text-white" style="background-color: @color !important">@item.BirthDate</td>
-                    <td class="align-middle text-white" style="background-color: @color !important">@item.RequestorName</td>
-                    <td class="align-middle text-white" style="background-color: @color !important">@item.RequestDate</td>
-                    <td class="d-flex flex-column text-white" style="background-color:@color!important">
-                        <div class="border border-1 border-white py-1 text-center rounded">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-telephone-fill me-2" viewBox="0 0 16 16">
-                                <path fill-rule="evenodd" d="M1.885.511a1.745 1.745 0 0 1 2.61.163L6.29 2.98c.329.423.445.974.315 1.494l-.547 2.19a.68.68 0 0 0 .178.643l2.457 2.457a.68.68 0 0 0 .644.178l2.189-.547a1.75 1.75 0 0 1 1.494.315l2.306 1.794c.829.645.905 1.87.163 2.611l-1.034 1.034c-.74.74-1.846 1.065-2.877.702a18.6 18.6 0 0 1-7.01-4.42 18.6 18.6 0 0 1-4.42-7.009c-.362-1.03-.037-2.137.703-2.877z" />
-                            </svg>
-                            @item.phone
-                        </div>
-                        <span>(Patient)</span>
-                        @if (item.requestId != 1)
-                        {
-                            <div class="border border-1 border-white py-1 text-center rounded">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-telephone-fill me-2" viewBox="0 0 16 16">
-                                    <path fill-rule="evenodd" d="M1.885.511a1.745 1.745 0 0 1 2.61.163L6.29 2.98c.329.423.445.974.315 1.494l-.547 2.19a.68.68 0 0 0 .178.643l2.457 2.457a.68.68 0 0 0 .644.178l2.189-.547a1.75 1.75 0 0 1 1.494.315l2.306 1.794c.829.645.905 1.87.163 2.611l-1.034 1.034c-.74.74-1.846 1.065-2.877.702a18.6 18.6 0 0 1-7.01-4.42 18.6 18.6 0 0 1-4.42-7.009c-.362-1.03-.037-2.137.703-2.877z" />
-                                </svg>
-                                @item.YourPhone
-                            </div>
-                            <span>(@requestor)</span>
-                        }
-                    </td>
-                    <td class=" text-white" style="background-color: @color !important">@item.address</td>
-                    <td class="align-middle text-white" style="background-color: @color !important">Notes</td>
-                    <td class="align-middle text-white" style="background-color: @color !important">
-                        <button class="btn btn-outline-light ">
-                            <i class="bi bi-person"></i>
-                            Provider
-                        </button>
-                    </td>
-                    <td class="align-middle text-white" style="background-color:@color!important">
-                        <div class="btn-group">
-                            <button type="button" class="btn btn-outline-light shadow-none dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-                                Action
-                            </button>
-                            <ul class="dropdown-menu">
-                                <li><button type="button" class="btn shadow-none dropdown-item">Accept</button></li>
-                                
-                                <li><a class="dropdown-item" asp-controller="ProviderDashboard" asp-action="ViewCase" asp-route-reqcliId="@item.reqclientId">View Case</a></li>
-                                <li><a class="dropdown-item" asp-controller="ProviderDashboard" asp-action="ViewNotes" asp-route-id="@item.reqid">ViewNotes</a></li>
-                                
-                            </ul>
-                        </div>
-                    </td>
                 </tr>
-                j++;
-            }
-        </tbody>
-        </Table>
+            </thead>
+            <tbody class=" overflow-auto">
+                @foreach (var item in Model)
+                {
+                    
+                    @if (item.requestId == 1)
+                    {
+                        color = "#14A44D";
+                        requestor = "Patient";
+                    }
+                    else if (item.requestId == 2)
+                    {
+                        color = "#E4A11B";
+                        requestor = "Family";
+                    }
+                    else if (item.requestId == 3)
+                    {
+                        color = "#54B4D3";
+                        requestor = "Concierge";
+                    }
+                    else if (item.requestId == 4)
+                    {
+                        color = "#DC4C64";
+                        requestor = "Business";
+                    }
+
+        <tr class="text-white " id="adminDashTableRow">
+
+            <td class="align-middle text-white" style="background-color: @color !important">@item.PatientName</td>
+            <td class="align-middle text-white" style="background-color: @color !important">@item.BirthDate</td>
+            <td class="align-middle text-white" style="background-color: @color !important">@item.RequestorName</td>
+            <td class="align-middle text-white" style="background-color: @color !important">@item.RequestDate</td>
+            <td class="d-flex flex-column text-white" style="background-color:@color!important">
+                <div class="border border-1 border-white py-1 text-center rounded">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-telephone-fill me-2" viewBox="0 0 16 16">
+                        <path fill-rule="evenodd" d="M1.885.511a1.745 1.745 0 0 1 2.61.163L6.29 2.98c.329.423.445.974.315 1.494l-.547 2.19a.68.68 0 0 0 .178.643l2.457 2.457a.68.68 0 0 0 .644.178l2.189-.547a1.75 1.75 0 0 1 1.494.315l2.306 1.794c.829.645.905 1.87.163 2.611l-1.034 1.034c-.74.74-1.846 1.065-2.877.702a18.6 18.6 0 0 1-7.01-4.42 18.6 18.6 0 0 1-4.42-7.009c-.362-1.03-.037-2.137.703-2.877z" />
+                    </svg>
+                                @item.phone
+                </div>
+                <span>(Patient)</span>
+                            @if (item.requestId != 1)
+                            {
+                    <div class="border border-1 border-white py-1 text-center rounded">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-telephone-fill me-2" viewBox="0 0 16 16">
+                            <path fill-rule="evenodd" d="M1.885.511a1.745 1.745 0 0 1 2.61.163L6.29 2.98c.329.423.445.974.315 1.494l-.547 2.19a.68.68 0 0 0 .178.643l2.457 2.457a.68.68 0 0 0 .644.178l2.189-.547a1.75 1.75 0 0 1 1.494.315l2.306 1.794c.829.645.905 1.87.163 2.611l-1.034 1.034c-.74.74-1.846 1.065-2.877.702a18.6 18.6 0 0 1-7.01-4.42 18.6 18.6 0 0 1-4.42-7.009c-.362-1.03-.037-2.137.703-2.877z" />
+                        </svg>
+                                    @item.YourPhone
+                    </div>
+                    <span>(@requestor)</span>
+                            }
+            </td>
+            <td class=" text-white" style="background-color: @color !important">@item.address</td>
+            <td class="align-middle text-white" style="background-color: @color !important">Notes</td>
+            <td class="align-middle text-white" style="background-color: @color !important">
+                <button class="btn btn-outline-light ">
+                    <i class="bi bi-person"></i>
+                    Provider
+                </button>
+            </td>
+            <td class="align-middle text-white" style="background-color:@color!important">
+                <div class="btn-group">
+                    <button type="button" class="btn btn-outline-light shadow-none dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                        Action
+                    </button>
+                    <ul class="dropdown-menu">
+                                    <li><a asp-action="Accept" asp-route-reqid="@item.reqid" type="button" class="btn shadow-none dropdown-item">Accept</a></li>
+
+                        <li><a class="dropdown-item" asp-controller="ProviderDashboard" asp-action="ViewCase" asp-route-reqcliId="@item.reqclientId">View Case</a></li>
+                        <li><a class="dropdown-item" asp-action="ViewNotes" asp-route-reqid="@item.reqid">ViewNotes</a></li>
+
+                    </ul>
+                </div>
+            </td>
+        </tr>
+                    j++;
+                }
+            </tbody>
+            </Table>
     }
     else
     {
-        <div class="fs-1">
+    <div class="fs-1">
             @ViewBag.EmptyMessage
-        </div>
+    </div>
     }
 </div>
 
@@ -134,7 +138,7 @@
     }
     @foreach (var item in Model)
     {
-        
+
         <div class="accordion-item bg-info-subtle">
             <button class=" accordion-header btn w-100 px-2 shadow-none" type="button" data-bs-toggle="collapse" data-bs-target="#collapse_@i" aria-expanded="false" aria-controls="collapseTwo">
                 <div class="row w-100 pb-1">
@@ -315,55 +319,12 @@
 </div>
 <script>
 
-    function filterPhysicianByRegionn(RegionId) {
-        if (RegionId != "0") {
-            $.ajax({
-                type: "GET",
-                url: "/AdminDashboard/filterPhyByRegion",
-                data: { RegionId: RegionId },
-
-                success: function (data) {
-                    $('#physicianDrop').empty();
-                    $.each(data, function (index, item) {
-                        $('#physicianDrop').append($('<option>').text(item.firstName).attr('value', item.physicianId));
-
-                    });
-                    $('#physicianDrop option:first').prop('selected', true);
-                }
-            });
-        }
-    }
-
-
-    function filterPhysicianByRegion(RegionId, i) {
-        if (RegionId != "0") {
-            $.ajax({
-                type: "GET",
-                url: "/AdminDashboard/filterPhyByRegion",
-                data: { RegionId: RegionId },
-
-                success: function (data) {
-
-                    $('#physicianDrop1_' + i).empty();
-                    $.each(data, function (index, item) {
-
-                        $('#physicianDrop1_' + i).append($('<option>').text(item.firstName).attr('value', item.physicianId));
-                    });
-                    $('#physicianDrop1_' + i + 'option:first').prop('selected', true);
-                }
-            });
-        }
-    }
+   
 </script>
 <script>
-    function openAssignModal(requestid) {
-        var regions = @Json.Serialize(Model[0].regionTable.ToList());
-        regions.forEach(region => {
-            $('#Regionnid').append($('<option>').text(region.name).attr('value', region.regionId));
-        });
-        $('#assignRequestidInput').attr('value', requestid);
-        $('#AssignForm').attr('action', '/AdminDashboard/AssignCase?reqid=' + requestid);
-        $('#AssignCaseModal').modal('show');
+    function AcceptModal(requestid) {
+        $("#acceptModalRequestId").attr("value", requestid);
+        $('#AcceptModal').modal('show');
     }
     function openCancelModal(requestid, patientname) {
         $("#cancelModalRequestId").attr('value', requestid);

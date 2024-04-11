@@ -38,7 +38,6 @@
         currentpage = $("#" + id).data("page");
         console.log("Current Page: " + currentpage);
         var storedpartial = localStorage.getItem("providerpartialviewpath");
-
         ChangeTable(storedpartial, StatusButton, currentpage, pagesize);
     });
 
@@ -46,19 +45,22 @@
         currentpage = 1;
         $('.buttonOfFilter').removeClass('active');
         $(this).addClass('active');
-        ChangeTable(path, StatusButton, currentpage, pagesize);
+        var storedpartial = localStorage.getItem("providerpartialviewpath");
+        ChangeTable(storedpartial, StatusButton, currentpage, pagesize);
     });
 
     //Search filter
     $("#SearchString").on("input", function () {
         currentpage = 1;
-        ChangeTable(path, StatusButton, currentpage, pagesize);
+        var storedpartial = localStorage.getItem("providerpartialviewpath");
+        ChangeTable(storedpartial, StatusButton, currentpage, pagesize);
     });
 
     // Status button 
     $("#SelectedStateId").on("change", function () {
         currentpage = 1;
-        ChangeTable(path, StatusButton, currentpage, pagesize);
+        var storedpartial = localStorage.getItem("providerpartialviewpath");
+        ChangeTable(storedpartial, StatusButton, currentpage, pagesize);
     });
 
     // physician dropdown in assign case

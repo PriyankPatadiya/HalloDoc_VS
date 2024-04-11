@@ -246,7 +246,7 @@ namespace HalloDoc.Controllers
 
         [CustomAuthorize(new string[] { "Administrator", "Provider" })]
         [HttpGet("AdminDashBoard/ViewCase/{reqcliId}", Name = "AdminViewCase")]
-        [HttpGet("ProviderDashboard/ViewCase/reqcliId={reqcliId}", Name = "ProviderCase")]
+        [HttpGet("ProviderDashboard/ViewCase/{reqcliId}", Name = "ProviderCase")]
         public IActionResult ViewCase(string reqcliId)
         {
             var physicianid = HttpContext.Session.GetInt32("PhysicianId");
@@ -323,7 +323,7 @@ namespace HalloDoc.Controllers
 
         [CustomAuthorize(new string[] { "Administrator", "Provider" })]
         [HttpGet("AdminDashboard/ViewNotesAdminn/{reqid}", Name = "AdminViewNotes")]
-        [HttpGet("ProviderDashboard/ViewNotes/{id}", Name = "ProvideViewNotes")]
+        [HttpGet("ProviderDashboard/ViewNotes/{reqid}", Name = "ProvideViewNotes")]
         public IActionResult ViewNotesAdminn(int reqid)
         {
             var physicianid = HttpContext.Session.GetInt32("PhysicianId");
@@ -460,9 +460,19 @@ namespace HalloDoc.Controllers
 
         #region View Document
         // View Document Actions
+        [CustomAuthorize(new string[] { "Administrator", "Provider" })]
 
         public IActionResult ViewDocuments(int reeqid)
         {
+            var physicianid = HttpContext.Session.GetInt32("PhysicianId");
+            if (physicianid == null)
+            {
+                ViewBag.IsPhysician = false;
+            }
+            else
+            {
+                ViewBag.IsPhysician = true;
+            }
             AdminMainPageVM mainmodel = new AdminMainPageVM
             {
                 PageName = PageName.viewdocument

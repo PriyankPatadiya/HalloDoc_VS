@@ -35,7 +35,7 @@ $(document).ready(function () {
         currentpage = $("#" + id).data("page");
         console.log("Current Page: " + currentpage);
         var storedpartial = localStorage.getItem("partialviewpath");
-
+        debugger
         ChangeTable(storedpartial, StatusButton, currentpage, pagesize);
     });
 

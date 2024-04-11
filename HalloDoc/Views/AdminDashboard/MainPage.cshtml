@@ -1,5 +1,5 @@
 ﻿@model DAL.ViewModels.AdminMainPageVM
-@if (ViewBag.IsPhysician == false)
+@if (ViewBag.IsPhysician == false || ViewBag.IsPhysician == null)
 {
     Layout = "~/Views/Shared/_LayoutAdminDash.cshtml";
 }
