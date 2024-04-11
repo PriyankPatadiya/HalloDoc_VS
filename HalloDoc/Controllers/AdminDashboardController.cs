@@ -841,11 +841,13 @@ namespace HalloDoc.Controllers
             return PartialView("ProviderMenu/_ProviderPartialTable", result);
         }
 
-
+        [HttpGet("ProviderDashboard/ProviderProfile/{id?}",Name = "ProfileProvider")]
+        [HttpGet("AdminDashboard/ProviderProfile/{id?}", Name ="ProfileProviderAdmin")]
         public IActionResult ProviderProfile(int id)
         {
             var email = HttpContext.Session.GetString("Email");
-            ViewBag.username = _admin.username(email);
+            //ViewBag.username = _admin.username(email);
+            
 
             Physician? physician = _provider.getPhysicianById(id);
 

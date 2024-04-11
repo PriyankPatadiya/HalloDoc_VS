@@ -83,7 +83,7 @@
                             <a class="px-2 shadow-none nav-link text-decoration-none text-info @(ViewContext.ActionDescriptor.RouteValues["action"] == "AdminProfile" ? "active" : "")" >My Schedule</a>
                         </li>
                         <li class="nav-item" role="presentation">
-                            <button class="px-2 shadow-none nav-link text-decoration-none text-info @(ViewContext.ActionDescriptor.RouteValues["action"] == "Provider" || ViewContext.ActionDescriptor.RouteValues["action"] == "Scheduling" || ViewContext.ActionDescriptor.RouteValues["action"] == "CreateProviderAcc" ? "active" : "")" id="dropdownMenu2" data-bs-toggle="dropdown" aria-expanded="false">My Profile</button>
+                            <a asp-controller="ProviderDashboard" asp-action="ProviderProfile" asp-route-id="physicianId" class="px-2 shadow-none nav-link text-decoration-none text-info">My Profile</a>
                             
                         </li>
                         
