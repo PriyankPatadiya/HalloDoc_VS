@@ -195,9 +195,19 @@ namespace HalloDoc.Controllers
 
         #region Encounter
         // Encounter Form Actions
-
+        [HttpGet("AdminDashboard/EncounterForm/{requestid?}", Name = "EncounterByAdmin")]
+        [HttpGet("ProviderDashboard/EncounterForm/{requestid?}", Name = "EncounterByProvider")]
         public IActionResult EncounterForm(int requestid)
         {
+            var physicianid = HttpContext.Session.GetInt32("PhysicianId");
+            if (physicianid == null)
+            {
+                ViewBag.IsPhysician = false;
+            }
+            else
+            {
+                ViewBag.IsPhysician = true;
+            }
             AdminMainPageVM MainModel = new AdminMainPageVM
             {
                 PageName = PageName.Encounterform
@@ -207,18 +217,27 @@ namespace HalloDoc.Controllers
             return View("MainPage", MainModel);
         }
 
-        [HttpPost]
+        [HttpPost("ProviderDashboard/EncounterForm/{requestid?}", Name = "EncounterPostProvider")]
+        [HttpPost("AdminDashboard/EncounterForm/{requestid?}", Name = "EncounterPostAdmin")]
         public IActionResult EncounterForm(EncounterFormVM model)
         {
+            var physicianid = HttpContext.Session.GetInt32("PhysicianId");
             _adminActions.addencounterdata(model);
-            return RedirectToAction("EncounterForm", new { requestid = model.requestid });
+            if (physicianid == null)
+            {
+                return RedirectToAction("MainPage");
+            }
+            else
+            {
+                return RedirectToAction("Dashboard", "ProviderDashboard");
+            }
         }
         public IActionResult finalizeForm(int requestid)
         {
             bool result = _adminActions.finalize(requestid);
             if (result == true)
             {
-                return RedirectToAction("MainPage");
+                return RedirectToAction("Dashboard","ProviderDashboard");
             }
             return Ok("Can't finalize the form");
         }
@@ -245,8 +264,8 @@ namespace HalloDoc.Controllers
         #region View Case 
 
         [CustomAuthorize(new string[] { "Administrator", "Provider" })]
-        [HttpGet("AdminDashBoard/ViewCase/{reqcliId}", Name = "AdminViewCase")]
-        [HttpGet("ProviderDashboard/ViewCase/{reqcliId}", Name = "ProviderCase")]
+        [HttpGet("AdminDashBoard/ViewCaseAdmin/{reqcliId?}", Name = "AdminViewCase")]
+        [HttpGet("ProviderDashboard/ViewCase/{reqcliId?}", Name = "ProviderCase")]
         public IActionResult ViewCase(string reqcliId)
         {
             var physicianid = HttpContext.Session.GetInt32("PhysicianId");
@@ -323,7 +342,7 @@ namespace HalloDoc.Controllers
 
         [CustomAuthorize(new string[] { "Administrator", "Provider" })]
         [HttpGet("AdminDashboard/ViewNotesAdminn/{reqid}", Name = "AdminViewNotes")]
-        [HttpGet("ProviderDashboard/ViewNotes/{reqid}", Name = "ProvideViewNotes")]
+        [HttpGet("ProviderDashboard/ViewNotes/{reqid?}", Name = "ProvideViewNotes")]
         public IActionResult ViewNotesAdminn(int reqid)
         {
             var physicianid = HttpContext.Session.GetInt32("PhysicianId");
@@ -365,12 +384,11 @@ namespace HalloDoc.Controllers
             }
             return RedirectToAction("ViewNotesAdminn", new { reqid = reqid });
         }
-        public IActionResult TransferNotes(int reeqid)
+        public IActionResult TransferNotes(int reeqid, string Notes)
         {
             int phyid = int.Parse(Request.Form["physicianId"]);
-            string transNote = Request.Form["Notes"];
 
-            if (_adminActions.transferNotes(reeqid, phyid, transNote) == true)
+            if (_adminActions.transferNotes(reeqid, phyid, Notes) == true)
             {
                 return RedirectToAction("MainPage");
             }
@@ -382,9 +400,20 @@ namespace HalloDoc.Controllers
         #endregion View Notes
 
         #region Send Order
-
+        [CustomAuthorize(new string[] {"Administrator","Provider"})]
+        [HttpGet("ProviderDashboard/SendOrder/{requestid?}", Name = "SendOrderByProvider")]
+        [HttpGet("AdminDashboard/SendOrder/{requestid?}", Name = "AdminSendOrder")]
         public IActionResult SendOrder(int requestid)
         {
+            var physicianid = HttpContext.Session.GetInt32("PhysicianId");
+            if (physicianid == null)
+            {
+                ViewBag.IsPhysician = false;
+            }
+            else
+            {
+                ViewBag.IsPhysician = true;
+            }
             AdminMainPageVM MainModel = new AdminMainPageVM()
             {
                 PageName = PageName.SendOrder
@@ -396,9 +425,28 @@ namespace HalloDoc.Controllers
             return View("MainPage", MainModel);
         }
 
-        [HttpPost]
+        [CustomAuthorize(new string[] {"Administrator","Provider"})]
+        [HttpPost("ProviderDashboard/SendOrder/{requestid?}", Name = "SendOrderByProviderpost")]
+        [HttpPost("AdminDashboard/SendOrder/{requestid?}", Name = "AdminSendOrderpost")]
         public IActionResult SendOrder(SendOrderVM model)
         {
+            var physicianid = HttpContext.Session.GetInt32("PhysicianId");
+            
+            AdminMainPageVM MainModel = new AdminMainPageVM()
+            {
+                PageName = PageName.SendOrder
+            };
+            if(physicianid == null)
+            {
+                var email = HttpContext.Session.GetString("Email");
+                var admin = _admin.username(email);
+                model.createdby = admin;
+            }
+            else
+            {
+                model.createdby = _context.Physicians.FirstOrDefault(u => u.PhysicianId == physicianid).FirstName;
+            }
+            model.CreatedDate = DateTime.Now;
             if (ModelState.IsValid)
             {
                 bool issend = _adminActions.sendOrder(model);
@@ -406,7 +454,14 @@ namespace HalloDoc.Controllers
                 {
                     TempData["Message"] = "Successfully sent Your order!...";
                     TempData["MessageType"] = "success";
-                    return RedirectToAction("MainPage");
+                    if (physicianid == null)
+                    {
+                        return RedirectToAction("MainPage");
+                    }
+                    else
+                    {
+                        return RedirectToAction("Dashboard", "ProviderDashboard");
+                    }
                 }
             }
             TempData["Message"] = "Unable to send order";
@@ -461,7 +516,7 @@ namespace HalloDoc.Controllers
         #region View Document
         // View Document Actions
         [CustomAuthorize(new string[] { "Administrator", "Provider" })]
-
+        [HttpGet("ProviderDashboard/ViewDocuments/{reeqid?}", Name = "ProviderDocument")]
         public IActionResult ViewDocuments(int reeqid)
         {
             var physicianid = HttpContext.Session.GetInt32("PhysicianId");
@@ -602,10 +657,10 @@ namespace HalloDoc.Controllers
         #endregion Clear Case
 
         #region Send Aggrement
-        [HttpPost]
+
         public IActionResult SendAgreement(int requestid)
         {
-
+           
             string token = Guid.NewGuid().ToString() + ":" + requestid.ToString() + ":" + DateTime.Now.ToString();
             var link = Url.Action("ReviewAgreement", "PatientDashBoard", new { token = token }, protocol: HttpContext.Request.Scheme);
 
@@ -624,11 +679,26 @@ namespace HalloDoc.Controllers
                 TempData["Message"] = "Aggrement Sent";
                 TempData["MessageType"] = "success";
                 _emailService.SendEmail(to, subject, Body);
-                return RedirectToAction("MainPage");
+                if (TempData["isFromPhysician"] != null)
+                {
+                    return RedirectToAction("Dashboard", "ProviderDashboard");
+                }
+                else
+                {
+                    return RedirectToAction("MainPage");
+                }
+                
             }
             TempData["Message"] = "can't send Aggrement";
             TempData["MessageType"] = "warning";
-            return RedirectToAction("MainPage");
+            if (TempData["isFromPhysician"] != null)
+            {
+                return RedirectToAction("Dashboard", "ProviderDashboard");
+            }
+            else
+            {
+                return RedirectToAction("MainPage");
+            }
         }
 
         #endregion Send Aggrement

@@ -24,14 +24,8 @@
                 <tr>
 
                     <th class="align-middle text-secondary my-2 ">Name</th>
-
-                    <th class="align-middle text-secondary">Date Of Birth</th>
-                    <th class="align-middle text-secondary">Requestor</th>
-                    <th class="align-middle text-secondary">RequestedDate</th>
                     <th class="align-middle text-secondary">Phone</th>
                     <th class="align-middle text-secondary">Address</th>
-                    <th class="align-middle text-secondary">Notes</th>
-                    <th class="align-middle text-secondary">ChatWith</th>
                     <th class="align-middle text-secondary">Actions</th>
 
                 </tr>
@@ -64,9 +58,6 @@
         <tr class="text-white " id="adminDashTableRow">
 
             <td class="align-middle text-white" style="background-color: @color !important">@item.PatientName</td>
-            <td class="align-middle text-white" style="background-color: @color !important">@item.BirthDate</td>
-            <td class="align-middle text-white" style="background-color: @color !important">@item.RequestorName</td>
-            <td class="align-middle text-white" style="background-color: @color !important">@item.RequestDate</td>
             <td class="d-flex flex-column text-white" style="background-color:@color!important">
                 <div class="border border-1 border-white py-1 text-center rounded">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-telephone-fill me-2" viewBox="0 0 16 16">
@@ -87,13 +78,6 @@
                             }
             </td>
             <td class=" text-white" style="background-color: @color !important">@item.address</td>
-            <td class="align-middle text-white" style="background-color: @color !important">Notes</td>
-            <td class="align-middle text-white" style="background-color: @color !important">
-                <button class="btn btn-outline-light ">
-                    <i class="bi bi-person"></i>
-                    Provider
-                </button>
-            </td>
             <td class="align-middle text-white" style="background-color:@color!important">
                 <div class="btn-group">
                     <button type="button" class="btn btn-outline-light shadow-none dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">

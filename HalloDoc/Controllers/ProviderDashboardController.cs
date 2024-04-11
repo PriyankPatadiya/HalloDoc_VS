@@ -4,6 +4,7 @@ using DAL.DataContext;
 using DAL.DataModels;
 using DAL.ViewModels;
 using Microsoft.AspNetCore.Mvc;
+using Org.BouncyCastle.Asn1.Ocsp;
 using Org.BouncyCastle.Ocsp;
 using Org.BouncyCastle.Utilities;
 
@@ -66,14 +67,6 @@ namespace HalloDoc.Controllers
                 return PartialView(partialviewpath);
             }
         }
-        public IActionResult ViewCase(string reqcliId)
-        {
-            return RedirectToAction("ViewCase", "AdminDashBoard", new { reqcliId = reqcliId });
-        }
-        public IActionResult ViewNotes(int reqid)
-        {
-            return RedirectToAction("ViewNotesAdminn", "AdminDashboard", new { reqid = reqid });
-        }
         public IActionResult Accept(int reqid)
         {
             var result = _context.Requests.FirstOrDefault(u => u.RequestId == reqid);
@@ -91,9 +84,47 @@ namespace HalloDoc.Controllers
             _context.SaveChanges();
             return RedirectToAction("Dashboard");
         }
-        public IActionResult ViewDocuments(int reeqid)
+        
+        [HttpPost]
+        public IActionResult TransferThisRequest(int reeqid, string Notes)
         {
-            return RedirectToAction("ViewDocuments","AdminDashboard", new { reeqid = reeqid });
+            var request = _context.Requests.FirstOrDefault(u => u.RequestId == reeqid);
+            request.Status = 1;
+            request.PhysicianId = null;
+            _context.Requests.Update(request);
+            _context.SaveChanges();
+
+            RequestStatusLog log = new RequestStatusLog();
+            log.Status = request.Status;
+            log.RequestId = reeqid;
+            log.Notes = Notes;
+            log.CreatedDate = DateTime.Now;
+            _context.RequestStatusLogs.Add(log); _context.SaveChanges();
+
+            return RedirectToAction("Dashboard");
+        }
+        
+        public IActionResult SendAgreement(int requestid)
+        {
+           TempData["isFromPhysician"]  = true;
+            return RedirectToAction("SendAgreement", "AdminDashboard", new { requestid = requestid});
+        }
+        public IActionResult HouseCall(int requestId)
+        {
+            var request = _context.Requests.FirstOrDefault(u => u.RequestId == requestId);
+            request.Status = 5;
+            request.ModifiedDate = DateTime.Now;
+            _context.Requests.Update(request);  _context.SaveChanges();
+            return RedirectToAction("Dashboard");
+        }
+        public IActionResult Consult(int requestId)
+        {
+            var request = _context.Requests.FirstOrDefault(u => u.RequestId==requestId);
+            request.Status = 6;
+            request.ModifiedDate = DateTime.Now;
+            _context.Requests.Update(request); _context.SaveChanges();
+            return RedirectToAction("Dashboard");
+
         }
     }
 }

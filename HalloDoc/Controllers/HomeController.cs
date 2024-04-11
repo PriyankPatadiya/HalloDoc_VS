@@ -93,6 +93,8 @@ namespace HalloDoc.Controllers
         { 
             HttpContext.Session.Remove("Email");
             HttpContext.Session.Remove("Role");
+            HttpContext.Session.Remove("PhysicianId");
+            HttpContext.Session.Clear();
             Response.Cookies.Delete("jwt");
             return RedirectToAction("PatientLoginn");
         }

@@ -1,16 +1,28 @@
 ﻿@model DAL.ViewModels.SendOrderVM
 
-<div class="" >
+<div class="">
     <div class="mx-auto py-3 " style="width:70%;">
         <div class="d-flex justify-content-between align-items-center my-2 py-auto ">
             <h3>Send Order</h3><br />
-            
+            @if (ViewBag.IsPhysician == false || ViewBag.IsPhysician == null)
+            {
                 <a asp-action="MainPage" type="button" class="btn btn-primary btn text-decoration-none border border-info bg-transparent text-info shadow py-2 px-3 ">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-left" viewBox="0 0 16 16">
                         <path fill-rule="evenodd" d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0" />
                     </svg>
                     Back
                 </a>
+            }
+            else
+            {
+                <a asp-controller="ProviderDashboard" asp-action="Dashboard" type="button" class="btn btn-primary btn text-decoration-none border border-info bg-transparent text-info shadow py-2 px-3 ">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-left" viewBox="0 0 16 16">
+                        <path fill-rule="evenodd" d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0" />
+                    </svg>
+                    Back
+                </a>
+            }
+
         </div>
         <div class="my-3 py-3 px-4 bg-light-subtle rounded-2 shadow">
             <form method="post">
@@ -19,9 +31,9 @@
                     <div class="col-sm-12 col-md-12 col-lg-6 form-floating my-3 ">
                         <select class="form-select py-3 form-select shadow-none" asp-for="profession" aria-label="Select Profession" id="SelectProfession">
                             <option value="0" selected>Select Profession</option>
-                            @foreach(var item in Model.Professions)
+                            @foreach (var item in Model.Professions)
                             {
-                                <option value ="@item.HealthProfessionalId">@item.ProfessionName</option>
+                                <option value="@item.HealthProfessionalId">@item.ProfessionName</option>
                             }
                         </select>
                         <span class="text-danger " style="font-size: 11px;"></span>
@@ -69,7 +81,7 @@
                     </div>
                     <div class="col-sm-12 col-md-12 col-lg-6 form-floating my-3">
                         <input type="number"
-                                asp-for="Noofretail"
+                               asp-for="Noofretail"
                                class="form-control"
                                id="floatingInput"
                                placeholder="" />
@@ -89,3 +101,61 @@
         </div>
     </div>
 </div>
+
+<script>
+    // Send Order
+    $("#SelectProfession").on("change", function () {
+        var ProfessionId = $("#SelectProfession").val();
+        filterVendorsByProfession(ProfessionId);
+    });
+
+    // Send Order
+    $('#SelectBusiness').on("change", function () {
+        var businessId = $('#SelectBusiness').val();
+        getVendordata(businessId);
+    });
+    function filterVendorsByProfession(ProfessionId) {
+
+        if (ProfessionId != "0") {
+            $.ajax({
+                type: "GET",
+                url: "/AdminDashboard/filterVenByPro",
+                data: { ProfessionId: ProfessionId },
+
+                success: function (data) {
+                    $("#Vencontact").val('');
+                    $("#Venemail").val('');
+                    $("#VenFax").val('');
+                    $('#SelectBusiness').empty();
+                    $('#SelectBusiness').append($('<option>').text("Business").attr('value', 0));
+                    $.each(data, function (index, item) {
+                        $('#SelectBusiness').append($('<option>').text(item.vendorName).attr('value', item.vendorId));
+                    });
+                    $('#SelectBusiness option:first').prop('selected', true);
+                }
+            });
+        }
+    }
+
+    function getVendordata(businessId) {
+        if (businessId != 0) {
+            $.ajax({
+                type: "GET",
+                url: "/AdminDashboard/getvendordata",
+                data: { businessId: businessId },
+                success: function (data) {
+                    console.log(data);
+                    $("#Vencontact").val(data[0].businessContact);
+                    $("#Venemail").val(data[0].email);
+                    $("#VenFax").val(data[0].faxNumber);
+                }
+            });
+        }
+        else {
+            $("#Vencontact").val('');
+            $("#Venemail").val('');
+            $("#VenFax").val('');
+        }
+    }
+
+</script>

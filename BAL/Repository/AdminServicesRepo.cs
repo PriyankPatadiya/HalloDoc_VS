@@ -181,7 +181,8 @@ namespace BAL.Repository
                               DateOfService = req.ModifiedDate,
                               physicianname = _context.Physicians.FirstOrDefault(u => u.PhysicianId == req.PhysicianId).FirstName,
                               IsEncounterFinalize = _context.EncounterForms.FirstOrDefault(r => r.RequestId == req.RequestId).IsFinalize,
-                              physicianId = req.PhysicianId
+                              physicianId = req.PhysicianId,
+                              Notes = _context.RequestStatusLogs.Where(u => u.RequestId == req.RequestId && myarray.Any(s=>u.Status == s)).FirstOrDefault().Notes
 
                           }).Where(item=>myarray.Any(s=>item.requestStatus==s));
             

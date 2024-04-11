@@ -11,14 +11,12 @@
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header bg-info">
-                <h1 class="modal-title fs-5  text-white" id="exampleModalLabel">Transfer Request</h1>
+                <h1 class="modal-title fs-5  text-white" id="exampleModalLabel">Transfer Request To Admin</h1>
                 <button type="button" class="btn-close shadow-none" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <form asp-action="TransferThisRequest" enctype="multipart/form-data">
+            <form asp-action="TransferThisRequest" method="post" enctype="multipart/form-data">
                 <input id="transferModalRequestId" name="reeqid" hidden />
                 <div class="modal-body">
-                    
-
                     <div class="form-floating mt-3">
                         <textarea class="form-control border border-info" name="Notes" placeholder="Leave a comment here" id="floatingTextarea2" style="height: 100px"></textarea>
                         <label for="floatingTextarea2">Description</label>
@@ -27,7 +25,7 @@
                 </div>
                 <div class="modal-footer">
                     <div class="d-flex justify-content-end mt-3">
-                        <button type="submit" class="btn btn-info">Confirm</button>
+                        <button type="submit" data-bs-dismiss="modal" class="btn btn-info">Confirm</button>
                         <button type="button" data-bs-dismiss="modal" class="btn btn-outline-info ms-3">cancel</button>
                     </div>
                 </div>
@@ -45,14 +43,8 @@
         <thead class=" border-0" style="height: 60px;">
             <tr>
                 <th class="align-middle text-secondary my-2">Name</th>
-                <th class="align-middle text-secondary">Date Of Birth</th>
-                <th class="align-middle text-secondary">Requestor</th>
-                <th class="align-middle text-secondary">PhysicianName</th>
-                <th class="align-middle text-secondary">DateOfService</th>
                 <th class="align-middle text-secondary">Phone</th>
                 <th class="align-middle text-secondary">Address</th>
-                <th class="align-middle text-secondary">Notes</th>
-                <th class="align-middle text-secondary">ChatWith</th>
                 <th class="align-middle text-secondary">Actions</th>
             </tr>
         </thead>
@@ -134,7 +126,7 @@
                                     }
                                 </p>
                                 <p>To Send Agrrement Papers Make Sure yor are updating the correct contact information Below for the responsiblelity party</p>
-                                <form class="form-floating" id="agreementform" method="post" asp-action="SendAgreement" asp-route-requestid="@item.reqid">
+                                <form class="form-floating" id="agreementform" method="post" asp-controller="ProviderDashboard" asp-action="SendAgreement" asp-route-requestid="@item.reqid">
                                     <div class="form-floating">
                                         <input type="text"
                                                value="@item.phone"
@@ -188,10 +180,6 @@
 
                 <tr class="text-white" id="adminDashTableRow">
                     <td class="align-middle text-white" style="background-color: @color !important">@item.PatientName</td>
-                    <td class="align-middle text-white" style="background-color: @color !important">@item.BirthDate</td>
-                    <td class="align-middle text-white" style="background-color: @color !important">@item.RequestorName</td>
-                    <td class="align-middle text-white" style="background-color: @color !important">@item.physicianname</td>
-                    <td class="align-middle text-white" style="background-color: @color !important">@item.DateOfService</td>
                     <td class="d-flex flex-column  text-white" style="background-color:@color!important">
                         <div class="border border-1 border-white py-1 text-center rounded">
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-telephone-fill me-2" viewBox="0 0 16 16">
@@ -212,13 +200,6 @@
                         }
                     </td>
                     <td class=" text-white" style="background-color: @color !important">@item.address</td>
-                    <td class="align-middle  text-white" style="background-color: @color !important">Notes</td>
-                    <td class="align-middle  text-white" style="background-color: @color !important">
-                        <button class="btn btn-outline-light ">
-                            <i class="bi bi-person"></i>
-                            Provider
-                        </button>
-                    </td>
                     <td class="align-middle  text-white" style="background-color:@color !important">
                         <div class="btn-group">
                             <button type="button" class="btn btn-outline-light shadow-none dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
@@ -244,7 +225,7 @@
     else
     {
         <div class="fs-1">
-            @ViewBag.EmptyMessage
+            Empty...
         </div>
     }
 </div>
@@ -580,27 +561,24 @@
     else
     {
         <div class="fs-1">
-            @ViewBag.EmptyMessage
+            Empty
         </div>
     }
 
 </div>
-<div class="pb-2 w-100">
-    <nav id="pagination" aria-label="Page navigation">
-        <ul class="pagination justify-content-center mb-0">
+<div class="pb-2 d-flex justify-content-between">
+    <nav id="pagination" aria-label="Page navigation" style="width: 80%;">
+        <ul class="pagination mb-0">
             @if (ViewBag.CurrentPage >= 1 && ViewBag.CurrentPage <= ViewBag.TotalPages)
             {
                 int prevpage = Convert.ToInt32(ViewBag.CurrentPage) - 1;
                 int currpage = Convert.ToInt32(ViewBag.CurrentPage);
                 int nextpage = Convert.ToInt32(ViewBag.CurrentPage) + 1;
-                if (ViewBag.CurrentPage > 1)
-                {
-                    <li class="page-item">
-                        <a class="page-link btn rounded-4 btn-outline-info mx-1" id="previous" data-page="@(prevpage)" aria-label="Previous">
-                            &laquo;
-                        </a>
-                    </li>
-                }
+                <li class="page-item">
+                    <a class="page-link btn rounded-4 btn-outline-info mx-1" id="previous" data-page="@(prevpage)" aria-label="Previous" @(ViewBag.CurrentPage <= 1 ? "hidden" : "")>
+                        &laquo;
+                    </a>
+                </li>
                 for (int z = 0; z < 3; z++)
                 {
                     if (currpage + z <= ViewBag.TotalPages)
@@ -612,19 +590,16 @@
                         </li>
                     }
                 }
-                if (ViewBag.CurrentPage < ViewBag.TotalPages)
-                {
-                    <li class="page-item">
-                        <a class="page-link btn rounded-4 btn-outline-info mx-1" id="next" data-page="@(nextpage)" aria-label="Next">
-                            &raquo;
-                        </a>
-                    </li>
-                }
+                <li class="page-item">
+                    <a class="page-link btn rounded-4 btn-outline-info mx-1" id="next" data-page="@(nextpage)" aria-label="Next" @(ViewBag.CurrentPage >= ViewBag.TotalPages ? "hidden" : "")>
+                        &raquo;
+                    </a>
+                </li>
             }
         </ul>
     </nav>
+    <span>@ViewBag.CurrentPage of @ViewBag.TotalPages</span>
 </div>
-
 <script>
 
     //function filterPhysicianByRegion(RegionId) {

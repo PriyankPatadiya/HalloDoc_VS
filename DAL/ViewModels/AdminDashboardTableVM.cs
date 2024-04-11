@@ -23,5 +23,6 @@ namespace DAL.ViewModels
         public List<Region> regionTable { get; set; }
         public int reqid { get; set; }
         public bool? IsEncounterFinalize { get; set; }
+        public string? Notes { get; set; }
     }
 }

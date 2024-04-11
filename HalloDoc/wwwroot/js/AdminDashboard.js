@@ -35,7 +35,6 @@ $(document).ready(function () {
         currentpage = $("#" + id).data("page");
         console.log("Current Page: " + currentpage);
         var storedpartial = localStorage.getItem("partialviewpath");
-        debugger
         ChangeTable(storedpartial, StatusButton, currentpage, pagesize);
     });
 
@@ -70,17 +69,7 @@ $(document).ready(function () {
         filterPhysicianByRegion(RegionId);
     });
 
-    // Send Order 
-    $("#SelectProfession").on("change", function () {
-        var ProfessionId = $("#SelectProfession").val();
-        filterVendorsByProfession(ProfessionId);
-    });
-
-    // Send Order 
-    $('#SelectBusiness').on("change", function () {
-        var businessId = $('#SelectBusiness').val();
-        getVendordata(businessId);
-    });
+    
 
     // enable inputs in close case
     $('#closecaseeditbtn').on("click", function () {
@@ -270,49 +259,7 @@ $(document).ready(function () {
         }
     }
 
-    function filterVendorsByProfession(ProfessionId) {
-
-        if (ProfessionId != "0") {
-            $.ajax({
-                type: "GET",
-                url: "/AdminDashboard/filterVenByPro",
-                data: { ProfessionId: ProfessionId },
-
-                success: function (data) {
-                    $("#Vencontact").val('');
-                    $("#Venemail").val('');
-                    $("#VenFax").val('');   
-                    $('#SelectBusiness').empty();
-                    $('#SelectBusiness').append($('<option>').text("Business").attr('value', 0));
-                    $.each(data, function (index, item) {
-                        $('#SelectBusiness').append($('<option>').text(item.vendorName).attr('value', item.vendorId));
-                    });
-                    $('#SelectBusiness option:first').prop('selected', true);
-                }
-            });
-        }
-    }
-
-    function getVendordata(businessId) {
-        if (businessId != 0) {
-            $.ajax({
-                type: "GET",
-                url: "/AdminDashboard/getvendordata",
-                data: { businessId: businessId },
-                success: function (data) {
-                    console.log(data);
-                    $("#Vencontact").val(data[0].businessContact);
-                    $("#Venemail").val(data[0].email);
-                    $("#VenFax").val(data[0].faxNumber);
-                }
-            });
-        }
-        else {
-            $("#Vencontact").val('');
-            $("#Venemail").val('');
-            $("#VenFax").val('');
-        }
-    }
+    
 
 
 });
