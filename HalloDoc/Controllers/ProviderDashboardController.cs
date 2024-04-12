@@ -7,10 +7,11 @@ using Microsoft.AspNetCore.Mvc;
 using Org.BouncyCastle.Asn1.Ocsp;
 using Org.BouncyCastle.Ocsp;
 using Org.BouncyCastle.Utilities;
+using System.Drawing;
 
 namespace HalloDoc.Controllers
 {
-    [CustomAuthorize(new string[] {"Provider"})]
+    [CustomAuthorize(new string[] { "Provider" })]
     public class ProviderDashboardController : Controller
     {
         private readonly IAdminDashboard _admin;
@@ -43,7 +44,7 @@ namespace HalloDoc.Controllers
 
             int totalItems = result.Count();
             int totalPages = (int)Math.Ceiling((double)totalItems / pagesize);
-            if (SearchString != null || selectButton != null )
+            if (SearchString != null || selectButton != null)
             {
                 if (totalPages <= 1)
                 {
@@ -84,7 +85,7 @@ namespace HalloDoc.Controllers
             _context.SaveChanges();
             return RedirectToAction("Dashboard");
         }
-        
+
         [HttpPost]
         public IActionResult TransferThisRequest(int reeqid, string Notes)
         {
@@ -103,28 +104,124 @@ namespace HalloDoc.Controllers
 
             return RedirectToAction("Dashboard");
         }
-        
+
         public IActionResult SendAgreement(int requestid)
         {
-           TempData["isFromPhysician"]  = true;
-            return RedirectToAction("SendAgreement", "AdminDashboard", new { requestid = requestid});
+            TempData["isFromPhysician"] = true;
+            return RedirectToAction("SendAgreement", "AdminDashboard", new { requestid = requestid });
         }
         public IActionResult HouseCall(int requestId)
         {
             var request = _context.Requests.FirstOrDefault(u => u.RequestId == requestId);
             request.Status = 5;
             request.ModifiedDate = DateTime.Now;
-            _context.Requests.Update(request);  _context.SaveChanges();
+            _context.Requests.Update(request); _context.SaveChanges();
             return RedirectToAction("Dashboard");
         }
         public IActionResult Consult(int requestId)
         {
-            var request = _context.Requests.FirstOrDefault(u => u.RequestId==requestId);
+            var request = _context.Requests.FirstOrDefault(u => u.RequestId == requestId);
             request.Status = 6;
             request.ModifiedDate = DateTime.Now;
             _context.Requests.Update(request); _context.SaveChanges();
             return RedirectToAction("Dashboard");
+        }
 
+        public IActionResult ConcludeCare(int requestId)
+        {
+            var physicianid = HttpContext.Session.GetInt32("PhysicianId");
+            ViewBag.username = _context.Physicians.FirstOrDefault(i => i.PhysicianId == physicianid).FirstName;
+            ViewdocumentVM model = new ViewdocumentVM();
+            var requestfiles = _admin.filesbyrequestid(requestId);
+            model.RequestWiseFile = requestfiles;
+            model.requestid = requestId;
+            model.confirmationNumber = _context.Requests.FirstOrDefault(u => u.RequestId == requestId).ConfirmationNumber.ToUpper();
+            model.patientName = _context.RequestClients.FirstOrDefault(u => u.RequestId == requestId).FirstName;
+            return View("Actions/ConcludeCare", model);
+        }
+
+        [HttpPost]
+        public IActionResult SubmitConclude(int reqId)
+        {
+            var Notes = Request.Form["ProviderNote"];
+            var physicianId = HttpContext.Session.GetInt32("PhysicianId");
+
+            var request = _context.Requests.FirstOrDefault(u => u.RequestId == reqId);
+            var encounterForm = _context.EncounterForms.FirstOrDefault(u => u.RequestId == reqId);
+            if (encounterForm != null && encounterForm.IsFinalize)
+            {
+                request.Status = 8;
+                request.ModifiedDate = DateTime.Now;
+                _context.Requests.Update(request);
+                _context.SaveChanges();
+
+                RequestStatusLog log = new RequestStatusLog()
+                {
+                    RequestId = reqId,
+                    Status = request.Status,
+                    PhysicianId = physicianId,
+                    CreatedDate = DateTime.Now,
+                    Notes = Notes,
+
+                };
+                _context.RequestStatusLogs.Add(log);
+                _context.SaveChanges();
+
+                RequestNote note = _context.RequestNotes.FirstOrDefault(u => u.RequestId == reqId);
+                note.PhysicianNotes = Notes;
+                _context.RequestNotes.Update(note); _context.SaveChanges();
+
+                TempData["Message"] = "Request Closed";
+                TempData["MessageType"] = "success";
+                return RedirectToAction("Dashboard");
+            }
+            TempData["Message"] = "Request is Not Finalized";
+            TempData["MessageType"] = "error";
+            return RedirectToAction("ConcludeCare", new { requestId = reqId });
+        }
+
+        public IActionResult Scheduling()
+        {
+            return View("Scheduling/Scheduling");
+        }
+
+        public IActionResult GetPhysicianShift()
+        {
+            var physicianId = HttpContext.Session.GetInt32("PhysicianId");
+            var physicians = (from physician in _context.Physicians
+            where physician.PhysicianId == physicianId
+                              select physician)
+                             .FirstOrDefault();
+            return Json(physicians);
+        }
+
+        public IActionResult getEvents()
+        {
+            var physicianId = HttpContext.Session.GetInt32("PhysicianId");
+
+            var events = (from s in _context.Shifts
+                          join pd in _context.Physicians on s.PhysicianId equals pd.PhysicianId
+                          join sd in _context.ShiftDetails on s.ShiftId equals sd.ShiftId into shiftGroup
+                          from sd in shiftGroup.DefaultIfEmpty()
+                      
+
+                          select new SchedulingVM
+                          {
+                              title = string.Concat(sd.StartTime, " ", sd.EndTime, " ", pd.FirstName, " ", pd.LastName),
+                              Shiftid = sd.ShiftDetailId,
+                              Startdate = sd.ShiftDate.Date.Add(sd.StartTime.ToTimeSpan()),
+                              Enddate = sd.ShiftDate.Date.Add(sd.EndTime.ToTimeSpan()),
+                              Status = sd.Status,
+                              Physicianid = pd.PhysicianId,
+                              PhysicianName = pd.FirstName + ' ' + pd.LastName,
+                              Shiftdate = sd.ShiftDate,
+                              ShiftDetailId = sd.ShiftDetailId,
+                              Regionid = sd.RegionId,
+                              ShiftDeleted = sd.IsDeleted[0]
+
+                          }).ToList();
+            events = events.Where(item => !item.ShiftDeleted).ToList();
+            return Json(events);
         }
     }
 }

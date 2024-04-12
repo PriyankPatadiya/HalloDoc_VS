@@ -195,19 +195,14 @@ namespace HalloDoc.Controllers
 
         #region Encounter
         // Encounter Form Actions
+        [CustomAuthorize(new string [] { "Administrator", "Provider"})]
         [HttpGet("AdminDashboard/EncounterForm/{requestid?}", Name = "EncounterByAdmin")]
         [HttpGet("ProviderDashboard/EncounterForm/{requestid?}", Name = "EncounterByProvider")]
         public IActionResult EncounterForm(int requestid)
         {
             var physicianid = HttpContext.Session.GetInt32("PhysicianId");
-            if (physicianid == null)
-            {
-                ViewBag.IsPhysician = false;
-            }
-            else
-            {
-                ViewBag.IsPhysician = true;
-            }
+            ViewBag.IsPhysician = physicianid == null ? false : true; 
+            
             AdminMainPageVM MainModel = new AdminMainPageVM
             {
                 PageName = PageName.Encounterform
@@ -241,6 +236,9 @@ namespace HalloDoc.Controllers
             }
             return Ok("Can't finalize the form");
         }
+
+        [HttpGet("ProviderDashboard/GeneratePdf/{requestid?}", Name = "DownloadPdfByProvider")]
+        [HttpGet("AdminDashboard/GeneratePdf/{requestid?}", Name = "DownloadPdfByADMIN")]
         public IActionResult GeneratePdf(int requestid)
         {
 
@@ -341,7 +339,7 @@ namespace HalloDoc.Controllers
         #region View Notes
 
         [CustomAuthorize(new string[] { "Administrator", "Provider" })]
-        [HttpGet("AdminDashboard/ViewNotesAdminn/{reqid}", Name = "AdminViewNotes")]
+        [HttpGet("AdminDashboard/ViewNotesAdmin/{reqid?}", Name = "AdminViewNotes")]
         [HttpGet("ProviderDashboard/ViewNotes/{reqid?}", Name = "ProvideViewNotes")]
         public IActionResult ViewNotesAdminn(int reqid)
         {
@@ -360,17 +358,6 @@ namespace HalloDoc.Controllers
             };
             MainModel.NotesVM = _adminActions.viewnotes(reqid);
             return View("MainPage",MainModel);
-        }
-        public IActionResult ViewNotesAdmin()
-        {
-            var requestId = HttpContext.Request.Query["reqid"];
-            AdminMainPageVM MainModel = new AdminMainPageVM()
-            {
-                PageName = PageName.ViewNotes
-            };
-            var result = _adminActions.viewnotes(int.Parse(requestId));
-            MainModel.NotesVM = result;
-            return View("MainPage", MainModel);
         }
 
         [HttpPost]
@@ -543,6 +530,7 @@ namespace HalloDoc.Controllers
         }
 
         [Obsolete]
+        [HttpGet("ProviderDashboard/downloadfile")]
         public IActionResult downloadfile(string filename)
         {
             string Filename = Path.GetFileName(filename);
@@ -560,9 +548,12 @@ namespace HalloDoc.Controllers
             }
         }
 
-        [HttpPost]
+        [HttpPost("ProviderDashboard/uploadFile/{requestid?}", Name = "uploadByProvider")]
+        [HttpPost("AdminDashboard/uploadFile/{requestid?}", Name = "uploadByAdmin")]
         public IActionResult uploadFile(int requestid)
         {
+            var physicianid = HttpContext.Session.GetInt32("PhysicianId");
+            ViewBag.IsPhysician = physicianid != null ? true : false;
             var file = Request.Form.Files["Document"];
 
             if (file == null)
@@ -583,25 +574,28 @@ namespace HalloDoc.Controllers
                 ViewBag.IsUpload = true;
                 TempData["Message"] = "file uploaded successfully....";
                 TempData["MessageType"] = "success";
-                return RedirectToAction("ViewDocuments", new { reeqid = requestid });
+                return physicianid == null ? RedirectToAction("ViewDocuments", new { reeqid = requestid }) : RedirectToAction("ConcludeCare", "ProviderDashboard", new { requestId = requestid });
             }
         }
 
-
+        [HttpPost("ProviderDashboard/deleteFile/{reqid?}", Name = "deleteByProvider")]
+        [HttpPost("AdminDashboard/deleteFile/{reqid?}", Name = "deleteByAdmin")]
         public IActionResult deleteFile(int reqid, string filename)
         {
             var requestwisefile = _admin.filebyReqidandName(reqid, filename);
+            var physicianid = HttpContext.Session.GetInt32("PhysicianId");
+            ViewBag.IsPhysician = physicianid != null ? true : false;
             if (requestwisefile != null)
             {
                 _admin.deleteSingleFile(requestwisefile);
                 ViewBag.Isdelete = true;
                 TempData["Message"] = "file deleted successfully....";
                 TempData["MessageType"] = "success";
-                return RedirectToAction("ViewDocuments", new { reeqid = reqid });
+                return physicianid == null ? RedirectToAction("ViewDocuments", new { reeqid = reqid }) : RedirectToAction("ConcludeCare", "ProviderDashboard", new { requestId = reqid });
             }
             TempData["Message"] = "Unable To delete file";
             TempData["MessageType"] = "warning";
-            return RedirectToAction("ViewDocuments", new { reeqid = reqid });
+            return physicianid == null ? RedirectToAction("ViewDocuments", new { reeqid = reqid }) : RedirectToAction("ConcludeCare", "ProviderDashboard", new { requestId = reqid });
         }
 
         [HttpPost]
@@ -847,10 +841,19 @@ namespace HalloDoc.Controllers
         {
             var email = HttpContext.Session.GetString("Email");
             //ViewBag.username = _admin.username(email);
-            
+            var physicianId = HttpContext.Session.GetInt32("PhysicianId");
+            Physician? physician;
+            if (physicianId != null)
+            {
+                ViewBag.IsPhysician = true;
+                physician = _context.Physicians.Where(u => u.PhysicianId == physicianId).First();
+            }
 
-            Physician? physician = _provider.getPhysicianById(id);
-
+            else
+            {
+                ViewBag.IsPhysician = false;
+                physician = _provider.getPhysicianById(id);
+            }
             PhysicianProfileVM physicanProfile = new PhysicianProfileVM();
             physicanProfile.FirstName = physician.FirstName;
             physicanProfile.LastName = physician.LastName ?? "";
@@ -876,6 +879,7 @@ namespace HalloDoc.Controllers
             physicanProfile.IsHippa = physician.IsAgreementDoc;
             physicanProfile.NonDiscoluser = physician.IsNonDisclosureDoc;
             physicanProfile.License = physician.IsLicenseDoc;
+            
             return View("ProviderMenu/ProviderProfile", physicanProfile);
         }
 

@@ -18,13 +18,13 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                
-                    <label > Send Mail with attachments </label>
-                    <input type="email" class="form-control shadow-none border0" id="PatientMail" aria-describedby="emailHelp">
+
+                <label> Send Mail with attachments </label>
+                <input type="email" class="form-control shadow-none border0" id="PatientMail" aria-describedby="emailHelp">
 
                 <button type="button" id="SendEmailAttachment" class="btn btn-primary mt-3">Send</button>
-                    <button type="button" class="btn btn-secondary mt-3" data-bs-dismiss="modal">Close</button>
-                
+                <button type="button" class="btn btn-secondary mt-3" data-bs-dismiss="modal">Close</button>
+
             </div>
         </div>
     </div>
@@ -58,7 +58,7 @@
                     </button>
                 </a>
             }
-            
+
         </div>
         <div class="PatientInfoTable border rounded-top shadow bg-light-subtle p-4">
             <h6> patient name</h6>
@@ -97,9 +97,9 @@
                 </div>
             </div>
         </div>
-            <table class="table table-borderless">
+        <table class="table table-borderless">
             <thead class=" ">
-                <tr class=" table-secondary" >
+                <tr class=" table-secondary">
                     <td scope="col" class="text-start fw-bold text-secondary ps-4"><input type="checkbox" name="maincheck" class="form-check-input" id="maincheck" value=""></td>
                     <td scope="col" class="text-start fw-bold text-secondary">DocumentName</td>
                     <td scope="col" class="text-center fw-bold text-secondary">
@@ -108,11 +108,11 @@
                         </svg>
                     </td>
                     <td scope="col" class="text-end pe-5 fw-bold text-secondary ">Action</td>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var item in Model.RequestWiseFile)
-                    {
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.RequestWiseFile)
+                {
                     if (item.IsDeleted[0] != true || item.IsDeleted == null)
                     {
                         <tr>
@@ -121,7 +121,7 @@
                             </td>
                             <td class="text-start ">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-file-earmark" viewBox="0 0 16 16">
-                                    <path d="M14 4.5V14a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2h5.5zm-3 0A1.5 1.5 0 0 1 9.5 3V1H4a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V4.5z" class="text-primary"/>
+                                    <path d="M14 4.5V14a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2h5.5zm-3 0A1.5 1.5 0 0 1 9.5 3V1H4a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V4.5z" class="text-primary" />
                                 </svg>
                                 @item.FileName
                             </td>
@@ -131,190 +131,190 @@
                             <td class="text-end pe-4">
                                 <a asp-action="downloadfile" asp-route-filename="@item.FileName" class="btn btn-outline-info text-info shadow-none " target="_blank">
                                     <svg xmlns="http://www.w3.org/2000/svg"
-                                    width="24"
-                                    height="24"
-                                    fill="currentColor"
-                                    class="bi bi-cloud-arrow-up"
-                                    viewBox="0 0 16 16">
+                                         width="24"
+                                         height="24"
+                                         fill="currentColor"
+                                         class="bi bi-cloud-arrow-up"
+                                         viewBox="0 0 16 16">
                                         <path fill-rule="evenodd"
-                                        d="M7.646 5.146a.5.5 0 0 1 .708 0l2 2a.5.5 0 0 1-.708.708L8.5 6.707V10.5a.5.5 0 0 1-1 0V6.707L6.354 7.854a.5.5 0 1 1-.708-.708z" />
+                                              d="M7.646 5.146a.5.5 0 0 1 .708 0l2 2a.5.5 0 0 1-.708.708L8.5 6.707V10.5a.5.5 0 0 1-1 0V6.707L6.354 7.854a.5.5 0 1 1-.708-.708z" />
                                         <path d="M4.406 3.342A5.53 5.53 0 0 1 8 2c2.69 0 4.923 2 5.166 4.579C14.758 6.804 16 8.137 16 9.773 16 11.569 14.502 13 12.687 13H3.781C1.708 13 0 11.366 0 9.318c0-1.763 1.266-3.223 2.942-3.593.143-.863.698-1.723 1.464-2.383m.653.757c-.757.653-1.153 1.44-1.153 2.056v.448l-.445.049C2.064 6.805 1 7.952 1 9.318 1 10.785 2.23 12 3.781 12h8.906C13.98 12 15 10.988 15 9.773c0-1.216-1.02-2.228-2.313-2.228h-.5v-.5C12.188 4.825 10.328 3 8 3a4.53 4.53 0 0 0-2.941 1.1z" />
                                     </svg>
                                 </a>
                                 <form asp-action="deleteFile" asp-route-reqid="@item.RequestId" enctype="multipart/form-data" class="btn p-0">
                                     <input type="hidden" name="filename" value="@item.FileName">
-                                    <button type="submit"  class="btn btn-outline-info text-info shadow-none ">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
-                                        <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z" />
-                                        <path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z" />
-                                    </svg>
+                                    <button type="submit" class="btn btn-outline-info text-info shadow-none ">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
+                                            <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z" />
+                                            <path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z" />
+                                        </svg>
                                     </button>
                                 </form>
                             </td>
                         </tr>
                     }
                 }
-                </tbody>
-            </table>
+            </tbody>
+        </table>
 
     </div>
-    <script>
-        var input = document.getElementById("fileInput");
-        var info = document.getElementById("infoarea");
-
-        input.addEventListener('change', showFilename);
-
-        function checkfile() {
-            if (document.getElementById("fileInput").value == null || document.getElementById("fileInput").value == '') {
-                document.getElementById("filesubmitbtn").type = "button";
-                alert("please select file");
-            }
-            else {
-                document.getElementById("filesubmitbtn").type = "submit";
-            }
-        }
-
-        function showFilename() {
-            var fileinp = event.srcElement;
-            var fileName = fileinp.files[0].name;
-            info.textContent = fileName;
-        }
-
-        document.getElementById("downloadAllBtn").addEventListener("click", function () {
-            
-            var selectedFiles = [];
-            var checkboxes = document.querySelectorAll('.checks:checked');
-            checkboxes.forEach(function (checkbox){
-                selectedFiles.push(checkbox.dataset.files);
-            });
-            if(selectedFiles.length === 0){
-                alert('please select at least one file. ');
-                return;
-            }
-            else{
-                selectedFiles.forEach(function (selectedFile){
-                    var uniqueCounter = 1;
-                    var link = document.createElement("a");
-                    link.href = "/uploads/"+selectedFile ; // Add a slash at the beginning and adjust the path accordingly
-                    link.download = selectedFile + (uniqueCounter > 1 ? "(" + uniqueCounter + ")" : "");
-                    uniqueCounter++;
-                    link.style.display = "none";
-                    document.body.appendChild(link);
-                    link.click();
-                    document.body.removeChild(link);
-                });
-            }
-        });
-
-        document.getElementById("deleteAllBtn").addEventListener("click", function(){
-            var selectedFiles = [];
-            var reqid = @Model.requestid;
-            var checkboxes = document.querySelectorAll('.checks:checked');
-            checkboxes.forEach(function (checkbox) {
-                selectedFiles.push(checkbox.dataset.files);
-            });
-            if (selectedFiles.length === 0) {
-                alert('please select at least one file. ');
-                return;
-            }
-            else{
-                $.ajax({
-                    type: "POST",
-                    url: "/AdminDashboard/deleteAllFiles",
-                    data: { selectedFiles : selectedFiles , reqid : reqid },
-
-                    success: function (data) {
-                        window.location.href = '/AdminDashboard/ViewDocuments/?reeqid=' + @Model.requestid
-                    },
-                    error: function (error) {
-                        alert("can't delete files....")
-                        return;
-                    }
-
-                });
-            }
-        });
-
-        document.getElementById("SendEmailAttachment").addEventListener("click", function () {
-            var selectedFilesPath = [];
-            var checkboxes = document.querySelectorAll('.checks:checked');
-            var email = document.getElementById("PatientMail").value;   
-            var reqid = @Model.requestid;
-
-            checkboxes.forEach(function (checkbox) {
-                selectedFilesPath.push(checkbox.dataset.files);
-            });
-
-            if (selectedFilesPath.length === 0) {
-                alert('please select at least one file. ');
-                return;
-            }
-            else {
-                $.ajax({
-                    type: "POST",
-                    url: "/AdminDashboard/SendEmailWithAttachments",
-                    data: { selectedFilesPath: selectedFilesPath, email: email, reqid: reqid },
-
-                    success: function (data) {
-                        window.location.href = '/AdminDashboard/ViewDocuments/?reeqid=' + @Model.requestid
-                    },
-                    error: function (error) {
-                        alert("can't delete files....")
-                        return;
-                    }
-
-                });
-            }
-        });
-
-        document.addEventListener("DOMContentLoaded", function () {
-
-            var maincheckbox = document.getElementById('maincheck');
-            var checkboxes = document.querySelectorAll('tbody input[type="checkbox"]');
-
-            maincheckbox.addEventListener('click', function () {
-                checkboxes.forEach(function (checkbox) {
-                    checkbox.checked = maincheckbox.checked;
-                });
-            });
-
-        });
-
-
-    </script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
-    <script>
-        if ('@TempData["Message"]' != '') {
-            showToast('@TempData["Message"]', '@TempData["MessageType"]');
-            '@TempData.Remove("Message")'
-        }
-        function showToast(message, messageType) {
-            const Toast = Swal.mixin({
-                toast: true,
-                position: "top-end",
-                showConfirmButton: false,
-                timer: 3000,
-                timerProgressBar: true,
-                didOpen: (toast) => {
-                    toast.onmouseenter = Swal.stopTimer;
-                    toast.onmouseleave = Swal.resumeTimer;
-                }
-            });
-
-            let icon = "info";
-            if (messageType === "success") {
-                icon = "success";
-            } else if (messageType === "error") {
-                icon = "error";
-            } else if (messageType === "warning") {
-                icon = "warning";
-            }
-
-            Toast.fire({
-                icon: icon,
-                title: message
-            });
-        }
-    </script>
 </div>
+<script>
+    var input = document.getElementById("fileInput");
+    var info = document.getElementById("infoarea");
+
+    input.addEventListener('change', showFilename);
+
+    function checkfile() {
+        if (document.getElementById("fileInput").value == null || document.getElementById("fileInput").value == '') {
+            document.getElementById("filesubmitbtn").type = "button";
+            alert("please select file");
+        }
+        else {
+            document.getElementById("filesubmitbtn").type = "submit";
+        }
+    }
+
+    function showFilename() {
+        var fileinp = event.srcElement;
+        var fileName = fileinp.files[0].name;
+        info.textContent = fileName;
+    }
+
+    document.getElementById("downloadAllBtn").addEventListener("click", function () {
+
+        var selectedFiles = [];
+        var checkboxes = document.querySelectorAll('.checks:checked');
+        checkboxes.forEach(function (checkbox) {
+            selectedFiles.push(checkbox.dataset.files);
+        });
+        if (selectedFiles.length === 0) {
+            alert('please select at least one file. ');
+            return;
+        }
+        else {
+            selectedFiles.forEach(function (selectedFile) {
+                var uniqueCounter = 1;
+                var link = document.createElement("a");
+                link.href = "/uploads/" + selectedFile; // Add a slash at the beginning and adjust the path accordingly
+                link.download = selectedFile + (uniqueCounter > 1 ? "(" + uniqueCounter + ")" : "");
+                uniqueCounter++;
+                link.style.display = "none";
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            });
+        }
+    });
+
+    document.getElementById("deleteAllBtn").addEventListener("click", function () {
+        var selectedFiles = [];
+        var reqid = @Model.requestid;
+        var checkboxes = document.querySelectorAll('.checks:checked');
+        checkboxes.forEach(function (checkbox) {
+            selectedFiles.push(checkbox.dataset.files);
+        });
+        if (selectedFiles.length === 0) {
+            alert('please select at least one file. ');
+            return;
+        }
+        else {
+            $.ajax({
+                type: "POST",
+                url: "/AdminDashboard/deleteAllFiles",
+                data: { selectedFiles: selectedFiles, reqid: reqid },
+
+                success: function (data) {
+                    window.location.href = '/AdminDashboard/ViewDocuments/?reeqid=' + @Model.requestid
+                        },
+                error: function (error) {
+                    alert("can't delete files....")
+                    return;
+                }
+
+            });
+        }
+    });
+
+    document.getElementById("SendEmailAttachment").addEventListener("click", function () {
+        var selectedFilesPath = [];
+        var checkboxes = document.querySelectorAll('.checks:checked');
+        var email = document.getElementById("PatientMail").value;
+        var reqid = @Model.requestid;
+
+        checkboxes.forEach(function (checkbox) {
+            selectedFilesPath.push(checkbox.dataset.files);
+        });
+
+        if (selectedFilesPath.length === 0) {
+            alert('please select at least one file. ');
+            return;
+        }
+        else {
+            $.ajax({
+                type: "POST",
+                url: "/AdminDashboard/SendEmailWithAttachments",
+                data: { selectedFilesPath: selectedFilesPath, email: email, reqid: reqid },
+
+                success: function (data) {
+                    window.location.href = '/AdminDashboard/ViewDocuments/?reeqid=' + @Model.requestid
+                        },
+                error: function (error) {
+                    alert("can't delete files....")
+                    return;
+                }
+
+            });
+        }
+    });
+
+    document.addEventListener("DOMContentLoaded", function () {
+
+        var maincheckbox = document.getElementById('maincheck');
+        var checkboxes = document.querySelectorAll('tbody input[type="checkbox"]');
+
+        maincheckbox.addEventListener('click', function () {
+            checkboxes.forEach(function (checkbox) {
+                checkbox.checked = maincheckbox.checked;
+            });
+        });
+
+    });
+
+
+</script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
+<script>
+    if ('@TempData["Message"]' != '') {
+        showToast('@TempData["Message"]', '@TempData["MessageType"]');
+        '@TempData.Remove("Message")'
+    }
+    function showToast(message, messageType) {
+        const Toast = Swal.mixin({
+            toast: true,
+            position: "top-end",
+            showConfirmButton: false,
+            timer: 3000,
+            timerProgressBar: true,
+            didOpen: (toast) => {
+                toast.onmouseenter = Swal.stopTimer;
+                toast.onmouseleave = Swal.resumeTimer;
+            }
+        });
+
+        let icon = "info";
+        if (messageType === "success") {
+            icon = "success";
+        } else if (messageType === "error") {
+            icon = "error";
+        } else if (messageType === "warning") {
+            icon = "warning";
+        }
+
+        Toast.fire({
+            icon: icon,
+            title: message
+        });
+    }
+</script>

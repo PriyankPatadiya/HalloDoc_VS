@@ -53,7 +53,7 @@
                         </div>
                     </div>
 
-                    @*Select Care Type model*@
+                    @*Select Care Type modAl*@
 
                     <div class="modal fade rounded-2" id="SelectCareType_@j" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
                         <div class="modal-dialog modal-dialog-centered">
@@ -63,23 +63,23 @@
                                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                 </div>
                                 <div class="modal-body">
-                                    
+                                        
                                     <div class="d-flex justify-content-center my-3">
                                         <div class="form-check">
-                                            <input class="form-check-input" type="radio" id="houseCallRadio">
+                                            <input class="form-check-input" type="radio" id="houseCallRadio_@j">
                                             <label class="form-check-label btn btn-outline-info" for="flexRadioDefault1">
                                                 House Call
                                             </label>
                                         </div>
                                         <div class="form-check">
-                                            <input class="form-check-input" type="radio" id="consultRedio">
+                                            <input class="form-check-input" type="radio" id="consultRedio_@j">
                                             <label class="form-check-label btn btn-outline-info" for="flexRadioDefault2">
                                                Consult
                                             </label>
                                         </div>
 
                                     </div>
-                                    <button type="button" class="btn btn-info" onclick="TypeOfCareSave(@item.reqid)"> Save </button>
+                                    <button type="button" class="btn btn-info" onclick="TypeOfCareSave(@item.reqid, @j)"> Save </button>
                                         <button class="btn btn-info text-white" data-bs-dismiss="modal"> cancel</button>
                                 </div>
                             </div>
@@ -148,13 +148,20 @@
                                     <li><a class="dropdown-item pe-auto" asp-controller="ProviderDashboard" asp-action="ViewDocuments" asp-route-reeqid="@item.reqid">View Uploads</a></li>
                                     <li><a class="dropdown-item pe-auto" asp-action="ViewNotes" asp-route-reqid="@item.reqid">ViewNotes</a></li>
                                     <li><a class="dropdown-item" asp-action="SendOrder" asp-route-requestid="@item.reqid">Orders</a></li>
-                                    @if (item.IsEncounterFinalize != true)
+                                    @if (item.requestStatus == 4)
                                     {
                                         <li><a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#SelectCareType_@j">Encounter</a></li>
                                     }
                                     else
                                     {
-                                        <li><a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#isFinalize_@j">Encounter</a></li>
+                                        if (item.IsEncounterFinalize == true && item.IsEncounterFinalize != null)
+                                        {
+                                            <li><a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#isFinalize_@j">Encounter</a></li>
+                                        }
+                                        else if(item.IsEncounterFinalize != null)
+                                        {
+                                            <li><a class="dropdown-item" asp-action="EncounterForm" asp-route-requestid="@item.reqid">Encounter</a></li>
+                                        }
                                     }
                                 </ul>
                             </div>
@@ -438,18 +445,20 @@
         }
     }
 
-    function TypeOfCareSave(requestid) {
-        var houseCall = $("#houseCallRadio").is(":checked");
-        var cunsult = $("#consultRedio").is(":checked");
+    function TypeOfCareSave(requestid, i) {
+        var houseCall = $(`#houseCallRadio_${i}`).is(":checked");
+        var consult = $(`#consultRedio_${i}`).is(":checked");
         debugger
         if(houseCall){
             var url = "/ProviderDashboard/HouseCall?requestId=" + requestid;
             window.location.href = url;
         }
-        if(cunsult){
+        if(consult){
             var url = "/ProviderDashboard/Consult?requestId="+requestid;
             window.location.href = url;
         }
+        if(!houseCall && !consult){
+            alert("Please Select Any One of this");
+        }
     }
-
 </script>

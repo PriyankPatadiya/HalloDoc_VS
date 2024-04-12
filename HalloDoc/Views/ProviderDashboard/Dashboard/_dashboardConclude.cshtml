@@ -108,18 +108,17 @@
                                     Action
                                 </button>
                                 <ul class="dropdown-menu">
-                                    <li><a class="dropdown-item" asp-action="ViewCaseAdmin" asp-route-reqcliId="@item.reqclientId">View Case</a></li>
+                                    <li><a asp-action="ConcludeCare" asp-route-requestId="@item.reqid" class="dropdown-item pe-auto">Conclude Care</a></li>
+                                    <li><a class="dropdown-item" asp-action="ViewCase" asp-route-reqcliId="@item.reqclientId">View Case</a></li>
                                     <li><a class="dropdown-item pe-auto" asp-action="ViewDocuments" asp-route-reeqid="@item.reqid">View Uploads</a></li>
-                                    <li><a class="dropdown-item" asp-action="ViewNotesAdmin" asp-route-reqid="@item.reqid">ViewNotes</a></li>
-                                    <li><a class="dropdown-item" asp-action="SendOrder" asp-route-requestid="@item.reqid">Orders</a></li>
-                                    <li><a class="dropdown-item" href="#">Doctors Note</a></li>
+                                    <li><a class="dropdown-item" asp-action="ViewNotes" asp-route-reqid="@item.reqid">ViewNotes</a></li>
                                     @if (item.IsEncounterFinalize != true)
                                     {
                                         <li><a class="dropdown-item" asp-action="EncounterForm" asp-route-requestid="@item.reqid">Encounter</a></li>
                                     }
                                     else
                                     {
-                                        <li><a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#isFinalize_@j">Encounter</a></li>
+                                        <li><a class="dropdown-item pe-auto" data-bs-toggle="modal" data-bs-target="#isFinalize_@j">Encounter</a></li>
                                     }
                                 </ul>
                             </div>
