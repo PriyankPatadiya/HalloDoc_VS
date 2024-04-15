@@ -10,130 +10,136 @@
 
 @*Table*@
 
-<div style ="height: 88% !important" class="mx-2 tab-pane fade show active  table-responsive" id="pills-Dashboard" role="tabpanel" aria-labelledby="pills-Dashboard-tab" tabindex="0">
+<div style="height: 88% !important" class="mx-2 tab-pane fade show active  table-responsive" id="pills-Dashboard" role="tabpanel" aria-labelledby="pills-Dashboard-tab" tabindex="0">
+    @if(ViewBag.EmptyMessage == null)
+    {
+        <Table class="table">
+            <thead class="border-0" style="height: 60px;">
+                <tr>
 
-    <Table class="table">
-        <thead class="border-0" style="height: 60px;">
-            <tr>
+                    <th class="align-middle text-secondary my-2">Name</th>
+                    <th class="align-middle text-secondary">Date Of Birth</th>
+                    <th class="align-middle text-secondary">Requestor</th>
+                    <th class="align-middle text-secondary">PhysicianName</th>
+                    <th class="align-middle text-secondary">DateOfService</th>
+                    <th class="align-middle text-secondary">Phone</th>
+                    <th class="align-middle text-secondary">Address</th>
+                    <th class="align-middle text-secondary">Notes</th>
+                    <th class="align-middle text-secondary">ChatWith</th>
+                    <th class="align-middle text-secondary">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    @*finalyze model*@
 
-                <th class="align-middle text-secondary my-2">Name</th>
-                <th class="align-middle text-secondary">Date Of Birth</th>
-                <th class="align-middle text-secondary">Requestor</th>
-                <th class="align-middle text-secondary">PhysicianName</th>
-                <th class="align-middle text-secondary">DateOfService</th>
-                <th class="align-middle text-secondary">Phone</th>
-                <th class="align-middle text-secondary">Address</th>
-                <th class="align-middle text-secondary">Notes</th>
-                <th class="align-middle text-secondary">ChatWith</th>
-                <th class="align-middle text-secondary">Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var item in Model)
-            {
-                @*finalyze model*@
+                    <div class="modal fade rounded-2" id="isFinalize_@j" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered">
+                            <div class="modal-content">
+                                <div class="modal-header bg-info">
+                                    <h1 class="modal-title fs-5  text-white" id="exampleModalLabel">Confirm Cancellation</h1>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <span class="text-body">Encounter Form is finalized successfully!</span>
+                                    <div class="d-flex justify-content-center my-3">
 
-                <div class="modal fade rounded-2" id="isFinalize_@j" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-                    <div class="modal-dialog modal-dialog-centered">
-                        <div class="modal-content">
-                            <div class="modal-header bg-info">
-                                <h1 class="modal-title fs-5  text-white" id="exampleModalLabel">Confirm Cancellation</h1>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                            </div>
-                            <div class="modal-body">
-                                <span class="text-body">Encounter Form is finalized successfully!</span>
-                                <div class="d-flex justify-content-center my-3">
-
-                                    <a asp-action="GeneratePdf" asp-route-requestid="@item.reqid"><button type="button" class="btn btn-info" id="submitBtnEncounterForm"> Download </button></a>
+                                        <a asp-action="GeneratePdf" asp-route-requestid="@item.reqid"><button type="button" class="btn btn-info" id="submitBtnEncounterForm"> Download </button></a>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
 
-                @if (item.requestId == 1)
-                {
-                    color = "#14A44D";
-                    requestor = "Patient";
-                }
-                else if (item.requestId == 2)
-                {
-                    color = "#E4A11B";
-                    requestor = "Family";
-                }
-                else if (item.requestId == 3)
-                {
-                    color = "#54B4D3";
-                    requestor = "Concierge";
-                }
-                else if (item.requestId == 4)
-                {
-                    color = "#DC4C64";
-                    requestor = "Business";
-                }
+                    @if (item.requestId == 1)
+                    {
+                        color = "#14A44D";
+                        requestor = "Patient";
+                    }
+                    else if (item.requestId == 2)
+                    {
+                        color = "#E4A11B";
+                        requestor = "Family";
+                    }
+                    else if (item.requestId == 3)
+                    {
+                        color = "#54B4D3";
+                        requestor = "Concierge";
+                    }
+                    else if (item.requestId == 4)
+                    {
+                        color = "#DC4C64";
+                        requestor = "Business";
+                    }
 
-                <tr class="text-white" id="adminDashTableRow">
+                    <tr class="text-white" id="adminDashTableRow">
 
-                    <td class="align-middle text-white" style="background-color:@color!important">@item.PatientName</td>
-                    <td class="align-middle text-white" style="background-color:@color!important">@item.BirthDate</td>
-                    <td class="align-middle text-white" style="background-color:@color!important">@item.RequestorName</td>
-                    <td class="align-middle text-white" style="background-color:@color!important">@item.physicianname</td>
-                    <td class="align-middle text-white" style="background-color:@color!important">@item.DateOfService</td>
-                    <td class="d-flex flex-column  text-white" style="background-color:@color!important">
-                        <div class="border border-1 border-white py-1 text-center rounded">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-telephone-fill me-2" viewBox="0 0 16 16">
-                                <path fill-rule="evenodd" d="M1.885.511a1.745 1.745 0 0 1 2.61.163L6.29 2.98c.329.423.445.974.315 1.494l-.547 2.19a.68.68 0 0 0 .178.643l2.457 2.457a.68.68 0 0 0 .644.178l2.189-.547a1.75 1.75 0 0 1 1.494.315l2.306 1.794c.829.645.905 1.87.163 2.611l-1.034 1.034c-.74.74-1.846 1.065-2.877.702a18.6 18.6 0 0 1-7.01-4.42 18.6 18.6 0 0 1-4.42-7.009c-.362-1.03-.037-2.137.703-2.877z" />
-                            </svg>
-                            @item.phone
-                        </div>
-                        <span>(Patient)</span>
-                        @if (item.requestId != 1)
-                        {
+                        <td class="align-middle text-white" style="background-color:@color!important">@item.PatientName</td>
+                        <td class="align-middle text-white" style="background-color:@color!important">@item.BirthDate</td>
+                        <td class="align-middle text-white" style="background-color:@color!important">@item.RequestorName</td>
+                        <td class="align-middle text-white" style="background-color:@color!important">@item.physicianname</td>
+                        <td class="align-middle text-white" style="background-color:@color!important">@item.DateOfService</td>
+                        <td class="d-flex flex-column  text-white" style="background-color:@color!important">
                             <div class="border border-1 border-white py-1 text-center rounded">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-telephone-fill me-2" viewBox="0 0 16 16">
                                     <path fill-rule="evenodd" d="M1.885.511a1.745 1.745 0 0 1 2.61.163L6.29 2.98c.329.423.445.974.315 1.494l-.547 2.19a.68.68 0 0 0 .178.643l2.457 2.457a.68.68 0 0 0 .644.178l2.189-.547a1.75 1.75 0 0 1 1.494.315l2.306 1.794c.829.645.905 1.87.163 2.611l-1.034 1.034c-.74.74-1.846 1.065-2.877.702a18.6 18.6 0 0 1-7.01-4.42 18.6 18.6 0 0 1-4.42-7.009c-.362-1.03-.037-2.137.703-2.877z" />
                                 </svg>
-                                @item.YourPhone
+                                @item.phone
                             </div>
-                            <span>(@requestor)</span>
-                        }
-                    </td>
-                    <td class=" text-white" style="background-color:@color!important">@item.address</td>
-                    <td class="align-middle  text-white" style="background-color:@color!important">Notes</td>
-                    <td class="align-middle  text-white" style="background-color:@color!important">
-                        <button class="btn btn-outline-light ">
-                            <i class="bi bi-person"></i>
-                            Provider
-                        </button>
-                    </td>
-                    <td class="align-middle  text-white" style="background-color:@color!important">
-                        <div class="btn-group">
-                            <button type="button" class="btn btn-outline-light shadow-none dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-                                Action
+                            <span>(Patient)</span>
+                            @if (item.requestId != 1)
+                            {
+                                <div class="border border-1 border-white py-1 text-center rounded">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-telephone-fill me-2" viewBox="0 0 16 16">
+                                        <path fill-rule="evenodd" d="M1.885.511a1.745 1.745 0 0 1 2.61.163L6.29 2.98c.329.423.445.974.315 1.494l-.547 2.19a.68.68 0 0 0 .178.643l2.457 2.457a.68.68 0 0 0 .644.178l2.189-.547a1.75 1.75 0 0 1 1.494.315l2.306 1.794c.829.645.905 1.87.163 2.611l-1.034 1.034c-.74.74-1.846 1.065-2.877.702a18.6 18.6 0 0 1-7.01-4.42 18.6 18.6 0 0 1-4.42-7.009c-.362-1.03-.037-2.137.703-2.877z" />
+                                    </svg>
+                                    @item.YourPhone
+                                </div>
+                                <span>(@requestor)</span>
+                            }
+                        </td>
+                        <td class=" text-white" style="background-color:@color!important">@item.address</td>
+                        <td class="align-middle  text-white" style="background-color:@color!important">Notes</td>
+                        <td class="align-middle  text-white" style="background-color:@color!important">
+                            <button class="btn btn-outline-light ">
+                                <i class="bi bi-person"></i>
+                                Provider
                             </button>
-                            <ul class="dropdown-menu">
-                                <li><a class="dropdown-item" asp-action="ViewCaseAdmin" asp-route-reqcliId="@item.reqclientId">View Case</a></li>
-                                <li><a class="dropdown-item pe-auto" asp-action="ViewDocuments" asp-route-reeqid="@item.reqid">View Uploads</a></li>
-                                <li><a class="dropdown-item" asp-action="ViewNotesAdmin" asp-route-reqid="@item.reqid">ViewNotes</a></li>
-                                <li><a class="dropdown-item" asp-action="SendOrder" asp-route-requestid="@item.reqid">Orders</a></li>
-                                <li><a class="dropdown-item" href="#">Doctors Note</a></li>
-                                @if (item.IsEncounterFinalize != true)
-                                {
-                                    <li><a class="dropdown-item" asp-action="EncounterForm" asp-route-requestid="@item.reqid">Encounter</a></li>
-                                }
-                                else
-                                {
-                                    <li><a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#isFinalize_@j">Encounter</a></li>
-                                }
-                            </ul>
-                        </div>
-                    </td>
+                        </td>
+                        <td class="align-middle  text-white" style="background-color:@color!important">
+                            <div class="btn-group">
+                                <button type="button" class="btn btn-outline-light shadow-none dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                                    Action
+                                </button>
+                                <ul class="dropdown-menu">
+                                    <li><a class="dropdown-item" asp-action="ViewCaseAdmin" asp-route-reqcliId="@item.reqclientId">View Case</a></li>
+                                    <li><a class="dropdown-item pe-auto" asp-action="ViewDocuments" asp-route-reeqid="@item.reqid">View Uploads</a></li>
+                                    <li><a class="dropdown-item" asp-action="ViewNotesAdmin" asp-route-reqid="@item.reqid">ViewNotes</a></li>
+                                    <li><a class="dropdown-item" asp-action="SendOrder" asp-route-requestid="@item.reqid">Orders</a></li>
+                                    <li><a class="dropdown-item" href="#">Doctors Note</a></li>
+                                    @if (item.IsEncounterFinalize != true)
+                                    {
+                                        <li><a class="dropdown-item" asp-action="EncounterForm" asp-route-requestid="@item.reqid">Encounter</a></li>
+                                    }
+                                    else
+                                    {
+                                        <li><a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#isFinalize_@j">Encounter</a></li>
+                                    }
+                                </ul>
+                            </div>
+                        </td>
 
-                </tr>
-                j++;
-            }
-        </tbody>
-    </Table>
+                    </tr>
+                    j++;
+                }
+            </tbody>
+        </Table>
+    }
+    else
+    {
+        <div class="fs-1">Empty....</div>
+    }
 </div>
 
 
@@ -145,7 +151,9 @@
     @{
         int i = 0;
     }
-    @foreach (var item in Model)
+    @if(ViewBag.EmptyMessage == null)
+    {
+        @foreach (var item in Model)
     {
         <div class="accordion-item bg-info-subtle">
             <button class=" accordion-header btn w-100 px-4 shadow-none" type="button" data-bs-toggle="collapse" data-bs-target="#collapse_@i" aria-expanded="false" aria-controls="collapseTwo">
@@ -315,6 +323,11 @@
             </div>
         </div>
         i++;
+        }
+    }
+    else
+    {
+        <div class="fs-1">Empty....</div>
     }
 
 </div>

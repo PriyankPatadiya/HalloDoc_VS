@@ -29,7 +29,7 @@ namespace BAL.Repository
             }
             else
             {
-                return new RequestNote();
+                return new RequestNote() { RequestId = requestid, PhysicianNotes = "-", AdminNotes ="--", CreatedDate = DateTime.Now,  };
             }
 
         }
@@ -110,8 +110,9 @@ namespace BAL.Repository
         {
             var result = (from physician in _context.Physicians
                           join region in _context.PhysicianRegions on
-                            physician.PhysicianId equals region.PhysicianId into phy
-                          select physician).Where(s => s.RegionId == int.Parse(RegionId)).ToList();
+                            physician.PhysicianId equals region.PhysicianId 
+                          where region.RegionId == int.Parse( RegionId )
+                          select physician).ToList();
 
             return result;
 
@@ -123,10 +124,12 @@ namespace BAL.Repository
                 ViewNotesVM model = new ViewNotesVM();
                 var transferedNotes = (from reqlog in _context.RequestStatusLogs
                                        where reqlog.RequestId == id
-                                       select reqlog.Notes).ToList();
+                                       orderby reqlog.CreatedDate
+                                       select reqlog.Notes ).ToList();
                 model.TransferNotes = transferedNotes;
-                model.AdminNotes = _context.RequestNotes.FirstOrDefault(s => s.RequestId == id).AdminNotes;
-                model.PhysicianNotes = _context.RequestNotes.FirstOrDefault(s => s.RequestId == id).PhysicianNotes;
+                bool isRequestNotes = _context.RequestNotes.FirstOrDefault(s => s.RequestId == id) != null ? true : false;
+                model.AdminNotes = isRequestNotes ? _context.RequestNotes.FirstOrDefault(s => s.RequestId == id).AdminNotes : "Empty ";
+                model.PhysicianNotes = isRequestNotes ? _context.RequestNotes.FirstOrDefault(s => s.RequestId == id).PhysicianNotes : "Empty";
                 model.RequestId = id;
                 return model;
             }

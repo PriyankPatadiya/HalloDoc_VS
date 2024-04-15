@@ -1,6 +1,258 @@
 ﻿@{
     Layout = "~/Views/Shared/_layoutProvider.cshtml";
 }
+@model DAL.ViewModels.SchedulingVM
+
+<style>
+    .fc-time {
+        display: none;
+    }
+
+    .fc-daygrid-event {
+        cursor: pointer;
+    }
+
+    .fc-event-end .fc-event-time {
+        display: none;
+    }
+
+    .fc-header-toolbar.fc-header-resources-only {
+        background-color: #ff9999;
+        border: none;
+    }
+
+    .fc-header-toolbar,
+    .fc-daygrid-event {
+        background-color: #CCCCCC !important; / or any other color code /
+    }
+
+    .fc-timeline-header-row {
+        background-color: gray !important;
+    }
+
+    .btn22 {
+        padding: 0.25rem 0.5rem !important;
+    }
+
+    .fc-header-toolbar .fc-button {
+        padding: 0.25rem 0.5rem !important;
+    }
+
+    .input-group {
+        width: 300px;
+    }
+
+    #calendar {
+        margin-top: 2rem;
+    }
+
+    .fc .fc-toolbar-title {
+        font-size: 22px;
+        font-weight: 600;
+    }
+
+    .fc-scrollgrid-sync-inner:has(.fc-col-header-cell-cushion) {
+        background-color: #747474;
+    }
+
+    .fc .fc-col-header-cell-cushion {
+        color: white;
+    }
+
+    .fc a {
+        color: black;
+        cursor: pointer;
+        text-decoration: none;
+    }
+
+    /* .fc-daygrid-day-top {
+            background-color: #ec9aef;
+        }*/
+
+    .fc .fc-button-group {
+        display: block;
+    }
+
+    .fc-button {
+        margin: 10px;
+    }
+
+    .fc-direction-ltr .fc-button-group > .fc-button:not(:last-child) {
+        background: none;
+        border: 1px solid #02BCE6;
+        color: #02BCE6;
+        border-radius: 5px;
+        margin: 3px;
+    }
+
+    .fc-direction-ltr .fc-button-group > .fc-button:last-child {
+        background: none;
+        border: 1px solid #02BCE6;
+        color: #02BCE6;
+        border-radius: 5px;
+        margin: 3px;
+    }
+
+    .fc .fc-button-primary:not(:disabled).fc-button-active:focus, .fc .fc-button-primary:not(:disabled):active:focus {
+        box-shadow: none;
+    }
+
+    .fc .fc-button-group > .fc-button.fc-button-active {
+        background-color: #02BCE6;
+        color: white;
+    }
+
+    .fc-toolbar-title {
+        font-weight: 600;
+    }
+
+    .fc-next-button.fc-button.fc-button-primary {
+        padding: 4px 5px;
+        border-radius: 50px;
+    }
+
+    .fc-prev-button.fc-button.fc-button-primary {
+        padding: 4px 5px;
+        border-radius: 50px;
+    }
+
+    .fc-direction-ltr {
+        padding: 4px 5px;
+        border-radius: 50px;
+    }
+
+    .fc a{
+        color: darkcyan !important;
+    }
+
+    .fc-scrollgrid-sync-inner:has(.fc-col-header-cell-cushion) {
+        background-color: lightpink !important;
+    }
+
+    .fc-daygrid-event{
+        background-color: transparent !important;
+    }
+</style>
+
+
+<div class="modal fade" id="createShiftModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <div class="modal-content border-0">
+            <div class="modal-header bg-info text-white">
+                <h5 class="modal-title" id="exampleModalLongTitle">Add New Shift </h5>
+                <button type="button" class="close btn shadow-none" data-bs-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true"><i class="bi bi-x-lg text-white"></i></span>
+                </button>
+            </div>
+            <form asp-action="CreateShift" method="post" class="row p-3" id="createShiftModalForm">
+                <input type="hidden" asp-for="checkWeekday" id="checkWeekday" />
+
+                <div class="form-floating my-3">
+                    
+                </div>
+
+                <div class="form-floating mb-3">
+                    <select class="form-select pt-1" asp-for="Regionid" id="regionDrop" aria-label="Default select example">
+                        <option value="0" selected disabled>Region</option>
+                        @foreach(var item in ViewBag.region)
+                        {
+                            <option value="@item.RegionId">@item.Name - (@item.Abbreviation)</option>
+                        }
+                    </select>
+                </div>
+
+                <div class="col-md-12 form-floating mb-3">
+                    <input id="StartDate" asp-for="Startdate" class="form-control rounded vcs" name="Startdate" type="date"
+                           min="@DateTime.Now.ToString("yyyy-MM-dd")" value="@DateTime.Now.ToString("yyyy-MM-dd")" autocomplete=off>
+                    <label for="floatingInput">Starting Date</label>
+                </div>
+                <div class="col-md-6 form-floating mb-3">
+                    <input id="StartTime" asp-for="Starttime" class="form-control rounded vcs" name="Starttime" type="time" placeholder=Suchtext autocomplete=off>
+                    <label for="floatingInput">Start</label>
+                </div>
+                <div class="col-md-6 form-floating mb-3">
+                    <input id="EndTime" asp-for="Endtime" class="form-control rounded vcs" name="Endtime" type="time" placeholder=Suchtext autocomplete=off>
+                    <label for="floatingInput">End</label>
+                </div>
+                <div class="col-md-6 d-flex align-items-center justify-content-start mb-3">
+                    <label for="floatingInput">Repeat</label>
+                    <label class="switch">
+                        <input type="checkbox" asp-for="Isrepeat" id="Isrepeat" class="switch-input form-check-input mx-3" onchange="toggleCheckboxes()">
+                        <span class="slider round"></span>
+                    </label>
+                </div>
+
+                <label class="my-2" for="Sunday">Repeat Days</label>
+                <input type="hidden" asp-for="checkWeekday" id="checkWeekday" />
+
+                <div class="col-md-12 row form-floating">
+
+                    <div class="col-md-4">
+                        <div class="form-check mx-2 d-flex align-items-center">
+                            <input onchange="menubox()" class="form-check-input Every disabled" disabled type="checkbox" name="Sunday" value="0">
+                            <label class="form-check-label" for="Sunday">Every Sunday</label>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4 ">
+                        <div class="form-check mx-2 d-flex align-items-center">
+                            <input onchange="menubox()" class="form-check-input Every" disabled type="checkbox" name="Monday" value="1">
+                            <label class="form-check-label" for="Monday">Every Monday</label>
+                        </div>
+                    </div>
+                    <div class="col-md-4 ">
+                        <div class="form-check mx-2 d-flex align-items-center">
+                            <input onchange="menubox()" class="form-check-input Every" disabled type="checkbox" name="Tuesday" value="2">
+                            <label class="form-check-label" for="Tuesday">Every Tuesday</label>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-check mx-2">
+                            <input onchange="menubox()" class="form-check-input Every" disabled type="checkbox" name="Wednesday" value="3">
+                            <label class="form-check-label" for="Wednesday">Every Wednesday</label>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-check mx-2 d-flex align-items-center">
+                            <input onchange="menubox()" class="form-check-input Every" disabled type="checkbox" name="Thursday" value="4">
+                            <label class="form-check-label" for="Thursday">Every Thursday</label>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-check mx-2 d-flex align-items-center">
+                            <input onchange="menubox()" class="form-check-input Every" disabled type="checkbox" name="Friday" value="5">
+                            <label class="form-check-label" for="Friday">Every Friday</label>
+                        </div>
+                    </div>
+                    <div class="col-md-3 ">
+                        <div class="form-check mx-2 d-flex align-items-center">
+                            <input onchange="menubox()" class="form-check-input Every" disabled type="checkbox" name="Saturday" value="6">
+                            <label class="form-check-label" for="Saturday">Every Saturday</label>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="col-md-12 form-floating  my-2">
+                    <select asp-for="Repeatupto" class="form-select form-select-sm mt-3 p-2" id="Refile" disabled data-allow-clear="true" tabindex="-1" data-control="select2" data-placeholder=" ">
+                        <option selected hidden>Reapet End</option>
+                        <option>1</option>
+                        <option>2</option>
+                        <option>3</option>
+                    </select>
+                </div>
+                <hr class="form-button-divider" />
+
+                <div class="row">
+                    <div class="col-12 d-flex justify-content-end">
+                        <input type="button" onclick="submitAddShiftForm()" value="Save" class="btn btn-info  shadow-none text-white mx-2" />
+                        <button type="button" class="btn btn-outline-info  shadow-none hover_white" data-bs-dismiss="modal">Cancel</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
 <div class="container  py-3 px-4 mb-3">
 
     <div class="p-0 m-0 d-flex justify-content-between">
@@ -13,7 +265,7 @@
     </div>
 
 
-    <h4 class="w-100 my-0 py-3" id="dateOfShift"></h4>
+    <h4 class="w-100 my-0 py-3" id="dateOfShift"> Schedule For: </h4>
 
 
     <div class="m-0 pe-2 py-0 d-flex justify-content-end my-3">
@@ -47,21 +299,28 @@
             </button>
         </div>
         <div>
-            <button class="btn btn-success">Add New Shift</button>
+            <button class="btn btn-success" id="adminBtn" style="width:fit-content" data-bs-toggle="modal" data-bs-target="#createShiftModal">Add New Shift</button>
         </div>
     </div>
-    <div id="calendar" class="bottom-0" style="height: 100vh !important"></div>
+    <div id="calendar" class="bottom-0 bg-body rounded-0 p-0" style="height: 100vh !important"></div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/fullcalendar-scheduler@6.1.11/index.global.min.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
 <script>
     //let calendarNext = () => calendar.next();
     //let calendarPrev = () => calendar.prev();
     //let calendarToday = () => calendar.today();
     //let changeView = (type) => calendar.changeView(type);
 
+    document.addEventListener('DOMContentLoaded', function () {
+        // Your FullCalendar initialization code here
+        fetchPhysicianShifts(); // Call your function once the DOM is fully loaded
+    });
 
-    fetchPhysicianShifts("0");
+    
 
     function fetchPhysicianShifts() {
         // Fetch physician shifts data
@@ -73,12 +332,14 @@
                     id: data.physicianId,
                     title: data.firstName,
                 };
+
+                var recourseId = resources.id;
                 fetch(`/ProviderDashboard/getEvents`)
                     .then(response => response.json())
                     .then(data => {
                         const events = data.map(event => ({
                             id: event.shiftDetailId,
-                            resourceId: event.physicianid,
+                            resourceId: recourseId,
                             title: event.title,
                             start: event.startdate,
                             end: event.enddate,
@@ -89,214 +350,36 @@
                             status: event.status,
                             allDay: false,
                         }));
-
                         var calendarEl = document.getElementById('calendar');
-                                debugger
                         calendar = new FullCalendar.Calendar(calendarEl, {
                             height: 'auto',
                             schedulerLicenseKey: 'GPL-My-Project-Is-Open-Source',
                             themeSystem: 'bootstrap5',
                             headerToolbar: false,
-                            initialView: 'resourceTimeline',
+                            initialView: 'dayGridMonth',
                             resourceAreaWidth: '15%',
-                            resources: resources,
-                            events: events,
                             //editable: true,
-                            eventClick: function (info) {
-                                $('#eventModal').modal('show');
+                            resources: [resources],
+                            events : events,
 
-                                $('#eventModal').on('click', '#editbtn', function () {
-                                    $('#editbtn').addClass('d-none');
-                                    $('#savebtn').removeClass('d-none');
-                                    $('#StartDateView').prop('disabled', false);
-                                    $('#StartTimeView').prop('disabled', false);
-                                    $('#EndTimeView').prop('disabled', false);
-                                });
-
-                                $('#eventModal').on('click', '#returnshift', function () {
-                                    console.log("sdfs")
-
-                                    var shiftDetailId = $('#shiftDetailId').val(); // Assuming you have an input field with id 'shiftDetailId' in your modal
-                                    $.ajax({
-                                        url: '/AdminDashboard/changeShiftStatus',
-                                        type: 'POST',
-                                        data: { shiftDetailId: shiftDetailId, region: region },
-                                        success: function (response) {
-                                            // Handle success
-                                            $('#eventModal').modal('hide');
-                                            const events = response.events.map(event => ({
-                                                id: event.shiftDetailId,
-                                                resourceId: event.physicianid,
-                                                title: event.title,
-                                                start: event.startdate,
-                                                end: event.enddate,
-                                                eventBackgroundColor: event.status === 1 ? '#32d97d' : '#e39de8',
-                                                color: event.status === 1 ? '#e39de8' : '#32d97d',
-                                                ShiftDetailId: event.shiftDetailId,
-                                                region: event.region
-                                            }));
-                                            calendar.removeAllEvents();
-                                            calendar.addEventSource(events);
-                                            calendar.refetchEvents();
-
-                                        },
-                                        error: function (xhr, status, error) {
-                                        }
-                                    });
-                                });
-
-                                $('#eventModal').on('click', '#deletebtn', function () {
-                                    var shiftDetailId = $('#shiftDetailId').val();
-                                    $.ajax({
-                                        url: '/AdminDashboard/DeleteShift',
-                                        type: 'POST',
-                                        data: { shiftDetailId: shiftDetailId, region: region },
-                                        success: function (response) {
-                                            $('#eventModal').modal('hide');
-                                            const events = response.events.map(event => ({
-                                                id: event.shiftDetailId,
-                                                resourceId: event.physicianid,
-                                                title: event.title,
-                                                start: event.startdate,
-                                                end: event.enddate,
-                                                eventBackgroundColor: event.status === 1 ? '#32d97d' : '#e39de8',
-                                                color: event.status === 1 ? '#e39de8' : '#32d97d',
-                                                ShiftDetailId: event.shiftDetailId,
-                                                region: event.region
-                                            }));
-                                            calendar.removeAllEvents();
-                                            calendar.addEventSource(events);
-                                            calendar.refetchEvents();
-                                        },
-                                        error: function (xhr, status, error) {
-                                        }
-                                    });
-                                });
-
-                                $('#eventModal').on('click', '#savebtn', function () {
-                                    // Get data to be saved
-                                    var shiftDetailId = $('#shiftDetailId').val(); // Assuming you have an input field with id 'shiftDetailId' in your modal
-                                    var startDate = $('#StartDateView').val();
-                                    var startTime = $('#StartTimeView').val();
-                                    var endTime = $('#EndTimeView').val();
-                                    console.log(shiftDetailId);
-                                    $.ajax({
-                                        url: '/AdminDashboard/saveShiftChanges',
-                                        type: 'POST',
-                                        data: {
-                                            shiftDetailId: shiftDetailId,
-                                            startDate: startDate,
-                                            startTime: startTime,
-                                            endTime: endTime,
-                                            region: region,
-                                        },
-                                        success: function (response) {
-                                            $('#eventModal').modal('hide');
-
-                                            const events = response.events.map(event => ({
-                                                id: event.shiftDetailId,
-                                                resourceId: event.physicianid,
-                                                title: event.title,
-                                                start: event.startdate,
-                                                end: event.enddate,
-                                                eventBackgroundColor: event.status === 1 ? '#32d97d' : '#e39de8',
-                                                color: event.status === 1 ? '#e39de8' : '#32d97d',
-                                                ShiftDetailId: event.shiftDetailId,
-                                                region: event.region
-                                            }));
-                                            calendar.removeAllEvents(); // Remove existing events
-                                            calendar.addEventSource(events); // Add updated events
-                                            calendar.refetchEvents(); // Refetch events from the event sources
-
-                                            // Hide the save button and show the edit button
-                                            $('#savebtn').addClass('d-none');
-                                            $('#editbtn').removeClass('d-none');
-                                        },
-                                        error: function (xhr, status, error) {
-                                            // Handle error
-                                        }
-                                    });
-                                });
-                                // Get the ShiftDetailId from the event's extendedProps
-                                var shiftDetailId = info.event.extendedProps.ShiftDetailId;
-                                var region = info.event.extendedProps.region;
-                                console.log(region)
-                                // Populate modal content with event details
-                                var event = info.event;
-                                var modalBody = document.querySelector('#eventModal .modal-body');
-                                var eventDetails = `
-                                            <form asp-action="viewshift">
-                                            <input class="d-none" id="shiftDetailId" value="${shiftDetailId}">
-                                               <div class="form-floating mb-3 mt-3">
-
-                                                </div>
-                                            <div class="form-floating mb-3 mt-3">
-                                                            <select class="form-select pt-1 physicianDropdown" asp-for="Physicianid" id="physicianSelect" aria-label="Default select example" disabled>
-                                                            <option value="" selected disabled>${event.title}</option>
-                                                        </select>
-                                                    </div>
-                                                            <div class="col-md-12 form-floating mb-3">
-                                            <input id="StartDateView" class="form-control rounded vcs" name="Startdate" type="date" placeholder="Suchtext" autocomplete="off" value="${formatDate(event.start)}" disabled>
-                                                        <label for="StartDate">Shifted Date</label>
-                                                        <div class="d-flex gap-2 mt-3">
-                                                        <div class="col-md-6 form-floating mb-3">
-                                                                <input id="StartTimeView" asp-for="Starttime" disabled class="form-control rounded vcs" name="Starttime" type="time" placeholder="Suchtext" autocomplete="off" value="${formatTime(event.start)}" >
-                                                        <label for="StartTime">Start</label>
-                                                    </div>
-                                                    <div class="col-md-6 form-floating mb-3">
-                                                                <input id="EndTimeView" asp-for="Endtime" disabled	 class="form-control rounded vcs" name="Endtime" type="time" placeholder="Suchtext" autocomplete="off" value="${formatTime(event.end)}" >
-                                                        <label for="EndTime">End</label>
-                                                    </div>
-                                                    </div>
-                                                        <div class="d-flex justify-content-end gap-2">
-                                                    <button class="btn btn-info" id="returnshift"  type="button">Return</button>
-                                                <button class="btn btn-info" id="editbtn" type="button">Edit</button>
-                                                    <button class="btn btn-success d-none" id="savebtn"  type="button">Save</button>
-                                                <button class="btn btn-danger" id="deletebtn" type="button">Delete</button>
-                                            </div>
-                                                    </form>
-                                                `;
-                                modalBody.innerHTML = eventDetails;
-                            },
-                            eventDragStop: function (info) {
-                                $('#eventModal').modal('show');
-                            },
-                            datesSet: function (info) {
-                                var title = info.view.title;
-                                $("#dateOfShift").html(title);
-                            },
-                            resourceLabelDidMount: function (resourceObj) {
-                                const img = document.createElement('img');
-                                const imgUrl = resourceObj.resource.extendedProps.imageUrl || `/Physician/${resourceObj.el.dataset.resourceId}/profile.png`;
-                                img.src = imgUrl;
-                                console.log(imgUrl);
-                                img.style.maxHeight = '25px';
-                                img.style.marginLeft = "4px";
-                                resourceObj.el.querySelector('.fc-datagrid-cell-main').appendChild(img);
-                            },
                             views: {
-                                resourceTimelineDay: {
-                                    buttonText: 'Day',
-                                },
-                                resourceTimelineWeek: {
-                                    buttonText: 'Week',
-                                    slotDuration: { days: 1 },
-                                    slotLabelInterval: { days: 1 },
-                                    slotMinTime: '00:00:00',
-                                    slotMaxTime: '23:59:59',
-                                    slotLabelFormat: {
-                                        omitWeekday: false,
-                                        weekday: 'short',
-                                        day: '2-digit',
-                                        omitCommas: true,
-                                        meridiem: 'short'
-                                    }
-                                },
+                                
                                 resourceTimelineMonth: {
                                     buttonText: 'Month',
                                     eventLimit: true, // Set the event limit to 3
                                     eventLimitText: "More"
                                 }
+                            },
+                            datesSet: function (info) {
+                                var startDate = info.view.activeStart;
+                                var endDate = info.view.activeEnd;
+
+                                var formattedStartDate = startDate.toLocaleDateString('en-GB', { day: 'numeric', month: 'long'});
+                                var formattedEndDate = endDate.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
+
+                                var dateRangeText = 'Schedule For: ' + formattedStartDate + ' - ' + formattedEndDate;
+
+                                $("#dateOfShift").html(dateRangeText);
                             },
 
 
@@ -307,5 +390,73 @@
 
                     });
             });
+    }
+
+    window.onload = toggleCheckboxes;
+    function toggleCheckboxes() {
+        var repeatCheckbox = document.getElementById('Isrepeat');
+        var refile = document.getElementById('Refile');
+        var checkboxes = document.querySelectorAll('.Every');
+
+        if (!repeatCheckbox.checked) {
+            checkboxes.forEach(function (checkbox) {
+                checkbox.checked = false;
+                checkbox.disabled = true;
+                refile.disabled = true;
+            });
+        } else {
+            checkboxes.forEach(function (checkbox) {
+                checkbox.disabled = false;
+                refile.disabled = false;
+            });
+        }
+    }
+    function submitAddShiftForm(){
+
+        var starttime = $("#StartTime").val();
+        var endtime = $("#EndTime").val();
+
+        console.log(starttime);
+        console.log(endtime);
+        if(endtime - starttime < 1){
+            alert("endtime should be greater than starttime");
+        }
+        else{
+            $("#createShiftModalForm").submit();
+        }
+    }
+    
+</script>
+<script>
+    if ('@TempData["Message"]' != '') {
+        showToast('@TempData["Message"]', '@TempData["MessageType"]');
+        '@TempData.Remove("Message")'
+    }
+    function showToast(message, messageType) {
+        const Toast = Swal.mixin({
+            toast: true,
+            position: "top-end",
+            showConfirmButton: false,
+            timer: 3000,
+            timerProgressBar: true,
+            didOpen: (toast) => {
+                toast.onmouseenter = Swal.stopTimer;
+                toast.onmouseleave = Swal.resumeTimer;
+            }
+        });
+
+        let icon = "info";
+        if (messageType === "success") {
+            icon = "success";
+        } else if (messageType === "error") {
+            icon = "error";
+        } else if (messageType === "warning") {
+            icon = "warning";
+        }
+
+        Toast.fire({
+            icon: icon,
+            title: message
+        });
     }
 </script>

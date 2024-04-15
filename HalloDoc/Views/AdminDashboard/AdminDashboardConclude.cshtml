@@ -11,8 +11,9 @@
 @*Table*@
 
 <div style="height: 88% !important" class="mx-2 tab-pane fade show active  table-responsive" id="pills-Dashboard" role="tabpanel" aria-labelledby="pills-Dashboard-tab" tabindex="0">
-
-    <Table class="table">
+    @if(ViewBag.EmptyMessage == null)
+    {
+        <Table class="table">
         <thead class="border-0" style="height: 60px;">
             <tr>
                 <th class="align-middle text-secondary my-2">Name</th>
@@ -126,7 +127,12 @@
                 </tr>
             }
         </tbody>
-    </Table>
+        </Table>
+    }
+    else
+    {
+        <div class="fs-1"> Empty .... </div>
+    }
 </div>
 
 
@@ -138,7 +144,9 @@
     @{
         int i = 0;
     }
-    @foreach (var item in Model)
+    @if(ViewBag.EmptyMessage == null)
+    {
+        @foreach (var item in Model)
     {
         <div class="accordion-item bg-info-subtle">
             <button class=" accordion-header btn w-100 px-4 shadow-none" type="button" data-bs-toggle="collapse" data-bs-target="#collapse_@i" aria-expanded="false" aria-controls="collapseTwo">
@@ -285,8 +293,14 @@
                     </div>
                 </div>
             </div>
-        </div>
-        i++;
+            </div>
+            i++;
+        }
+
+    }
+    else
+    {
+        <div class="fs-1">Empty.....</div>
     }
 
 </div>

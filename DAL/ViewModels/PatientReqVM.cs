@@ -12,25 +12,28 @@ namespace DAL.ViewModels
         // For ASPNETUSER
 
         
-        [StringLength(128)]
+        [StringLength(128)] 
         public string? Id { get; set; } = null!;
 
         [Column(TypeName = "character varying")]
         
+        [RegularExpression(@"/^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[*.!@$%^&(){}[]:;<>,.?/~_+-=|\]).{8,32}$/", ErrorMessage = "Invalid Password")]
         public string? PasswordHash { get; set; } = null!;
-
+        
+        
         [Column(TypeName = "character varying")]
+        [RegularExpression(@"/^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[*.!@$%^&(){}[]:;<>,.?/~_+-=|\]).{8,32}$/", ErrorMessage = "Invalid Password")]
         public string? ConfirmPasswordHash { get; set; }
 
         [Key]
         [StringLength(256)]
         [Required(ErrorMessage = " Email Is Required")]
         [RegularExpression(@"^[a-zA-Z0-9._%+-]+@(gmail\.com|yahoo\.com|gov\.in)$", ErrorMessage = "Enter a valid email address with valid domain")]
-        public string? Email { get; set; } = null!;
+        public string Email { get; set; } = null!;
 
         [Column(TypeName = "character varying")]
         [Required(ErrorMessage = " Phone number Is Required")]
-
+        [RegularExpression(@"^(?:(\+?91|0)?[ ]?([\-\s]?[6-9]\d{9})|(\+?91|0)?[ ]?(\d{5})[ ]?(\d{5}))$", ErrorMessage = "Enter a valid Phone number")]
         public string? PhoneNumber { get; set; }
 
         [Column(TypeName = "timestamp without time zone")]
@@ -43,29 +46,29 @@ namespace DAL.ViewModels
 
         [Required(ErrorMessage = " Patient FirstName Is Required")]
         [StringLength(50, ErrorMessage = "First Name should be between {2} and {1} characters.", MinimumLength = 2)]
-        //[RegularExpression(@"^[^\s]+$", ErrorMessage = "Invalid Name")]
+        [RegularExpression(@"^[A-Z][a-z-']*\s*([A-Z][a-z-']*\s*)*$", ErrorMessage = "Invalid Name")]
         public string FirstName { get; set; } = null!;
 
         [StringLength(100)]
         [Required(ErrorMessage = " Patient LastName Is Required")]
-        //[RegularExpression(@"^[^\s]+$", ErrorMessage = "Invalid Name")]
+        [RegularExpression(@"^[A-Z][a-z-']*\s*([A-Z][a-z-']*\s*)*$", ErrorMessage = "Invalid Name")]
         public string LastName { get; set; } = null!;
 
         [StringLength(100)]
         [Required(ErrorMessage = "Fill This Field")]
-        public string Street { get; set; } 
+        public string? Street { get; set; } 
 
         [StringLength(100)]
         [Required(ErrorMessage = "Fill This Field")]
-        public string City { get; set; }
+        public string? City { get; set; }
 
         [StringLength(100)]
         [Required(ErrorMessage = "Fill This Field")]
-        public string State { get; set; }
+        public string? State { get; set; }
 
         [StringLength(10)]
         [RegularExpression(@"^\d{6}$", ErrorMessage = "Enter a valid 6-digit zip code")]
-        public string ZipCode { get; set; }
+        public string? ZipCode { get; set; }
 
         [StringLength(100)]
         public string? AdminNote { get; set; }

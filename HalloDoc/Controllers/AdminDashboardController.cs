@@ -10,15 +10,12 @@ using Rotativa.AspNetCore;
 using Microsoft.AspNetCore.Identity;
 using System.Collections;
 using OfficeOpenXml;
-using System.Transactions;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 using String = System.String;
-using System.Drawing;
 using Microsoft.EntityFrameworkCore;
 
 namespace HalloDoc.Controllers
 {
-    
+
     public class AdminDashboardController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -53,7 +50,7 @@ namespace HalloDoc.Controllers
             _accessMenu = menu;
             _passAdminHasher = hasherr;
         }
-        [CustomAuthorize(new string[] { "Administrator"})]
+        [CustomAuthorize(new string[] { "Administrator" })]
         public IActionResult MainPage()
         {
             var email = HttpContext.Session.GetString("Email");
@@ -89,7 +86,7 @@ namespace HalloDoc.Controllers
         // Filter action 
 
         public IActionResult SearchByName(string SearchString, string selectButton, string StatusButton, string SelectedStateId, string partialviewpath, int pagesize, int currentpage)
-            {
+        {
             var result = _admin.GetRequestsQuery(StatusButton);
             result = result.Where(s => (String.IsNullOrEmpty(SearchString) || s.PatientName.Contains(SearchString)) && (System.String.IsNullOrEmpty(selectButton) || s.requestId == int.Parse(selectButton)) && ((SelectedStateId == "0" || SelectedStateId == null) || s.regionId == int.Parse(SelectedStateId)));
 
@@ -195,14 +192,14 @@ namespace HalloDoc.Controllers
 
         #region Encounter
         // Encounter Form Actions
-        [CustomAuthorize(new string [] { "Administrator", "Provider"})]
+        [CustomAuthorize(new string[] { "Administrator", "Provider" })]
         [HttpGet("AdminDashboard/EncounterForm/{requestid?}", Name = "EncounterByAdmin")]
         [HttpGet("ProviderDashboard/EncounterForm/{requestid?}", Name = "EncounterByProvider")]
         public IActionResult EncounterForm(int requestid)
         {
             var physicianid = HttpContext.Session.GetInt32("PhysicianId");
-            ViewBag.IsPhysician = physicianid == null ? false : true; 
-            
+            ViewBag.IsPhysician = physicianid == null ? false : true;
+
             AdminMainPageVM MainModel = new AdminMainPageVM
             {
                 PageName = PageName.Encounterform
@@ -232,7 +229,7 @@ namespace HalloDoc.Controllers
             bool result = _adminActions.finalize(requestid);
             if (result == true)
             {
-                return RedirectToAction("Dashboard","ProviderDashboard");
+                return RedirectToAction("Dashboard", "ProviderDashboard");
             }
             return Ok("Can't finalize the form");
         }
@@ -279,7 +276,7 @@ namespace HalloDoc.Controllers
             result.requestid = requestid;
             result.regiontable = _admin.regions();
             MainModel.Casemodel = result;
-            if(physicianid == null)
+            if (physicianid == null)
             {
                 ViewBag.IsPhysician = false;
             }
@@ -310,11 +307,11 @@ namespace HalloDoc.Controllers
             bool isclosed = _adminActions.closecase(model);
             if (isclosed == true)
             {
-                TempData["Message"] = "Request Closed";
+                TempData["Message"] = "Data updated";
                 TempData["MessageType"] = "success";
                 return RedirectToAction("CloseCase", new { reqid = model.requestid });
             }
-            TempData["Message"] = "Unable to close request";
+            TempData["Message"] = "Unable to Update The Data";
             TempData["MessageType"] = "warning";
             return RedirectToAction("CloseCase", new { reqid = model.requestid });
         }
@@ -357,13 +354,20 @@ namespace HalloDoc.Controllers
                 PageName = PageName.ViewNotes
             };
             MainModel.NotesVM = _adminActions.viewnotes(reqid);
-            return View("MainPage",MainModel);
+            return View("MainPage", MainModel);
         }
 
         [HttpPost]
         public IActionResult addAdminnote(ViewNotesVM model, int reqid)
         {
             RequestNote notes = _adminActions.reqnotebyreqid(reqid);
+            var physicianId = HttpContext.Session.GetInt32("PhysicianId");
+            var email = HttpContext.Session.GetString("Email");
+            if(notes.CreatedBy == null)
+            {
+                notes.CreatedBy = physicianId == null ? _context.Admins.FirstOrDefault(u => u.Email == email).AspNetUserId : _context.Physicians.FirstOrDefault(u => u.PhysicianId == physicianId).AspNetUserId;
+            }
+            model.RequestId = reqid;
             if (notes != null)
             {
                 _adminActions.addrequnotes(model, notes);
@@ -387,7 +391,7 @@ namespace HalloDoc.Controllers
         #endregion View Notes
 
         #region Send Order
-        [CustomAuthorize(new string[] {"Administrator","Provider"})]
+        [CustomAuthorize(new string[] { "Administrator", "Provider" })]
         [HttpGet("ProviderDashboard/SendOrder/{requestid?}", Name = "SendOrderByProvider")]
         [HttpGet("AdminDashboard/SendOrder/{requestid?}", Name = "AdminSendOrder")]
         public IActionResult SendOrder(int requestid)
@@ -412,18 +416,18 @@ namespace HalloDoc.Controllers
             return View("MainPage", MainModel);
         }
 
-        [CustomAuthorize(new string[] {"Administrator","Provider"})]
+        [CustomAuthorize(new string[] { "Administrator", "Provider" })]
         [HttpPost("ProviderDashboard/SendOrder/{requestid?}", Name = "SendOrderByProviderpost")]
         [HttpPost("AdminDashboard/SendOrder/{requestid?}", Name = "AdminSendOrderpost")]
         public IActionResult SendOrder(SendOrderVM model)
         {
             var physicianid = HttpContext.Session.GetInt32("PhysicianId");
-            
+
             AdminMainPageVM MainModel = new AdminMainPageVM()
             {
                 PageName = PageName.SendOrder
             };
-            if(physicianid == null)
+            if (physicianid == null)
             {
                 var email = HttpContext.Session.GetString("Email");
                 var admin = _admin.username(email);
@@ -464,6 +468,7 @@ namespace HalloDoc.Controllers
         {
             string? Reason = Request.Form["Reason"];
             string? Notes = Request.Form["Notes"];
+            
             bool iscancel = _adminActions.changeStatusOnCancleCase(requestid, Reason, Notes);
             if (iscancel)
             {
@@ -654,7 +659,7 @@ namespace HalloDoc.Controllers
 
         public IActionResult SendAgreement(int requestid)
         {
-           
+
             string token = Guid.NewGuid().ToString() + ":" + requestid.ToString() + ":" + DateTime.Now.ToString();
             var link = Url.Action("ReviewAgreement", "PatientDashBoard", new { token = token }, protocol: HttpContext.Request.Scheme);
 
@@ -681,7 +686,7 @@ namespace HalloDoc.Controllers
                 {
                     return RedirectToAction("MainPage");
                 }
-                
+
             }
             TempData["Message"] = "can't send Aggrement";
             TempData["MessageType"] = "warning";
@@ -835,8 +840,8 @@ namespace HalloDoc.Controllers
             return PartialView("ProviderMenu/_ProviderPartialTable", result);
         }
 
-        [HttpGet("ProviderDashboard/ProviderProfile/{id?}",Name = "ProfileProvider")]
-        [HttpGet("AdminDashboard/ProviderProfile/{id?}", Name ="ProfileProviderAdmin")]
+        [HttpGet("ProviderDashboard/ProviderProfile/{id?}", Name = "ProfileProvider")]
+        [HttpGet("AdminDashboard/ProviderProfile/{id?}", Name = "ProfileProviderAdmin")]
         public IActionResult ProviderProfile(int id)
         {
             var email = HttpContext.Session.GetString("Email");
@@ -879,7 +884,7 @@ namespace HalloDoc.Controllers
             physicanProfile.IsHippa = physician.IsAgreementDoc;
             physicanProfile.NonDiscoluser = physician.IsNonDisclosureDoc;
             physicanProfile.License = physician.IsLicenseDoc;
-            
+
             return View("ProviderMenu/ProviderProfile", physicanProfile);
         }
 
@@ -1173,24 +1178,24 @@ namespace HalloDoc.Controllers
         [HttpPost]
         public IActionResult EditAccess(int[] rolemenu, string rolename, int roleid)
         {
-                var role = _context.Roles.Where(u => u.RoleId == roleid).First();
-                role.Name = rolename;
-                role.ModifiedDate = DateTime.Now;
-                role.ModifiedBy = rolename;
-                _context.Roles.Update(role);
-                _context.SaveChanges();
+            var role = _context.Roles.Where(u => u.RoleId == roleid).First();
+            role.Name = rolename;
+            role.ModifiedDate = DateTime.Now;
+            role.ModifiedBy = rolename;
+            _context.Roles.Update(role);
+            _context.SaveChanges();
 
-                var prevRoleMenu = _context.RoleMenus.Where(u => u.RoleId == roleid).ToList();
-                _context.RoleMenus.RemoveRange(prevRoleMenu);
+            var prevRoleMenu = _context.RoleMenus.Where(u => u.RoleId == roleid).ToList();
+            _context.RoleMenus.RemoveRange(prevRoleMenu);
+            _context.SaveChanges();
+            foreach (var menu in rolemenu)
+            {
+                RoleMenu rolemenu1 = new RoleMenu();
+                rolemenu1.MenuId = menu;
+                rolemenu1.RoleId = role.RoleId;
+                _context.RoleMenus.Add(rolemenu1);
                 _context.SaveChanges();
-                foreach (var menu in rolemenu)
-                {
-                    RoleMenu rolemenu1 = new RoleMenu();
-                    rolemenu1.MenuId = menu;
-                    rolemenu1.RoleId = role.RoleId;
-                    _context.RoleMenus.Add(rolemenu1);
-                    _context.SaveChanges();
-                }
+            }
             TempData["Message"] = "Edited Successfully!";
             TempData["MessageType"] = "success";
             return RedirectToAction("roleAccess");
@@ -1198,13 +1203,13 @@ namespace HalloDoc.Controllers
 
         public IActionResult DeleteRole(int roleid)
         {
-                var role = _context.Roles.Where(u => u.RoleId == roleid).First();
-                var prevRoleMenu = _context.RoleMenus.Where(u => u.RoleId == roleid).ToList();
-                _context.RoleMenus.RemoveRange(prevRoleMenu);
-                _context.Roles.Remove(role);
-                _context.SaveChanges();
-                TempData["Message"] = "Removed Successfully!";
-                TempData["MessageType"] = "success";
+            var role = _context.Roles.Where(u => u.RoleId == roleid).First();
+            var prevRoleMenu = _context.RoleMenus.Where(u => u.RoleId == roleid).ToList();
+            _context.RoleMenus.RemoveRange(prevRoleMenu);
+            _context.Roles.Remove(role);
+            _context.SaveChanges();
+            TempData["Message"] = "Removed Successfully!";
+            TempData["MessageType"] = "success";
 
 
             return RedirectToAction("roleAccess");
@@ -1226,7 +1231,6 @@ namespace HalloDoc.Controllers
         #endregion Location
 
         #region Scheduling
-
         public IActionResult Scheduling()
         {
             var email = HttpContext.Session.GetString("Email");
@@ -1248,17 +1252,21 @@ namespace HalloDoc.Controllers
 
 
 
-        [HttpPost]
+        [CustomAuthorize(new[] {"Administrator", "Provider"})]
+        [HttpPost("ProviderDashboard/CreateShift")]
+        [HttpPost("AdminDashboard/CreateShift")]
         [ValidateAntiForgeryToken]
         public IActionResult CreateShift(SchedulingVM model)
         {
+            var physicianId = HttpContext.Session.GetInt32("PhysicianId");
+            var email = HttpContext.Session.GetString("Email");
             if (ModelState.IsValid)
             {
-                var email = HttpContext.Session.GetString("Email");
-                var admin = _context.Admins.First(u => u.Email == email);
+                var creater = physicianId == null ? _context.Admins.FirstOrDefault(u => u.Email == email).AspNetUserId : _context.Physicians.FirstOrDefault(u => u.PhysicianId == physicianId).AspNetUserId;
+
 
                 bool isShiftExist = _context.ShiftDetails.Any(sD =>
-                                    sD.Shift.PhysicianId == model.Physicianid &&
+                                    sD.Shift.PhysicianId == (int)(physicianId != null ? physicianId : model.Physicianid) &&
                                     sD.ShiftDate.Date == model.Startdate.Date && // Shifts must start on the same day
                                     ((sD.StartTime < model.Endtime && sD.EndTime > model.Starttime) || // Check for overlap
                                     (sD.StartTime < model.Starttime && sD.EndTime > model.Starttime) ||
@@ -1269,12 +1277,12 @@ namespace HalloDoc.Controllers
                 if (!isShiftExist)
                 {
                     Shift shift = new Shift();
-                    shift.PhysicianId = model.Physicianid;
+                    shift.PhysicianId = (int)(physicianId != null ? physicianId : model.Physicianid);
                     shift.StartDate = model.Startdate;
                     shift.IsRepeat = new BitArray(new[] { model.Isrepeat });
                     shift.RepeatUpto = model.Repeatupto;
                     shift.CreatedDate = DateTime.Now;
-                    shift.CreatedBy = admin.AspNetUserId;
+                    shift.CreatedBy = creater.ToString();
                     _context.Shifts.Add(shift);
                     _context.SaveChanges();
 
@@ -1329,16 +1337,20 @@ namespace HalloDoc.Controllers
                             }
                         }
                     }
+                    return physicianId == null ? RedirectToAction("Scheduling") : RedirectToAction("Scheduling", "ProviderDashboard");
 
-                    return RedirectToAction("Scheduling");
 
                 }
                 else
                 {
-                    return BadRequest("Physician is Already in shift for entered Time");
+                    TempData["Message"] = "shift is already exist";
+                    TempData["MessageType"] = "error";
+                    return physicianId == null ? RedirectToAction("Scheduling") : RedirectToAction("Scheduling", "ProviderDashboard");
                 }
             }
-            return RedirectToAction("Scheduling");
+            TempData["Message"] = "Value incorrect";
+            TempData["MessageType"] = "error";
+            return physicianId == null ? RedirectToAction("Scheduling") : RedirectToAction("Scheduling","ProviderDashboard");
         }
 
         public IActionResult getEvents(int regionId)
@@ -1713,8 +1725,8 @@ namespace HalloDoc.Controllers
         {
             return View("RecordsMenu/SearchRecords");
         }
-        public IActionResult getSearchRecordsData(int [] status, string patientName,
-        string providerName, string phoneNum, string email, string requestType, DateTime fromDate , DateTime toDate, int currentPage , int pageSize)
+        public IActionResult getSearchRecordsData(int[] status, string patientName,
+        string providerName, string phoneNum, string email, string requestType, DateTime fromDate, DateTime toDate, int currentPage, int pageSize)
         {
             var record = (from request in _context.Requests
                           join requestclient in _context.RequestClients
@@ -1759,11 +1771,11 @@ namespace HalloDoc.Controllers
             var paginatedData = searchedRecord.Skip((currentPage - 1) * pageSize).Take(pageSize).ToList();
             if (paginatedData.Count != 0)
             {
-                    ViewBag.CurrentPage = currentPage;
-                    ViewBag.TotalPages = totalPages;
+                ViewBag.CurrentPage = currentPage;
+                ViewBag.TotalPages = totalPages;
             }
             return PartialView("RecordsMenu/_searchRecordsPartial", paginatedData);
-            
+
         }
         public IActionResult exportSearchRecordfile(int[] status, string patientName,
         string providerName, string phoneNum, string email, string requestType)
@@ -1847,27 +1859,27 @@ namespace HalloDoc.Controllers
         #endregion Search Records
 
         #region Blocked History
-        
+
         public IActionResult BlockedHistory()
         {
             return View("RecordsMenu/BlockedRequests");
         }
 
-        public IActionResult getBlockedRequests(DateTime date , string Name, string email, string phoneNumber)
+        public IActionResult getBlockedRequests(DateTime date, string Name, string email, string phoneNumber)
         {
             List<BlockedHistoryVM> blocked = (from blockedrequest in _context.BlockRequests
-                                          join reqclient in _context.RequestClients on blockedrequest.RequestId.ToString() equals reqclient.RequestId.ToString()
-                                          select new BlockedHistoryVM()
-                                          {
-                                              BlockedRequestID = blockedrequest.BlockRequestId,
-                                              RequestId = blockedrequest.RequestId,
-                                              PatientName = reqclient.FirstName,
-                                              CreatedDate = blockedrequest.CreatedDate,
-                                              PhoneNumber = blockedrequest.PhoneNumber,
-                                              Email = blockedrequest.Email,
-                                              Notes = reqclient.Notes,
-                                              IsActive = blockedrequest.IsActive[0]
-                                          }).ToList();
+                                              join reqclient in _context.RequestClients on blockedrequest.RequestId.ToString() equals reqclient.RequestId.ToString()
+                                              select new BlockedHistoryVM()
+                                              {
+                                                  BlockedRequestID = blockedrequest.BlockRequestId,
+                                                  RequestId = blockedrequest.RequestId,
+                                                  PatientName = reqclient.FirstName,
+                                                  CreatedDate = blockedrequest.CreatedDate,
+                                                  PhoneNumber = blockedrequest.PhoneNumber,
+                                                  Email = blockedrequest.Email,
+                                                  Notes = reqclient.Notes,
+                                                  IsActive = blockedrequest.IsActive[0]
+                                              }).ToList();
 
             var blockedrequests = blocked.Where(i => (String.IsNullOrEmpty(Name) || i.PatientName.Contains(Name)) &&
                                                       (String.IsNullOrEmpty(email) || i.Email.Contains(email)) &&
@@ -1879,7 +1891,7 @@ namespace HalloDoc.Controllers
         public IActionResult unBlockRequest(int RequestId)
         {
             var request = _context.Requests.FirstOrDefault(u => u.RequestId == RequestId);
-            if(request != null && request.Status == 11)
+            if (request != null && request.Status == 11)
             {
                 var blockedRequest = _context.BlockRequests.FirstOrDefault(u => u.RequestId == RequestId);
                 _context.BlockRequests.Remove(blockedRequest);

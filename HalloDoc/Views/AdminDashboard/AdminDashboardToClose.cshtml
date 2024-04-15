@@ -10,8 +10,9 @@
 @*Table*@
 
 <div style="height: 88% !important" class="mx-2 tab-pane fade show active  table-responsive" id="pills-Dashboard" role="tabpanel" aria-labelledby="pills-Dashboard-tab" tabindex="0">
-
-    <Table class="table">
+    @if(ViewBag.EmptyMessage == null)
+    {
+        <Table class="table">
         <thead class="border-0" style="height: 60px;">
             <tr>
                 <th class="align-middle text-secondary my-2">Name</th>
@@ -139,6 +140,38 @@
                     </div>
                 </div>
 
+                    @*Clear Case Modal*@
+
+                    <div class="modal fade "
+                         id="ClearModal_@j"
+                         tabindex="-1"
+                         aria-labelledby="exampleModalLabel"
+                         aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered">
+                            <div class="modal-content px-5">
+
+                                <div class="warninglogo d-flex justify-content-center my-4 p-2 text-light ">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="70" height="70" fill="currentColor" class="bi bi-exclamation-circle bg-warning border rounded-circle" viewBox="0 0 16 16">
+                                        <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16" />
+                                        <path d="M7.002 11a1 1 0 1 1 2 0 1 1 0 0 1-2 0M7.1 4.995a.905.905 0 1 1 1.8 0l-.35 3.507a.552.552 0 0 1-1.1 0z" />
+                                    </svg>
+                                </div>
+                                <div class="modalinfo text-center container ">
+                                    <h4>Confirmation for clear case</h4>
+                                    <span style="font-size: 13px;">
+                                        Are sure you want to clear this request? Once clear this request then you are not able to see this request.
+                                    </span>
+                                </div>
+
+                                <div class="subbutton mx-auto my-4 pb-3">
+                                    <a asp-action="ClearCaseee" asp-route-reqid="@item.reqid"> <button class="btn btn-info text-light shadow-none p-3 mx-2">Clear</button></a>
+                                    <button class="btn btn-outline-info shadow-none p-3" data-bs-dismiss="modal">cancel</button>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+
                 @if (item.requestId == 1)
                 {
                     color = "#14A44D";
@@ -181,7 +214,7 @@
                                 <li><a class="dropdown-item pe-auto" asp-action="ViewDocuments" asp-route-reeqid="@item.reqid">View Uploads</a></li>
                                 <li><a class="dropdown-item" asp-action="ViewNotesAdmin" asp-route-reqid="@item.reqid">ViewNotes</a></li>
                                 <li><a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#ClearModal_@j">Clear Case</a></li>
-                                <li><a class="dropdown-item" href="#">Orders</a></li>
+                                    <li><a class="dropdown-item" asp-action="SendOrder" asp-route-requestid="@item.reqid">Orders</a></li>
                                 <li><a class="dropdown-item" asp-action="CloseCase" asp-route-reqid="@item.reqid">Close Case</a></li>
                                 <li><a class="dropdown-item" href="#">Doctors Note</a></li>
                                 <li><a class="dropdown-item" href="#">Encounter</a></li>
@@ -191,7 +224,12 @@
                 </tr>
             }
         </tbody>
-    </Table>
+        </Table>
+    }
+    else
+    {
+        <div class="fs-1">Empty...</div>
+    }
 </div>
 
 
@@ -203,7 +241,9 @@
     @{
         int i = 0;
     }
-    @foreach (var item in Model)
+    @if(ViewBag.EmptyMessage == null)
+    {
+        @foreach (var item in Model)
     {
         @*Clear Case Modal*@
 
@@ -397,8 +437,14 @@
                     </div>
                 </div>
             </div>
-        </div>
-        i++;
+            </div>
+            i++;
+        }
+
+    }
+    else
+    {
+        <div class="fs-1">Empty...</div>
     }
 
 </div>

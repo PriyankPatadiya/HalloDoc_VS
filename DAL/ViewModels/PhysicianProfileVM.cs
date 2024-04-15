@@ -27,19 +27,23 @@ namespace DAL.ViewModels
 
         [Required(ErrorMessage = "First name is required")]
         [StringLength(50, ErrorMessage = "First name cannot exceed 50 characters")]
+        [RegularExpression(@"^[A-Z][a-z-']*\s*([A-Z][a-z-']*\s*)*$", ErrorMessage = "Invalid Name")]
         public string? FirstName { get; set; }
 
         [Required(ErrorMessage = "Last name is required")]
         [StringLength(50, ErrorMessage = "Last name cannot exceed 50 characters")]
+        [RegularExpression(@"^[A-Z][a-z-']*\s*([A-Z][a-z-']*\s*)*$", ErrorMessage = "Invalid Name")]
         public string? LastName { get; set; }
 
         [Required(ErrorMessage = "Email is required")]
         [EmailAddress(ErrorMessage = "Invalid email address")]
+        [RegularExpression(@"^[a-zA-Z0-9._%+-]+@(gmail\.com|yahoo\.com|gov\.in)$", ErrorMessage = "Enter a valid email address with valid domain")]
         public string? Email { get; set; }
 
         [Compare("Email", ErrorMessage = "Email and confirm email must match")]
         public string? ConfirmEmail { get; set; }
 
+        [Required(ErrorMessage = "Required!")]
         [RegularExpression(@"^\d{10}$", ErrorMessage = "Mobile number must be 10 digits")]
         public string? MobileNo { get; set; }
 
@@ -56,7 +60,7 @@ namespace DAL.ViewModels
         [RegularExpression(@"^\d{5}$", ErrorMessage = "Zip code must be 5 digits")]
         public string? ZipCode { get; set; }
 
-        public List<Region> Regions { get; set; }
+        public List<Region>? Regions { get; set; }
 
         public List<PhysicianRegion>? WorkingRegions { get; set; }
 
@@ -68,8 +72,10 @@ namespace DAL.ViewModels
 
         public string? SynchronizationEmail { get; set; }
 
+        [Required(ErrorMessage = "BusinessName is Required!")]
         public string? BusinessName { get; set; }
 
+        [Required(ErrorMessage = "BusinessWebsite is required!")]
         public string? BusinessWebsite { get; set; }
 
         public string? AdminNotes { get; set; }

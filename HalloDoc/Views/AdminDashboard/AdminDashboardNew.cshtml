@@ -33,14 +33,14 @@
                     </select>
 
                     <div class="form-floating mt-3">
-                        <textarea class="form-control border border-info" name="Notes" placeholder="Leave a comment here" id="floatingTextarea2" style="height: 100px"></textarea>
+                        <textarea class="form-control border border-info" name="AssignNote"  placeholder="Leave a comment here" id="AssignNote" style="height: 100px"></textarea>
                         <label for="floatingTextarea2">Description</label>
                     </div>
 
                 </div>
                 <div class="modal-footer">
                     <div class="d-flex justify-content-end mt-3">
-                        <button type="submit" class="btn btn-info">Confirm</button>
+                        <button type="button" onclick="checkAssignCaseForm()" class="btn btn-info">Confirm</button>
                         <button type="button" data-bs-dismiss="modal" class="btn btn-outline-info ms-3">cancel</button>
                     </div>
                 </div>
@@ -59,12 +59,12 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <form asp-action="CancelCase" method="post">
-                    <input class="d-none" name="requestid" id="cancelModalRequestId" hidden/>
+                <form asp-action="CancelCase" id="CancelCaseForm" method="post">
+                    <input class="d-none" name="requestid" id="cancelModalRequestId" hidden />
 
                     <p> Patient Name : <span id="patientnamecancelmodal"></span></p>
-                    <select class="form-select" aria-label="Default select example" name="Reason">
-                        <option selected>Reason For Cancellation</option>
+                    <select class="form-select" aria-label="Default select example" id="ReasonCancelId" name="Reason">
+                        <option value="0" selected>Reason For Cancellation</option>
                         <option value="1">No Respone to call or text, left message</option>
                         <option value="2">Cost Issue</option>
                         <option value="3">Insurance Issue</option>
@@ -73,11 +73,11 @@
                         <option value="6">Referral to Clinic or Hospital</option>
                     </select>
                     <div class="form-floating mt-3">
-                        <textarea class="form-control" name="Notes" placeholder="Leave a comment here" id="floatingTextarea2" style="height: 100px"></textarea>
+                        <textarea class="form-control" name="CancelNote" placeholder="Leave a comment here" id="CancelNote" style="height: 100px"></textarea>
                         <label for="floatingTextarea2">provide Additional Notes</label>
                     </div>
                     <div class="d-flex justify-content-end mt-3">
-                        <button type="submit" class="btn btn-info">Confirm</button>
+                        <button type="button" id="CancelCaseSubmitBtn" onclick="checkIfValidCancelCase()" class="btn btn-info">Confirm</button>
                         <button type="button" data-bs-dismiss="modal" class="btn btn-outline-info ms-3">cancel</button>
                     </div>
                 </form>
@@ -90,12 +90,7 @@
 @*Table*@
 
 <div style="height: 360px !important" class="mx-2 mb-2 tab-pane fade show active overflow-auto" id="pills-Dashboard" role="tabpanel" aria-labelledby="pills-Dashboard-tab" tabindex="0">
-    @if (ViewBag.EmptyMessage != "")
-    {
-        <div class="fs-1">
-            @ViewBag.EmptyMessage
-        </div>
-    }
+    
     <Table class="table">
         <thead class="border-0" style="height: 60px;">
             <tr>
@@ -113,123 +108,137 @@
 
             </tr>
         </thead>
-        <tbody class=" overflow-auto">
-            @foreach (var item in Model)
-            {
+        @if (ViewBag.EmptyMessage == null)
+        {
+            <tbody class=" overflow-auto">
 
-                @*Block Request*@
+                @foreach (var item in Model)
+                {
 
-                <div class="modal fade" id="BlockCaseModal_@j" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-                    <div class="modal-dialog modal-dialog-centered">
-                        <div class="modal-content">
-                            <div class="modal-header bg-info">
-                                <h1 class="modal-title fs-5  text-white" id="exampleModalLabel">Block Case</h1>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                            </div>
+                    @*Block Request*@
 
-                            <div class="modal-body">
-                                <p> Patient Name : <span id="text">@item.PatientName</span></p>
+                    <div class="modal fade" id="BlockCaseModal_@j" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered">
+                            <div class="modal-content">
+                                <div class="modal-header bg-info">
+                                    <h1 class="modal-title fs-5  text-white" id="exampleModalLabel">Block Case</h1>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
 
-                                <div class="form-floating mt-3">
-                                    <textarea class="form-control" name="reason" placeholder="Leave a comment here" id="floatingTextarea2" style="height: 100px"></textarea>
-                                    <label for="floatingTextarea2">provide Additional Notes</label>
+                                <div class="modal-body">
+                                    <p> Patient Name : <span id="text">@item.PatientName</span></p>
+
+                                    <div class="form-floating mt-3">
+                                        <textarea class="form-control" name="reason" placeholder="Leave a comment here" id="floatingTextarea2" style="height: 100px"></textarea>
+                                        <label for="floatingTextarea2">provide Additional Notes</label>
+                                    </div>
+
+                                </div>
+                                <div class="modal-footer">
+                                    <div class="d-flex justify-content-end mt-3">
+                                        <a asp-action="BlockCase" asp-route-reeqid="@item.reqid" class="btn btn-info">Confirm</a>
+                                        <button type="button" data-bs-dismiss="modal" class="btn btn-outline-info ms-3">cancel</button>
+                                    </div>
                                 </div>
 
                             </div>
-                            <div class="modal-footer">
-                                <div class="d-flex justify-content-end mt-3">
-                                    <a asp-action="BlockCase" asp-route-reeqid="@item.reqid" class="btn btn-info">Confirm</a>
-                                    <button type="button" data-bs-dismiss="modal" class="btn btn-outline-info ms-3">cancel</button>
-                                </div>
-                            </div>
-
                         </div>
                     </div>
-                </div>
 
-                @if (item.requestId == 1)
-                {
-                    color = "#14A44D";
-                    requestor = "Patient";
-                }
-                else if (item.requestId == 2)
-                {
-                    color = "#E4A11B";
-                    requestor = "Family";
-                }
-                else if (item.requestId == 3)
-                {
-                    color = "#54B4D3";
-                    requestor = "Concierge";
-                }
-                else if (item.requestId == 4)
-                {
-                    color = "#DC4C64";
-                    requestor = "Business";
-                }
+                    @if (item.requestId == 1)
+                    {
+                        color = "#14A44D";
+                        requestor = "Patient";
+                    }
+                    else if (item.requestId == 2)
+                    {
+                        color = "#E4A11B";
+                        requestor = "Family";
+                    }
+                    else if (item.requestId == 3)
+                    {
+                        color = "#54B4D3";
+                        requestor = "Concierge";
+                    }
+                    else if (item.requestId == 4)
+                    {
+                        color = "#DC4C64";
+                        requestor = "Business";
+                    }
 
-                <tr class="text-white " id="adminDashTableRow">
+                    <tr class="text-white " id="adminDashTableRow">
 
-                    <td class="align-middle text-white" style="background-color:@color !important">@item.PatientName @if (item.physicianId != null) { <span class="bg-danger px-1 shadow rounded-3 py-1 text-center">assigned</span> }</td>
-                    <td class="align-middle text-white" style="background-color: @color !important">@item.BirthDate</td>
-                    <td class="align-middle text-white" style="background-color: @color !important">@item.RequestorName</td>
-                    <td class="align-middle text-white" style="background-color: @color !important">@item.RequestDate</td>
-                    <td class="d-flex flex-column text-white" style="background-color:@color!important">
-                        <div class="border border-1 border-white py-1 text-center rounded">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-telephone-fill me-2" viewBox="0 0 16 16">
-                                <path fill-rule="evenodd" d="M1.885.511a1.745 1.745 0 0 1 2.61.163L6.29 2.98c.329.423.445.974.315 1.494l-.547 2.19a.68.68 0 0 0 .178.643l2.457 2.457a.68.68 0 0 0 .644.178l2.189-.547a1.75 1.75 0 0 1 1.494.315l2.306 1.794c.829.645.905 1.87.163 2.611l-1.034 1.034c-.74.74-1.846 1.065-2.877.702a18.6 18.6 0 0 1-7.01-4.42 18.6 18.6 0 0 1-4.42-7.009c-.362-1.03-.037-2.137.703-2.877z" />
-                            </svg>
-                            @item.phone
-                        </div>
-                        <span>(Patient)</span>
-                        @if (item.requestId != 1)
-                        {
+                        <td class="align-middle text-white" style="background-color:@color !important">
+                            @item.PatientName @if (item.physicianId != null)
+                            {
+                                <span class="bg-danger px-1 shadow rounded-3 py-1 text-center">assigned</span>
+                            }
+                        </td>
+                        <td class="align-middle text-white" style="background-color: @color !important">@item.BirthDate</td>
+                        <td class="align-middle text-white" style="background-color: @color !important">@item.RequestorName</td>
+                        <td class="align-middle text-white" style="background-color: @color !important">@item.RequestDate</td>
+                        <td class="d-flex flex-column text-white" style="background-color:@color!important">
                             <div class="border border-1 border-white py-1 text-center rounded">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-telephone-fill me-2" viewBox="0 0 16 16">
                                     <path fill-rule="evenodd" d="M1.885.511a1.745 1.745 0 0 1 2.61.163L6.29 2.98c.329.423.445.974.315 1.494l-.547 2.19a.68.68 0 0 0 .178.643l2.457 2.457a.68.68 0 0 0 .644.178l2.189-.547a1.75 1.75 0 0 1 1.494.315l2.306 1.794c.829.645.905 1.87.163 2.611l-1.034 1.034c-.74.74-1.846 1.065-2.877.702a18.6 18.6 0 0 1-7.01-4.42 18.6 18.6 0 0 1-4.42-7.009c-.362-1.03-.037-2.137.703-2.877z" />
                                 </svg>
-                                @item.YourPhone
+                                @item.phone
                             </div>
-                            <span>(@requestor)</span>
-                        }
-                    </td>
-                    <td class=" text-white" style="background-color: @color !important">@item.address</td>
-                    <td class="align-middle text-white" style="background-color: @color !important">@item.Notes</td>
-                    <td class="align-middle text-white" style="background-color: @color !important">
-                        <button class="btn btn-outline-light ">
-                            <i class="bi bi-person"></i>
-                            Provider
-                        </button>
-                    </td>
-                    <td class="align-middle text-white" style="background-color:@color!important">
-                        <div class="btn-group">
-                            <button type="button" class="btn btn-outline-light shadow-none dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-                                Action
+                            <span>(Patient)</span>
+                            @if (item.requestId != 1)
+                            {
+                                <div class="border border-1 border-white py-1 text-center rounded">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-telephone-fill me-2" viewBox="0 0 16 16">
+                                        <path fill-rule="evenodd" d="M1.885.511a1.745 1.745 0 0 1 2.61.163L6.29 2.98c.329.423.445.974.315 1.494l-.547 2.19a.68.68 0 0 0 .178.643l2.457 2.457a.68.68 0 0 0 .644.178l2.189-.547a1.75 1.75 0 0 1 1.494.315l2.306 1.794c.829.645.905 1.87.163 2.611l-1.034 1.034c-.74.74-1.846 1.065-2.877.702a18.6 18.6 0 0 1-7.01-4.42 18.6 18.6 0 0 1-4.42-7.009c-.362-1.03-.037-2.137.703-2.877z" />
+                                    </svg>
+                                    @item.YourPhone
+                                </div>
+                                <span>(@requestor)</span>
+                            }
+                        </td>
+                        <td class=" text-white" style="background-color: @color !important">@item.address</td>
+                        <td class="align-middle text-white" style="background-color: @color !important">@item.Notes</td>
+                        <td class="align-middle text-white" style="background-color: @color !important">
+                            <button class="btn btn-outline-light ">
+                                <i class="bi bi-person"></i>
+                                Provider
                             </button>
-                            <ul class="dropdown-menu">
-                                @if(item.physicianId == null)
-                                {
-                                    <li><button type="button" class="btn shadow-none dropdown-item" onclick="openAssignModal(@item.reqid)" data-asignreqid="@item.reqid">Assign Case</button></li>
-                                }
-                                <li>
-                                    <button onclick="openCancelModal(@item.reqid, '@item.PatientName')" class="dropdown-item pointer-event">
-                                        cancel
-                                    </button>
-                                </li>
-                                <li><a class="dropdown-item" asp-controller="AdminDashboard" asp-action="ViewCase" asp-route-reqcliId="@item.reqclientId">View Case</a></li>
-                                <li><a class="dropdown-item" asp-action="ViewNotesAdmin" asp-route-reqid="@item.reqid">ViewNotes</a></li>
-                                <li>
-                                    <a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#BlockCaseModal_@j">
-                                        Block Case
-                                    </a>
-                                </li>
-                            </ul>
-                        </div>
-                    </td>
-                </tr>
-                j++;
-            }
-        </tbody>
+                        </td>
+                        <td class="align-middle text-white" style="background-color:@color!important">
+                            <div class="btn-group">
+                                <button type="button" class="btn btn-outline-light shadow-none dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                                    Action
+                                </button>
+                                <ul class="dropdown-menu">
+                                    @if (item.physicianId == null)
+                                    {
+                                        <li><button type="button" class="btn shadow-none dropdown-item" onclick="openAssignModal(@item.reqid)" data-asignreqid="@item.reqid">Assign Case</button></li>
+                                    }
+                                    <li>
+                                        <button onclick="openCancelModal(@item.reqid, '@item.PatientName')" class="dropdown-item pointer-event">
+                                            cancel
+                                        </button>
+                                    </li>
+                                    <li><a class="dropdown-item" asp-controller="AdminDashboard" asp-action="ViewCase" asp-route-reqcliId="@item.reqclientId">View Case</a></li>
+                                    <li><a class="dropdown-item" asp-action="ViewNotesAdmin" asp-route-reqid="@item.reqid">ViewNotes</a></li>
+                                    <li>
+                                        <a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#BlockCaseModal_@j">
+                                            Block Case
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </td>
+                    </tr>
+                    j++;
+                }
+
+            </tbody>
+        }
+        else
+        {
+            <div class="fs-1">Empty</div>
+        }
     </Table>
 </div>
 
@@ -241,267 +250,271 @@
     @{
         int i = 0;
     }
-    @if (ViewBag.EmptyMessage != "")
+    @if (ViewBag.EmptyMessage != null)
     {
         <div class="fs-1">
-            @ViewBag.EmptyMessage
+            Empty....
         </div>
     }
-    @foreach (var item in Model)
+    else
     {
-        @*Assign Case Modal*@
+        @foreach (var item in Model)
+        {
+            @*Assign Case Modal*@
 
-        <div class="modal fade" id="AssignCaseModal1_@i" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered">
-                <div class="modal-content">
-                    <div class="modal-header bg-info">
-                        <h1 class="modal-title fs-5  text-white" id="exampleModalLabel">Assign Request</h1>
-                        <button type="button" class="btn-close shadow-none" data-bs-dismiss="modal" aria-label="Close"></button>
+            <div class="modal fade" id="AssignCaseModal1_@i" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header bg-info">
+                            <h1 class="modal-title fs-5  text-white" id="exampleModalLabel">Assign Request</h1>
+                            <button type="button" class="btn-close shadow-none" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <form asp-action="AssignCase" method="post" enctype="multipart/form-data">
+                            <input class="d-none" value="@item.reqid" name="requestid" hidden>
+                            <div class="modal-body">
+                                <p> To assign this request search and select another physician</p>
+                                @*for ajax*@
+                                <select class="form-select py-2 my-2 shadow-none border border-info" id="Regionid" onchange="filterPhysicianByRegion(this.value, @i)">
+                                    <option value="0" selected>Narrow Search By Region</option>
+                                    @foreach (var items in item.regionTable)
+                                    {
+                                        <option value="@items.RegionId">@items.Name</option>
+                                    }
+                                </select>
+                                @*for action post*@
+
+                                <select class="form-select py-2 my-2 shadow-none border border-info" id="physicianDrop1_@i" name="physicianId">
+                                    @*using ajax*@
+                                </select>
+
+                                <div class="form-floating mt-3">
+                                    <textarea class="form-control border border-info" name="NotesAccordion1" placeholder="Leave a comment here" id="floatingTextarea2" style="height: 100px"></textarea>
+                                    <label for="floatingTextarea2">Description</label>
+                                </div>
+
+                            </div>
+                            <div class="modal-footer">
+                                <div class="d-flex justify-content-end mt-3">
+                                    <button type="submit" class="btn btn-info">Confirm</button>
+                                    <button type="button" data-bs-dismiss="modal" class="btn btn-outline-info ms-3">cancel</button>
+                                </div>
+                            </div>
+                        </form>
                     </div>
-                    <form asp-action="AssignCase" method="post" enctype="multipart/form-data">
-                        <input class="d-none" value="@item.reqid" name="requestid" hidden>
-                        <div class="modal-body">
-                            <p> To assign this request search and select another physician</p>
-                            @*for ajax*@
-                            <select class="form-select py-2 my-2 shadow-none border border-info" id="Regionid" onchange="filterPhysicianByRegion(this.value, @i)">
-                                <option value="0" selected>Narrow Search By Region</option>
-                                @foreach (var items in item.regionTable)
-                                {
-                                    <option value="@items.RegionId">@items.Name</option>
-                                }
-                            </select>
-                            @*for action post*@
-
-                            <select class="form-select py-2 my-2 shadow-none border border-info" id="physicianDrop1_@i" name="physicianId">
-                                @*using ajax*@
-                            </select>
-
-                            <div class="form-floating mt-3">
-                                <textarea class="form-control border border-info" name="Notes" placeholder="Leave a comment here" id="floatingTextarea2" style="height: 100px"></textarea>
-                                <label for="floatingTextarea2">Description</label>
-                            </div>
-
-                        </div>
-                        <div class="modal-footer">
-                            <div class="d-flex justify-content-end mt-3">
-                                <button type="submit" class="btn btn-info">Confirm</button>
-                                <button type="button" data-bs-dismiss="modal" class="btn btn-outline-info ms-3">cancel</button>
-                            </div>
-                        </div>
-                    </form>
                 </div>
             </div>
-        </div>
 
-        @*Cancel Modal*@
+            @*Cancel Modal*@
 
-        <div class="modal fade" id="staticBackdrop1_@i" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered">
-                <div class="modal-content">
-                    <div class="modal-header bg-info">
-                        <h1 class="modal-title fs-5  text-white" id="exampleModalLabel">Confirm Cancellation</h1>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            <div class="modal fade" id="staticBackdrop1_@i" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header bg-info">
+                            <h1 class="modal-title fs-5  text-white" id="exampleModalLabel">Confirm Cancellation</h1>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <form asp-action="CancelCase" asp-route-reeqid="@item.reqid" enctype="multipart/form-data">
+                            <div class="modal-body">
+                                <p> Patient Name : <span>@item.PatientName</span></p>
+                                <select class="form-select" aria-label="Default select example" name="Reason">
+                                    <option selected>Reason For Cancellation</option>
+                                    <option value="1">No Respone to call or text, left message</option>
+                                    <option value="2">Cost Issue</option>
+                                    <option value="3">Insurance Issue</option>
+                                    <option value="4">Out of Service Area</option>
+                                    <option value="5">Not appropriate for service</option>
+                                    <option value="6">Referral to Clinic or Hospital</option>
+                                </select>
+                                <div class="form-floating mt-3">
+                                    <textarea class="form-control" name="NotesAccordion2" placeholder="Leave a comment here" id="floatingTextarea2" style="height: 100px"></textarea>
+                                    <label for="floatingTextarea2">provide Additional Notes</label>
+                                </div>
+
+                            </div>
+                            <div class="modal-footer">
+                                <div class="d-flex justify-content-end mt-3">
+                                    <button type="submit" class="btn btn-info">Confirm</button>
+                                    <button type="button" data-bs-dismiss="modal" class="btn btn-outline-info ms-3">cancel</button>
+                                </div>
+                            </div>
+                        </form>
                     </div>
-                    <form asp-action="CancelCase" asp-route-reeqid="@item.reqid" enctype="multipart/form-data">
-                        <div class="modal-body">
-                            <p> Patient Name : <span>@item.PatientName</span></p>
-                            <select class="form-select" aria-label="Default select example" name="Reason">
-                                <option selected>Reason For Cancellation</option>
-                                <option value="1">No Respone to call or text, left message</option>
-                                <option value="2">Cost Issue</option>
-                                <option value="3">Insurance Issue</option>
-                                <option value="4">Out of Service Area</option>
-                                <option value="5">Not appropriate for service</option>
-                                <option value="6">Referral to Clinic or Hospital</option>
-                            </select>
-                            <div class="form-floating mt-3">
-                                <textarea class="form-control" name="Notes" placeholder="Leave a comment here" id="floatingTextarea2" style="height: 100px"></textarea>
-                                <label for="floatingTextarea2">provide Additional Notes</label>
-                            </div>
-
-                        </div>
-                        <div class="modal-footer">
-                            <div class="d-flex justify-content-end mt-3">
-                                <button type="submit" class="btn btn-info">Confirm</button>
-                                <button type="button" data-bs-dismiss="modal" class="btn btn-outline-info ms-3">cancel</button>
-                            </div>
-                        </div>
-                    </form>
                 </div>
             </div>
-        </div>
 
-        @*Block Request*@
+            @*Block Request*@
 
-        <div class="modal fade" id="BlockCaseModal1_@i" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered">
-                <div class="modal-content">
-                    <div class="modal-header bg-info">
-                        <h1 class="modal-title fs-5  text-white" id="exampleModalLabel">Block Case</h1>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            <div class="modal fade" id="BlockCaseModal1_@i" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header bg-info">
+                            <h1 class="modal-title fs-5  text-white" id="exampleModalLabel">Block Case</h1>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <form asp-action="BlockCase" asp-route-reeqid="@item.reqid" enctype="multipart/form-data">
+                            <div class="modal-body">
+                                <p> Patient Name : <span id="text">@item.PatientName</span></p>
+
+                                <div class="form-floating mt-3">
+                                    <textarea class="form-control" name="reason" placeholder="Leave a comment here" id="floatingTextarea2" style="height: 100px"></textarea>
+                                    <label for="floatingTextarea2">provide Additional Notes</label>
+                                </div>
+
+                            </div>
+                            <div class="modal-footer">
+                                <div class="d-flex justify-content-end mt-3">
+                                    <button type="submit" class="btn btn-info">Confirm</button>
+                                    <button type="button" data-bs-dismiss="modal" class="btn btn-outline-info ms-3">cancel</button>
+                                </div>
+                            </div>
+                        </form>
                     </div>
-                    <form asp-action="BlockCase" asp-route-reeqid="@item.reqid" enctype="multipart/form-data">
-                        <div class="modal-body">
-                            <p> Patient Name : <span id="text">@item.PatientName</span></p>
-
-                            <div class="form-floating mt-3">
-                                <textarea class="form-control" name="reason" placeholder="Leave a comment here" id="floatingTextarea2" style="height: 100px"></textarea>
-                                <label for="floatingTextarea2">provide Additional Notes</label>
-                            </div>
-
-                        </div>
-                        <div class="modal-footer">
-                            <div class="d-flex justify-content-end mt-3">
-                                <button type="submit" class="btn btn-info">Confirm</button>
-                                <button type="button" data-bs-dismiss="modal" class="btn btn-outline-info ms-3">cancel</button>
-                            </div>
-                        </div>
-                    </form>
                 </div>
             </div>
-        </div>
 
-        <div class="accordion-item bg-info-subtle">
-            <button class=" accordion-header btn w-100 px-2 shadow-none" type="button" data-bs-toggle="collapse" data-bs-target="#collapse_@i" aria-expanded="false" aria-controls="collapseTwo">
-                <div class="row w-100 pb-1">
-                    <div class="col-6 text-start pt-3 pe-0">
-                        <span>@item.PatientName</span>
+            <div class="accordion-item bg-info-subtle">
+                <button class=" accordion-header btn w-100 px-2 shadow-none" type="button" data-bs-toggle="collapse" data-bs-target="#collapse_@i" aria-expanded="false" aria-controls="collapseTwo">
+                    <div class="row w-100 pb-1">
+                        <div class="col-6 text-start pt-3 pe-0">
+                            <span>@item.PatientName</span>
 
-                        <p class="mt-4">@item.address</p>
-                    </div>
-                    <div class="col-6 pt-3 d-flex flex-column text-end pe-0 ">
-                        @if (item.requestId == 1)
-                        {
-                            <span class="mb-3">
-                                Patient
+                            <p class="mt-4">@item.address</p>
+                        </div>
+                        <div class="col-6 pt-3 d-flex flex-column text-end pe-0 ">
+                            @if (item.requestId == 1)
+                            {
+                                <span class="mb-3">
+                                    Patient
 
-                                <svg height="15" width="15" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-                                    <circle fill="#5fbc61" r="45" cx="50" cy="50" stroke="grey" stroke-width="3" />
-                                </svg>
-                            </span>
-                        }
-                        @if (item.requestId == 2)
-                        {
-                            <span class="mb-3">
-                                Family/Friend
+                                    <svg height="15" width="15" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                                        <circle fill="#5fbc61" r="45" cx="50" cy="50" stroke="grey" stroke-width="3" />
+                                    </svg>
+                                </span>
+                            }
+                            @if (item.requestId == 2)
+                            {
+                                <span class="mb-3">
+                                    Family/Friend
 
-                                <svg height="15" width="15" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-                                    <circle fill="#ed9124" r="45" cx="50" cy="50" stroke="grey" stroke-width="3" />
-                                </svg>
-                            </span>
-                        }
-                        @if (item.requestId == 3)
-                        {
-                            <span class="mb-3">
-                                Concierge
+                                    <svg height="15" width="15" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                                        <circle fill="#ed9124" r="45" cx="50" cy="50" stroke="grey" stroke-width="3" />
+                                    </svg>
+                                </span>
+                            }
+                            @if (item.requestId == 3)
+                            {
+                                <span class="mb-3">
+                                    Concierge
 
-                                <svg height="15" width="15" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-                                    <circle fill="#e26277" r="45" cx="50" cy="50" stroke="grey" stroke-width="3" />
-                                </svg>
-                            </span>
-                        }
-                        @if (item.requestId == 4)
-                        {
-                            <span class="mb-3">
-                                Business
+                                    <svg height="15" width="15" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                                        <circle fill="#e26277" r="45" cx="50" cy="50" stroke="grey" stroke-width="3" />
+                                    </svg>
+                                </span>
+                            }
+                            @if (item.requestId == 4)
+                            {
+                                <span class="mb-3">
+                                    Business
 
-                                <svg height="15" width="15" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-                                    <circle fill="#007fc6" r="45" cx="50" cy="50" stroke="grey" stroke-width="3" />
-                                </svg>
-                            </span>
-                        }
-                        <div class="d-flex justify-content-end">
+                                    <svg height="15" width="15" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                                        <circle fill="#007fc6" r="45" cx="50" cy="50" stroke="grey" stroke-width="3" />
+                                    </svg>
+                                </span>
+                            }
+                            <div class="d-flex justify-content-end">
 
-                            <a class="btn rounded-4 btn-outline-info my-3 px-0 w-75"><span class="fs-6">Map Location</span></a>
+                                <a class="btn rounded-4 btn-outline-info my-3 px-0 w-75"><span class="fs-6">Map Location</span></a>
+                            </div>
                         </div>
                     </div>
-                </div>
-                <div class="text-start pb-3">
-                    @{
-                        var timedifference = DateTime.Now - DateTime.Parse(item.RequestDate);
+                    <div class="text-start pb-3">
+                        @{
+                            var timedifference = DateTime.Now - DateTime.Parse(item.RequestDate);
 
-                    }
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-clock text-info" viewBox="0 0 16 16">
-                        <path d="M8 3.5a.5.5 0 0 0-1 0V9a.5.5 0 0 0 .252.434l3.5 2a.5.5 0 0 0 .496-.868L8 8.71z" />
-                        <path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16m7-8A7 7 0 1 1 1 8a7 7 0 0 1 14 0" />
-                    </svg>
-                    <span>Wait Time : @item.RequestDate (@timedifference.Hours: @timedifference.Minutes)</span>
-                </div>
-            </button>
-            <div id="collapse_@i" class="accordion-collapse collapse border-top border-secondary" data-bs-parent="#accordionExample">
-                <div class="accordion-body position-relative">
-                    <a asp-action="ViewCaseAdmin" asp-route-reqcliId="@item.reqclientId">
-                        <button class="btn btn-light position-absolute rounded-4 border-1 border-dark-subtle" style="top: -18px; right: 5px;">
-                            view case
-                        </button>
-                    </a>
-                    <h6 class="w-100">
-
-                        <button class="btn border-1 rounded-5 border-info pt-0 ">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-calendar-week" viewBox="0 0 16 16">
-                                <path d="M11 6.5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5zm-3 0a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5zm-5 3a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5zm3 0a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5z" />
-                                <path d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5M1 4v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4z" />
-                            </svg>
-                        </button>
-
-                        Date Of Birth: @item.BirthDate
-                    </h6>
-                    <h6 class="w-100">
-                        <button class="btn border-1 rounded-5 border-info pt-0">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-envelope" viewBox="0 0 16 16">
-                                <path d="M0 4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2zm2-1a1 1 0 0 0-1 1v.217l7 4.2 7-4.2V4a1 1 0 0 0-1-1zm13 2.383-4.708 2.825L15 11.105zm-.034 6.876-5.64-3.471L8 9.583l-1.326-.795-5.64 3.47A1 1 0 0 0 2 13h12a1 1 0 0 0 .966-.741M1 11.105l4.708-2.897L1 5.383z" />
-                            </svg>
-                        </button>
-
-                        Email: @item.Email
-                    </h6>
-                    <h6 class="w-100">
-                        <button class="btn border-1 rounded-5 border-info pt-0">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-telephone" viewBox="0 0 16 16">
-                                <path d="M3.654 1.328a.678.678 0 0 0-1.015-.063L1.605 2.3c-.483.484-.661 1.169-.45 1.77a17.6 17.6 0 0 0 4.168 6.608 17.6 17.6 0 0 0 6.608 4.168c.601.211 1.286.033 1.77-.45l1.034-1.034a.678.678 0 0 0-.063-1.015l-2.307-1.794a.68.68 0 0 0-.58-.122l-2.19.547a1.75 1.75 0 0 1-1.657-.459L5.482 8.062a1.75 1.75 0 0 1-.46-1.657l.548-2.19a.68.68 0 0 0-.122-.58zM1.884.511a1.745 1.745 0 0 1 2.612.163L6.29 2.98c.329.423.445.974.315 1.494l-.547 2.19a.68.68 0 0 0 .178.643l2.457 2.457a.68.68 0 0 0 .644.178l2.189-.547a1.75 1.75 0 0 1 1.494.315l2.306 1.794c.829.645.905 1.87.163 2.611l-1.034 1.034c-.74.74-1.846 1.065-2.877.702a18.6 18.6 0 0 1-7.01-4.42 18.6 18.6 0 0 1-4.42-7.009c-.362-1.03-.037-2.137.703-2.877z" />
-                            </svg>
-                        </button>
-
-                        Patient: @item.phone
-                    </h6>
-
-                    <h6 class="w-100">
-                        <button class="btn border-1 rounded-5 border-info pt-0">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-person" viewBox="0 0 16 16">
-                                <path d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6m2-3a2 2 0 1 1-4 0 2 2 0 0 1 4 0m4 8c0 1-1 1-1 1H3s-1 0-1-1 1-4 6-4 6 3 6 4m-1-.004c-.001-.246-.154-.986-.832-1.664C11.516 10.68 10.289 10 8 10s-3.516.68-4.168 1.332c-.678.678-.83 1.418-.832 1.664z" />
-                            </svg>
-                        </button>
-
-                        Requestor: @item.RequestorName
-                    </h6>
-
-                    <div class="row gy-2  py-3">
-                        <div class="col-6 px-2">
-                            <a data-bs-toggle="modal" data-bs-target="#AssignCaseModal1_@i"><button class="border-1 text-light rounded-5 btn w-100 " style="background-color: indigo;"> Assign Case</button></a>
-                        </div>
-                        <div class="col-6 px-2">
-                            <a data-bs-toggle="modal" data-bs-target="#staticBackdrop1_@i"><button class=" border-1 btn-danger px-3 rounded-5 btn w-100"> Cancel Case</button></a>
-
-                        </div>
-                        <div class="col-6 px-2">
-                            <a asp-action="ViewNotesAdmin" asp-route-reqid="@item.reqid"><button class=" border-1 btn-success px-3 rounded-5 btn w-100"> View Notes</button></a>
-
-                        </div>
-                        <div class="col-6 px-2">
-                            <a data-bs-toggle="modal" data-bs-target="#BlockCaseModal1_@i"><button class=" border-1 btn-danger px-3 rounded-5 btn w-100"> Block Patient</button></a>
-
-                        </div>
-                        <div class="col-6 px-2">
-                            <a href="mailto: @item.Email"> <button class="border-1 btn-success px-3 rounded-5 btn w-100"> Email</button> </a>
-
-                        </div>
+                        }
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-clock text-info" viewBox="0 0 16 16">
+                            <path d="M8 3.5a.5.5 0 0 0-1 0V9a.5.5 0 0 0 .252.434l3.5 2a.5.5 0 0 0 .496-.868L8 8.71z" />
+                            <path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16m7-8A7 7 0 1 1 1 8a7 7 0 0 1 14 0" />
+                        </svg>
+                        <span>Wait Time : @item.RequestDate (@timedifference.Hours: @timedifference.Minutes)</span>
                     </div>
+                </button>
+                <div id="collapse_@i" class="accordion-collapse collapse border-top border-secondary" data-bs-parent="#accordionExample">
+                    <div class="accordion-body position-relative">
+                        <a asp-action="ViewCaseAdmin" asp-route-reqcliId="@item.reqclientId">
+                            <button class="btn btn-light position-absolute rounded-4 border-1 border-dark-subtle" style="top: -18px; right: 5px;">
+                                view case
+                            </button>
+                        </a>
+                        <h6 class="w-100">
 
+                            <button class="btn border-1 rounded-5 border-info pt-0 ">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-calendar-week" viewBox="0 0 16 16">
+                                    <path d="M11 6.5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5zm-3 0a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5zm-5 3a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5zm3 0a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5z" />
+                                    <path d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5M1 4v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4z" />
+                                </svg>
+                            </button>
+
+                            Date Of Birth: @item.BirthDate
+                        </h6>
+                        <h6 class="w-100">
+                            <button class="btn border-1 rounded-5 border-info pt-0">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-envelope" viewBox="0 0 16 16">
+                                    <path d="M0 4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2zm2-1a1 1 0 0 0-1 1v.217l7 4.2 7-4.2V4a1 1 0 0 0-1-1zm13 2.383-4.708 2.825L15 11.105zm-.034 6.876-5.64-3.471L8 9.583l-1.326-.795-5.64 3.47A1 1 0 0 0 2 13h12a1 1 0 0 0 .966-.741M1 11.105l4.708-2.897L1 5.383z" />
+                                </svg>
+                            </button>
+
+                            Email: @item.Email
+                        </h6>
+                        <h6 class="w-100">
+                            <button class="btn border-1 rounded-5 border-info pt-0">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-telephone" viewBox="0 0 16 16">
+                                    <path d="M3.654 1.328a.678.678 0 0 0-1.015-.063L1.605 2.3c-.483.484-.661 1.169-.45 1.77a17.6 17.6 0 0 0 4.168 6.608 17.6 17.6 0 0 0 6.608 4.168c.601.211 1.286.033 1.77-.45l1.034-1.034a.678.678 0 0 0-.063-1.015l-2.307-1.794a.68.68 0 0 0-.58-.122l-2.19.547a1.75 1.75 0 0 1-1.657-.459L5.482 8.062a1.75 1.75 0 0 1-.46-1.657l.548-2.19a.68.68 0 0 0-.122-.58zM1.884.511a1.745 1.745 0 0 1 2.612.163L6.29 2.98c.329.423.445.974.315 1.494l-.547 2.19a.68.68 0 0 0 .178.643l2.457 2.457a.68.68 0 0 0 .644.178l2.189-.547a1.75 1.75 0 0 1 1.494.315l2.306 1.794c.829.645.905 1.87.163 2.611l-1.034 1.034c-.74.74-1.846 1.065-2.877.702a18.6 18.6 0 0 1-7.01-4.42 18.6 18.6 0 0 1-4.42-7.009c-.362-1.03-.037-2.137.703-2.877z" />
+                                </svg>
+                            </button>
+
+                            Patient: @item.phone
+                        </h6>
+
+                        <h6 class="w-100">
+                            <button class="btn border-1 rounded-5 border-info pt-0">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-person" viewBox="0 0 16 16">
+                                    <path d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6m2-3a2 2 0 1 1-4 0 2 2 0 0 1 4 0m4 8c0 1-1 1-1 1H3s-1 0-1-1 1-4 6-4 6 3 6 4m-1-.004c-.001-.246-.154-.986-.832-1.664C11.516 10.68 10.289 10 8 10s-3.516.68-4.168 1.332c-.678.678-.83 1.418-.832 1.664z" />
+                                </svg>
+                            </button>
+
+                            Requestor: @item.RequestorName
+                        </h6>
+
+                        <div class="row gy-2  py-3">
+                            <div class="col-6 px-2">
+                                <a data-bs-toggle="modal" data-bs-target="#AssignCaseModal1_@i"><button class="border-1 text-light rounded-5 btn w-100 " style="background-color: indigo;"> Assign Case</button></a>
+                            </div>
+                            <div class="col-6 px-2">
+                                <a data-bs-toggle="modal" data-bs-target="#staticBackdrop1_@i"><button class=" border-1 btn-danger px-3 rounded-5 btn w-100"> Cancel Case</button></a>
+
+                            </div>
+                            <div class="col-6 px-2">
+                                <a asp-action="ViewNotesAdmin" asp-route-reqid="@item.reqid"><button class=" border-1 btn-success px-3 rounded-5 btn w-100"> View Notes</button></a>
+
+                            </div>
+                            <div class="col-6 px-2">
+                                <a data-bs-toggle="modal" data-bs-target="#BlockCaseModal1_@i"><button class=" border-1 btn-danger px-3 rounded-5 btn w-100"> Block Patient</button></a>
+
+                            </div>
+                            <div class="col-6 px-2">
+                                <a href="mailto: @item.Email"> <button class="border-1 btn-success px-3 rounded-5 btn w-100"> Email</button> </a>
+
+                            </div>
+                        </div>
+
+                    </div>
                 </div>
             </div>
-        </div>
-        i++;
+            i++;
+        }
     }
+    
 </div>
 
 
@@ -513,11 +526,11 @@
                 int prevpage = Convert.ToInt32(ViewBag.CurrentPage) - 1;
                 int currpage = Convert.ToInt32(ViewBag.CurrentPage);
                 int nextpage = Convert.ToInt32(ViewBag.CurrentPage) + 1;
-                    <li class="page-item">
-                        <a class="page-link btn rounded-4 btn-outline-info mx-1" id="previous" data-page="@(prevpage)" aria-label="Previous" @(ViewBag.CurrentPage <= 1 ? "hidden" : "")>
-                            &laquo;
-                        </a>
-                    </li>
+                <li class="page-item">
+                    <a class="page-link btn rounded-4 btn-outline-info mx-1" id="previous" data-page="@(prevpage)" aria-label="Previous" @(ViewBag.CurrentPage <= 1 ? "hidden" : "")>
+                        &laquo;
+                    </a>
+                </li>
                 for (int z = 0; z < 3; z++)
                 {
                     if (currpage + z <= ViewBag.TotalPages)
@@ -529,15 +542,15 @@
                         </li>
                     }
                 }
-                    <li class="page-item">
-                        <a class="page-link btn rounded-4 btn-outline-info mx-1" id="next" data-page="@(nextpage)" aria-label="Next" @(ViewBag.CurrentPage >= ViewBag.TotalPages ? "hidden" : "")>
-                            &raquo;
-                        </a>
-                    </li>
+                <li class="page-item">
+                    <a class="page-link btn rounded-4 btn-outline-info mx-1" id="next" data-page="@(nextpage)" aria-label="Next" @(ViewBag.CurrentPage >= ViewBag.TotalPages ? "hidden" : "")>
+                        &raquo;
+                    </a>
+                </li>
             }
         </ul>
     </nav>
-<span>@ViewBag.CurrentPage of @ViewBag.TotalPages</span>
+    <span>@ViewBag.CurrentPage of @ViewBag.TotalPages</span>
 </div>
 <script>
 
@@ -596,5 +609,26 @@
         $("#patientnamecancelmodal").html(patientname);
         $("#staticBackdrop").modal('show');
     }
-
+    function checkIfValidCancelCase(){
+        var notes = $("#CancelNote").val();
+        var reasonId =  $("#ReasonCancelId").val();
+        if(reasonId == 0){
+            alert("Please Select Reason");
+        } else if (notes == "") {
+            alert("Please Write Notes");
+        } else {
+            $("#CancelCaseForm").submit();
+        }
+    }
+    function checkAssignCaseForm(){
+        var regionId = $("#Regionnid").val();
+        var notes = $("#AssignNote").val();
+        if(regionId == 0){
+            alert("Please Select Region");
+        }else if(notes == ""){
+            alert("Please Write Notes");
+        }  else{
+            $("#AssignForm").submit();
+        }
+    }
 </script>

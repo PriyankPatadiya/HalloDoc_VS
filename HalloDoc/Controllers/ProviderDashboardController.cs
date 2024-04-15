@@ -182,6 +182,12 @@ namespace HalloDoc.Controllers
 
         public IActionResult Scheduling()
         {
+            var physicianId = HttpContext.Session.GetInt32("PhysicianId");
+            ViewBag.region = from region in _context.Regions
+                             join phyregion in _context.PhysicianRegions
+                             on region.RegionId equals phyregion.RegionId
+                             where phyregion.PhysicianId == physicianId
+                             select region;
             return View("Scheduling/Scheduling");
         }
 
@@ -220,7 +226,7 @@ namespace HalloDoc.Controllers
                               ShiftDeleted = sd.IsDeleted[0]
 
                           }).ToList();
-            events = events.Where(item => !item.ShiftDeleted).ToList();
+            events = events.Where(item => item.Physicianid == physicianId && !item.ShiftDeleted).ToList();
             return Json(events);
         }
     }

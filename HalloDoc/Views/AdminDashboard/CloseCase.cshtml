@@ -94,6 +94,7 @@
                                    id="floatingInput"
                                    placeholder="name@example.com" disabled/>
                             <label for="floatingInput">First Name</label>
+                            <span asp-validation-for=FirstName class="text-danger"></span>
                         </div>
                     </div>
                     <div class="col col-12 col-md-6 mb-3">
@@ -104,6 +105,7 @@
                                    id="floatingPassword"
                                    placeholder="Password" disabled />
                             <label for="floatingPassword">Last Name</label>
+                            <span asp-validation-for=LastName class="text-danger"></span>
 
                         </div>
                     </div>
@@ -122,13 +124,14 @@
                     </div>
                     <div class="col-12 col-md-6 d-flex">
                         <div class="form-floating mb-2" style="width: 80%;">
-                            <input type="tel"
+                            <input type="text"
                             asp-for="Phonenum"
                                    class="form-control inputclass"
                                    placeholder="PhoneNumber" disabled />
                             <label for="floatingPassword">Phone No.</label>
+                            <span asp-validation-for=Phonenum class="text-danger"></span>
                         </div>
-                        <button class=" btn btn-outline-info h-75 ms-2 px-0" style="width: 20%;">
+                        <button type="button" class=" btn btn-outline-info h-75 ms-2 px-0" style="width: 20%;">
                             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-telephone" viewBox="0 0 16 16">
                                 <path fill-rule="evenodd" d="M1.885.511a1.745 1.745 0 0 1 2.61.163L6.29 2.98c.329.423.445.974.315 1.494l-.547 2.19a.68.68 0 0 0 .178.643l2.457 2.457a.68.68 0 0 0 .644.178l2.189-.547a1.75 1.75 0 0 1 1.494.315l2.306 1.794c.829.645.905 1.87.163 2.611l-1.034 1.034c-.74.74-1.846 1.065-2.877.702a18.6 18.6 0 0 1-7.01-4.42 18.6 18.6 0 0 1-4.42-7.009c-.362-1.03-.037-2.137.703-2.877z" />
                             </svg>
@@ -142,22 +145,23 @@
                                    id="floatingInput"
                                    placeholder="name@example.com" disabled />
                             <label for="floatingInput">Email</label>
+                            <span asp-validation-for=Email class="text-danger"></span>
 
                         </div>
                     </div>
                     <div class="d-flex justify-content-end p-4" id="editbtndiv">
-                        <button type="button" class="btn btn-info p-3 text-light fw-semibold me-2 buttonstohide" data-bs-toggle="modal" data-bs-target="#staticBackdrop" id="closecaseeditbtn">
+                        <button type="button" class="btn btn-info p-3 text-light fw-semibold me-2 buttonstohide" onclick="unhideInputs()">
                             Edit
                         </button>
                         <a asp-action="ClosecasePost" asp-route-reqid="@Model.requestid"> 
-                            <button type="button" class="btn btn-outline-info p-3 fw-semibold me-2 buttonstohide" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
+                            <button type="button" class="btn btn-outline-info p-3 fw-semibold me-2 buttonstohide" >
                             Close Case
                             </button>
                         </a>
-                        <button type="submit" class="btn btn-info p-3 text-light fw-semibold me-2 hiddenbuttons" data-bs-toggle="modal" data-bs-target="#staticBackdrop" style="display:none;">
+                        <button type="submit" class="btn btn-info p-3 text-light fw-semibold me-2 hiddenbuttons"  style="display:none;">
                             save changes
                         </button>
-                        <button type="button" class="btn btn-outline-info p-3 fw-semibold me-2 hiddenbuttons" data-bs-toggle="modal" data-bs-target="#staticBackdrop" style="display:none;">
+                        <button type="button" class="btn btn-outline-info p-3 fw-semibold me-2 hiddenbuttons" onclick="hidebuttons()"  style="display:none;">
                             Close
                         </button>
                     </div>
@@ -167,3 +171,16 @@
         
     </div>
 </div>
+<script>
+    function unhideInputs(){
+        $(".inputclass").removeAttr('disabled');
+        $(".hiddenbuttons").css("display","block");
+        $(".buttonstohide").css("display", "none");
+    }
+    function hidebuttons(){
+        $(".inputclass").attr('disabled', true);
+        $(".hiddenbuttons").css("display", "none");
+        $(".buttonstohide").css("display", "block");
+    }
+</script>
+<partial name="_ValidationScriptsPartial"></partial>

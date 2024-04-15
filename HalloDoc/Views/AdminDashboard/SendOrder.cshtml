@@ -36,7 +36,7 @@
                                 <option value="@item.HealthProfessionalId">@item.ProfessionName</option>
                             }
                         </select>
-                        <span class="text-danger " style="font-size: 11px;"></span>
+                        <span asp-validation-for="profession" class="text-danger " style="font-size: 11px;"></span>
                     </div>
                     <div class="col-sm-12 col-md-12 col-lg-6 form-floating my-3 ">
                         <select class="form-select py-3 form-select shadow-none" asp-for="vendorid" aria-label="Select Profession" id="SelectBusiness">
@@ -51,7 +51,7 @@
                                id="Vencontact"
                                placeholder="Business Contact" />
                         <label for="floatingInput" class="ms-2">Business Contact</label>
-                        @*<span asp-validation-for="BirthDate" class="text-danger" style="font-size: 11px;">  </span>*@
+                        <span asp-validation-for="BusinessContact" class="text-danger" style="font-size: 11px;">  </span>
                     </div>
                     <div class="col-sm-12 col-md-12 col-lg-6 form-floating my-3">
                         <input type="email"
@@ -60,7 +60,7 @@
                                id="Venemail"
                                placeholder="Email" />
                         <label for="floatingInput" class="ms-2">Email</label>
-                        @*<span asp-validation-for="BirthDate" class="text-danger" style="font-size: 11px;">  </span>*@
+                        <span asp-validation-for="Email" class="text-danger" style="font-size: 11px;">  </span>
                     </div>
                     <div class="col-sm-12 col-md-12 col-lg-6 form-floating my-3">
                         <input type="text"
@@ -69,7 +69,7 @@
                                id="VenFax"
                                placeholder="Fax Number" />
                         <label for="floatingInput" class="ms-2">Fax Number</label>
-                        @*<span asp-validation-for="BirthDate" class="text-danger" style="font-size: 11px;">  </span>*@
+                        <span asp-validation-for="Fax" class="text-danger" style="font-size: 11px;"> </span>
                     </div>
                     <div class="form-floating my-3 control-group col-12">
                         <textarea class="form-control"
@@ -159,3 +159,4 @@
     }
 
 </script>
+<partial name="_ValidationScriptsPartial"></partial>

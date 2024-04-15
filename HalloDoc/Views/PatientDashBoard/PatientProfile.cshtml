@@ -37,7 +37,7 @@
                                    id="floatingInput"
                                    placeholder="First Name" disabled/>
                             <label for="floatingInput" class="ms-2">First Name</label>
-                            @*<span asp-validation-for="FirstName" class="text-danger " style="font-size: 11px;"></span>*@
+                            <span asp-validation-for="FirstName" class="text-danger " style="font-size: 11px;"></span>
                         </div>
                         <div class="col-sm-12 col-md-12 col-lg-6 form-floating my-3">
                             <input type="text"
@@ -46,7 +46,7 @@
                                    id="floatingInput"
                                    placeholder="Last Name" disabled />
                             <label for="floatingInput" class="ms-2">Last Name</label>
-                            @*<span asp-validation-for="LastName" class="text-danger" style="font-size: 11px;"></span>*@
+                            <span asp-validation-for="LastName" class="text-danger" style="font-size: 11px;"></span>
                         </div>
 
                         <div class="col-sm-12 col-md-12 col-lg-6 form-floating my-3">
@@ -56,7 +56,7 @@
                                    id="floatingInput"
                                    placeholder="Date Of Birth" disabled />
                             <label for="floatingInput" class="ms-2">Date Of Birth</label>
-                            @*<span asp-validation-for="BirthDate" class="text-danger" style="font-size: 11px;">  </span>*@
+                            <span asp-validation-for="BirthDate" class="text-danger" style="font-size: 11px;">  </span>
                         </div>
 
                         <!-- Contact Information -->
@@ -73,7 +73,7 @@
                                    id="floatingInput"
                                    placeholder="PhoneNumber" disabled />
                             <label for="floatingInput" class="ms-2">Mobile Number</label>
-                            @*<span asp-validation-for="" class="text-danger" style="font-size: 11px;"></span>*@
+                            <span asp-validation-for="PhoneNumber" class="text-danger" style="font-size: 11px;"></span>
                         </div>
 
                         <div class="col-sm-12 col-md-12 col-lg-6 form-floating my-3">
@@ -85,7 +85,7 @@
                                    placeholder="name@InputType.com"
                                    onchange="CheckEmail()" readonly disabled/>
                             <label for="floatingInput" class="ms-2">Email</label>
-                            @*<span asp-validation-for="" class="text-danger" style="font-size: 11px;"></span>*@
+                            @*<span asp-validation-for="Email" class="text-danger" style="font-size: 11px;"></span>*@
                         </div>
 
 
@@ -125,6 +125,7 @@
                                    id="floatingInput"
                                    placeholder="Zip Code" disabled />
                             <label for="floatingInput" class="ms-2">Zip Code</label>
+                            <span asp-validation-for="ZipCode" class="text-danger" style="font-size: 11px;"></span>
                         </div>
                         
                         <div class="col-sm-12 col-md-12 col-lg-2 form-floating my-3">
@@ -140,10 +141,10 @@
                             <button type="button" class="btn border-none bg-info p-3 text-light fw-semibold me-4" id="submitBtnforenable">
                                 Edit
                             </button>
-                                <a asp-action="editprofile"><button type="submit" class="btn border-none bg-info p-3 text-light fw-semibold me-4 hiddenbtn" style="display:none;">
+                                <button type="submit" class="btn border-none bg-info p-3 text-light fw-semibold me-4 hiddenbtn" style="display:none;">
                                     Save
                                 </button>
-                            </a>
+                           
                             <button type="button" class=" hiddenbtn btn border-none bg-danger p-3 text-light fw-semibold me-4" id="cancelbtn" style="display:none;">
                                 Cancel
                             </button>
@@ -154,5 +155,5 @@
         </div>
     </div>
 </div>
-
-   
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<partial name="_ValidationScriptsPartial"></partial>

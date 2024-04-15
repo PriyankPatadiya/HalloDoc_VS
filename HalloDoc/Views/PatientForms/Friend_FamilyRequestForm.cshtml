@@ -19,7 +19,7 @@
 </head>
 <body>
     <!-- Modal -->
-
+    
     <div class="modal fade shadow"
          id="exampleModal"
          tabindex="-1"
@@ -114,7 +114,7 @@
                             <span asp-validation-for="YourLastName" class="text-danger" style="font-size: 11px;"></span>
                         </div>
                         <div class="col-sm-12 col-md-12 col-lg-6 form-floating my-3">
-                            <input type="tel"
+                            <input type="text"
                                    class="form-control"
                                    asp-for="YourPhoneNumber"
                                    id="floatingInput"
@@ -292,6 +292,7 @@
     <div style="height: 8vh;" class="bg-dark d-flex flex-row-reverse align-items-center pe-3" id="submitfooter">
         <span class="text-light fw-semibold">Terms of conditions | Privacy Policy</span>
     </div>
+    
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/RequestForms.js" asp-append-version="true"></script>
@@ -302,5 +303,6 @@
         });     
     </script>
     <script src="~/js/site.js" asp-append-version="true"></script>
+    <partial name="_ValidationScriptsPartial"></partial>
 </body>
 </html>
