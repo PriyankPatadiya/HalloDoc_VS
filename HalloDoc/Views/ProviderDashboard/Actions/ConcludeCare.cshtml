@@ -92,13 +92,48 @@
         <div class="m-0 p-0 bg-light-subtle p-3 rounded-bottom">
             <span class="fs-6 fw-bold text-body">Provider Notes</span>
             <form method="post" asp-action="SubmitConclude" asp-route-reqId="@Model.requestid">
-                <textarea class="w-100" rows="8" name="ProviderNote"></textarea>
+                <textarea class="w-100" rows="8" name="ProviderNote" style="resize: none; height: 10vh;"  required></textarea>
                 <div class="d-flex justify-content-end"><button type="submit" class="btn btn-info text-white">Conclude Care</button></div>
             </form>
 
         </div>
     </div>
 </div>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
+<script>
+    if ('@TempData["Message"]' != '') {
+        showToast('@TempData["Message"]', '@TempData["MessageType"]');
+        '@TempData.Remove("Message")'
+    }
+    function showToast(message, messageType) {
+        const Toast = Swal.mixin({
+            toast: true,
+            position: "top-end",
+            showConfirmButton: false,
+            timer: 3000,
+            timerProgressBar: true,
+            didOpen: (toast) => {
+                toast.onmouseenter = Swal.stopTimer;
+                toast.onmouseleave = Swal.resumeTimer;
+            }
+        });
+
+        let icon = "info";
+        if (messageType === "success") {
+            icon = "success";
+        } else if (messageType === "error") {
+            icon = "error";
+        } else if (messageType === "warning") {
+            icon = "warning";
+        }
+
+        Toast.fire({
+            icon: icon,
+            title: message
+        });
+    }
+</script>
 <script>
 
     $("#fileInput").on("change", function () {

@@ -41,35 +41,35 @@
 
 
 
-<div class="container-fluid bg-secondary-subtle tab-pane fade show active px-2 px-sm-4 overflow-auto" style="height: 100% !important;">
+<div class="container-fluid bg-secondary-subtle tab-pane fade show active px-2 px-sm-4 overflow-auto"  style="height: 100% !important;">
 
     @*Tabs Of Status*@
 
     <div class="container-fluid text-center py-2 ">
         <ul class=" nav gx-5 row  gy-4 mt-0 px-md-3">
 
-            <li class=" nav-item col-4 col-sm-4 col-lg-2 rounded-4 text-start position-relative px-2" role="presentation">
+            <li class=" nav-item col-6 col-sm-4 col-lg-2 rounded-4 text-start position-relative px-2" role="presentation">
                 <button class="btn w-100 text-start rounded-4 shadow-none border-0 Status-btn text-sm-start text-center statuslink1" id="statuslink1" data-id="1">
                     <span class="py-2 d-sm-block d-flex justify-content-center fs-5 Status-btn-text text-sm-start text-center">New</span>
                     <h4 class="fw-bolder  pb-2 Status-Count">@Model.NewCount</h4>
                 </button>
                 <div id="triangle1" class="triangle"></div>
             </li>
-            <li class=" nav-item col-4 col-sm-4 col-lg-2 rounded-4 text-primary text-start position-relative px-2" role="presentation">
+            <li class=" nav-item col-6 col-sm-4 col-lg-2 rounded-4 text-primary text-start position-relative px-2" role="presentation">
                 <button class="btn text-decoration-none rounded-4 text-primary w-100 text-start shadow-none border-0 Status-btn text-sm-start text-center statuslink2" id="statuslink2" data-id="2">
                     <span class="py-2 d-sm-block d-flex justify-content-center fs-5 Status-btn-text text-sm-start text-center">Pending</span>
                     <h4 class="fw-bolder ps-1 pb-2 Status-Coun">@Model.PendingCount</h4>
                 </button>
                 <div id="triangle2" class="triangle" style="display: none;"></div>
             </li>
-            <li class=" nav-item col-4 col-sm-4 col-lg-2 rounded-4 text-success text-start position-relative px-2" role="presentation">
+            <li class=" nav-item col-6 col-sm-4 col-lg-2 rounded-4 text-success text-start position-relative px-2" role="presentation">
                 <button class="btn text-decoration-none rounded-4 text-success w-100 text-start shadow-none border-0 Status-btn text-sm-start text-center statuslink3" id="statuslink3" data-id="3">
                     <span class="py-2 d-sm-block d-flex justify-content-center fs-5 Status-btn-text text-sm-start text-center">Active</span>
                     <h4 class="fw-bolder pb-2 Status-Coun">@Model.ActiveCount</h4>
                 </button>
                 <div id="triangle3" class="triangle" style="display: none;"></div>
             </li>
-            <li class=" nav-item col col-lg-2 rounded-4 text-danger text-start position-relative px-2" role="presentation">
+            <li class=" nav-item col-6 col-sm-4 col-lg-2 rounded-4 text-danger text-start position-relative px-2" role="presentation">
                 <button class="btn text-decoration-none rounded-4 text-danger w-100 text-start shadow-none border-0 Status-btn text-sm-start text-center statuslink4" id="statuslink4" data-id="4">
                     <span class="py-2 d-sm-block d-flex justify-content-center fs-5 Status-btn-text text-sm-start text-center">Conclude</span>
                     <h4 class="fw-bolder pb-2 Status-Coun">@Model.ConcludeCount</h4>
@@ -158,7 +158,7 @@
 
         @*render partial view of request Status *@
 
-        <div class="tab-content SearchPartial px-sm-2 " style="height: 420px !important">
+        <div class="tab-content SearchPartial px-sm-2 " >
             @*<partial name="AdminDashboardNew" model="Model.DashboardTableVM"/>*@
 
         </div>

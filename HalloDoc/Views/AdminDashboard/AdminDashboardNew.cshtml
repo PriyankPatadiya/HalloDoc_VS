@@ -6,6 +6,7 @@
     int j = 0;
 }
 
+
 @*<link href="https://getbootstrap.com/docs/5.0/dist/css/bootstrap.min.css" rel="stylesheet" />*@
 
 @*Assign Case Modal*@
@@ -33,7 +34,7 @@
                     </select>
 
                     <div class="form-floating mt-3">
-                        <textarea class="form-control border border-info" name="AssignNote"  placeholder="Leave a comment here" id="AssignNote" style="height: 100px"></textarea>
+                        <textarea class="form-control border border-info" name="AssignNote" rows="50" cols="15" placeholder="Leave a comment here" id="AssignNote" style="resize: none; min-height: 9vh !important"></textarea>
                         <label for="floatingTextarea2">Description</label>
                     </div>
 
@@ -73,7 +74,7 @@
                         <option value="6">Referral to Clinic or Hospital</option>
                     </select>
                     <div class="form-floating mt-3">
-                        <textarea class="form-control" name="CancelNote" placeholder="Leave a comment here" id="CancelNote" style="height: 100px"></textarea>
+                        <textarea class="form-control" name="CancelNote" placeholder="Leave a comment here" id="CancelNote" style="resize: none; min-height: 9vh !important"></textarea>
                         <label for="floatingTextarea2">provide Additional Notes</label>
                     </div>
                     <div class="d-flex justify-content-end mt-3">
@@ -89,27 +90,27 @@
 
 @*Table*@
 
-<div style="height: 360px !important" class="mx-2 mb-2 tab-pane fade show active overflow-auto" id="pills-Dashboard" role="tabpanel" aria-labelledby="pills-Dashboard-tab" tabindex="0">
-    
-    <Table class="table">
-        <thead class="border-0" style="height: 60px;">
-            <tr>
+<div class="mx-2 mb-2 tab-pane fade show active" id="pills-Dashboard" role="tabpanel" aria-labelledby="pills-Dashboard-tab" tabindex="0">
+    @if (ViewBag.EmptyMessage == null)
+    {
+        <Table class="table">
+            <thead class="table-info border-0" style="height: 60px;">
+                <tr>
 
-                <th class="align-middle text-secondary my-2 ">Name</th>
+                    <th class="align-middle  my-2 ">Name</th>
 
-                <th class="align-middle text-secondary">Date Of Birth</th>
-                <th class="align-middle text-secondary">Requestor</th>
-                <th class="align-middle text-secondary">RequestedDate</th>
-                <th class="align-middle text-secondary">Phone</th>
-                <th class="align-middle text-secondary">Address</th>
-                <th class="align-middle text-secondary">Notes</th>
-                <th class="align-middle text-secondary">ChatWith</th>
-                <th class="align-middle text-secondary">Actions</th>
+                    <th class="align-middle ">Date Of Birth</th>
+                    <th class="align-middle ">Requestor</th>
+                    <th class="align-middle ">RequestedDate</th>
+                    <th class="align-middle ">Phone</th>
+                    <th class="align-middle ">Address</th>
+                    <th class="align-middle ">Notes</th>
+                    <th class="align-middle ">ChatWith</th>
+                    <th class="align-middle ">Actions</th>
 
-            </tr>
-        </thead>
-        @if (ViewBag.EmptyMessage == null)
-        {
+                </tr>
+            </thead>
+
             <tbody class=" overflow-auto">
 
                 @foreach (var item in Model)
@@ -129,7 +130,7 @@
                                     <p> Patient Name : <span id="text">@item.PatientName</span></p>
 
                                     <div class="form-floating mt-3">
-                                        <textarea class="form-control" name="reason" placeholder="Leave a comment here" id="floatingTextarea2" style="height: 100px"></textarea>
+                                        <textarea class="form-control" name="reason" placeholder="Leave a comment here" id="floatingTextarea2" style="resize: none; min-height: 9vh !important"></textarea>
                                         <label for="floatingTextarea2">provide Additional Notes</label>
                                     </div>
 
@@ -234,12 +235,13 @@
                 }
 
             </tbody>
-        }
-        else
-        {
-            <div class="fs-1">Empty</div>
-        }
-    </Table>
+
+        </Table>
+    }
+    else
+    {
+        <div class="fs-1">Empty</div>
+    }
 </div>
 
 
@@ -514,9 +516,10 @@
             i++;
         }
     }
-    
+
 </div>
 
+@*pagination*@
 
 <div class="pb-2 d-flex justify-content-between">
     <nav id="pagination" aria-label="Page navigation" style="width: 80%;">
@@ -550,8 +553,15 @@
             }
         </ul>
     </nav>
-    <span>@ViewBag.CurrentPage of @ViewBag.TotalPages</span>
+    @if(ViewBag.EmptyMessage == null)
+    {
+        <span>@ViewBag.CurrentPage of @ViewBag.TotalPages</span>
+    }
 </div>
+
+@*scripts*@
+
+
 <script>
 
     function filterPhysicianByRegionn(RegionId) {
@@ -594,41 +604,44 @@
         }
     }
 </script>
-<script>
-    function openAssignModal(requestid) {
-        var regions = @Json.Serialize(Model[0].regionTable.ToList());
-        regions.forEach(region => {
-            $('#Regionnid').append($('<option>').text(region.name).attr('value', region.regionId));
-        });
-        $('#assignRequestidInput').attr('value', requestid);
-        $('#AssignForm').attr('action', '/AdminDashboard/AssignCase?reqid=' + requestid);
-        $('#AssignCaseModal').modal('show');
-    }
-    function openCancelModal(requestid, patientname) {
-        $("#cancelModalRequestId").attr('value', requestid);
-        $("#patientnamecancelmodal").html(patientname);
-        $("#staticBackdrop").modal('show');
-    }
-    function checkIfValidCancelCase(){
-        var notes = $("#CancelNote").val();
-        var reasonId =  $("#ReasonCancelId").val();
-        if(reasonId == 0){
-            alert("Please Select Reason");
-        } else if (notes == "") {
-            alert("Please Write Notes");
-        } else {
-            $("#CancelCaseForm").submit();
+@if (ViewBag.EmptyMessage == null)
+{
+    <script>
+        function openAssignModal(requestid) {
+            var regions = @Json.Serialize(Model[0].regionTable.ToList());
+            regions.forEach(region => {
+                $('#Regionnid').append($('<option>').text(region.name).attr('value', region.regionId));
+            });
+            $('#assignRequestidInput').attr('value', requestid);
+            $('#AssignForm').attr('action', '/AdminDashboard/AssignCase?reqid=' + requestid);
+            $('#AssignCaseModal').modal('show');
         }
-    }
-    function checkAssignCaseForm(){
-        var regionId = $("#Regionnid").val();
-        var notes = $("#AssignNote").val();
-        if(regionId == 0){
-            alert("Please Select Region");
-        }else if(notes == ""){
-            alert("Please Write Notes");
-        }  else{
-            $("#AssignForm").submit();
+        function openCancelModal(requestid, patientname) {
+            $("#cancelModalRequestId").attr('value', requestid);
+            $("#patientnamecancelmodal").html(patientname);
+            $("#staticBackdrop").modal('show');
         }
-    }
-</script>
+        function checkIfValidCancelCase() {
+            var notes = $("#CancelNote").val();
+            var reasonId = $("#ReasonCancelId").val();
+            if (reasonId == 0) {
+                alert("Please Select Reason");
+            } else if (notes == "") {
+                alert("Please Write Notes");
+            } else {
+                $("#CancelCaseForm").submit();
+            }
+        }
+        function checkAssignCaseForm() {
+            var regionId = $("#Regionnid").val();
+            var notes = $("#AssignNote").val();
+            if (regionId == 0) {
+                alert("Please Select Region");
+            } else if (notes == "") {
+                alert("Please Write Notes");
+            } else {
+                $("#AssignForm").submit();
+            }
+        }
+    </script>
+}

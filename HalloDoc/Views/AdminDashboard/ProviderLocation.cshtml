@@ -1,8 +1,15 @@
 ﻿@{
     Layout = "~/Views/Shared/_LayoutAdminDash.cshtml";
 }
-
-<div id="map" style="height: 90vh; z-index: 1;"></div>
+@*<style>
+    .leaflet-layer,
+    .leaflet-control-zoom-in,
+    .leaflet-control-zoom-out,
+    .leaflet-control-attribution {
+        filter: invert(100%) hue-rotate(180deg) brightness(95%) contrast(90%);
+    }
+</style>*@
+<div id="map" style="height: 70vh; z-index: 1; width: 160vh !important" class="container d-flex align-items-center justify-content-center my-4"></div>
 <script>
     
 
@@ -12,7 +19,7 @@
             center: [21.0000, 78.0000], // india coordinates
             zoom: 5,
             zoomControl: true,
-            trackResize: true,
+            trackResize: false,
         });
             $.ajax({
                 type: "POST",

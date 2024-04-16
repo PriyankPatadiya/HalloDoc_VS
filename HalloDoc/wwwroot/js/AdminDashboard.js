@@ -11,13 +11,13 @@ $(document).ready(function () {
     var triangleid = localStorage.getItem("triangle");
     var trianglecolor = localStorage.getItem("color");
     var storedpartial = localStorage.getItem("partialviewpath");
-    path = storedpartial ;
+    path = storedpartial == null ? "AdminDashboardNew" : storedpartial;
 
     $(".Status-btn").removeClass('activee');
     $(".triangle").css('display', 'none');
-    $("#statusspan").html(span);
-    $(statuslink).addClass("activee");
-    $(triangleid).css('display', 'block').css('border-top-color', trianglecolor);
+    span != null ? $("#statusspan").html(span) : $("#statusspan").html("(New)");
+    statuslink != null ? $(statuslink).addClass("activee") : $("#statuslink1").addClass("activee");
+    triangleid != null ? $(triangleid).css('display', 'block').css('border-top-color', trianglecolor) : $("#triangle1").css('display', 'block').css('border-top-color', '#203f9a');
 
     if (localStorage.getItem("statusbutton") != undefined) {
         StatusButton = localStorage.getItem("statusbutton");
@@ -69,7 +69,7 @@ $(document).ready(function () {
         filterPhysicianByRegion(RegionId);
     });
 
-    
+
 
     // enable inputs in close case
     $('#closecaseeditbtn').on("click", function () {
@@ -84,9 +84,9 @@ $(document).ready(function () {
         $(".Status-btn").removeClass('active');
         $(".Status-btn").removeClass('activee');
         $(this).addClass('active');
-        
 
-         StatusButton = $(".Status-btn.active").data("id");
+
+        StatusButton = $(".Status-btn.active").data("id");
 
 
         if (StatusButton == "1") {
@@ -94,7 +94,7 @@ $(document).ready(function () {
             $("#statusspan").html("(New)");
             $(".triangle").css('display', 'none');
             $("#triangle1").css('display', 'block').css('border-top-color', '#203f9a');
-            partialviewpath = "AdminDashboardNew"; 
+            partialviewpath = "AdminDashboardNew";
             localStorage.setItem("partialviewpath", partialviewpath);
             localStorage.setItem("statusbutton", $("#statuslink1").data("id"));
             localStorage.setItem("triangle", "#triangle1");
@@ -196,7 +196,7 @@ $(document).ready(function () {
     // Main function that filters and load partial view in admin dashboard
     function ChangeTable(partialviewpath, StatusButton, currentpage, pagesize) {
 
-         $.get('/Home/CheckSession', function (sessioncheck) {
+        $.get('/Home/CheckSession', function (sessioncheck) {
             if (sessioncheck.sessionExists) {
 
                 var Searchstring = $("#SearchString").val();
@@ -213,7 +213,7 @@ $(document).ready(function () {
                     $.ajax({
                         type: "GET",
                         url: "/AdminDashboard/SearchByName",
-                        data: { Searchstring: Searchstring, selectButton: selectButton, StatusButton: StatusButton, SelectedStateId: SelectedStateId, partialviewpath: partialviewpath,currentpage: currentpage, pagesize: pagesize },
+                        data: { Searchstring: Searchstring, selectButton: selectButton, StatusButton: StatusButton, SelectedStateId: SelectedStateId, partialviewpath: partialviewpath, currentpage: currentpage, pagesize: pagesize },
 
                         success: function (data) {
                             $(".SearchPartial").html(data);
@@ -240,27 +240,31 @@ $(document).ready(function () {
         console.log("......")
     });
     function filterPhysicianByRegion(RegionId) {
-       
-        if (RegionId != "0") {
-            $.ajax({
-                type: "GET",
-                url: "/AdminDashboard/filterPhyByRegion",
-                data: { RegionId: RegionId },
+        $.get('/Home/CheckSession', function (sessioncheck) {
+            if (sessioncheck.sessionExists) {
+                if (RegionId != "0") {
+                    $.ajax({
+                        type: "GET",
+                        url: "/AdminDashboard/filterPhyByRegion",
+                        data: { RegionId: RegionId },
 
-                success: function (data) {
-                    $('#physicianDrop').empty();
-                    $('#physicianDrop').append($('<option>').text("Select Physician").attr('value', 0));
-                    $.each(data, function (index, item) {
-                        $('#physicianDrop').append($('<option>').text(item.firstName).attr('value', item.physicianId));
+                        success: function (data) {
+                            $('#physicianDrop').empty();
+                            $('#physicianDrop').append($('<option>').text("Select Physician").attr('value', 0));
+                            $.each(data, function (index, item) {
+                                $('#physicianDrop').append($('<option>').text(item.firstName).attr('value', item.physicianId));
+                            });
+                            $('#physicianDrop option:first').prop('selected', true);
+                        }
                     });
-                    $('#physicianDrop option:first').prop('selected', true);
                 }
-            });
-        }
+
+            }
+            else {
+                window.location.href = "/PatientLoginn";
+            }
+        });
     }
-
-    
-
 
 });
 

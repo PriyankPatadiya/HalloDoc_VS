@@ -272,7 +272,7 @@
     </div>
 </div>
 
-<div class="container card py-3 px-4 mb-3">
+<div class="container bg-body py-3 px-4 mb-3 shadow ">
 
     <div class="p-0 m-0 d-flex justify-content-between">
         <div class="d-flex border border-secondary bg-body rounded align-items-center my-2 col-3">
@@ -403,7 +403,7 @@
 
                         var calendarEl = document.getElementById('calendar');
                         calendar = new FullCalendar.Calendar(calendarEl, {
-                            height: 'auto',
+                            height: '22rem',
                             schedulerLicenseKey: 'GPL-My-Project-Is-Open-Source',
                             themeSystem: 'bootstrap5',
                             headerToolbar: false,
@@ -413,7 +413,7 @@
                             events: events,
                             //editable: true,
                             eventClick: function (info) {
-                                debugger
+
                                 $('#eventModal').modal('show');
 
                                 $('#eventModal').on('click', '#editbtn', function () {

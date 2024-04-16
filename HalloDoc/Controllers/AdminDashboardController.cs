@@ -50,6 +50,9 @@ namespace HalloDoc.Controllers
             _accessMenu = menu;
             _passAdminHasher = hasherr;
         }
+
+        #region Dashboard
+
         [CustomAuthorize(new string[] { "Administrator" })]
         public IActionResult MainPage()
         {
@@ -119,9 +122,11 @@ namespace HalloDoc.Controllers
             }
         }
 
+        #endregion
+
         #region Export
         // Export
-
+        [CustomAuthorize(new string[] { "Administrator","Provider" })]
         public IActionResult exportfile(string StatusButton, int pagesize, int currentpage)
         {
             var result = _admin.GetRequestsQuery(StatusButton);
@@ -292,6 +297,7 @@ namespace HalloDoc.Controllers
         #region Close Case
         // Close Case Actions
 
+        [CustomAuthorize(new string[] {"Administrator"})]
         public IActionResult CloseCase(int reqid)
         {
             AdminMainPageVM mainModel = new AdminMainPageVM();
@@ -316,6 +322,7 @@ namespace HalloDoc.Controllers
             return RedirectToAction("CloseCase", new { reqid = model.requestid });
         }
 
+
         public IActionResult ClosecasePost(int reqid)
         {
             var request = _admin.reqbyreqid(reqid);
@@ -335,7 +342,7 @@ namespace HalloDoc.Controllers
 
         #region View Notes
 
-        [CustomAuthorize(new string[] { "Administrator", "Provider" })]
+        [CustomAuthorize(new string[] { "Administrator", "Provider"})]
         [HttpGet("AdminDashboard/ViewNotesAdmin/{reqid?}", Name = "AdminViewNotes")]
         [HttpGet("ProviderDashboard/ViewNotes/{reqid?}", Name = "ProvideViewNotes")]
         public IActionResult ViewNotesAdminn(int reqid)
@@ -463,6 +470,7 @@ namespace HalloDoc.Controllers
         #endregion Send Order
 
         #region Cancel Case
+        [CustomAuthorize(new string[] {"Administrator","Provider"})]
         [HttpPost]
         public IActionResult CancelCase(int requestid)
         {
@@ -481,6 +489,7 @@ namespace HalloDoc.Controllers
         #endregion Cancel Case
 
         #region Assign Case
+        [CustomAuthorize(new string [] {"Administrator"})]
         [HttpPost]
         public IActionResult AssignCase(IFormCollection form)
         {
@@ -495,7 +504,7 @@ namespace HalloDoc.Controllers
 
         #region Block Case
         // Block Request Actions
-
+        [CustomAuthorize(new string [] {"Administrator"})]
         public IActionResult BlockCase(int reeqid, string reason)
         {
             _adminActions.BlockCase(reeqid, reason);
@@ -640,6 +649,8 @@ namespace HalloDoc.Controllers
         #endregion View Document
 
         #region Clear Case
+
+        [CustomAuthorize( new string[] {"Administrator"})]
         public IActionResult ClearCaseee(int reqid)
         {
             bool result = _adminActions.ClearCase(reqid);
@@ -657,6 +668,7 @@ namespace HalloDoc.Controllers
 
         #region Send Aggrement
 
+        [CustomAuthorize(new string[] {"Administrator"})]
         public IActionResult SendAgreement(int requestid)
         {
 
@@ -704,17 +716,19 @@ namespace HalloDoc.Controllers
 
         #region Admin Profile
 
-        public IActionResult AdminProfile()
+        [CustomAuthorize(new string[] {"Administrator"})]
+        public IActionResult AdminProfile(string mail)
         {
             string email = HttpContext.Session.GetString("Email");
             ViewBag.username = _admin.username(email);
-            var admin = _admin.getProfileData(email);
+            var adminn = mail != null ? _admin.getProfileData(mail) : _admin.getProfileData(email);
 
-            return View(admin);
+            return View(adminn);
         }
 
         public IActionResult changeAccInfo(AdminProfileVM model, List<string> regions)
         {
+            
             string email = HttpContext.Session.GetString("Email");
 
             if (email != "")
@@ -723,7 +737,8 @@ namespace HalloDoc.Controllers
                 HttpContext.Session.SetString("Email", email);
                 TempData["Message"] = "Edited Successfully";
                 TempData["MessageType"] = "success";
-                return RedirectToAction("AdminProfile");
+
+                return email == model.Email ? RedirectToAction("AdminProfile") : RedirectToAction("PatientLoginn","Home");
             }
             TempData["Message"] = "Not able to change information";
             TempData["MessageType"] = "success";
@@ -766,6 +781,8 @@ namespace HalloDoc.Controllers
         #region Send Link
         // Send Link
 
+        [CustomAuthorize(new string[] {"Administrator","Provider"})]
+        [HttpPost("ProviderDashboard/sendLinkofSubmitreq")]
         public IActionResult sendLinkofSubmitreq(string PatientFirstname, string PatientLastname, string PatientEmail)
         {
             var link = Url.ActionLink("SubmitRequest", "Home", protocol: HttpContext.Request.Scheme);
@@ -793,9 +810,10 @@ namespace HalloDoc.Controllers
 
         #endregion Send Link
 
-        #region Create Admin Request
+        #region Create Request
         // Create Request
 
+        [CustomAuthorize(new string[] {"Administrator", "Provider"})]
         public IActionResult CreateRequestAdmin()
         {
             PatientReqVM model = new PatientReqVM();
@@ -825,6 +843,8 @@ namespace HalloDoc.Controllers
 
         #region Provider Menu
         // Provider Menu
+
+        [CustomAuthorize(new string[] {"Administrator" })]
         public IActionResult Provider()
         {
             var email = HttpContext.Session.GetString("Email");
@@ -1076,7 +1096,7 @@ namespace HalloDoc.Controllers
 
         #region Access
         // Access 
-
+        [CustomAuthorize(new string[] {"Administrator"})]
         public IActionResult userAccess()
         {
             var email = HttpContext.Session.GetString("Email");
@@ -1219,6 +1239,7 @@ namespace HalloDoc.Controllers
         #region Location
         // location 
 
+        [CustomAuthorize(new string[] {"Administrator"})]
         public IActionResult ProviderLocation()
         {
             return View();
@@ -1231,6 +1252,8 @@ namespace HalloDoc.Controllers
         #endregion Location
 
         #region Scheduling
+
+        [CustomAuthorize(new [] { "Administrator"})]
         public IActionResult Scheduling()
         {
             var email = HttpContext.Session.GetString("Email");
@@ -1556,6 +1579,8 @@ namespace HalloDoc.Controllers
         #endregion Scheduling
 
         #region Partners
+
+        [CustomAuthorize(new[] {"Administrator"})]
         public IActionResult Partners()
         {
             ViewBag.Regions = _admin.regions();
@@ -1677,6 +1702,7 @@ namespace HalloDoc.Controllers
 
         #region PatientHistory
 
+        [CustomAuthorize(new[] {"Administrator"})]
         public IActionResult PatientHistory()
         {
             return View("RecordsMenu/PatientRecords");
@@ -1721,6 +1747,7 @@ namespace HalloDoc.Controllers
 
         #region Search Records
 
+        [CustomAuthorize(new[] {"Administrator"})]
         public IActionResult SearchRecords()
         {
             return View("RecordsMenu/SearchRecords");
@@ -1860,6 +1887,7 @@ namespace HalloDoc.Controllers
 
         #region Blocked History
 
+        [CustomAuthorize(new string[] {"Administrator"})]
         public IActionResult BlockedHistory()
         {
             return View("RecordsMenu/BlockedRequests");
@@ -1904,6 +1932,7 @@ namespace HalloDoc.Controllers
         #endregion Blocked History
 
         #region Other
+        [CustomAuthorize(new string[] {"Administrator", "Provider"})]
         public IActionResult filterPhyByRegion(string RegionId)
         {
             var physician = _adminActions.GetPhysicianByRegion(RegionId);

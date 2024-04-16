@@ -134,7 +134,19 @@
     }
 </style>
 
+<div class="modal fade" id="eventModal" tabindex="-1" aria-labelledby="eventModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header bg-info">
+                <h5 class="modal-title" id="eventModalLabel">View Shift</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+            </div>
 
+        </div>
+    </div>
+</div>
 <div class="modal fade" id="createShiftModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
         <div class="modal-content border-0">
@@ -255,7 +267,7 @@
 
 <div class="container  py-3 px-4 mb-3">
 
-    <div class="p-0 m-0 d-flex justify-content-between">
+    <div class="p-0 mt-4 d-flex justify-content-between">
         <h4>My Schedule</h4>
         <button class="btn btn-outline-info">
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-left" viewBox="0 0 16 16">
@@ -352,7 +364,7 @@
                         }));
                         var calendarEl = document.getElementById('calendar');
                         calendar = new FullCalendar.Calendar(calendarEl, {
-                            height: 'auto',
+                            height: '25rem',
                             schedulerLicenseKey: 'GPL-My-Project-Is-Open-Source',
                             themeSystem: 'bootstrap5',
                             headerToolbar: false,
@@ -361,7 +373,54 @@
                             //editable: true,
                             resources: [resources],
                             events : events,
+                            eventClick: function (info) {
+                                $('#eventModal').modal('show');
 
+                                $('#eventModal').on('click', '#editbtn', function () {
+                                    $('#editbtn').addClass('d-none');
+                                    $('#savebtn').removeClass('d-none');
+                                    $('#StartDateView').prop('disabled', false);
+                                    $('#StartTimeView').prop('disabled', false);
+                                    $('#EndTimeView').prop('disabled', false);
+                                });
+
+                                
+                                // Get the ShiftDetailId from the event's extendedProps
+                                var shiftDetailId = info.event.extendedProps.ShiftDetailId;
+                                var region = info.event.extendedProps.region;
+                                console.log(region)
+                                // Populate modal content with event details
+                                var event = info.event;
+                                var modalBody = document.querySelector('#eventModal .modal-body');
+                                var eventDetails = `
+                                            <form asp-action="viewshift">
+                                            <input class="d-none" id="shiftDetailId" value="${shiftDetailId}">
+                                               <div class="form-floating mb-3 mt-3">
+
+                                                </div>
+                                            <div class="form-floating mb-3 mt-3">
+                                                            <select class="form-select pt-1 physicianDropdown" asp-for="Physicianid" id="physicianSelect" aria-label="Default select example" disabled>
+                                                            <option value="" selected disabled>${event.title}</option>
+                                                        </select>
+                                                    </div>
+                                                            <div class="col-md-12 form-floating mb-3">
+                                            <input id="StartDateView" class="form-control rounded vcs" name="Startdate" type="date" placeholder="Suchtext" autocomplete="off" value="${formatDate(event.start)}" disabled>
+                                                        <label for="StartDate">Shifted Date</label>
+                                                        <div class="d-flex gap-2 mt-3">
+                                                        <div class="col-md-6 form-floating mb-3">
+                                                                <input id="StartTimeView" asp-for="Starttime" disabled class="form-control rounded vcs" name="Starttime" type="time" placeholder="Suchtext" autocomplete="off" value="${formatTime(event.start)}" >
+                                                        <label for="StartTime">Start</label>
+                                                    </div>
+                                                    <div class="col-md-6 form-floating mb-3">
+                                                                <input id="EndTimeView" asp-for="Endtime" disabled	 class="form-control rounded vcs" name="Endtime" type="time" placeholder="Suchtext" autocomplete="off" value="${formatTime(event.end)}" >
+                                                        <label for="EndTime">End</label>
+                                                    </div>
+                                                    </div>
+                                                        
+                                                    </form>
+                                                `;
+                                modalBody.innerHTML = eventDetails;
+                            },
                             views: {
                                 
                                 resourceTimelineMonth: {
@@ -458,5 +517,24 @@
             icon: icon,
             title: message
         });
+    }
+</script>
+<script>
+    // Function to format date to YYYY-MM-DD
+    function formatDate(dateString) {
+        const date = new Date(dateString);
+        const year = date.getFullYear();
+        let month = (date.getMonth() + 1).toString().padStart(2, '0');
+        let day = date.getDate().toString().padStart(2, '0');
+        return `${year}-${month}-${day}`;
+    }
+</script>
+<script>
+    // Function to format time to HH:mm
+    function formatTime(dateString) {
+        const date = new Date(dateString);
+        let hours = date.getHours().toString().padStart(2, '0');
+        let minutes = date.getMinutes().toString().padStart(2, '0');
+        return `${hours}:${minutes}`;
     }
 </script>

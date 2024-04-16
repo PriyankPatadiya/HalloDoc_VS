@@ -29,7 +29,7 @@ namespace BAL.Repository
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(new[] { new Claim("email", email) , new Claim("Role", role ) }),
-                Expires = DateTime.UtcNow.AddHours(1), // Token expires in 1 hour
+                Expires = DateTime.UtcNow.AddMinutes(30), // Token expires in 1 hour
                 Issuer = _config["Jwt:Issuer"],
                 //Audience = _audience,
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key)

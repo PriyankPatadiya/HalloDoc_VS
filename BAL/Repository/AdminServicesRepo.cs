@@ -229,14 +229,13 @@ namespace BAL.Repository
                                      join AspNetUser in _context.AspNetUsers
                                      on admin.AspNetUserId equals AspNetUser.Id
                                      join adminregion in _context.AdminRegions
-                                     on admin.AdminId equals adminregion.AdminId
+                                     on admin.AdminId equals adminregion.AdminId into adminRegion
+                                     from totalAdminRegion in adminRegion.DefaultIfEmpty()
                                      where admin.Email == email
                                      select new AdminProfileVM()
                                      {
                                          UserName = admin.Email,
                                          Password = AspNetUser.PasswordHash,
-                                         //Status = admin.Status,
-                                         //Role =,
                                          FirstName = admin.FirstName,
                                          LastName = admin.LastName,
                                          Email = admin.Email,

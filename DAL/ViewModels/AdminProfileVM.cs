@@ -10,7 +10,8 @@ namespace DAL.ViewModels
         public string? UserName { get; set; }
 
         [Column(TypeName = "character varying")]
-        [RegularExpression(@"/^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[*.!@$%^&(){}[]:;<>,.?/~_+-=|\]).{8,32}$/", ErrorMessage = "Invalid Password")]
+        [RegularExpression(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^\da-zA-Z]).{8,15}$",
+            ErrorMessage = "Password must be 8-15 characters long and contain at least one uppercase letter, one lowercase letter, one digit, and one special character.")]
         public string Password { get; set; } = null!;
         public string? Status { get; set; }
         public string? Role { get; set; }
@@ -38,7 +39,7 @@ namespace DAL.ViewModels
         public string? Address1 { get; set; }
         public string? Address2 { get; set; }    
         public string? city { get; set; }
-        public int state { get; set; }
+        public int? state { get; set; }
 
         [StringLength(10)]
         [RegularExpression(@"^\d{6}$", ErrorMessage = "Enter a valid 6-digit zip code")]

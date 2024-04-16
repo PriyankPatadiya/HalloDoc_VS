@@ -10,7 +10,7 @@
 
 @*Table*@
 
-<div style="height: 88% !important" class="mx-2 tab-pane fade show active  table-responsive" id="pills-Dashboard" role="tabpanel" aria-labelledby="pills-Dashboard-tab" tabindex="0">
+<div class="mx-2 tab-pane fade show active" id="pills-Dashboard" role="tabpanel" aria-labelledby="pills-Dashboard-tab" tabindex="0">
     @if (ViewBag.EmptyMessage == null)
     {
         <Table class="table">
@@ -136,10 +136,7 @@
     }
 </div>
 
-
-
 @*Accordion*@
-
 
 <div class="accordion mx-2 pb-3" id="accordionExample">
     @{
@@ -304,22 +301,22 @@
     }
 
 </div>
-<div class="pb-2 w-100">
-    <nav id="pagination" aria-label="Page navigation">
-        <ul class="pagination justify-content-center mb-0">
+
+@*Pagination*@
+
+<div class="pb-2 d-flex justify-content-between">
+    <nav id="pagination" aria-label="Page navigation" style="width: 80%;">
+        <ul class="pagination mb-0">
             @if (ViewBag.CurrentPage >= 1 && ViewBag.CurrentPage <= ViewBag.TotalPages)
             {
                 int prevpage = Convert.ToInt32(ViewBag.CurrentPage) - 1;
                 int currpage = Convert.ToInt32(ViewBag.CurrentPage);
                 int nextpage = Convert.ToInt32(ViewBag.CurrentPage) + 1;
-                if (ViewBag.CurrentPage > 1)
-                {
-                    <li class="page-item">
-                        <a class="page-link btn rounded-4 btn-outline-info mx-1" id="previous" data-page="@(prevpage)" aria-label="Previous">
-                            &laquo;
-                        </a>
-                    </li>
-                }
+                <li class="page-item">
+                    <a class="page-link btn rounded-4 btn-outline-info mx-1" id="previous" data-page="@(prevpage)" aria-label="Previous" @(ViewBag.CurrentPage <= 1 ? "hidden" : "")>
+                        &laquo;
+                    </a>
+                </li>
                 for (int z = 0; z < 3; z++)
                 {
                     if (currpage + z <= ViewBag.TotalPages)
@@ -331,17 +328,18 @@
                         </li>
                     }
                 }
-                if (ViewBag.CurrentPage < ViewBag.TotalPages)
-                {
-                    <li class="page-item">
-                        <a class="page-link btn rounded-4 btn-outline-info mx-1" id="next" data-page="@(nextpage)" aria-label="Next">
-                            &raquo;
-                        </a>
-                    </li>
-                }
+                <li class="page-item">
+                    <a class="page-link btn rounded-4 btn-outline-info mx-1" id="next" data-page="@(nextpage)" aria-label="Next" @(ViewBag.CurrentPage >= ViewBag.TotalPages ? "hidden" : "")>
+                        &raquo;
+                    </a>
+                </li>
             }
         </ul>
     </nav>
+    @if (ViewBag.EmptyMessage == null)
+    {
+        <span>@ViewBag.CurrentPage of @ViewBag.TotalPages</span>
+    }
 </div>
 
 <script>

@@ -36,7 +36,7 @@
 
 @*Table*@
 
-<div style="height: 88% !important" class="mx-2 tab-pane fade show active table-responsive  " id="pills-Dashboard" role="tabpanel" aria-labelledby="pills-Dashboard-tab" tabindex="0">
+<div  class="mx-2 tab-pane fade show active" id="pills-Dashboard" role="tabpanel" aria-labelledby="pills-Dashboard-tab" tabindex="0">
     @if (ViewBag.EmptyMessage == null)
     {
     <Table class="table">
@@ -230,10 +230,7 @@
     }
 </div>
 
-
-
 @*Accordion*@
-
 
 <div class="accordion mx-2 pb-3" id="accordionExample">
     @{
@@ -566,6 +563,9 @@
     }
 
 </div>
+
+@*Pagination*@
+
 <div class="pb-2 d-flex justify-content-between">
     <nav id="pagination" aria-label="Page navigation" style="width: 80%;">
         <ul class="pagination mb-0">
@@ -598,31 +598,13 @@
             }
         </ul>
     </nav>
-    <span>@ViewBag.CurrentPage of @ViewBag.TotalPages</span>
+    @if (ViewBag.EmptyMessage == null)
+    {
+        <span>@ViewBag.CurrentPage of @ViewBag.TotalPages</span>
+    }
 </div>
+
 <script>
-
-    //function filterPhysicianByRegion(RegionId) {
-    //    if (RegionId != "0") {
-    //        $.ajax({
-    //            type: "GET",
-    //            url: "/AdminDashboard/filterPhyByRegion",
-    //            data: { RegionId: RegionId },
-
-    //            success: function (data) {
-    //                $('#physicianDrop').empty();
-    //                $('#physicianDrop1').empty();
-    //                $.each(data, function (index, item) {
-
-    //                    $('#physicianDrop').append($('<option>').text(item.firstName).attr('value', item.physicianId));
-    //                    $('#physicianDrop1').append($('<option>').text(item.firstName).attr('value', item.physicianId));
-    //                });
-    //                $('#physicianDrop option:first').prop('selected', true);
-    //            }
-    //        });
-    //    }
-    //}
-
 
     function openTransfterModal(requestid) {
         

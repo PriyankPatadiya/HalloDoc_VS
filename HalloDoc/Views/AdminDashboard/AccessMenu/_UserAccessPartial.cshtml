@@ -31,13 +31,13 @@
                     }
                     <td>@item.status</td>
                     <td>0</td>
-                    @if (item.AccountTypeid == 2)
+                    @if (item.AccountTypeid == 3)
                     {
-                        <td><a class="btn btn-outline-info" asp-action="PhysicanProfile" asp-controller="Admin" asp-route-id="@item.useraccessid">Edit</a></td>
+                        <td><a class="btn btn-outline-info" asp-action="ProviderProfile" asp-controller="AdminDashboard" asp-route-id="@item.useraccessid">Edit</a></td>
                     }
                     else
                     {
-                        <td><a class="btn btn-outline-info" asp-action="EditProfile" asp-controller="Admin" asp-route-adminid="@item.useraccessid">Edit</a></td>
+                        <td><a class="btn btn-outline-info" asp-action="AdminProfile" asp-controller="AdminDashboard" asp-route-mail="@item.email">Edit</a></td>
                     }
                 </tr>
             </tbody>
