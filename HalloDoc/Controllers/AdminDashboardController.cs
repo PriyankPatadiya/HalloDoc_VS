@@ -91,7 +91,7 @@ namespace HalloDoc.Controllers
         public IActionResult SearchByName(string SearchString, string selectButton, string StatusButton, string SelectedStateId, string partialviewpath, int pagesize, int currentpage)
         {
             var result = _admin.GetRequestsQuery(StatusButton);
-            result = result.Where(s => (String.IsNullOrEmpty(SearchString) || s.PatientName.Contains(SearchString)) && (System.String.IsNullOrEmpty(selectButton) || s.requestId == int.Parse(selectButton)) && ((SelectedStateId == "0" || SelectedStateId == null) || s.regionId == int.Parse(SelectedStateId)));
+            result = result.Where(s => (String.IsNullOrEmpty(SearchString) || s.PatientName.ToLower().Contains(SearchString.ToLower())) && (System.String.IsNullOrEmpty(selectButton) || s.requestId == int.Parse(selectButton)) && ((SelectedStateId == "0" || SelectedStateId == null) || s.regionId == int.Parse(SelectedStateId)));
 
 
 
@@ -668,7 +668,7 @@ namespace HalloDoc.Controllers
 
         #region Send Aggrement
 
-        [CustomAuthorize(new string[] {"Administrator"})]
+        [CustomAuthorize(new string[] {"Administrator", "Provider"})]
         public IActionResult SendAgreement(int requestid)
         {
 
@@ -857,6 +857,7 @@ namespace HalloDoc.Controllers
         public IActionResult filterProviderTable(string stateid)
         {
             var result = _provider.getfilteredPhysicians(int.Parse(stateid)).ToList();
+            ViewBag.IsNullData = result != null ? false : true;
             return PartialView("ProviderMenu/_ProviderPartialTable", result);
         }
 
@@ -977,9 +978,8 @@ namespace HalloDoc.Controllers
             try
             {
                 _admin.UpdateProviderProfile(id, businessName, businessWebsite, signatureFile, photoFile);
-
             }
-            catch (InvalidOperationException ex)
+            catch (Exception ex)
             {
 
                 Console.WriteLine(ex.Message);

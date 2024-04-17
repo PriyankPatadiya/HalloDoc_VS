@@ -139,6 +139,10 @@
     .fc-timeline-slot-frame{
         background-color: lightpink !important;
     }
+
+    /*.fc-daygrid-day-top{
+        background-color: lightsteelblue !important;
+    }*/
 </style>
 
 
@@ -258,7 +262,7 @@
                     </div>
                 </div>
             </form>
-        </div>
+        </div>  
     </div>
 </div>
 
@@ -305,18 +309,13 @@
 
 
     <div class="m-0 pe-2 py-0 d-flex justify-content-end my-3">
-        <div class="m-0 p-0 text-danger">
-            <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" class="bi bi-circle-fill" viewBox="0 0 16 16">
-                <circle cx="8" cy="8" r="8" />
-            </svg>
-            <span class="text-body me-3">Pending Shifts</span>
+        <div class="alert mx-1 px-4 border border-danger shadow" role="alert" style="background-color:#e39ce8">
         </div>
-        <div class="m-0 p-0 text-success">
-            <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" class="bi bi-circle-fill" viewBox="0 0 16 16">
-                <circle cx="8" cy="8" r="8" />
-            </svg>
-            <span class="text-body">Approved Shifts</span>
+        <span class="mx-1">Pending Shifts</span>
+        <!-- Button trigger modal -->
+        <div class="alert mx-1 px-4 border border-success shadow" role="alert" style="background-color: #31d87c">
         </div>
+        <span class="mx-1">Appoved Shifts</span>
     </div>
     <div class="my-3 p-0 d-flex justify-content-between">
         <div>
@@ -591,9 +590,7 @@
                                 var eventDetails = `
                                         <form asp-action="viewshift">
                                         <input class="d-none" id="shiftDetailId" value="${shiftDetailId}">
-                                           <div class="form-floating mb-3 mt-3">
-
-                                            </div>
+                                           
                                         <div class="form-floating mb-3 mt-3">
                                                         <select class="form-select pt-1 physicianDropdown" asp-for="Physicianid" id="physicianSelect" aria-label="Default select example" disabled>
                                                         <option value="" selected disabled>${event.title}</option>

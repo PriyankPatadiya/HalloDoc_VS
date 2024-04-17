@@ -123,7 +123,7 @@ namespace BAL.Repository
             var count = (from req in _context.Requests
                          join reqclient in _context.RequestClients
                          on req.RequestId equals reqclient.RequestId
-                         where !(req.IsDeleted == new BitArray(new bool[] { false }))
+                         where !(req.IsDeleted == new BitArray(new bool[] { true }))
                          select req.Status ).Where(item => myarray.Any(s => item == s)).Count();
             return count;
         }
@@ -162,7 +162,7 @@ namespace BAL.Repository
             var result = (from req in _context.Requests
                           join reqclient in _context.RequestClients
                           on req.RequestId equals reqclient.RequestId
-                          where ! (req.IsDeleted == new BitArray(new bool[] { false }))
+                          where ! (req.IsDeleted == new BitArray(new bool[] { true }))
                           orderby req.CreatedDate
                           select new AdminDashboardTableVM()
                           {

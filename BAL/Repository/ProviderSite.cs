@@ -46,7 +46,7 @@ namespace BAL.Repository
             var count = (from req in _context.Requests
                          join reqclient in _context.RequestClients
                          on req.RequestId equals reqclient.RequestId
-                         where req.PhysicianId == physicianId
+                         where (req.PhysicianId == physicianId) && !(req.IsDeleted == new System.Collections.BitArray(new bool[] {true}))
                          select req.Status).Where(item => myarray.Any(s => item == s)).Count();
             return count;
         }

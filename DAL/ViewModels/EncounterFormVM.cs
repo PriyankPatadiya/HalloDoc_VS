@@ -36,7 +36,7 @@ namespace DAL.ViewModels
             public string? MedicationDispensed { get; set; }
             public string? Procedures { get; set; }
             public string? Followup { get; set; }
-            public int? requestid { get; set; }
+            public int requestid { get; set; }
             public int? physicianid { get; set; }
 
     }

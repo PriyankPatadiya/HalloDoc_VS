@@ -41,7 +41,7 @@ namespace HalloDoc.Controllers
         {
             var physicianId = HttpContext.Session.GetInt32("PhysicianId");
             var result = _admin.GetRequestsQuery(StatusButton);
-            result = result.Where(s => (s.physicianId == physicianId) && (String.IsNullOrEmpty(SearchString) || s.PatientName.Contains(SearchString)) && (System.String.IsNullOrEmpty(selectButton) || s.requestId == int.Parse(selectButton)));
+            result = result.Where(s => (s.physicianId == physicianId) && (String.IsNullOrEmpty(SearchString) || s.PatientName.ToLower().Contains(SearchString.ToLower())) && (System.String.IsNullOrEmpty(selectButton) || s.requestId == int.Parse(selectButton)));
 
             int totalItems = result.Count();
             int totalPages = (int)Math.Ceiling((double)totalItems / pagesize);

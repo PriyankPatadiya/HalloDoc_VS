@@ -45,78 +45,85 @@
     </div>
 </div>
 
+@if (ViewBag.IsNullData)
+{
+    <div class="fs-1">Empty</div>
+}
+else
+{
+    <table class="table">
 
-<table class="table">
+        <colgroup>
+            <col span="1" style="width: 15%;">
+            <col span="1" style="width: 25%;">
+            <col span="1" style="width: 15%;">
+            <col span="1" style="width: 20%;">
+            <col span="1" style="width: 10%;">
+            <col span="1" style="width: 15%;">
+        </colgroup>
 
-    <colgroup>
-        <col span="1" style="width: 15%;">
-        <col span="1" style="width: 25%;">
-        <col span="1" style="width: 15%;">
-        <col span="1" style="width: 20%;">
-        <col span="1" style="width: 10%;">
-        <col span="1" style="width: 15%;">
-    </colgroup>
-
-    <thead class="table-head align-middle">
-        <tr>
-            <td class=" text-start">Stop Notification</td>
-            <td>Provider Name</td>
-            <td>Role</td>
-            <td>OnCall Status</td>
-            <td>Status</td>
-            <td class="text-center">Actions</td>
-        </tr>
-    </thead>
-
-    <tbody>
-        @{
-            var i = 0; 
-        }
-        @foreach (var physician in Model)
-        {
+        <thead class="table-head align-middle">
             <tr>
-                <td scope="row" class="align-middle">
-                    <input type="checkbox" class="form-check-input" name="fileIds" id="locationBox_@i" onchange="locationchange(@physician.physicianid, @i)" @(physician.OnCallStatus[0] ? "checked" : "")>
-                </td>
-
-                <td class="align-middle">
-                    @physician.Name
-                </td>
-                <td class="align-middle">
-                    @physician.Role
-                </td>
-                <td class="align-middle">
-                    UnAvailable
-                </td>
-                <td scope="row" class="align-middle">
-                    @if (physician.Status == 1)
-                    {
-                        <span class="badge bg-success">Active</span>
-                    }
-                    else if (physician.Status == 2)
-                    {
-                        <span class="badge bg-warning text-dark">Pending</span>
-                    }
-                    else if (physician.Status == 3)
-                    {
-                        <span class="badge bg-secondary">Conclude</span>
-                    }
-                    else
-                    {
-                        <span class="badge bg-danger">Unknown</span>
-                    }
-                </td>
-                <td>
-                    <button class="btn btn-outline-info contact-provider-btn shadow-none" data-bs-toggle="modal" data-bs-target="#contactProviderModal">Contact</button>
-                    <a asp-action="ProviderProfile" asp-route-id="@physician.physicianid" class="btn btn-outline-info shadow-none ">Edit</a>
-                </td>
+                <td class=" text-start">Stop Notification</td>
+                <td>Provider Name</td>
+                <td>Role</td>
+                <td>OnCall Status</td>
+                <td>Status</td>
+                <td class="text-center">Actions</td>
             </tr>
-            i++;
-        }
+        </thead>
 
-    </tbody>
+        <tbody>
+            @{
+                var i = 0;
+            }
+            @foreach (var physician in Model)
+            {
+                <tr>
+                    <td scope="row" class="align-middle">
+                        <input type="checkbox" class="form-check-input" name="fileIds" id="locationBox_@i" onchange="locationchange(@physician.physicianid, @i)" @(physician.OnCallStatus[0] ? "checked" : "")>
+                    </td>
 
-</table>
+                    <td class="align-middle">
+                        @physician.Name
+                    </td>
+                    <td class="align-middle">
+                        @physician.Role
+                    </td>
+                    <td class="align-middle">
+                        UnAvailable
+                    </td>
+                    <td scope="row" class="align-middle">
+                        @if (physician.Status == 1)
+                        {
+                            <span class="badge bg-success">Active</span>
+                        }
+                        else if (physician.Status == 2)
+                        {
+                            <span class="badge bg-warning text-dark">Pending</span>
+                        }
+                        else if (physician.Status == 3)
+                        {
+                            <span class="badge bg-secondary">Conclude</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-danger">Unknown</span>
+                        }
+                    </td>
+                    <td>
+                        <button class="btn btn-outline-info contact-provider-btn shadow-none" data-bs-toggle="modal" data-bs-target="#contactProviderModal">Contact</button>
+                        <a asp-action="ProviderProfile" asp-route-id="@physician.physicianid" class="btn btn-outline-info shadow-none ">Edit</a>
+                    </td>
+                </tr>
+                i++;
+            }
+
+        </tbody>
+
+    </table>
+}
+
 <script>
     function locationchange(id, i){
         debugger
