@@ -121,16 +121,20 @@ namespace HalloDoc.Controllers
 
                     string token = _jwttoken.generateJwtToken(a.Email, role);
                     Response.Cookies.Append("jwt", token);
+
+                    bool isAdmin = _context.Admins.Any(u => u.Email == a.Email);
+                    bool isPatient = _context.Users.Any(u => u.Email == a.Email);
+                    bool isProvider = _context.Physicians.Any(u => u.Email == a.Email);
                     
-                    if (roleid == 1)
+                    if (roleid == 1 && isAdmin)
                     {
                         return RedirectToAction("MainPage", "AdminDashboard");
                     }
-                    if(roleid == 2)
+                    if(roleid == 2 && isPatient)
                     {
                         return RedirectToAction("PatientDashboard", "PatientDashBoard");
                     }
-                    if(roleid == 3)
+                    if(roleid == 3 && isProvider)
                     {
                         var physicianId = _context.Physicians.Where(u => u.AspNetUserId == userid.Id).FirstOrDefault().PhysicianId;
                         HttpContext.Session.SetInt32("PhysicianId", physicianId);

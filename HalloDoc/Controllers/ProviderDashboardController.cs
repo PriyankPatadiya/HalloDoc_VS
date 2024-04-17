@@ -34,7 +34,7 @@ namespace HalloDoc.Controllers
             model.ToCloseCount = _provider.CountRequests("5", physicianId);
             model.UnpaidCount = _provider.CountRequests("6", physicianId);
             model.Region = _admin.regions();
-            ViewBag.username = _context.Physicians.FirstOrDefault(u => u.PhysicianId == physicianId).FirstName;
+            TempData["username"] = _context.Physicians.FirstOrDefault(u => u.PhysicianId == physicianId).FirstName;
             return View("Dashboard/DashboardPage", model);
         }
         public IActionResult filterDashboardTable(string SearchString, string selectButton, string StatusButton, string partialviewpath, int pagesize, int currentpage)

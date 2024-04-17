@@ -151,7 +151,7 @@
                     <span aria-hidden="true"><i class="bi bi-x-lg text-white"></i></span>
                 </button>
             </div>
-            <form asp-action="CreateShift" method="post" class="row p-3">
+            <form asp-action="CreateShift" method="post" class="row p-3" id="createShiftModalForm">
                 <input type="hidden" asp-for="checkWeekday" id="checkWeekday" />
 
                 <div class="form-floating my-3">
@@ -253,7 +253,7 @@
 
                 <div class="row">
                     <div class="col-12 d-flex justify-content-end">
-                        <input type="submit" value="Save" class="btn btn-info  shadow-none text-white mx-2" />
+                        <input type="button" value="Save" class="btn btn-info  shadow-none text-white mx-2" onclick="submitAddShiftForm()" />
                         <button type="button" class="btn btn-outline-info  shadow-none hover_white" data-bs-dismiss="modal">Cancel</button>
                     </div>
                 </div>
@@ -351,6 +351,41 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/fullcalendar-scheduler@6.1.11/index.global.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
+<script>
+    if ('@TempData["Message"]' != '') {
+        showToast('@TempData["Message"]', '@TempData["MessageType"]');
+        '@TempData.Remove("Message")'
+    }
+    function showToast(message, messageType) {
+        const Toast = Swal.mixin({
+            toast: true,
+            position: "top-end",
+            showConfirmButton: false,
+            timer: 3000,
+            timerProgressBar: true,
+            didOpen: (toast) => {
+                toast.onmouseenter = Swal.stopTimer;
+                toast.onmouseleave = Swal.resumeTimer;
+            }
+        });
+
+        let icon = "info";
+        if (messageType === "success") {
+            icon = "success";
+        } else if (messageType === "error") {
+            icon = "error";
+        } else if (messageType === "warning") {
+            icon = "warning";
+        }
+
+        Toast.fire({
+            icon: icon,
+            title: message
+        });
+    }
+</script>
 <script>
     function menubox() {
         event.preventDefault();
@@ -362,6 +397,24 @@
         document.querySelector('#checkWeekday').value = repeatDays.join(',');
         console.log(document.querySelector('#checkWeekday').value);
     };
+
+    function submitAddShiftForm() {
+
+        var regionId = $("#selectregion").val();
+        var starttime = $("#StartTime").val();
+        var endtime = $("#EndTime").val();
+        var endtime = $("#EndTime").val();
+        console.log(regionId);
+        if (regionId == null) {
+            alert("Please Select the reqion");
+        }
+        else if (endtime - starttime < 1) {
+            alert("endtime should be greater than starttime");
+        }
+        else {
+            $("#createShiftModalForm").submit();
+        }
+    }
 </script>
 <script>
 

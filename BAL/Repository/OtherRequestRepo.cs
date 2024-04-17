@@ -2,6 +2,7 @@
 using DAL.DataContext;
 using DAL.DataModels;
 using DAL.ViewModels;
+using System.Collections;
 
 namespace BAL.Repository
 {
@@ -28,6 +29,7 @@ namespace BAL.Repository
             request.RelationName = model.Relation;
             request.CreatedDate = DateTime.Now;
             request.ConfirmationNumber = model.confirmationnumber;
+            request.IsDeleted = new BitArray(new bool[] { true });
             _context.Requests.Add(request);
             _context.SaveChanges();
 
@@ -72,6 +74,7 @@ namespace BAL.Repository
             request.PhoneNumber = model.YourPhoneNumber;
             request.CreatedDate = DateTime.Now;
             request.ConfirmationNumber = model.confirmationnumber;
+            request.IsDeleted = new BitArray(new bool[] { true });
             _context.Requests.Add(request);
             _context.SaveChanges();
 
@@ -126,6 +129,7 @@ namespace BAL.Repository
             request.PhoneNumber = model.PhoneNumber;
             request.CreatedDate = DateTime.Now;
             request.ConfirmationNumber = model.confirmationnumber;
+            request.IsDeleted = new BitArray(new bool[] { true });
             _context.Requests.Add(request);
             _context.SaveChanges();
 

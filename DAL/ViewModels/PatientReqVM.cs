@@ -28,7 +28,8 @@ namespace DAL.ViewModels
         [Key]
         [StringLength(256)]
         [Required(ErrorMessage = " Email Is Required")]
-        [RegularExpression(@"^[a-zA-Z0-9._%+-]+@(gmail\.com|yahoo\.com|gov\.in)$", ErrorMessage = "Enter a valid email address with valid domain")]
+        [DataType(DataType.EmailAddress , ErrorMessage = "Invalid Email Address")]
+        //[RegularExpression(@"^[a-zA-Z0-9._%+-]+@(gmail\.com|yahoo\.com|gov\.in)$", ErrorMessage = "Enter a valid email address with valid domain")]
         public string Email { get; set; } = null!;
 
         [Column(TypeName = "character varying")]
@@ -63,7 +64,6 @@ namespace DAL.ViewModels
         public string? City { get; set; }
 
         [StringLength(100)]
-        [Required(ErrorMessage = "Fill This Field")]
         public string? State { get; set; }
 
         [StringLength(10)]

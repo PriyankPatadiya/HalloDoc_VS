@@ -68,6 +68,7 @@ namespace BAL.Repository
                 request.PhoneNumber = pInfo.PhoneNumber;
                 request.Email = pInfo.Email;
                 request.ConfirmationNumber = pInfo.confirmationnumber;
+                request.IsDeleted = new BitArray(new bool[] { true });
                 _context.Requests.Add(request);
                 _context.SaveChanges();
 
@@ -110,7 +111,7 @@ namespace BAL.Repository
                 request.PhoneNumber = pInfo.PhoneNumber;
                 request.Email = pInfo.Email;
                 request.ConfirmationNumber = pInfo.confirmationnumber;
-
+                request.IsDeleted = new BitArray(new bool[] { true });
                 _context.Requests.Add(request);
                 _context.SaveChanges();
 
@@ -147,6 +148,50 @@ namespace BAL.Repository
 
         }
        
+        public void AddRequestForElse(PatientReqVM pInfo)
+        {
+            var request = new Request();
+
+            request.RequestTypeId = 2;
+            request.FirstName = pInfo.FirstName;
+            request.LastName = pInfo.LastName;
+            request.CreatedDate = DateTime.Now;
+            request.PhoneNumber = pInfo.PhoneNumber;
+            request.Email = pInfo.Email;
+            request.ConfirmationNumber = pInfo.confirmationnumber;
+            request.IsDeleted = new BitArray(new bool[] { true });
+            _context.Requests.Add(request);
+            _context.SaveChanges();
+
+            var requestClient = new RequestClient();
+
+            requestClient.RequestId = request.RequestId;
+            requestClient.FirstName = pInfo.FirstName;
+            requestClient.LastName = pInfo.LastName;
+            requestClient.Email = pInfo.Email;
+            requestClient.PhoneNumber = pInfo.PhoneNumber;
+            requestClient.Street = pInfo.Street;
+            requestClient.City = pInfo.City;
+            requestClient.State = pInfo.State;
+            requestClient.ZipCode = pInfo.ZipCode;
+            requestClient.IntDate = pInfo.BirthDate.Value.Day;
+            requestClient.IntYear = pInfo.BirthDate.Value.Year;
+            requestClient.StrMonth = pInfo.BirthDate.Value.Month.ToString();
+            requestClient.RegionId = pInfo.SelectedStateId;
+
+
+            _context.RequestClients.Add(requestClient);
+            _context.SaveChanges();
+
+            var reqnotes = new RequestNote();
+            reqnotes.RequestId = request.RequestId;
+            reqnotes.AdminNotes = "-";
+            reqnotes.CreatedDate = DateTime.Now;
+            reqnotes.CreatedBy = request.FirstName + request.LastName;
+            reqnotes.PhysicianNotes = "-";
+            _context.RequestNotes.Add(reqnotes);
+            _context.SaveChanges();
+        }
         public RequestClient GetUserByEmail(string email)
         {
             return _context.RequestClients.OrderBy(e => e.RequestId).LastOrDefault(u => u.Email == email);

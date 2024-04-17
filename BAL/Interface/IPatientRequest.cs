@@ -15,5 +15,6 @@ namespace BAL.Interface
         public string GenerateConfirmationNumber(PatientReqVM model);
 
         public void AddAdminCreateRequest(PatientReqVM model, string email);
+        public void AddRequestForElse(PatientReqVM pInfo);
     }
 }

@@ -22,7 +22,7 @@ namespace DAL.ViewModels
 
         public string? Status { get; set; }
 
-        [Required(ErrorMessage = "Role is required")]
+        
         public string? Role { get; set; }
 
         [Required(ErrorMessage = "First name is required")]
@@ -40,8 +40,6 @@ namespace DAL.ViewModels
         [RegularExpression(@"^[a-zA-Z0-9._%+-]+@(gmail\.com|yahoo\.com|gov\.in)$", ErrorMessage = "Enter a valid email address with valid domain")]
         public string? Email { get; set; }
 
-        [Compare("Email", ErrorMessage = "Email and confirm email must match")]
-        public string? ConfirmEmail { get; set; }
 
         [Required(ErrorMessage = "Required!")]
         [RegularExpression(@"^\d{10}$", ErrorMessage = "Mobile number must be 10 digits")]

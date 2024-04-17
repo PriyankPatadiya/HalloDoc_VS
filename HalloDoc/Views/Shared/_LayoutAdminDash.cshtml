@@ -1,4 +1,9 @@
-﻿<!DOCTYPE html>
+﻿
+@{
+    TempData.Keep("username");
+}
+
+<!DOCTYPE html>
 <html lang="en" style="min-height: 100vh; height:100vh;">
 <head>
     <meta charset="UTF-8" />
@@ -47,7 +52,7 @@
 
             <div class="text-center align-items-center">
                 <span class="text-secondary d-none d-sm-inline"> Welcome </span>
-                <span class="fw-bold fs-6 text-body mt-1 ">@ViewBag.username</span>
+                <span class="fw-bold fs-6 text-body mt-1 ">@TempData["username"]</span>
                 <a asp-controller="Home" asp-action="Logout"> <button class="btn text-decoration-none border border-info bg-transparent text-info shadow-none mx-2">Logout</button></a>
                 <button class="btn bg-transparent pt-1 pb-2 border border-info text-info me-4 shadow-none"
                         id="theme-toggle" >

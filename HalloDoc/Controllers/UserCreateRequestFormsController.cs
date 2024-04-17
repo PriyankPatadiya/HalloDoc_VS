@@ -18,14 +18,16 @@ namespace HalloDoc.Controllers
         private readonly IHostingEnvironment _environment;
         private readonly IuploadFile _uploadfile;
         private readonly IPatientRequest _patreq;
+        private readonly IRequests _others;
 
         [Obsolete]
-        public UserCreateRequestFormsController(ApplicationDbContext context, IPatientRequest req, IHostingEnvironment environment, IPatientRequest parreq)
+        public UserCreateRequestFormsController(ApplicationDbContext context, IPatientRequest req, IHostingEnvironment environment, IPatientRequest parreq, IRequests others)
         {
             _request = req;
             _context = context;
             _environment = environment;
             _patreq = parreq;
+            _others = others;
         }
         public IActionResult RequestForMe()
         {
@@ -60,21 +62,22 @@ namespace HalloDoc.Controllers
         {
             var email = HttpContext.Session.GetString("Email");
             var user = _context.AspNetUsers.Any(u => u.Email == email);
-            if(user && ModelState.IsValid)
-            {
                 model.State = await _patreq.GetStateAccordingToRegionId(model.SelectedStateId);
                 model.CreatedDate = DateTime.Now.Date;
+            if(user && ModelState.IsValid)
+            {
                 model.confirmationnumber = _patreq.GenerateConfirmationNumber(model);
 
-                var uniquefilesavetoken = new Guid().ToString();
-                string fileName = Path.GetFileNameWithoutExtension(model.Document.FileName);
-                string extension = Path.GetExtension(model.Document.FileName);
-                fileName = $"{fileName}_{uniquefilesavetoken}{extension}";
-
+                
                 _patreq.AddPatientForm(model);
 
                 if (model.Document != null && model.Document.Length > 0)
                 {
+                    var uniquefilesavetoken = new Guid().ToString();
+                    string fileName = Path.GetFileNameWithoutExtension(model.Document.FileName);
+                    string extension = Path.GetExtension(model.Document.FileName);
+                    fileName = $"{fileName}_{uniquefilesavetoken}{extension}";
+
                     string path = Path.Combine(this._environment.WebRootPath, "Uploads");
                     if (!Directory.Exists(path))
                     {
@@ -106,29 +109,30 @@ namespace HalloDoc.Controllers
                 model.CreatedDate = DateTime.Now.Date;
                 model.confirmationnumber = _patreq.GenerateConfirmationNumber(model);
 
-                var uniquefilesavetoken = new Guid().ToString();
-                string fileName = Path.GetFileNameWithoutExtension(model.Document.FileName);
-                string extension = Path.GetExtension(model.Document.FileName);
-                fileName = $"{fileName}_{uniquefilesavetoken}{extension}";
+                
 
-                _patreq.AddPatientForm(model);
+                _patreq.AddRequestForElse(model);
 
-                if (model.Document != null && model.Document.Length > 0)
-                {
-                    string path = Path.Combine(this._environment.WebRootPath, "Uploads");
-                    if (!Directory.Exists(path))
-                    {
-                        Directory.CreateDirectory(path);
-                    }
-                    using (FileStream stream = new FileStream(Path.Combine(path, fileName), FileMode.Create))
-                    {
-                        model.Document.CopyTo(stream);
-                    }
-                    var request = _patreq.GetUserByEmail(model.Email);
-                    _patreq.Addrequestwisefile(fileName, request.RequestId);
+                //if (model.Document != null && model.Document.Length > 0)
+                //{
+                //    var uniquefilesavetoken = new Guid().ToString();
+                //    string fileName = Path.GetFileNameWithoutExtension(model.Document.FileName);
+                //    string extension = Path.GetExtension(model.Document.FileName);
+                //    fileName = $"{fileName}_{uniquefilesavetoken}{extension}";
+                //    string path = Path.Combine(this._environment.WebRootPath, "Uploads");
+                //    if (!Directory.Exists(path))
+                //    {
+                //        Directory.CreateDirectory(path);
+                //    }
+                //    using (FileStream stream = new FileStream(Path.Combine(path, fileName), FileMode.Create))
+                //    {
+                //        model.Document.CopyTo(stream);
+                //    }
+                //    var request = _patreq.GetUserByEmail(model.Email);
+                //    _patreq.Addrequestwisefile(fileName, request.RequestId);
 
-                    return RedirectToAction("PatientDashboard", "PatientDashBoard");
-                }
+                //    return RedirectToAction("PatientDashboard", "PatientDashBoard");
+                //}
             }
             var req = new PatientReqVM();
             req.Region = _context.Regions.ToList();

@@ -174,7 +174,7 @@ namespace BAL.Repository
 
             if (model.ICAFile != null)
             {
-                _uploadProvider.UploadDocFile(model.File, physician.PhysicianId, "ICA");
+                _uploadProvider.UploadDocFile(model.ICAFile, physician.PhysicianId, "ICA");
                 physician.IsAgreementDoc = new BitArray(new[] { true });
             }
             else

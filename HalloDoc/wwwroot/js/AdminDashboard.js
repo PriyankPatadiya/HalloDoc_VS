@@ -35,6 +35,7 @@ $(document).ready(function () {
         currentpage = $("#" + id).data("page");
         console.log("Current Page: " + currentpage);
         var storedpartial = localStorage.getItem("partialviewpath");
+        storedpartial = storedpartial != null ?  storedpartial : "AdminDashboardNew";
         ChangeTable(storedpartial, StatusButton, currentpage, pagesize);
     });
 

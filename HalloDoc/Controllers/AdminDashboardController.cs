@@ -57,7 +57,7 @@ namespace HalloDoc.Controllers
         public IActionResult MainPage()
         {
             var email = HttpContext.Session.GetString("Email");
-            ViewBag.username = _admin.username(email);
+            TempData["username"] = _admin.username(email);
             AdminMainPageVM MainModel = new AdminMainPageVM()
             {
                 PageName = PageName.Dashboard
@@ -730,8 +730,8 @@ namespace HalloDoc.Controllers
         {
             
             string email = HttpContext.Session.GetString("Email");
-
-            if (email != "")
+            var isAdminExist = _context.AspNetUsers.Any(i => i.Email == model.Email);
+            if (email != "" && !isAdminExist)
             {
                 _admin.changeAccountInfo(model, email, regions);
                 HttpContext.Session.SetString("Email", email);
@@ -1278,7 +1278,7 @@ namespace HalloDoc.Controllers
         [CustomAuthorize(new[] {"Administrator", "Provider"})]
         [HttpPost("ProviderDashboard/CreateShift")]
         [HttpPost("AdminDashboard/CreateShift")]
-        [ValidateAntiForgeryToken]
+   
         public IActionResult CreateShift(SchedulingVM model)
         {
             var physicianId = HttpContext.Session.GetInt32("PhysicianId");
@@ -1289,12 +1289,13 @@ namespace HalloDoc.Controllers
 
 
                 bool isShiftExist = _context.ShiftDetails.Any(sD =>
+                                    (sD.IsDeleted == new BitArray(new bool[] {false})) && (
                                     sD.Shift.PhysicianId == (int)(physicianId != null ? physicianId : model.Physicianid) &&
                                     sD.ShiftDate.Date == model.Startdate.Date && // Shifts must start on the same day
                                     ((sD.StartTime < model.Endtime && sD.EndTime > model.Starttime) || // Check for overlap
                                     (sD.StartTime < model.Starttime && sD.EndTime > model.Starttime) ||
                                     (sD.StartTime < model.Endtime && sD.EndTime > model.Endtime) ||
-                                    (sD.StartTime > model.Starttime && sD.EndTime < model.Endtime)));
+                                    (sD.StartTime > model.Starttime && sD.EndTime < model.Endtime))));
 
 
                 if (!isShiftExist)
@@ -1315,7 +1316,7 @@ namespace HalloDoc.Controllers
                     sd.StartTime = model.Starttime;
                     sd.EndTime = model.Endtime;
                     sd.RegionId = model.Regionid;
-                    sd.Status = model.Status;
+                    sd.Status = (short)(physicianId != null ? 1 : model.Status);
                     sd.IsDeleted = new BitArray(new[] { false });
                     _context.ShiftDetails.Add(sd);
                     _context.SaveChanges();
@@ -1343,20 +1344,38 @@ namespace HalloDoc.Controllers
 
                             for (int i = 0; i < shift.RepeatUpto; i++)
                             {
+                                bool isRepeatedShiftExist = _context.ShiftDetails.Any(sD =>
+                                (sD.IsDeleted == new  BitArray(new bool[] { false }) ) &&
+                                    (sD.Shift.PhysicianId == (int)(physicianId != null ? physicianId : model.Physicianid) &&
+                                    sD.ShiftDate.Date == startDateForWeekday.AddDays(i * 7) && // Shifts must start on the same day
+                                    ((sD.StartTime < model.Endtime && sD.EndTime > model.Starttime) || // Check for overlap
+                                    (sD.StartTime < model.Starttime && sD.EndTime > model.Starttime) ||
+                                    (sD.StartTime < model.Endtime && sD.EndTime > model.Endtime) ||
+                                    (sD.StartTime > model.Starttime && sD.EndTime < model.Endtime))));
 
-                                ShiftDetail shiftDetail = new ShiftDetail
+                                if (isRepeatedShiftExist)
                                 {
-                                    ShiftId = shift.ShiftId,
-                                    ShiftDate = startDateForWeekday.AddDays(i * 7),
-                                    RegionId = (int)model.Regionid,
-                                    StartTime = model.Starttime,
-                                    EndTime = model.Endtime,
-                                    Status = 0,
-                                    IsDeleted = new BitArray(new[] { false })
-                                };
+                                    TempData["Message"] = "Shift Already exist on " + startDateForWeekday.ToString("dddd");
+                                    TempData["MessageType"] = "error";
+                                    return physicianId == null ? RedirectToAction("Scheduling") : RedirectToAction("Scheduling", "ProviderDashboard");
+                                }
+                                else
+                                {
+                                    ShiftDetail shiftDetail = new ShiftDetail
+                                    {
+                                        ShiftId = shift.ShiftId,
+                                        ShiftDate = startDateForWeekday.AddDays(i * 7),
+                                        RegionId = (int)model.Regionid,
+                                        StartTime = model.Starttime,
+                                        EndTime = model.Endtime,
+                                        Status = (short)(physicianId != null ? 1 : model.Status),
+                                        IsDeleted = new BitArray(new[] { false })
+                                    };
 
-                                _context.Add(shiftDetail);
-                                _context.SaveChanges();
+                                    _context.Add(shiftDetail);
+                                    _context.SaveChanges();
+                                }
+                                
                             }
                         }
                     }

@@ -7,6 +7,7 @@ using DAL.DataModels;
 using Microsoft.AspNetCore.Identity;
 using Org.BouncyCastle.Ocsp;
 using Microsoft.AspNetCore.Http;
+using System.Collections;
 
 namespace BAL.Repository
 {
@@ -122,6 +123,7 @@ namespace BAL.Repository
             var count = (from req in _context.Requests
                          join reqclient in _context.RequestClients
                          on req.RequestId equals reqclient.RequestId
+                         where !(req.IsDeleted == new BitArray(new bool[] { false }))
                          select req.Status ).Where(item => myarray.Any(s => item == s)).Count();
             return count;
         }
@@ -160,6 +162,7 @@ namespace BAL.Repository
             var result = (from req in _context.Requests
                           join reqclient in _context.RequestClients
                           on req.RequestId equals reqclient.RequestId
+                          where ! (req.IsDeleted == new BitArray(new bool[] { false }))
                           orderby req.CreatedDate
                           select new AdminDashboardTableVM()
                           {

@@ -164,7 +164,7 @@
                 </div>
 
                 <div class="form-floating mb-3">
-                    <select class="form-select pt-1" asp-for="Regionid" id="regionDrop" aria-label="Default select example">
+                    <select class="form-select pt-1" asp-for="Regionid" id="regionDrop" aria-label="Default select example" required>
                         <option value="0" selected disabled>Region</option>
                         @foreach(var item in ViewBag.region)
                         {
@@ -175,15 +175,15 @@
 
                 <div class="col-md-12 form-floating mb-3">
                     <input id="StartDate" asp-for="Startdate" class="form-control rounded vcs" name="Startdate" type="date"
-                           min="@DateTime.Now.ToString("yyyy-MM-dd")" value="@DateTime.Now.ToString("yyyy-MM-dd")" autocomplete=off>
+                           min="@DateTime.Now.ToString("yyyy-MM-dd")" value="@DateTime.Now.ToString("yyyy-MM-dd")" autocomplete=off required>
                     <label for="floatingInput">Starting Date</label>
                 </div>
                 <div class="col-md-6 form-floating mb-3">
-                    <input id="StartTime" asp-for="Starttime" class="form-control rounded vcs" name="Starttime" type="time" placeholder=Suchtext autocomplete=off>
+                    <input id="StartTime" asp-for="Starttime" class="form-control rounded vcs" name="Starttime" type="time" placeholder=Suchtext autocomplete=off required>
                     <label for="floatingInput">Start</label>
                 </div>
                 <div class="col-md-6 form-floating mb-3">
-                    <input id="EndTime" asp-for="Endtime" class="form-control rounded vcs" name="Endtime" type="time" placeholder=Suchtext autocomplete=off>
+                    <input id="EndTime" asp-for="Endtime" class="form-control rounded vcs" name="Endtime" type="time" placeholder=Suchtext autocomplete=off required>
                     <label for="floatingInput">End</label>
                 </div>
                 <div class="col-md-6 d-flex align-items-center justify-content-start mb-3">
@@ -281,18 +281,13 @@
 
 
     <div class="m-0 pe-2 py-0 d-flex justify-content-end my-3">
-        <div class="m-0 p-0 text-danger">
-            <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" class="bi bi-circle-fill" viewBox="0 0 16 16">
-                <circle cx="8" cy="8" r="8" />
-            </svg>
-            <span class="text-body me-3">Pending Shifts</span>
+        <div class="alert mx-1 px-4 border border-danger shadow" role="alert" style="background-color:#e39ce8">
         </div>
-        <div class="m-0 p-0 text-success">
-            <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" class="bi bi-circle-fill" viewBox="0 0 16 16">
-                <circle cx="8" cy="8" r="8" />
-            </svg>
-            <span class="text-body">Approved Shifts</span>
+        <span class="mx-1">Pending Shifts</span>
+        <!-- Button trigger modal -->
+        <div class="alert mx-1 px-4 border border-success shadow" role="alert" style="background-color: #31d87c">
         </div>
+        <span class="mx-1">Appoved Shifts</span>
     </div>
     <div class="my-3 p-0 d-flex justify-content-between">
         <div>
@@ -321,6 +316,18 @@
 
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
+<script>
+    function menubox() {
+        event.preventDefault();
+        let checkboxes = document.querySelectorAll('.Every:checked');
+        let repeatDays = [];
+        checkboxes.forEach(checkbox => {
+            repeatDays.push(checkbox.value);
+        });
+        document.querySelector('#checkWeekday').value = repeatDays.join(',');
+        console.log(document.querySelector('#checkWeekday').value);
+    };
+</script>
 <script>
     //let calendarNext = () => calendar.next();
     //let calendarPrev = () => calendar.prev();
@@ -472,12 +479,15 @@
     }
     function submitAddShiftForm(){
 
+        var regionId = $("#regionDrop").val();
         var starttime = $("#StartTime").val();
         var endtime = $("#EndTime").val();
-
-        console.log(starttime);
-        console.log(endtime);
-        if(endtime - starttime < 1){
+        var endtime = $("#EndTime").val();
+        console.log(regionId);
+        if(regionId == null){
+            alert("Please Select the reqion");
+        }
+        else if(endtime - starttime < 1){
             alert("endtime should be greater than starttime");
         }
         else{
