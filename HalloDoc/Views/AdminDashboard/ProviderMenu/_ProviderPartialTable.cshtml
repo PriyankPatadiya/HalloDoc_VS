@@ -122,9 +122,40 @@ else
         </tbody>
 
     </table>
+
+    <div class="pb-2 position-absolute d-flex justify-content-between align-items-center" style="bottom: 0%; width: 95%">
+        <nav id="pagination" aria-label="Page navigation">
+            <ul class="pagination justify-content-center mb-0">
+                @if (ViewBag.CurrentPage >= 1 && ViewBag.CurrentPage <= ViewBag.TotalPages)
+                {
+                    int prevpage = Convert.ToInt32(ViewBag.CurrentPage) - 1;
+                    int currpage = Convert.ToInt32(ViewBag.CurrentPage);
+                    int nextpage = Convert.ToInt32(ViewBag.CurrentPage) + 1;
+                    <li class="page-item">
+                        <a class="page-link btn rounded-4 btn-outline-info mx-1" id="previous" data-page="@(prevpage)" aria-label="Previous" @(ViewBag.CurrentPage <= 1 ? "hidden" : "")>
+                            &laquo;
+                        </a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link btn rounded-4 btn-outline-info mx-1" id="current" data-page="@(currpage)" aria-label="Current">
+                            @(ViewBag.CurrentPage)
+                        </a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link btn rounded-4 btn-outline-info mx-1" id="next" data-page="@(nextpage)" aria-label="Next" @(ViewBag.CurrentPage >= ViewBag.TotalPages ? "hidden" : "")>
+                            &raquo;
+                        </a>
+                    </li>
+                }
+            </ul>
+        </nav>
+        <span>@ViewBag.CurrentPage of @ViewBag.TotalPages</span>
+    </div>
 }
 
 <script>
+
+    
     function locationchange(id, i){
         debugger
         var boxid = $("#locationBox_"+i);

@@ -1,5 +1,9 @@
-﻿@{
+﻿@if(ViewBag.IsPhysician == false){
     Layout = "~/Views/Shared/_LayoutAdminDash.cshtml";
+}
+else
+{
+    Layout = "~/Views/Shared/_layoutProvider.cshtml";
 }
 @model DAL.ViewModels.PatientReqVM
 
@@ -9,24 +13,51 @@
     <div class="mx-auto pt-3 mb-3 container-sm" id="secondDiv">
         <div class="backbtn d-flex justify-content-between px-3">
             <h4 class="text-body my-auto">Submit Information</h4>
-            <a asp-action="MainPage"
-               class="p-2 border text-decoration-none border-info rounded bg-transparent">
-                <svg xmlns="http://www.w3.org/2000/svg"
-                     width="16"
-                     height="16"
-                     fill="currentColor"
-                     class="bi bi-chevron-left"
-                     viewBox="0 0 16 16">
-                    <path fill-rule="evenodd"
-                          d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0" />
-                </svg>
-                <span class="mx-2 text-info">Back</span>
-            </a>
+            @if(ViewBag.IsPhysician == false)
+            {
+                <a asp-action="MainPage"
+                   class="p-2 border text-decoration-none border-info rounded bg-transparent">
+                    <svg xmlns="http://www.w3.org/2000/svg"
+                         width="16"
+                         height="16"
+                         fill="currentColor"
+                         class="bi bi-chevron-left"
+                         viewBox="0 0 16 16">
+                        <path fill-rule="evenodd"
+                              d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0" />
+                    </svg>
+                    <span class="mx-2 text-info">Back</span>
+                </a>
+            }
+            else
+            {
+                <a asp-action="Dashboard" asp-controller="ProviderDashboard"
+                   class="p-2 border text-decoration-none border-info rounded bg-transparent">
+                    <svg xmlns="http://www.w3.org/2000/svg"
+                         width="16"
+                         height="16"
+                         fill="currentColor"
+                         class="bi bi-chevron-left"
+                         viewBox="0 0 16 16">
+                        <path fill-rule="evenodd"
+                              d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0" />
+                    </svg>
+                    <span class="mx-2 text-info">Back</span>
+                </a>
+            }
         </div>
 
         <div id="FormOfPatientRequest" class="container-sm mt-3 p-3 gx-4 mb-3 bg-light-subtle shadow">
             <form class="form-floating" method="post" enctype="multipart/form-data">
-                <!-- Patient Information -->
+                @if (ViewBag.IsPhysician)
+                {
+                    <input name="isPhysician" value = "1" hidden/>
+                }
+                else
+                {
+                    <input name="isPhysician" value="0" hidden />
+                    } 
+                    <!-- Patient Information -->
                 <div class="row gx-4">
                     <h4 class="fw-semibold text-body">Patient</h4>
                     

@@ -1,9 +1,6 @@
 ﻿using BAL.Interface;
-using DAL.DataContext;
-using DAL.DataModels;
 using DAL.ViewModels;
 using Microsoft.AspNetCore.Mvc;
-using NuGet.Common;
 using System.Net;
 using System.Net.Mail;
 using System.Text;
@@ -14,58 +11,62 @@ namespace HalloDoc.Controllers
     public class patientFormsController : Controller
     {
 
-        private readonly ApplicationDbContext _context;
         private readonly IPatientRequest _patreq;
         private readonly IRequests _otherreq;
         [Obsolete]
         private IHostingEnvironment _environment;
         private readonly IuploadFile _uploadfile;
         private readonly IEmailService _email;
+        private readonly IAdminDashboard _admin;
+        private readonly ILogin _login;
 
         [Obsolete]
-        public patientFormsController(ApplicationDbContext context, IPatientRequest patreq, IRequests otherreq, IHostingEnvironment environment, IuploadFile uploadFile, IEmailService email)
+        public patientFormsController( IPatientRequest patreq, IRequests otherreq, IHostingEnvironment environment, IuploadFile uploadFile, IEmailService email, IAdminDashboard admin, ILogin login)
         {
-            _context = context; 
             _patreq = patreq;
             _otherreq = otherreq;
             _environment = environment;
             _uploadfile = uploadFile;
-            _email = email; 
+            _email = email;
+            _admin = admin;
+            _login = login;
         }
+
+        #region Views
+
         public IActionResult PatientRequestForm()
         {
             PatientReqVM model = new PatientReqVM();
-            model.Region = _context.Regions.ToList();
+            model.Region = _admin.regions();
 
             return View(model);
         }
         public IActionResult Friend_FamilyRequestForm()
         {
             OthersReqVM model = new OthersReqVM();
-            model.Region = _context.Regions.ToList();
+            model.Region = _admin.regions();
             return View(model);
         }
         public IActionResult BusinessRequestForm()
         {
             OthersReqVM model = new OthersReqVM();
-            model.Region = _context.Regions.ToList();
+            model.Region = _admin.regions();
             return View(model);
         }
         public IActionResult ConciergeRequestForm()
         {
             OthersReqVM model = new OthersReqVM();
-            model.Region = _context.Regions.ToList();
+            model.Region = _admin.regions();
             return View(model);
         }
 
+        #endregion
 
-        // Patient Request Post
-
-
+        #region AddPatientRequest
         [HttpPost]
         public async Task<IActionResult> PatientRequestForm(PatientReqVM pInfo)
         {
-            var user = _context.AspNetUsers.FirstOrDefault(a => a.Email == pInfo.Email);
+            var user = _login.AspuserbyEmail(pInfo.Email);
             if (ModelState.IsValid)
             {
                 if (pInfo.PasswordHash != pInfo.ConfirmPasswordHash)
@@ -99,15 +100,16 @@ namespace HalloDoc.Controllers
                     return RedirectToAction("SubmitRequest", "Home");
                 }
             }
-            pInfo.Region = _context.Regions.ToList();
+            pInfo.Region = _admin.regions();
             return View("PatientRequestForm", pInfo);
         }
+        #endregion
 
-
+        #region AddF-FRequest
         [HttpPost]
         public async Task<IActionResult> Friend_FamilyRequest(OthersReqVM model)
         {
-            var user = _context.AspNetUsers.Where(u => u.Email == model.Email).FirstOrDefault();
+            var user = _login.AspuserbyEmail(model.Email);
             
             if (ModelState.IsValid)
             {
@@ -141,14 +143,16 @@ namespace HalloDoc.Controllers
                 TempData["MessageType"] = "success";
                 return RedirectToAction("SubmitRequest", "Home");
             }
-            model.Region = _context.Regions.ToList();
+            model.Region = _admin.regions();
             return View("Friend_FamilyRequestForm", model);
         }
+        #endregion
 
+        #region AddConciergeRequest
         [HttpPost]
         public async Task<IActionResult> ConciergeRequestForm(OthersReqVM model)
         {
-            var user = _context.AspNetUsers.Where(u => u.Email == model.Email).FirstOrDefault();
+            var user = _login.AspuserbyEmail(model.Email);
             
             if (ModelState.IsValid)
             {
@@ -171,15 +175,18 @@ namespace HalloDoc.Controllers
                 TempData["MessageType"] = "success";
                 return RedirectToAction("SubmitRequest", "Home");
             }
-            model.Region = _context.Regions.ToList();
+            model.Region = _admin.regions();
             return View("ConciergeRequestForm", model);
         }
+        #endregion
+
+        #region AddBusinessRequest
 
         [HttpPost]
 
         public async Task<IActionResult> BusinessRequestForm(OthersReqVM model)
         {
-            var user = _context.AspNetUsers.Where(u => u.Email == model.Email).FirstOrDefault();
+            var user = _login.AspuserbyEmail(model.Email);
            
             if (ModelState.IsValid) {
                 if (user == null)
@@ -201,24 +208,20 @@ namespace HalloDoc.Controllers
                 TempData["MessageType"] = "success";
                 return RedirectToAction("SubmitRequest", "Home");
             }
-            model.Region = _context.Regions.ToList();
+            model.Region = _admin.regions();
             return View("BusinessRequestForm", model);
         }
+
+        #endregion
+
+        #region Mails
 
         [HttpPost]
         public bool CheckMail(string email)
         {
-            var user = _context.AspNetUsers.FirstOrDefault(u => u.Email == email);
-            if (user != null)
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
+            var user = _login.isAspNetUser(email);
+            return user;
         }
-
         [HttpPost]
 
         public IActionResult SendMail(OthersReqVM model)
@@ -245,5 +248,6 @@ namespace HalloDoc.Controllers
             return View(model);
         }
 
+        #endregion
     }
 }

@@ -1,5 +1,11 @@
 ﻿@model List<DAL.ViewModels.BlockedHistoryVM>
-<Table class="table mb-0">
+@if (ViewBag.IsEmpty)
+{
+    <div class="d-flex justify-content-center text-body fs-4">No Data Found!</div>
+}
+else
+{
+    <Table class="table mb-0">
 
     <tbody class="table-secondary">
         <tr>
@@ -33,3 +39,4 @@
     </tbody>
 
 </Table>
+}

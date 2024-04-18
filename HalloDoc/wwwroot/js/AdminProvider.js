@@ -1,15 +1,18 @@
 ﻿
-    filterPartial("0");
+$(document).ready(function () {
+    var currentPage = 1;
+    var pageSize = 5;
+    filterPartial("0", currentPage);
     $("#SelectedStateId").on("change", function () {
         var stateid = $(this).val();
-        filterPartial(stateid);   
+        filterPartial(stateid);
     });
 
-    function filterPartial(stateid) {
+    function filterPartial(stateid, currentPage) {
         $.ajax({
             type: "GET",
             url: "/Admindashboard/filterProviderTable",
-            data: { stateid: stateid },
+            data: { currentPage: currentPage, pageSize: pageSize, stateid: stateid },
 
             success: function (data) {
                 $("#ProviderPartialDiv").html(data);
@@ -22,3 +25,12 @@
             }
         });
     }
+    $(document).on("click", "#pagination a.page-link", function () {
+        console.log("Pagination link clicked!");
+        var id = $(this).attr("id");
+        currentpage = $("#" + id).data("page");
+        console.log("Current Page: " + currentpage);
+        console.log($("#SelectedStateId").val());
+        filterPartial($("#SelectedStateId").val(), currentpage);
+    });
+});

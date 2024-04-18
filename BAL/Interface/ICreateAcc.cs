@@ -1,9 +1,10 @@
 ﻿using DAL.DataModels;
+using DAL.ViewModels;
 
 namespace BAL.Interface
 {
     public interface ICreateAcc
     {
-        void AddUser(AspNetUser user);
+        public void AddUser(CreateAccVM Obj, AspNetUser aspnetuser);
     }
 }

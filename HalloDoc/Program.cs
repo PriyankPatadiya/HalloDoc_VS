@@ -32,6 +32,8 @@ builder.Services.AddScoped<IProviders, ProviderService>();
 builder.Services.AddScoped<IUploadProvider, UploadProviderRepo>();
 builder.Services.AddScoped<IAccessMenu, AccessMenuRepo>();
 builder.Services.AddScoped<IProviderSite, ProviderSite>();
+builder.Services.AddScoped<IScheduling, SchedulingRepo>();
+builder.Services.AddScoped<IProviderDashboard, ProviderDashboardRepo>();
 //builder.Services.AddScoped<IJWTTokenservice, JWTTokenservicerepo>();
 
 

@@ -269,11 +269,11 @@
 
     <div class="p-0 mt-4 d-flex justify-content-between">
         <h4>My Schedule</h4>
-        <button class="btn btn-outline-info">
+        <a asp-controller="ProviderDashboard" asp-action="dashboard" class="btn btn-outline-info">
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-left" viewBox="0 0 16 16">
                 <path fill-rule="evenodd" d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0" />
             </svg> Back
-        </button>
+        </a>
     </div>
 
 
@@ -371,7 +371,7 @@
                         }));
                         var calendarEl = document.getElementById('calendar');
                         calendar = new FullCalendar.Calendar(calendarEl, {
-                            height: '25rem',
+                            height: 'auto',
                             schedulerLicenseKey: 'GPL-My-Project-Is-Open-Source',
                             themeSystem: 'bootstrap5',
                             headerToolbar: false,

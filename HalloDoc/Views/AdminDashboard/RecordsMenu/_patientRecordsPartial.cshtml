@@ -1,33 +1,40 @@
 ﻿@model List<DAL.DataModels.User>
-<Table class="table mb-0">
 
-    <tbody class="table-secondary">
-        <tr>
-            <th scope="col">First Name</th>
-            <th scope="col">Last Name</th>
-            <th scope="col">Email</th>
-            <th scope="col">Phone</th>
-            <th scope="col">Address</th>
-            <th scope="col">Actions</th>
-        </tr>
-    </tbody>
-    <tbody>
+@if(ViewBag.IsEmpty){
+    <div class="fs-4 d-flex justify-content-center text-body"> No Data Found!</div>
+}
+else
+{
+    <Table class="table mb-0">
 
-        @foreach (var item in Model)
-        {
+        <tbody class="table-secondary">
             <tr>
-
-                <td class="align-middle">@item.FirstName</td>
-                <td class="align-middle">@item.LastName</td>
-                <td class="align-middle">@item.Email</td>
-                <td class="align-middle">@item.Mobile</td>
-                <td class="align-middle">@item.Street, @item.City, @item.ZipCode</td>
-                <td class="align-middle">
-                    <a asp-action="explorePatientRequests" asp-route-userId="@item.UserId" class="btn btn-outline-info">Explore</a>
-                </td>
-
+                <th scope="col">First Name</th>
+                <th scope="col">Last Name</th>
+                <th scope="col">Email</th>
+                <th scope="col">Phone</th>
+                <th scope="col">Address</th>
+                <th scope="col">Actions</th>
             </tr>
-        }
-    </tbody>
+        </tbody>
+        <tbody>
 
-</Table>
+            @foreach (var item in Model)
+            {
+                <tr>
+
+                    <td class="align-middle">@item.FirstName</td>
+                    <td class="align-middle">@item.LastName</td>
+                    <td class="align-middle">@item.Email</td>
+                    <td class="align-middle">@item.Mobile</td>
+                    <td class="align-middle">@item.Street, @item.City, @item.ZipCode</td>
+                    <td class="align-middle">
+                        <a asp-action="explorePatientRequests" asp-route-userId="@item.UserId" class="btn btn-outline-info">Explore</a>
+                    </td>
+
+                </tr>
+            }
+        </tbody>
+
+    </Table>
+}

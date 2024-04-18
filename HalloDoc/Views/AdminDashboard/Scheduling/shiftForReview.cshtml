@@ -2,7 +2,7 @@
     Layout = "~/Views/Shared/_LayoutAdminDash.cshtml";
 }
 <div class="container pt-3" style="height: 100% !important">
-    <div class="justify-content-between d-flex container-fluid mb-2 position-relative ">
+    <div class="justify-content-between d-flex container-fluid mb-2 position-relative py-3 ">
         <div class="">
             <h3>Requested Shifts</h3>
         </div>
@@ -14,7 +14,7 @@
         <div class="d-flex justify-content-between">
 
             <div class="d-flex border border-secondary bg-body rounded align-items-center mx-sm-2 my-2 w-25">
-                <select class="form-control shadow-none border-0" id="AccountTypeId" name="SelectedStateId" onchange="changeTable(this.value)">
+                <select class="form-control shadow-none border-0" id="AccountTypeId" name="SelectedStateId" onchange="changeTable(this.value, 1)">
                     <option value="0">All</option>
                     @foreach(var region in ViewBag.Regions)
                     {
@@ -30,10 +30,10 @@
                     <span>View Current Month Shifts</span>
                 </button>
                 <button class="btn btn-success mx-2" id="shiftToApprove" style="width:fit-content">
-                    <span>Approved Shifts</span>
+                    <span>Approved Selected</span>
                 </button>
                 <button class="btn btn-danger mx-2" id="deleteShift" style="width:fit-content">
-                    <span>Deleted Shifts</span>
+                    <span>Delete Selected</span>
                 </button>
             </div>
 
@@ -45,14 +45,15 @@
     </div>
 </div>
 <script>
+    var currentPage = 1;
+    var pageSize = 8;
+        changeTable("0", 1);
 
-        changeTable("0");
-
-        function changeTable(regionId) {
+        function changeTable(regionId, currentPage) {
             $.ajax({
                 type: "GET",
                 url: "/AdminDashboard/changeShiftReviewTable",
-                data: { region: regionId },
+                data: { currentPage : currentPage, pageSize : pageSize, region: regionId },
                 success: function (response) {
                     $("#ReviewShiftsPartialView").html(response);
                 }
@@ -120,4 +121,12 @@
             }
 
         });
+    $(document).on("click", "#pagination a.page-link", function () {
+        console.log("Pagination link clicked!");
+        var id = $(this).attr("id");
+        currentpage = $("#" + id).data("page");
+        console.log("Current Page: " + currentpage);
+        console.log( $("#AccountTypeId").val() );
+        changeTable($("#AccountTypeId").val(),currentpage);
+    });
 </script>

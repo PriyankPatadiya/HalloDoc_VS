@@ -86,5 +86,6 @@ namespace DAL.ViewModels
         public int SelectedStateId { get; set; }
 
         public string? confirmationnumber { get; set; }
+
     }
 }

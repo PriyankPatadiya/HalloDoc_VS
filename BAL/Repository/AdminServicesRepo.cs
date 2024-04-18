@@ -1,13 +1,10 @@
 ﻿using BAL.Interface;
 using DAL.DataContext;
 using DAL.ViewModels;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
-using System.ComponentModel;
 using DAL.DataModels;
-using Microsoft.AspNetCore.Identity;
-using Org.BouncyCastle.Ocsp;
 using Microsoft.AspNetCore.Http;
 using System.Collections;
+using Org.BouncyCastle.Asn1.Ocsp;
 
 namespace BAL.Repository
 {
@@ -22,7 +19,33 @@ namespace BAL.Repository
              _uploadProvider = upload;
         }
 
-        public Request reqbyreqid(int id)
+        public bool isAdminExist(string email)
+        {
+            return _context.AspNetUsers.Any(i => i.Email == email);
+        }
+        public void deleteRequest(int requestId)
+        {
+            var request = _context.Requests.FirstOrDefault(u => u.RequestId == requestId);
+            request.IsDeleted = new BitArray(new[] { true });
+            _context.Requests.Update(request);
+            _context.SaveChanges();
+        }
+        public void unblockRequest(int RequestId) {
+            var request = _context.Requests.FirstOrDefault(u => u.RequestId == RequestId);
+            if (request != null && request.Status == 11)
+            {
+                var blockedRequest = _context.BlockRequests.FirstOrDefault(u => u.RequestId == RequestId);
+                _context.BlockRequests.Remove(blockedRequest);
+                request.Status = 1;
+                _context.Requests.Update(request);
+                _context.SaveChanges();
+            }
+        }
+        public Admin getAdminByemail(string email)
+        {
+            return _context.Admins.FirstOrDefault(u => u.Email == email);
+        }
+        public DAL.DataModels.Request reqbyreqid(int id)
         {
             var request = _context.Requests.Where(i => i.RequestId == id).FirstOrDefault();
             return request;

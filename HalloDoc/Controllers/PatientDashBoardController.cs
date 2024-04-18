@@ -1,13 +1,7 @@
 ﻿using BAL.Interface;
 using BAL.Repository;
-using DAL.DataContext;
-using DAL.DataModels;
 using DAL.ViewModels;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using System.Net;
-using System.Net.NetworkInformation;
 using IHostingEnvironment = Microsoft.AspNetCore.Hosting.IHostingEnvironment;
 
 namespace HalloDoc.Controllers
@@ -15,25 +9,26 @@ namespace HalloDoc.Controllers
     [CustomAuthorize(new string[] { "Patient" })]
     public class PatientDashBoardController : Controller
     {
-        private readonly ApplicationDbContext _context;
         [Obsolete]
         private readonly IHostingEnvironment _environment;
         private readonly IuploadFile _uploadfile;
         private readonly IPatientRequest _request;
+        private readonly IRequests _otherreq;
+        private readonly ILogin _login;
 
         [Obsolete]
-        public PatientDashBoardController(ApplicationDbContext context, IHostingEnvironment environment , IuploadFile file, IPatientRequest request)
+        public PatientDashBoardController( IHostingEnvironment environment , IuploadFile file, IPatientRequest request, IRequests otherreq, ILogin login)
         {
-            _context = context;
             _environment = environment;
             _uploadfile = file;
             _request = request;
+            _otherreq = otherreq;
+            _login = login;
         }
 
-        public IActionResult ViewDocumentPatdash()
-        {
-            return View();
-        }
+        
+
+        #region Aggrement
 
         public IActionResult ReviewAgreement(string token)
         {
@@ -41,11 +36,11 @@ namespace HalloDoc.Controllers
             string requestid = tokenParts[1];
             string timepart = tokenParts[2];
             ViewBag.Requestid = requestid;
-            var Name = _context.RequestClients.Where(u => u.RequestId == int.Parse(requestid)).FirstOrDefault();
+            var Name = _request.reqclientByRequestId(int.Parse(requestid));
             string name = Name.FirstName +" "+ Name.LastName;
             ViewBag.Name = name;
 
-            bool isTrueUser = _context.RequestClients.Any(u => u.RequestId == int.Parse(requestid));
+            bool isTrueUser = _request.isReqClientExist(int.Parse(requestid));
 
             if (isTrueUser)
             {
@@ -59,21 +54,10 @@ namespace HalloDoc.Controllers
 
         public IActionResult ReviewAgreementPost(int requestid)
         {
-            var request = _context.Requests.Where(u => u.RequestId == requestid).FirstOrDefault();
+            var request = _request.requestByRequestId(requestid);
             if (request != null && request.Status == 2)
             {
-                request.Status = 4;
-                request.ModifiedDate = DateTime.Now;
-                _context.Requests.Update(request);
-                _context.SaveChanges();
-
-                RequestStatusLog model = new RequestStatusLog();
-                model.Status = request.Status;
-                model.RequestId = requestid;
-                model.CreatedDate = DateTime.Now;
-
-                _context.RequestStatusLogs.Add(model);
-                _context.SaveChanges();
+                _otherreq.AggrementReview(request, requestid);
                 return RedirectToAction("PatientDashboard");
             }
             else
@@ -84,76 +68,32 @@ namespace HalloDoc.Controllers
 
         public IActionResult CancleReviewAgreement(int requestid, string PatientNote)
         {
-            var request = _context.Requests.Where(u => u.RequestId == requestid).FirstOrDefault();
+            var request = _request.requestByRequestId(requestid);
             if (request != null && request.Status == 2)
             {
-                request.Status = 7;
-                request.ModifiedDate = DateTime.Now;
-                _context.Requests.Update(request);
-                _context.SaveChanges();
-
-                RequestStatusLog model = new RequestStatusLog();
-                model.Status = request.Status;
-                model.RequestId = requestid;
-                model.Notes = PatientNote;
-                model.CreatedDate = DateTime.Now;
-                _context.RequestStatusLogs.Add(model);
-                _context.SaveChanges();
+                _otherreq.cancelAgreement(requestid, PatientNote, request);
 
                 return RedirectToAction("PatientDashboard");
             }
             return Ok("can't cancel request");
         }
 
+        #endregion
+
+        #region PatientDashboard
         public IActionResult PatientDashboard()
         {
             var email = HttpContext.Session.GetString("Email");
 
-            var xyz = _context.Users.FirstOrDefault(u => u.Email == email);
+            var xyz = _login.userByEmail(email);
             if (xyz != null)
             {
                 ViewBag.username = xyz.FirstName + xyz.LastName;
 
 
-                var Dashboard = (from req in _context.Requests
-                                 join reqclient in _context.RequestClients on req.RequestId equals reqclient.RequestId
-                              join requestfile in _context.RequestWiseFiles on req.RequestId equals requestfile.RequestId
-                              into reqs
-                              where reqclient.Email == email
-                              from requestfile
-                              in reqs.DefaultIfEmpty()
-                              select new PatDashTableVM
-                              {
-                                 
-                                  currentStatus = req.Status,
-                                  CreatedDate = req.CreatedDate,
-                                  Document = requestfile.FileName == null ? null : requestfile.FileName,
-                                  requestid = req.RequestId,
-                                  count = _context.RequestWiseFiles.Count(u => u.RequestId == req.RequestId),
+                PatientDashboardVM patientDashboardVM = _otherreq.getPatientDashboardData(email);
 
-                              }).ToList();
 
-                var profiledata = (from user in _context.Users
-                                   where user.Email == email
-                                   select new ProfilePatient
-                                   {
-                                       FirstName = user.FirstName,
-                                       LastName = user.LastName,
-                                       BirthDate = new DateTime((int)user.IntYear, int.Parse(user.StrMonth), (int)user.IntDate),
-                                       PhoneNumber = user.Mobile,
-                                       Email = user.Email,
-                                       Street = user.Street,
-                                       City = user.City,
-                                       State = user.State,
-                                       ZipCode = user.ZipCode
-
-                                   }).FirstOrDefault();
-
-                PatientDashboardVM patientDashboardVM = new PatientDashboardVM();
-
-                patientDashboardVM.DashTable = Dashboard;
-                patientDashboardVM.ProfilePatient = (ProfilePatient)profiledata;
-                
                 return View(patientDashboardVM);
             }
             else
@@ -161,29 +101,18 @@ namespace HalloDoc.Controllers
                 return NotFound();
             }
         }
+        #endregion
+
+        #region editProfile
 
         [HttpPost]
         public IActionResult editprofile(ProfilePatient profilepatient)
         {
-            var user = _context.Users.Where(u => u.Email == profilepatient.Email).FirstOrDefault();
+            var user = _login.userByEmail(profilepatient.Email);
 
             if (user != null && ModelState.IsValid)
             {
-                user.FirstName = profilepatient.FirstName; 
-                user.LastName = profilepatient.LastName;
-                user.Email = profilepatient.Email;
-                user.Street = profilepatient.Street;
-                user.Mobile = profilepatient.PhoneNumber;
-                user.City = profilepatient.City;    
-                user.State = profilepatient.State;
-                user.ZipCode    = profilepatient.ZipCode;   
-                user.IntDate = profilepatient.BirthDate.Day;
-                user.IntYear = profilepatient.BirthDate.Year;
-                user.StrMonth = profilepatient.BirthDate.Month.ToString();
-                
-                _context.Update(user);
-                _context.SaveChanges();
-
+                _otherreq.EditPatientProfile(profilepatient);
                 TempData["Message"] = "Profile Edited Successfully";
                 TempData["MessageType"] = "success";
                 return RedirectToAction("PatientDashboard");
@@ -195,6 +124,14 @@ namespace HalloDoc.Controllers
 
         }
 
+        #endregion
+
+        #region ViewDocuments
+
+        public IActionResult ViewDocumentPatdash()
+        {
+            return View();
+        }
 
         [HttpPost]
 
@@ -223,23 +160,23 @@ namespace HalloDoc.Controllers
 
 
         [HttpGet]
-        public async Task<IActionResult> ViewDocumentsPatdash(int requestid)
+        public IActionResult ViewDocumentsPatdash(int requestid)
         {
             var email = HttpContext.Session.GetString("Email");
-            var xyz = _context.Users.FirstOrDefault(u => u.Email == email);
-            var reqfile =await _context.RequestWiseFiles.Where(x=>x.RequestId==requestid).ToListAsync();
+            var user = _login.userByEmail(email);
+            var reqfile =  _request.requestWiseFilesById(requestid);
 
 
-            if (xyz != null )
+            if (user != null)
             {
-                ViewBag.username = xyz.FirstName + " " +xyz.LastName;
+                ViewBag.username = user.FirstName + " " +user.LastName;
 
                 var result = new ViewdocumentVM
                 {
                     RequestWiseFile = reqfile,
                     requestid = requestid,
                     
-                    confirmationNumber = _context.Requests.Where(s => s.RequestId == requestid).FirstOrDefault().ConfirmationNumber.ToUpper()
+                    confirmationNumber = _request.requestByRequestId(requestid).ConfirmationNumber.ToUpper()
                                   
                 };
 
@@ -270,7 +207,7 @@ namespace HalloDoc.Controllers
             }
         }
 
-
+        #endregion
 
     }
 }

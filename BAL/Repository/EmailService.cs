@@ -1,6 +1,5 @@
 ﻿using BAL.Interface;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.EntityFrameworkCore.Metadata.Conventions;
 using System.Net;
 using System.Net.Mail;
 

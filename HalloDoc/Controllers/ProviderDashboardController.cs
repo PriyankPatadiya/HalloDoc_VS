@@ -1,13 +1,8 @@
 ﻿using BAL.Interface;
 using BAL.Repository;
 using DAL.DataContext;
-using DAL.DataModels;
 using DAL.ViewModels;
 using Microsoft.AspNetCore.Mvc;
-using Org.BouncyCastle.Asn1.Ocsp;
-using Org.BouncyCastle.Ocsp;
-using Org.BouncyCastle.Utilities;
-using System.Drawing;
 
 namespace HalloDoc.Controllers
 {
@@ -16,13 +11,20 @@ namespace HalloDoc.Controllers
     {
         private readonly IAdminDashboard _admin;
         private readonly IProviderSite _provider;
+        private readonly IProviderDashboard _pDashboard;
         private readonly ApplicationDbContext _context;
-        public ProviderDashboardController(IAdminDashboard admin, IProviderSite provider, ApplicationDbContext context)
+        private readonly IScheduling _schedule;
+        public ProviderDashboardController(IAdminDashboard admin, IProviderSite provider, IProviderDashboard pDashboard, IScheduling schedule, ApplicationDbContext context)
         {
             _admin = admin;
             _provider = provider;
+            _pDashboard = pDashboard;
+            _schedule = schedule;
             _context = context;
         }
+
+        #region Dashboard
+
         public IActionResult Dashboard()
         {
             var physicianId = HttpContext.Session.GetInt32("PhysicianId");
@@ -34,7 +36,7 @@ namespace HalloDoc.Controllers
             model.ToCloseCount = _provider.CountRequests("5", physicianId);
             model.UnpaidCount = _provider.CountRequests("6", physicianId);
             model.Region = _admin.regions();
-            TempData["username"] = _context.Physicians.FirstOrDefault(u => u.PhysicianId == physicianId).FirstName;
+            TempData["username"] = _pDashboard.getPhysicianbyEmail((int)physicianId).FirstName;
             return View("Dashboard/DashboardPage", model);
         }
         public IActionResult filterDashboardTable(string SearchString, string selectButton, string StatusButton, string partialviewpath, int pagesize, int currentpage)
@@ -69,39 +71,20 @@ namespace HalloDoc.Controllers
                 return PartialView(partialviewpath);
             }
         }
+
+        #endregion
+
+        #region Actions
         public IActionResult Accept(int reqid)
         {
-            var result = _context.Requests.FirstOrDefault(u => u.RequestId == reqid);
-            result.Status = 2;
-            result.ModifiedDate = DateTime.Now;
-            _context.Requests.Update(result);
-            _context.SaveChanges();
-
-            RequestStatusLog requestStatusLog = new RequestStatusLog();
-            requestStatusLog.Status = result.Status;
-            requestStatusLog.RequestId = reqid;
-            requestStatusLog.CreatedDate = DateTime.Now;
-
-            _context.RequestStatusLogs.Add(requestStatusLog);
-            _context.SaveChanges();
+            _pDashboard.AcceptRequest(reqid);
             return RedirectToAction("Dashboard");
         }
 
         [HttpPost]
         public IActionResult TransferThisRequest(int reeqid, string Notes)
         {
-            var request = _context.Requests.FirstOrDefault(u => u.RequestId == reeqid);
-            request.Status = 1;
-            request.PhysicianId = null;
-            _context.Requests.Update(request);
-            _context.SaveChanges();
-
-            RequestStatusLog log = new RequestStatusLog();
-            log.Status = request.Status;
-            log.RequestId = reeqid;
-            log.Notes = Notes;
-            log.CreatedDate = DateTime.Now;
-            _context.RequestStatusLogs.Add(log); _context.SaveChanges();
+            _pDashboard.transferRequest(reeqid, Notes);
 
             return RedirectToAction("Dashboard");
         }
@@ -147,30 +130,10 @@ namespace HalloDoc.Controllers
             var Notes = Request.Form["ProviderNote"];
             var physicianId = HttpContext.Session.GetInt32("PhysicianId");
 
-            var request = _context.Requests.FirstOrDefault(u => u.RequestId == reqId);
             var encounterForm = _context.EncounterForms.FirstOrDefault(u => u.RequestId == reqId);
             if (encounterForm != null && encounterForm.IsFinalize)
             {
-                request.Status = 8;
-                request.ModifiedDate = DateTime.Now;
-                _context.Requests.Update(request);
-                _context.SaveChanges();
-
-                RequestStatusLog log = new RequestStatusLog()
-                {
-                    RequestId = reqId,
-                    Status = request.Status,
-                    PhysicianId = physicianId,
-                    CreatedDate = DateTime.Now,
-                    Notes = Notes,
-
-                };
-                _context.RequestStatusLogs.Add(log);
-                _context.SaveChanges();
-
-                RequestNote note = _context.RequestNotes.FirstOrDefault(u => u.RequestId == reqId);
-                note.PhysicianNotes = Notes;
-                _context.RequestNotes.Update(note); _context.SaveChanges();
+                _pDashboard.concludeRequest(reqId, (int)physicianId, Notes);
 
                 TempData["Message"] = "Request Closed";
                 TempData["MessageType"] = "success";
@@ -180,6 +143,10 @@ namespace HalloDoc.Controllers
             TempData["MessageType"] = "error";
             return RedirectToAction("ConcludeCare", new { requestId = reqId });
         }
+
+        #endregion
+
+        #region Scheduling
 
         public IActionResult Scheduling()
         {
@@ -206,29 +173,10 @@ namespace HalloDoc.Controllers
         {
             var physicianId = HttpContext.Session.GetInt32("PhysicianId");
 
-            var events = (from s in _context.Shifts
-                          join pd in _context.Physicians on s.PhysicianId equals pd.PhysicianId
-                          join sd in _context.ShiftDetails on s.ShiftId equals sd.ShiftId into shiftGroup
-                          from sd in shiftGroup.DefaultIfEmpty()
-                      
-
-                          select new SchedulingVM
-                          {
-                              title = string.Concat(sd.StartTime, " ", sd.EndTime, " ", pd.FirstName, " ", pd.LastName),
-                              Shiftid = sd.ShiftDetailId,
-                              Startdate = sd.ShiftDate.Date.Add(sd.StartTime.ToTimeSpan()),
-                              Enddate = sd.ShiftDate.Date.Add(sd.EndTime.ToTimeSpan()),
-                              Status = sd.Status,
-                              Physicianid = pd.PhysicianId,
-                              PhysicianName = pd.FirstName + ' ' + pd.LastName,
-                              Shiftdate = sd.ShiftDate,
-                              ShiftDetailId = sd.ShiftDetailId,
-                              Regionid = sd.RegionId,
-                              ShiftDeleted = sd.IsDeleted[0]
-
-                          }).ToList();
-            events = events.Where(item => item.Physicianid == physicianId && !item.ShiftDeleted).ToList();
+            var events = _schedule.getProviderEvents((int)physicianId);
             return Json(events);
         }
+
+        #endregion
     }
 }

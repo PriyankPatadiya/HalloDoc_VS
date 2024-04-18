@@ -1,10 +1,5 @@
 ﻿using DAL.DataModels;
 using DAL.ViewModels;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BAL.Interface
 {
@@ -12,6 +7,9 @@ namespace BAL.Interface
     {
         public List<AdminProvidersVM> getPhysicianList(int stateid);
         public List<AdminProvidersVM> getfilteredPhysicians(int stateid);
+        public List<HealthProfessionalType> getProfessionals();
+
+        public HealthProfessional getProfessionByVendorId(int vendorid);
         public Physician? getPhysicianById(int id);
         public List<PhysicianRegion> getList(int id);
         public AspNetUser getAccByEmail(string email);

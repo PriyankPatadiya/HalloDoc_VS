@@ -2,14 +2,8 @@
 using DAL.DataContext;
 using DAL.DataModels;
 using DAL.ViewModels;
-using System;
 using System.Collections;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
-using System.Security.Cryptography;
-using System.Text;
-using System.Threading.Tasks;
+using System.Numerics;
 
 namespace BAL.Repository
 {
@@ -22,6 +16,17 @@ namespace BAL.Repository
             _context = context;
             this._uploadProvider = uploadProvider;
         }
+
+        public List<HealthProfessionalType> getProfessionals()
+        {
+            return _context.HealthProfessionalTypes.ToList();
+        }
+
+        public HealthProfessional getProfessionByVendorId(int vendorid)
+        {
+            return _context.HealthProfessionals.First(u => u.VendorId == vendorid);
+        }
+
         public List<AdminProvidersVM> getPhysicianList(int stateid)
         {
             //var result = (from phy in _context.Physicians
@@ -172,7 +177,7 @@ namespace BAL.Repository
                 physician.Photo = model.File.FileName;
             }
 
-            if (model.ICAFile != null)
+                if (model.ICAFile != null)
             {
                 _uploadProvider.UploadDocFile(model.ICAFile, physician.PhysicianId, "ICA");
                 physician.IsAgreementDoc = new BitArray(new[] { true });

@@ -1,7 +1,6 @@
 ﻿using HalloDoc.Models;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
-using DAL.DataContext;
 using DAL.DataModels;
 using BAL.Interface;
 using DAL.ViewModels;
@@ -10,7 +9,6 @@ using System.IdentityModel.Tokens.Jwt;
 using Microsoft.IdentityModel.Tokens;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Authorization;
 
 namespace HalloDoc.Controllers
@@ -19,7 +17,6 @@ namespace HalloDoc.Controllers
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
-        private readonly ApplicationDbContext _context;
         private readonly ILogin _login;
         private readonly ICreateAcc _createacc;
         private readonly IEmailService _emailService;
@@ -32,9 +29,8 @@ namespace HalloDoc.Controllers
         //private readonly IJWTTokense
 
 
-        public HomeController(IConfiguration config, ApplicationDbContext db, ILogin login, ICreateAcc createacc, IEmailService emailService, IPasswordHasher<LoginVM> passwordHasher, IJwtToken token, IPasswordHasher<CreateAccVM> passwordcreatehasher)
+        public HomeController(IConfiguration config, ILogin login, ICreateAcc createacc, IEmailService emailService, IPasswordHasher<LoginVM> passwordHasher, IJwtToken token, IPasswordHasher<CreateAccVM> passwordcreatehasher)
         {
-            _context = db;
             _login = login;
             _createacc = createacc;
             _emailService = emailService;
@@ -51,6 +47,9 @@ namespace HalloDoc.Controllers
             ViewData["numTimes"] = numTimes;
             return View();
         }
+
+        #region Views
+
         public IActionResult SubmitRequest()
         {
             return View();
@@ -77,18 +76,18 @@ namespace HalloDoc.Controllers
         public IActionResult AccessDenied()
         {
             return View();
-           }
+        }
 
-        //public IActionResult PatientCreateAcc()
-        //{
-        //    return View();
-        //}
         public IActionResult PatientCreateAcc(string email)
         {
             CreateAccVM model = new CreateAccVM();
             model.UserName = email;
             return View(model);
         }
+
+        #endregion
+
+        #region Logout
         public IActionResult Logout()
         { 
             HttpContext.Session.Remove("Email");
@@ -98,8 +97,9 @@ namespace HalloDoc.Controllers
             Response.Cookies.Delete("jwt");
             return RedirectToAction("PatientLoginn");
         }
+        #endregion
 
-
+        #region Login
         //Post  Login Action
 
 
@@ -114,17 +114,17 @@ namespace HalloDoc.Controllers
                 if (user == true)
                 {
                     HttpContext.Session.SetString("Email", a.Email);
-                    var userid = _context.AspNetUsers.Where(u => u.Email == a.Email).First();
-                    int roleid = (int)_context.AspNetUserRoles.FirstOrDefault(u => u.UserId == userid.Id).RoleId;
-                    string role = _context.AspNetRoles.Where(i => i.Id == roleid).First().Name;
+                    var userid = _login.AspuserbyEmail(a.Email);
+                    int roleid = (int)_login.getUserRoleById(userid.Id).RoleId;
+                    string role = _login.roleByRoleId(roleid).Name;
                     HttpContext.Session.SetString("Role", role);
 
                     string token = _jwttoken.generateJwtToken(a.Email, role);
                     Response.Cookies.Append("jwt", token);
 
-                    bool isAdmin = _context.Admins.Any(u => u.Email == a.Email);
-                    bool isPatient = _context.Users.Any(u => u.Email == a.Email);
-                    bool isProvider = _context.Physicians.Any(u => u.Email == a.Email);
+                    bool isAdmin = _login.isAdmin(a.Email);
+                    bool isPatient = _login.isPatient(a.Email);
+                    bool isProvider = _login.isProvider(a.Email);
                     
                     if (roleid == 1 && isAdmin)
                     {
@@ -136,7 +136,7 @@ namespace HalloDoc.Controllers
                     }
                     if(roleid == 3 && isProvider)
                     {
-                        var physicianId = _context.Physicians.Where(u => u.AspNetUserId == userid.Id).FirstOrDefault().PhysicianId;
+                        var physicianId = _login.physicianByAspUserId(userid.Id).PhysicianId;
                         HttpContext.Session.SetInt32("PhysicianId", physicianId);
                         return RedirectToAction("Dashboard", "ProviderDashboard");
                     }
@@ -151,7 +151,9 @@ namespace HalloDoc.Controllers
             return View(a);
         }
 
+        #endregion
 
+        #region Create
         //POST Create Action
 
         [HttpPost]
@@ -165,63 +167,18 @@ namespace HalloDoc.Controllers
                     ModelState.AddModelError("ConfirmPassword", "The Password and Confirm Password do not match");
                     return View(Obj);
                 }
-                //var newUser = new AspNetUser
-                //{
-                //    Id = Guid.NewGuid().ToString(),
-                //    UserName = Obj.UserName,
-                //    PasswordHash = _passwordcreatehasher.HashPassword(null, Obj.Password),
-                //};
-
-                var client = _context.RequestClients.FirstOrDefault(u => u.Email == Obj.UserName);
-                var aspnetuser = new AspNetUser();
-
-
-                aspnetuser.Id = Guid.NewGuid().ToString();
-                aspnetuser.Email = Obj.UserName;
-                aspnetuser.CreatedDate = DateTime.Now;
-                aspnetuser.UserName = Obj.UserName;
+                AspNetUser aspnetuser = new AspNetUser();
                 aspnetuser.PasswordHash = _passwordcreatehasher.HashPassword(null, Obj.Password);
-                aspnetuser.PhoneNumber = client.PhoneNumber;
-
-
-                _context.AspNetUsers.Add(aspnetuser);
-                _context.SaveChanges();
-
-                var user = new User();
-                user.AspNetUserId = aspnetuser.Id;
-                user.FirstName = client.FirstName;
-                user.LastName = client.LastName;
-                user.Mobile = client.PhoneNumber;
-                user.Street = client.Street;
-                user.City = client.City;
-                user.State = client.State;
-                user.ZipCode = client.ZipCode;
-                user.Email = Obj.UserName;
-                user.CreatedBy = client.FirstName;
-                user.IntYear = client.IntYear;
-                user.IntDate = client.IntDate;
-                user.StrMonth = client.StrMonth;
-                user.RegionId = client.RegionId;
-
-                _context.Users.Add(user);
-                _context.SaveChanges();
-
-                var aspnetuserrole = new AspNetUserRole
-                {
-                    UserId = aspnetuser.Id,
-                    RoleId = 2
-                };
-
-                _context.AspNetUserRoles.Add(aspnetuserrole);
-                _context.SaveChanges();
+                _createacc.AddUser(Obj, aspnetuser);
 
                 return RedirectToAction(nameof(Privacy));
             }
             return View(Obj);
         }
 
+        #endregion
 
-
+        #region Password Change
         [HttpPost]
         [AutoValidateAntiforgeryToken]
 
@@ -263,7 +220,7 @@ namespace HalloDoc.Controllers
 
             if (ModelState.IsValid)
             {
-                var user = _context.Users.Where(x => x.Email == to);
+                var user = _login.userByEmail(to);
                 _emailService.SendEmail(to, subject, Body);
                 model.EmailSent = true;
                 return RedirectToAction("PatientLoginn");
@@ -312,19 +269,22 @@ namespace HalloDoc.Controllers
         [HttpPost]
         public IActionResult ChangePassword(ForgetPasswordVM model)
         {
-            if (ModelState.IsValid && model != null && _context.AspNetUsers.Any(u => u.Email == model.email))
+            if (ModelState.IsValid && model != null && _login.isAspNetUser(model.email))
             {
                 if (model.Password == model.ConfirmPassword)
                 {
-                    var user = _context.AspNetUsers.FirstOrDefault(u => u.Email == model.email);
+                    var user = _login.AspuserbyEmail(model.email);
                     user.PasswordHash = _passwordHasher.HashPassword(null, model.Password);
-                    _context.AspNetUsers.Update(user);
-                    _context.SaveChanges();
+                    _login.updateAspNetUser(user);
                     return View("PatientLoginn");
                 }
             }
             return Content("Model is not valid");
         }
+
+        #endregion
+
+        #region SessionCheck
 
         [AllowAnonymous]
         public JsonResult CheckSession()
@@ -341,11 +301,17 @@ namespace HalloDoc.Controllers
             }
         }
 
+        #endregion
+
+        #region error
+
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
+
+        #endregion
     }
 
 

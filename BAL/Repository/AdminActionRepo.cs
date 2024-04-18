@@ -2,11 +2,7 @@
 using DAL.DataContext;
 using DAL.DataModels;
 using DAL.ViewModels;
-using Microsoft.AspNetCore.Http.HttpResults;
-using Microsoft.IdentityModel.Abstractions;
-using Org.BouncyCastle.Asn1.Mozilla;
 using Org.BouncyCastle.Asn1.Ocsp;
-using Org.BouncyCastle.Ocsp;
 using System.Collections;
 
 namespace BAL.Repository

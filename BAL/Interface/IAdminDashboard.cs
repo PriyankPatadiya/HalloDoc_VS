@@ -6,8 +6,10 @@ namespace BAL.Interface
 {
     public interface IAdminDashboard
     {
+        public bool isAdminExist(string email);
         public string username(string email);
-        public Request reqbyreqid(int id);
+        public Admin getAdminByemail(string email); 
+        public DAL.DataModels.Request reqbyreqid(int id);
         public List<RequestWiseFile> filesbyrequestid(int requestid);
         public RequestWiseFile filebyReqidandName(int reqid, string filename);
         public RequestWiseFile filebyName(string name);
@@ -24,7 +26,9 @@ namespace BAL.Interface
         public void changeAccountInfo(AdminProfileVM model, string email, List<string> regions);
         public void changeBillingInfo(AdminProfileVM model, string email);
         public void changePassword(string password, string email);
-
+        public void deleteRequest(int requestId);
+        public void unblockRequest(int requestId);
+        
         public void UpdateProviderProfile(int id, string businessName, string businessWebsite, IFormFile signatureFile, IFormFile photoFile);
     }
 }

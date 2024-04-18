@@ -82,9 +82,6 @@
                             <a asp-controller="ProviderDashboard" asp-action="dashboard" class="px-2 shadow-none nav-link text-decoration-none text-info pe-auto  @(ViewContext.ActionDescriptor.RouteValues["action"] == "Dashboard" || ViewContext.ActionDescriptor.RouteValues["action"] == "ViewCase" || ViewContext.ActionDescriptor.RouteValues["action"] == "SendOrder" || ViewContext.ActionDescriptor.RouteValues["action"] == "ConcludeCare " ? "active" : "")">Dashboard</a>
                         </li>
                         <li class="nav-item" role="presentation">
-                            <a class="px-2 nav-link text-info text-decoration-none  shadow-none pe-auto @(ViewContext.ActionDescriptor.RouteValues["action"] == "ProviderLocation" ? "active" : "")">Invoicing</a>
-                        </li> 
-                        <li class="nav-item" role="presentation">
                             <a asp-controller="ProviderDashboard" asp-action="Scheduling" class="px-2 shadow-none nav-link text-decoration-none pe-auto text-info @(ViewContext.ActionDescriptor.RouteValues["action"] == "Scheduling" ? "active" : "")">My Schedule</a>
                         </li>
                         <li class="nav-item" role="presentation">

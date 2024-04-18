@@ -1,11 +1,6 @@
 ﻿using BAL.Interface;
 using DAL.DataContext;
 using Microsoft.AspNetCore.Http;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BAL.Repository
 {
@@ -46,7 +41,7 @@ namespace BAL.Repository
             if (!Directory.Exists(path))
                 Directory.CreateDirectory(path);
             string fileExtension = Path.GetExtension(PhotoName.FileName);
-            string fileName = "photo" + fileExtension;
+            string fileName = "profile" + fileExtension;
             string filePath = Path.Combine(path, fileName);
             if (File.Exists(filePath))
             {
@@ -59,7 +54,7 @@ namespace BAL.Repository
             }
             return fileName;
         }
-        public string UploadDocFile(IFormFile PhotoName, int physicianid, string FileName)
+        public void UploadDocFile(IFormFile PhotoName, int physicianid, string FileName)
         {
 
             string folderPath = "wwwroot\\Physician\\" + physicianid;
@@ -78,7 +73,6 @@ namespace BAL.Repository
             {
                 PhotoName.CopyTo(fileStream);
             }
-            return fileName;
         }
     }
 }

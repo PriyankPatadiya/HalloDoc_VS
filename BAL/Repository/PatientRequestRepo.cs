@@ -3,6 +3,7 @@ using DAL.DataContext;
 using DAL.DataModels;
 using DAL.ViewModels;
 using Microsoft.AspNetCore.Identity;
+using Org.BouncyCastle.Asn1.Ocsp;
 using System.Collections;
 
 namespace BAL.Repository
@@ -15,8 +16,26 @@ namespace BAL.Repository
         {
             _context = context;
             _passwordHasher = passwordHasher;
-        }   
-       
+        }
+
+        public RequestClient reqclientByRequestId(int requsestId)
+        {
+            return _context.RequestClients.Where(u => u.RequestId == requsestId).FirstOrDefault();
+        }
+        public bool isReqClientExist(int requsestId)
+        {
+            return _context.RequestClients.Any(u => u.RequestId == requsestId);
+        }
+        public List<RequestWiseFile> requestWiseFilesById(int requsestId)
+        {
+            return _context.RequestWiseFiles.Where(x => x.RequestId == requsestId).ToList();
+        }
+        public DAL.DataModels.Request requestByRequestId(int requsestId)
+        {
+            return _context.Requests.Where(u => u.RequestId == requsestId).FirstOrDefault();
+        }
+
+
         // PatientForm
         public void  AddPatientForm(PatientReqVM pInfo)
         {
@@ -59,7 +78,7 @@ namespace BAL.Repository
                 _context.AspNetUserRoles.Add(aspnetuserrole);
                 _context.SaveChanges();
 
-                var request = new Request();
+                var request = new DAL.DataModels.Request();
                 request.RequestTypeId = 1;
                 request.UserId = user.UserId;
                 request.FirstName = pInfo.FirstName;
@@ -68,7 +87,7 @@ namespace BAL.Repository
                 request.PhoneNumber = pInfo.PhoneNumber;
                 request.Email = pInfo.Email;
                 request.ConfirmationNumber = pInfo.confirmationnumber;
-                request.IsDeleted = new BitArray(new bool[] { true });
+                request.IsDeleted = new BitArray(new bool[] { false });
                 _context.Requests.Add(request);
                 _context.SaveChanges();
 
@@ -102,7 +121,7 @@ namespace BAL.Repository
             }
             else
             {
-                var request = new Request();
+                var request = new DAL.DataModels.Request();
 
                 request.UserId = status.UserId;
                 request.FirstName = pInfo.FirstName;
@@ -111,7 +130,7 @@ namespace BAL.Repository
                 request.PhoneNumber = pInfo.PhoneNumber;
                 request.Email = pInfo.Email;
                 request.ConfirmationNumber = pInfo.confirmationnumber;
-                request.IsDeleted = new BitArray(new bool[] { true });
+                request.IsDeleted = new BitArray(new bool[] { false });
                 _context.Requests.Add(request);
                 _context.SaveChanges();
 
@@ -150,7 +169,7 @@ namespace BAL.Repository
        
         public void AddRequestForElse(PatientReqVM pInfo)
         {
-            var request = new Request();
+            var request = new DAL.DataModels.Request();
 
             request.RequestTypeId = 2;
             request.FirstName = pInfo.FirstName;
@@ -159,7 +178,7 @@ namespace BAL.Repository
             request.PhoneNumber = pInfo.PhoneNumber;
             request.Email = pInfo.Email;
             request.ConfirmationNumber = pInfo.confirmationnumber;
-            request.IsDeleted = new BitArray(new bool[] { true });
+            request.IsDeleted = new BitArray(new bool[] { false });
             _context.Requests.Add(request);
             _context.SaveChanges();
 
@@ -213,20 +232,26 @@ namespace BAL.Repository
             _context.SaveChanges();
         }
 
-        public void AddAdminCreateRequest(PatientReqVM pInfo, string email)
+        public void AddAdminCreateRequest(PatientReqVM pInfo, string email, bool isPhysician, int physicianID)
         {
-            var adminuser = _context.Admins.Where(x => x.Email == email).FirstOrDefault();
+
+            
             if(pInfo != null)
             {
                 pInfo.CreatedDate = DateTime.Now;
-                var request = new Request();
-
-                request.FirstName = adminuser.FirstName;
-                request.LastName = adminuser.LastName;
+                var request = new DAL.DataModels.Request();
+                request.Status = (short)(isPhysician ? 2 : 1);
+                if (isPhysician)
+                {
+                    request.PhysicianId = physicianID;
+                }
+                request.FirstName = isPhysician ? _context.Physicians.FirstOrDefault(x => x.PhysicianId == physicianID).FirstName : _context.Admins.Where(x => x.Email == email).FirstOrDefault().FirstName;
+                request.LastName = isPhysician ? _context.Physicians.FirstOrDefault(x => x.PhysicianId == physicianID).LastName : _context.Admins.Where(x => x.Email == email).FirstOrDefault().LastName;
                 request.CreatedDate = DateTime.Now;
-                request.PhoneNumber = adminuser.Mobile;
-                request.Email = email;
+                request.PhoneNumber = isPhysician ? _context.Physicians.FirstOrDefault(x => x.PhysicianId == physicianID).Mobile : _context.Admins.Where(x => x.Email == email).FirstOrDefault().Mobile;
+                request.Email = isPhysician ? _context.Physicians.FirstOrDefault(x => x.PhysicianId == physicianID).Email : email;
                 request.ConfirmationNumber = GenerateConfirmationNumber(pInfo);
+                request.IsDeleted = new BitArray(new bool[] { false });
 
                 _context.Requests.Add(request);
                 _context.SaveChanges();
@@ -252,9 +277,20 @@ namespace BAL.Repository
                 _context.RequestClients.Add(requestClient);
                 _context.SaveChanges();
 
+
+
+
                 var reqnotes = new RequestNote();
                 reqnotes.RequestId = request.RequestId;
-                reqnotes.AdminNotes = pInfo.AdminNote;
+                if (isPhysician)
+                {
+                    reqnotes.PhysicianNotes = pInfo.AdminNote;
+                }
+                else
+                {
+                    reqnotes.AdminNotes = pInfo.AdminNote;
+
+                }
                 reqnotes.CreatedDate = DateTime.Now;
                 reqnotes.CreatedBy = request.FirstName + request.LastName;
                 reqnotes.PhysicianNotes = "-";
