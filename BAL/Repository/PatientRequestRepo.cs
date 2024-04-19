@@ -273,12 +273,8 @@ namespace BAL.Repository
                 requestClient.StrMonth = pInfo.BirthDate.Value.Month.ToString();
                 requestClient.RegionId = pInfo.SelectedStateId;
 
-
                 _context.RequestClients.Add(requestClient);
                 _context.SaveChanges();
-
-
-
 
                 var reqnotes = new RequestNote();
                 reqnotes.RequestId = request.RequestId;
@@ -293,7 +289,6 @@ namespace BAL.Repository
                 }
                 reqnotes.CreatedDate = DateTime.Now;
                 reqnotes.CreatedBy = request.FirstName + request.LastName;
-                reqnotes.PhysicianNotes = "-";
                 _context.RequestNotes.Add(reqnotes);
                 _context.SaveChanges();
             }

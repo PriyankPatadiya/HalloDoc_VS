@@ -37,6 +37,7 @@
                 currentpage = $("#" + id).data("page");
                 console.log("Current Page: " + currentpage);
                 var storedpartial = localStorage.getItem("providerpartialviewpath");
+                storedpartial = storedpartial == null ? "Dashboard/_dashboardNew" : storedpartial;
                 ChangeTable(storedpartial, StatusButton, currentpage, pagesize);
             });
 
@@ -45,6 +46,7 @@
                 $('.buttonOfFilter').removeClass('active');
                 $(this).addClass('active');
                 var storedpartial = localStorage.getItem("providerpartialviewpath");
+                storedpartial = storedpartial == null ? "Dashboard/_dashboardNew" : storedpartial;
                 ChangeTable(storedpartial, StatusButton, currentpage, pagesize);
             });
 
@@ -52,6 +54,7 @@
             $("#SearchString").on("input", function () {
                 currentpage = 1;
                 var storedpartial = localStorage.getItem("providerpartialviewpath");
+                storedpartial = storedpartial == null ? "Dashboard/_dashboardNew" : storedpartial;
                 ChangeTable(storedpartial, StatusButton, currentpage, pagesize);
             });
 
@@ -59,6 +62,7 @@
             $("#SelectedStateId").on("change", function () {
                 currentpage = 1;
                 var storedpartial = localStorage.getItem("providerpartialviewpath");
+                storedpartial = storedpartial == null ? "Dashboard/_dashboardNew" : storedpartial;
                 ChangeTable(storedpartial, StatusButton, currentpage, pagesize);
             });
 

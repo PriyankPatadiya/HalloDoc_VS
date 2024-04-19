@@ -184,48 +184,61 @@ namespace HalloDoc.Controllers
 
         public IActionResult ResetPassword(ForgetPasswordVM model)
         {
+            if (_login.isAspNetUser(model.email))
+            {
+                var tokenHandler = new JwtSecurityTokenHandler();
+                var key = Encoding.UTF8.GetBytes(_config["Jwt:Key"]);
+                var tokenDescriptor = new SecurityTokenDescriptor
+                {
+                    Subject = new ClaimsIdentity(new[] { new Claim("email", model.email) }),
+                    Expires = DateTime.UtcNow.AddHours(1), // Token expires in 1 hour
+                    Issuer = _config["Jwt:Issuer"],
+                    //Audience = _audience,
+                    SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key)
+
+                    , SecurityAlgorithms.HmacSha256Signature)
+                };
+                var token = tokenHandler.CreateToken(tokenDescriptor);
+                var jwtToken = tokenHandler.WriteToken(token);
+
+
+
+                // Sending Mail Information
+
+                string to = model.email;
+                string subject = "Forget Your Password... Do not worry You can change your password.";
+                var resetlink = Url.Action("ChangePassword", "Home", new { token = jwtToken }, Request.Scheme);
+
+                var body = new StringBuilder();
+                body.AppendFormat("Hello");
+                body.AppendLine(@"Your KAUH Account about to activate click 
+                             the link below to complete the actination process");
+                body.AppendLine("<a href=\"" + resetlink + "\">Change Your Password</a>");
+
+                string Body = body.ToString();
+
+
+                if (ModelState.IsValid)
+                {
+                    var user = _login.userByEmail(to);
+                    _emailService.SendEmail(to, subject, Body);
+                    model.EmailSent = true;
+                    TempData["Message"] = "Check Your Email to reset password";
+                    TempData["MessageType"] = "success";
+                    return RedirectToAction("PatientLoginn");
+                }
+                
+                return View();
+            }
+            else
+            {
+                TempData["Message"] = "User Not exist";
+                TempData["MessageType"] = "error";
+                return View();  
+            }
             // Token Generation 
 
-            var tokenHandler = new JwtSecurityTokenHandler();
-            var key = Encoding.UTF8.GetBytes(_config["Jwt:Key"]);
-            var tokenDescriptor = new SecurityTokenDescriptor
-            {
-                Subject = new ClaimsIdentity(new[] { new Claim("email", model.email) }),
-                Expires = DateTime.UtcNow.AddHours(1), // Token expires in 1 hour
-                Issuer = _config["Jwt:Issuer"],
-                //Audience = _audience,
-                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key)
-
-                , SecurityAlgorithms.HmacSha256Signature)
-            };
-            var token = tokenHandler.CreateToken(tokenDescriptor);
-            var jwtToken = tokenHandler.WriteToken(token);
-
-
-
-            // Sending Mail Information
-
-            string to = model.email;
-            string subject = "Forget Your Password... Do not worry You can change your password.";
-            var resetlink = Url.Action("ChangePassword", "Home", new { token = jwtToken }, Request.Scheme);
-
-            var body = new StringBuilder();
-            body.AppendFormat("Hello");
-            body.AppendLine(@"Your KAUH Account about to activate click 
-                             the link below to complete the actination process");
-            body.AppendLine("<a href=\"" + resetlink + "\">Change Your Password</a>");
-
-            string Body = body.ToString();
-
-
-            if (ModelState.IsValid)
-            {
-                var user = _login.userByEmail(to);
-                _emailService.SendEmail(to, subject, Body);
-                model.EmailSent = true;
-                return RedirectToAction("PatientLoginn");
-            }
-            return View();
+            
         }
 
 
@@ -269,7 +282,7 @@ namespace HalloDoc.Controllers
         [HttpPost]
         public IActionResult ChangePassword(ForgetPasswordVM model)
         {
-            if (ModelState.IsValid && model != null && _login.isAspNetUser(model.email))
+            if (ModelState.IsValid)
             {
                 if (model.Password == model.ConfirmPassword)
                 {

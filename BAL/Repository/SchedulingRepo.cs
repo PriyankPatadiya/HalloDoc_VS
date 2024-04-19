@@ -15,7 +15,7 @@ namespace BAL.Repository
             _context = context;
         }
 
-        public bool IsShiftExist(SchedulingVM model, int physicianId)
+        public bool IsShiftExist(SchedulingVM model, int? physicianId)
         {
             bool isShiftExist = _context.ShiftDetails.Any(sD =>
             (sD.IsDeleted == new BitArray(new bool[] { false })) && (
@@ -27,7 +27,7 @@ namespace BAL.Repository
                                     (sD.StartTime > model.Starttime && sD.EndTime < model.Endtime))));
             return isShiftExist;
         }
-        public void addShift(SchedulingVM model, int physicianId, string? creater, Shift shift)
+        public void addShift(SchedulingVM model, int? physicianId, string? creater, Shift shift)
         {
             shift.PhysicianId = (int)(physicianId != null ? physicianId : model.Physicianid);
             shift.StartDate = model.Startdate;
@@ -61,7 +61,7 @@ namespace BAL.Repository
         {
             return _context.Shifts.FirstOrDefault();
         }
-        public bool IsRepeatedShiftExist(SchedulingVM model, int physicianId, DateTime startDateForWeekday, int i)
+        public bool IsRepeatedShiftExist(SchedulingVM model, int? physicianId, DateTime startDateForWeekday, int i)
         {
             return _context.ShiftDetails.Any(sD =>
                                 (sD.IsDeleted == new BitArray(new bool[] { false })) &&
@@ -72,7 +72,7 @@ namespace BAL.Repository
                                     (sD.StartTime < model.Endtime && sD.EndTime > model.Endtime) ||
                                     (sD.StartTime > model.Starttime && sD.EndTime < model.Endtime))));
         }
-        public void AddRepeatedShift(SchedulingVM model, int physicianId, DateTime startDateForWeekday, Shift shift, int i)
+        public void AddRepeatedShift(SchedulingVM model, int? physicianId, DateTime startDateForWeekday, Shift shift, int i)
         {
             ShiftDetail shiftDetail = new ShiftDetail
             {
@@ -250,6 +250,11 @@ namespace BAL.Repository
                                                            currentTime <= item.EndTime.Hour &&
                                                            item.IsDeleted == new BitArray(new[] { false }))
                    select physician).Distinct().ToList();
+        }
+        public void returnShift(ShiftDetail sd)
+        {
+            _context.Update(sd);
+            _context.SaveChanges();
         }
     }
 }

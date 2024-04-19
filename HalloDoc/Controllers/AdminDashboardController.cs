@@ -106,6 +106,7 @@ namespace HalloDoc.Controllers
                     currentpage = 1;
                 }
             }
+
             var paginatedData = result.ToList().Skip((currentpage - 1) * pagesize).Take(pagesize).ToList();
             if (paginatedData.Count != 0)
             {
@@ -741,6 +742,9 @@ namespace HalloDoc.Controllers
         [HttpPost("ProviderDashboard/sendLinkofSubmitreq")]
         public IActionResult sendLinkofSubmitreq(string PatientFirstname, string PatientLastname, string PatientEmail)
         {
+            var physicianId = HttpContext.Session.GetInt32("PhysicianId");
+            bool isPhysician = physicianId != null ? true : false;
+
             var link = Url.ActionLink("SubmitRequest", "Home", protocol: HttpContext.Request.Scheme);
 
             string to = PatientEmail;
@@ -757,11 +761,11 @@ namespace HalloDoc.Controllers
                 TempData["Message"] = "email Sent Successfully";
                 TempData["MessageType"] = "success";
                 _emailService.SendEmail(to, subject, Body);
-                return RedirectToAction("MainPage");
+                return isPhysician ? RedirectToAction("Dashboard","ProviderDashboard") : RedirectToAction("MainPage");
             }
             TempData["Message"] = "Can't Send Email";
             TempData["MessageType"] = "warning";
-            return RedirectToAction("MainPage");
+            return isPhysician? RedirectToAction("Dashboard","ProviderDashboard") : RedirectToAction("MainPage");
         }
 
         #endregion Send Link
@@ -771,6 +775,7 @@ namespace HalloDoc.Controllers
 
         [CustomAuthorize(new string[] { "Administrator", "Provider" })]
         [HttpGet("ProviderDashboard/CreateRequestAdmin", Name = "createRequestProvider")]
+        [HttpGet("AdminDashboard/CreateRequestAdmin", Name = "createRequestAdmin")]
         public IActionResult CreateRequestAdmin()
         {
             var physicianId = HttpContext.Session.GetInt32("PhysicianId");
@@ -793,9 +798,10 @@ namespace HalloDoc.Controllers
                 _request.AddAdminCreateRequest(model, email, isPhysician,(int)( isPhysician ? physicianId : 0) );
                 TempData["Message"] = "Request Added!";
                 TempData["MessageType"] = "success";
-                return RedirectToAction("MainPage");
+                
+                return isPhysician ? RedirectToAction("Dashboard","ProviderDashboard") : RedirectToAction("MainPage");
             }
-
+            ViewBag.IsPhysician = physicianId != null ? true : false;
             model.Region = _admin.regions();
             return PartialView("CreateRequestAdmin", model);
 
@@ -1167,6 +1173,10 @@ namespace HalloDoc.Controllers
         public IActionResult GetPhysicianShift(string region)
         {
             var physicians = _schedule.getShiftPhysicians(region);
+            if (physicians.Count() == 0)
+            {
+                return Json(new { Message = "No physicians found for the given region." });
+            }
             return Json(physicians);
         }
 
@@ -1185,7 +1195,7 @@ namespace HalloDoc.Controllers
                 var creater = physicianId == null ? _admin.getAdminByemail(email).AspNetUserId : _provider.getPhysicianById((int)physicianId).AspNetUserId;
 
                 // Check if existz
-                bool isShiftExist = _schedule.IsShiftExist(model, (int)physicianId);
+                bool isShiftExist = _schedule.IsShiftExist(model, physicianId);
 
 
                 if (!isShiftExist)
@@ -1193,7 +1203,7 @@ namespace HalloDoc.Controllers
                     Shift shift = new Shift();
 
                     // Add shift
-                    _schedule.addShift(model, (int)physicianId, creater, shift);
+                    _schedule.addShift(model, physicianId, creater, shift);
 
                     if (model.Isrepeat)
                     {
@@ -1211,7 +1221,7 @@ namespace HalloDoc.Controllers
 
                             for (int i = 0; i < shift.RepeatUpto; i++)
                             {
-                                bool isRepeatedShiftExist = _schedule.IsRepeatedShiftExist(model, (int)physicianId, startDateForWeekday, i);
+                                bool isRepeatedShiftExist = _schedule.IsRepeatedShiftExist(model, physicianId, startDateForWeekday, i);
 
                                 if (isRepeatedShiftExist)
                                 {
@@ -1298,7 +1308,8 @@ namespace HalloDoc.Controllers
             {
                 return NotFound("Shift detail not found.");
             }
-            
+            shiftDetail.Status = (short)(shiftDetail.Status == 0 ? 1 : 0);
+            _schedule.returnShift(shiftDetail);
             var events = _adminActions.getEvents(region);
 
             return Ok(new { message = "Shift Returned successfully.", events = events });

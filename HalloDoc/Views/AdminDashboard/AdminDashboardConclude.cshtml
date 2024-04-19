@@ -303,7 +303,6 @@
 </div>
 
 @*pagination*@
-
 <div class="pb-2 d-flex justify-content-between">
     <nav id="pagination" aria-label="Page navigation" style="width: 80%;">
         <ul class="pagination mb-0">
@@ -317,17 +316,11 @@
                         &laquo;
                     </a>
                 </li>
-                for (int z = 0; z < 3; z++)
-                {
-                    if (currpage + z <= ViewBag.TotalPages)
-                    {
-                        <li class="page-item">
-                            <a class="page-link btn rounded-4 btn-outline-info mx-1" id="current_@z" data-page="@(currpage + z)" aria-label="Current">
-                                @(ViewBag.CurrentPage + z)
-                            </a>
-                        </li>
-                    }
-                }
+                <li class="page-item">
+                    <a class="page-link btn rounded-4 btn-outline-info mx-1" id="current" data-page="@(currpage)" aria-label="Current">
+                        @(ViewBag.CurrentPage)
+                    </a>
+                </li>
                 <li class="page-item">
                     <a class="page-link btn rounded-4 btn-outline-info mx-1" id="next" data-page="@(nextpage)" aria-label="Next" @(ViewBag.CurrentPage >= ViewBag.TotalPages ? "hidden" : "")>
                         &raquo;
@@ -341,7 +334,6 @@
         <span>@ViewBag.CurrentPage of @ViewBag.TotalPages</span>
     }
 </div>
-
 <script>
     $("#Regionid").on("change", function () {
         var RegionId = $("#Regionid").val();

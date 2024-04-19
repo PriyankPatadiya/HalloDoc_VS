@@ -114,7 +114,7 @@
                 </div>
             </div>
         </form>
-        <form class="form-floating" method="post" asp-action="changeAccInfo">
+        <form class="form-floating" id="updateAccountInfo" method="post" asp-action="changeAccInfo">
             <div class="row p-0 m-0">
                 <h4 class="text-body">Account Information</h4>
                 <div class="col-sm-12 col-md-12 col-lg-6 form-floating my-3">
@@ -202,7 +202,7 @@
                 </div>
                 <div class="my-3 d-flex justify-content-end">
                     <button type="button" class="btn btn-info px-4 py-3" id="buttoninput1">Edit</button>
-                    <button type="submit" class="btn btn-info px-4 py-3 me-3" id="savebutton1" style="display: none;">Save</button>
+                    <button type="button" class="btn btn-info px-4 py-3 me-3" id="savebutton1" onclick="submitForm()" style="display: none;">Save</button>
                     <button type="button" class="btn btn-danger px-4 py-3" style="display: none;" id="canceledit1">Cancel</button>
                 </div>
 
@@ -333,6 +333,26 @@
             icon: icon,
             title: message
         });
+    }
+</script>
+<script>
+    function submitForm() {
+        var isAnyChecked = false;
+        $("input[name=regions]").each(function () {
+            if ($(this).is(":checked")) {
+                isAnyChecked = true;
+                return false; // exit the each loop
+            }
+        });
+
+        if (!isAnyChecked) {
+            alert('Please select at least one region.');
+        }
+
+        else {
+            $("#updateAccountInfo").submit();
+        }
+
     }
 </script>
 <partial name="_ValidationScriptsPartial"></partial>
