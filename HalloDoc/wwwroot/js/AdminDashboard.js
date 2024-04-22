@@ -47,7 +47,7 @@ $(document).ready(function () {
     });
 
     //Search filter
-    $("#SearchString").on("input", function () {
+    $("#SearchString").on("keyup", function () {
         currentpage = 1;
         ChangeTable(path, StatusButton, currentpage, pagesize);
     });

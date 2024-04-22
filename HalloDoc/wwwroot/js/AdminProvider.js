@@ -5,7 +5,7 @@ $(document).ready(function () {
     filterPartial("0", currentPage);
     $("#SelectedStateId").on("change", function () {
         var stateid = $(this).val();
-        filterPartial(stateid);
+        filterPartial(stateid, "1");
     });
 
     function filterPartial(stateid, currentPage) {

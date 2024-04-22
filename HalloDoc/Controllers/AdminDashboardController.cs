@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Identity;
 using System.Collections;
 using OfficeOpenXml;
 using String = System.String;
+using Microsoft.CodeAnalysis;
 
 namespace HalloDoc.Controllers
 {
@@ -822,6 +823,7 @@ namespace HalloDoc.Controllers
 
         public IActionResult filterProviderTable(string stateid, int currentPage, int pageSize)
         {
+
             var result = _provider.getfilteredPhysicians(int.Parse(stateid)).ToList();
             int totalPages = (int)Math.Ceiling((double)result.Count() / pageSize);
             var paginatedData = result.Skip((currentPage - 1) * pageSize).Take(pageSize).ToList();
@@ -830,7 +832,7 @@ namespace HalloDoc.Controllers
                 ViewBag.CurrentPage = currentPage;
                 ViewBag.TotalPages = totalPages;
             }
-            ViewBag.IsNullData = paginatedData != null ? false : true;
+            ViewBag.IsNullData = paginatedData.Count() != 0 ? false : true;
             return PartialView("ProviderMenu/_ProviderPartialTable", paginatedData);
         }
 
@@ -1023,7 +1025,7 @@ namespace HalloDoc.Controllers
         }
 
         [HttpPost]
-        public IActionResult CreateProviderAcc(PhysicianProfileVM model, string[] Region)
+        public IActionResult CreateProviderAcc(PhysicianProfileVM model, string[] Region, string latitude, string longitude)
         {
             if (ModelState.IsValid)
             {
@@ -1115,7 +1117,7 @@ namespace HalloDoc.Controllers
             _accessMenu.createAccess(rolemenu, rolename, accounttype);
             TempData["Message"] = "Created Successfully!";
             TempData["MessageType"] = "success";
-            return RedirectToAction("CreateAccess");
+            return RedirectToAction("roleAccess");
         }
         public IActionResult EditAccess(int roleid)
         {
@@ -1430,8 +1432,7 @@ namespace HalloDoc.Controllers
             AddBusinessVM model = _providersite.getBusinessDetails(Vendorid);
             ViewBag.Regions = _admin.regions();
             ViewBag.Professions = _provider.getProfessionals();
-            TempData["Message"] = "Edited!";
-            TempData["MessageType"] = "success";
+            
             return PartialView("Partners/EditBusiness", model);
         }
 
@@ -1441,6 +1442,8 @@ namespace HalloDoc.Controllers
             var Vendor = _provider.getProfessionByVendorId(vendor.vendorId);
             if (ModelState.IsValid && Vendor != null)
             {
+                TempData["Message"] = "Edited!";
+                TempData["MessageType"] = "success";
                 _providersite.updateBusinessDetails(vendor, Vendor);
             }
             return RedirectToAction("Partners");

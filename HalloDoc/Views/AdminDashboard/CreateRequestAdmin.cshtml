@@ -189,9 +189,18 @@ else
                         <button type="submit" class="btn border-none bg-info p-3 text-light fw-semibold me-4" id="submitBtn">
                             submit
                         </button>
-                        <a asp-action="MainPage" class="btn btn-outline-info p-3 fw-semibold">
-                            cancel
-                        </a>
+                        @if (ViewBag.IsPhysician == false)
+                        {
+                            <a asp-action="MainPage" class="btn btn-outline-info p-3 fw-semibold">
+                                cancel
+                            </a>
+                        }
+                        else
+                        {
+                            <a asp-action="Dashboard" asp-controller="ProviderDashboard" class="btn btn-outline-info p-3 fw-semibold">
+                                cancel
+                            </a>
+                        }
                     </div>
                 </div>
             </form>

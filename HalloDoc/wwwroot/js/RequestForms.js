@@ -46,3 +46,9 @@ function showFilename() {
     var fileName = fileinp.files[0].name;
     info.textContent = fileName;
 }
+
+function resetForm() {
+    $("#form")[0].reset();// Remove the validation data from the form element
+    $('form').removeData('validator');
+    $('form').removeData('unobtrusiveValidation');
+}

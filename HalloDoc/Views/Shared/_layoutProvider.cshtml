@@ -127,17 +127,26 @@
 
 
     <script>
-        $(document).ready(function () {
-            $(window).on('load', function () {
-                $('#overlay').fadeOut('slow');
-            });
+        document.onreadystatechange = function () {
+            if (document.readyState === 'complete') {
+                // Page has finished loading, hide the loader
+                $("#overlay").fadeOut('fast');
+            } else {
+                // Page is still loading, show the loader
+                $("#overlay").fadeIn('fast');
+            }
+        };
+        //$(document).ready(function () {
+        //    $(window).on('load', function () {
+        //        $('#overlay').fadeOut('slow');
+        //    });
 
-            $(document).ajaxStart(function () {
-                $('#overlay').show();
-            }).ajaxStop(function () {
-                $('#overlay').fadeOut('slow');
-            });
-        });
+        //    $(document).ajaxStart(function () {
+        //        $('#overlay').show();
+        //    }).ajaxStop(function () {
+        //        $('#overlay').fadeOut('slow');
+        //    });
+        //});
         const toggleButton = document.getElementById("theme-toggle");
         let currentTheme = localStorage.getItem("theme") || "light";
 
