@@ -43,7 +43,36 @@ else
                     <td class="align-middle">@item.PhoneNumber</td>
                     <td class="align-middle">@item.Address</td>
                     <td class="align-middle">@item.Zip</td>
-                    <td class="align-middle">@item.RequestStatus</td>
+                    @switch (item.RequestStatus)
+                    {
+                        case 1:
+                            <td class="align-middle">New</td>
+                            break;
+                        case 2:
+                            <td class="align-middle">Pending</td>
+                            break;
+                        case 3:
+                            <td class="align-middle">To Close</td>
+                            break;
+                        case 4:
+                            <td class="align-middle">Active</td>
+                            break;
+                        case 5:
+                            <td class="align-middle">Active</td>
+                            break;
+                        case 6:
+                            <td class="align-middle">Conclude</td>
+                            break;
+                        case 7:
+                            <td class="align-middle">To Close</td>
+                            break;
+                        case 8:
+                            <td class="align-middle">To Close</td>
+                            break;
+                        case 9:
+                            <td class="align-middle">Unpaid</td>
+                            break;
+                    }
                     <td class="align-middle">@item.PhysicianName</td>
                     <td class="align-middle">@item.PhysicianNote</td>
                     <td class="align-middle">@item.CancelledByProvidor</td>

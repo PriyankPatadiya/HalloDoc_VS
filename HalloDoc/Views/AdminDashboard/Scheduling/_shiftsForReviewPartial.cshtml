@@ -11,7 +11,7 @@
 
         <tbody class="Secondary">
             <tr>
-                <th scope="col"><input type="checkbox" class="form-check " /></th>
+                <th scope="col"><input type="checkbox" id="mainCheck" class="form-check " /></th>
                 <th scope="col">Staff</th>
                 <th scope="col">Day</th>
                 <th scope="col">Time</th>
@@ -24,7 +24,7 @@
             {
                 <tr>
 
-                    <td> <input type="checkbox" name="pendingShifts" value="@item.shiftDetailId" class="form-check" /></td>
+                    <td> <input type="checkbox"  name="pendingShifts" value="@item.shiftDetailId" class="form-check" /></td>
                     <td>@item.physicianName</td>
                     <td>@item.day</td>
                     <td>@item.startTime - @item.endTime </td>
@@ -64,3 +64,11 @@
         <span>@ViewBag.CurrentPage of @ViewBag.TotalPages</span>
     </div>
 }
+<script>
+    $("#mainCheck").on('change', function () {
+        var checks = $('tbody input[type="checkbox"]');
+        checks.each(function () {
+            $(this).prop('checked', $("#mainCheck").prop("checked"));
+        });
+    });
+</script>

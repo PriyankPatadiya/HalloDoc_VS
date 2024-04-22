@@ -11,6 +11,10 @@ namespace BAL.Interface
         public bool LoginVarify(LoginVM user);
         public AspNetUser AspuserbyEmail(string email); 
         public AspNetUserRole getUserRoleById(string id);
+        public string getRoleIdFromAdmin(string userID);
+        public string getRoleIdFromPhy(string userId);
+
+        public List<RoleMenu> getRoleMenuforAuth(string roleId, string menuId);
 
         public AspNetRole roleByRoleId(int roleId);
         public bool isAdmin(string email);

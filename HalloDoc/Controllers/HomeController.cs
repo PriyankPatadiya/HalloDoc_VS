@@ -115,26 +115,39 @@ namespace HalloDoc.Controllers
                 {
                     HttpContext.Session.SetString("Email", a.Email);
                     var userid = _login.AspuserbyEmail(a.Email);
-                    int roleid = (int)_login.getUserRoleById(userid.Id).RoleId;
-                    string role = _login.roleByRoleId(roleid).Name;
-                    HttpContext.Session.SetString("Role", role);
-
-                    string token = _jwttoken.generateJwtToken(a.Email, role);
-                    Response.Cookies.Append("jwt", token);
+                    int  Asproleid = (int)_login.getUserRoleById(userid.Id).RoleId;
+                    string Asprole = _login.roleByRoleId(Asproleid).Name;
+                    HttpContext.Session.SetString("Role", Asprole);
 
                     bool isAdmin = _login.isAdmin(a.Email);
                     bool isPatient = _login.isPatient(a.Email);
                     bool isProvider = _login.isProvider(a.Email);
-                    
-                    if (roleid == 1 && isAdmin)
+
+                    string roleId;
+                    if (isAdmin)
+                    {
+                        roleId = _login.getRoleIdFromAdmin(userid.Id);
+                    }else if (isProvider)
+                    {
+                        roleId = _login.getRoleIdFromPhy(userid.Id);
+                    }
+                    else
+                    {
+                        roleId = "0";
+                    }
+
+                    string token = _jwttoken.generateJwtToken(a.Email, Asprole, roleId);
+                    Response.Cookies.Append("jwt", token);
+
+                    if (Asproleid == 1 && isAdmin)
                     {
                         return RedirectToAction("MainPage", "AdminDashboard");
                     }
-                    if(roleid == 2 && isPatient)
+                    if(Asproleid == 2 && isPatient)
                     {
                         return RedirectToAction("PatientDashboard", "PatientDashBoard");
                     }
-                    if(roleid == 3 && isProvider)
+                    if(Asproleid == 3 && isProvider)
                     {
                         var physicianId = _login.physicianByAspUserId(userid.Id).PhysicianId;
                         HttpContext.Session.SetInt32("PhysicianId", physicianId);

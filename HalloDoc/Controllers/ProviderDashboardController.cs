@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace HalloDoc.Controllers
 {
-    [CustomAuthorize(new string[] { "Provider" })]
+    [CustomAuthorize(new string[] { "Provider" }, "6")]
     public class ProviderDashboardController : Controller
     {
         private readonly IAdminDashboard _admin;

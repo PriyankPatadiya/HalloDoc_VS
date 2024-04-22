@@ -6,7 +6,7 @@ using IHostingEnvironment = Microsoft.AspNetCore.Hosting.IHostingEnvironment;
 
 namespace HalloDoc.Controllers
 {
-    [CustomAuthorize(new string[] { "Patient" })]
+    [CustomAuthorize(new string[] { "Patient" }, "6")]
     public class UserCreateRequestFormsController : Controller
     {
 

@@ -29,7 +29,19 @@
                     {
                         <td>(NON)NNN-NNNNNN</td>
                     }
-                    <td>@item.status</td>
+                    @switch (item.status)
+                        {
+                            case 1: <td>New</td> break;
+                            case 2: <td>Pending</td> break;
+                            case 3: <td>To Close</td> break;
+                            case 4: <td>Active</td> break;
+                            case 5: <td>Active</td> break;
+                            case 6: <td>Conclude</td> break;
+                            case 7:  <td>To Close</td> break;
+                            case 8: <td>To Close</td> break;
+                            case 9: <td>Unpaid</td> break;
+                        }
+                    
                     <td>0</td>
                     @if (item.AccountTypeid == 3)
                     {

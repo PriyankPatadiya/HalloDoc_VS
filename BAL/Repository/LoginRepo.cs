@@ -9,6 +9,8 @@ using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
 using System.IdentityModel.Tokens.Jwt;
+using BAL.Interface;
+using BAL.Repository;
 
 namespace BAL.Repository
 {
@@ -88,21 +90,38 @@ namespace BAL.Repository
             _context.AspNetUsers.Update(user);
             _context.SaveChanges();
         }
+        public string getRoleIdFromAdmin(string userID)
+        {
+            return _context.Admins.FirstOrDefault(u => u.AspNetUserId == userID).RoleId.ToString();
+        }
+        public string getRoleIdFromPhy(string userId)
+        {
+            return _context.Physicians.FirstOrDefault(u => u.AspNetUserId == userId).RoleId.ToString();
+        }
+        public List<RoleMenu> getRoleMenuforAuth(string roleId, string menuId)
+        {
+            return _context.RoleMenus.Where(u => u.RoleId == int.Parse(roleId) && u.MenuId == int.Parse(menuId)).ToList();
+        }
     }
+
+    // Authorization 
 
     public class CustomAuthorize : Attribute , IAuthorizationFilter
     {
-        private readonly string[] _role;
+        private readonly string[] _Asprole;
+        private readonly string _menuId;
         private readonly ApplicationDbContext _context;
-        public CustomAuthorize(string [] role )
+        public CustomAuthorize(string [] Asprole, string role)
         {
-            this._role = role;
+            this._Asprole = Asprole;
+            _menuId = role;
         }
         public void OnAuthorization(AuthorizationFilterContext context)
         {
             var jwtService = context.HttpContext.RequestServices.GetService<IJwtToken>();
             var email = context.HttpContext.Session.GetString("Email");
             var roLe = context.HttpContext.Session.GetString("Role");
+            var loginRepo = context.HttpContext.RequestServices.GetService<ILogin>();
             
             if(jwtService == null)
             {
@@ -118,13 +137,15 @@ namespace BAL.Repository
                 return;
             }
             var roleClaim = jwtToken.Claims.FirstOrDefault(c => c.Type == "Role");
+            var roleId = jwtToken.Claims.FirstOrDefault(c => c.Type == "roleId");
+            var roleMenu = loginRepo.getRoleMenuforAuth(roleId.Value, _menuId);
             // Access Denied if Role Not matched
             if(roleClaim == null)
             {
                 context.Result = new RedirectToRouteResult(new RouteValueDictionary(new { Controller = "Home", Action = "PatientLoginn" }));
                 return;
             }
-            if(_role.Length < 1 || !_role.Contains(roleClaim.Value)) { 
+            if(_Asprole.Length < 1 || !_Asprole.Contains(roleClaim.Value) || (roleMenu.Count() == 0 && roleId.Value != "0")) { 
                     context.Result = new RedirectToRouteResult(new RouteValueDictionary(new { Controller = "Home", Action = "AccessDenied" }));
             }
         }

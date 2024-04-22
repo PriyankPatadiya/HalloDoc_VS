@@ -39,7 +39,15 @@
                         <tbody>
                             <tr>
                                 <td>@item.Name</td>
-                                <td>@item.AccountType</td>
+                                @switch (item.AccountType)
+                                {
+                                    case 1:
+                                        <td>Provider</td>
+                                        break;
+                                    case 2:
+                                        <td>Admin</td>
+                                        break;
+                                }
                                 <td>
                                     <a asp-action="EditAccess" asp-route-roleid="@item.RoleId" class="btn btn-outline-info">Edit</a>
                                     <a asp-action="DeleteRole" asp-route-roleid="@item.RoleId" class="btn btn-outline-info">Delete</a>

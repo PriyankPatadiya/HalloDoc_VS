@@ -16,7 +16,7 @@ namespace BAL.Repository
             _config = config;
         }
 
-        public string generateJwtToken(string email , string role)
+        public string generateJwtToken(string email , string role, string roleId)
         {
             // Token Generation 
 
@@ -24,7 +24,7 @@ namespace BAL.Repository
             var key = Encoding.UTF8.GetBytes(_config["Jwt:Key"]);
             var tokenDescriptor = new SecurityTokenDescriptor
             {
-                Subject = new ClaimsIdentity(new[] { new Claim("email", email) , new Claim("Role", role ) }),
+                Subject = new ClaimsIdentity(new[] { new Claim("email", email) , new Claim("Role", role ), new Claim("roleId", roleId) }),
                 Expires = DateTime.UtcNow.AddMinutes(30), // Token expires in 1 hour
                 Issuer = _config["Jwt:Issuer"],
                 //Audience = _audience,

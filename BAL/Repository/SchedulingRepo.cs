@@ -34,7 +34,7 @@ namespace BAL.Repository
             shift.IsRepeat = new BitArray(new[] { model.Isrepeat });
             shift.RepeatUpto = model.Repeatupto;
             shift.CreatedDate = DateTime.Now;
-            shift.CreatedBy = creater.ToString();
+            shift.CreatedBy = string.IsNullOrEmpty(creater) ? "": creater;
             _context.Shifts.Add(shift);
             _context.SaveChanges();
 
