@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace HalloDoc.Controllers
 {
-    [CustomAuthorize(new string[] { "Provider" }, "6")]
     public class ProviderDashboardController : Controller
     {
         private readonly IAdminDashboard _admin;
@@ -24,6 +23,7 @@ namespace HalloDoc.Controllers
         }
 
         #region Dashboard
+        [CustomAuthorize(new string[] { "Provider" }, "18")]
 
         public IActionResult Dashboard()
         {
@@ -75,6 +75,7 @@ namespace HalloDoc.Controllers
         #endregion
 
         #region Actions
+        [CustomAuthorize(new string[] { "Provider" }, "18")]
         public IActionResult Accept(int reqid)
         {
             _pDashboard.AcceptRequest(reqid);
@@ -148,6 +149,7 @@ namespace HalloDoc.Controllers
 
         #region Scheduling
 
+        [CustomAuthorize(new string[] { "Provider" }, "19")]
         public IActionResult Scheduling()
         {
             var physicianId = HttpContext.Session.GetInt32("PhysicianId");

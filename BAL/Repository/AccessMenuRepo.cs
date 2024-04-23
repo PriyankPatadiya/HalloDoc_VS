@@ -47,7 +47,7 @@ namespace BAL.Repository
                           on aspnetuserrole.RoleId equals aspnetrole.Id
                           join phy in _context.Physicians
                           on aspuser.Id equals phy.AspNetUserId into phyusers
-                          from totaluser in phyusers.DefaultIfEmpty()
+                          from totalphy in phyusers.DefaultIfEmpty()
                           join admin in _context.Admins
                           on aspuser.Id equals admin.AspNetUserId into admins
                           from totaladmins in admins.DefaultIfEmpty()
@@ -66,12 +66,12 @@ namespace BAL.Repository
                           {
                               AccountType = aspnetrole.Name,
                               AccountPOC = aspuser.UserName,
-                              phone = totaluser.Mobile,
-                              status = totaluser.Status,
+                              phone = totalphy.Mobile,
+                              status = totalphy.Status,
                               roleid = aspnetuserrole.RoleId,
                               AccountTypeid = aspnetuserrole.RoleId,
-                              useraccessid = totaluser.PhysicianId,
-                              email = totaluser.Email,
+                              useraccessid = totalphy.PhysicianId,
+                              email = totalphy.Email,
                           }
 
                           )).ToList();

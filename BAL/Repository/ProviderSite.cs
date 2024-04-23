@@ -209,22 +209,31 @@ namespace BAL.Repository
 
                           }).ToList();
 
-            var searchedRecord = record.Select(item => new SearchRecordsVM
+            var searchedRecord = record.Select(item =>
             {
-                PatientName = item.RequestClient.FirstName + " " + item.RequestClient.LastName,
-                Requestor = item.Request.FirstName + " " + item.Request.LastName,
-                //DateOfService = ,
-                //CloseDate = ,
-                Email = item.RequestClient.Email,
-                PhoneNumber = item.RequestClient.PhoneNumber,
-                Address = item.RequestClient.Address,
-                Zip = item.RequestClient.ZipCode,
-                RequestStatus = item.Request.Status,
-                PhysicianName = item.Physician != null ? item.Physician.FirstName : " ",
-                PatientNote = item.RequestClient.Notes,
-                RequestTypeId = item.Request.RequestTypeId,
-                RequestId = item.Request.RequestId,
-                IsDeleted = item.Request.IsDeleted[0],
+                var requestNotes = _context.RequestNotes.FirstOrDefault(u => u.RequestId == item.Request.RequestId);
+                string? physicianNotes = requestNotes == null ? "-" : requestNotes.PhysicianNotes;
+                string? adminNotes = requestNotes == null ? "-" : requestNotes.AdminNotes;
+                
+                return new SearchRecordsVM
+                {
+                    PatientName = item.RequestClient.FirstName + " " + item.RequestClient.LastName,
+                    Requestor = item.Request.FirstName + " " + item.Request.LastName,
+                    //DateOfService = ,
+                    //CloseDate = ,
+                    Email = item.RequestClient.Email,
+                    PhoneNumber = item.RequestClient.PhoneNumber,
+                    Address = item.RequestClient.Address,
+                    Zip = item.RequestClient.ZipCode,
+                    RequestStatus = item.Request.Status,
+                    PhysicianName = item.Physician != null ? item.Physician.FirstName : " ",
+                    PatientNote = item.RequestClient.Notes,
+                    PhysicianNote = physicianNotes,
+                    AdminNotes = adminNotes,
+                    RequestTypeId = item.Request.RequestTypeId,
+                    RequestId = item.Request.RequestId,
+                    IsDeleted = item.Request.IsDeleted[0],
+                };
             }).Where(item =>
             (string.IsNullOrEmpty(email) || item.Email.Contains(email)) &&
             (string.IsNullOrEmpty(phoneNum) || item.PhoneNumber.Contains(phoneNum)) &&

@@ -65,9 +65,37 @@
                                     <td class="col align-middle accept-policy">
                                         @Html.DisplayFor(modelitem=>item.CreatedDate)
                                     </td>
-                                    <td class="col align-middle">
-                                        @Html.DisplayFor(modelitem=>item.currentStatus)
-                                    </td>
+                                    @switch (item.currentStatus)
+                                    {
+                                        case 1:
+                                            <td class="align-middle">New</td>
+                                            break;
+                                        case 2:
+                                            <td class="align-middle">Pending</td>
+                                            break;
+                                        case 3:
+                                            <td class="align-middle">To Close</td>
+                                            break;
+                                        case 4:
+                                            <td class="align-middle">Active</td>
+                                            break;
+                                        case 5:
+                                            <td class="align-middle">Active</td>
+                                            break;
+                                        case 6:
+                                            <td class="align-middle">Conclude</td>
+                                            break;
+                                        case 7:
+                                            <td class="align-middle">To Close</td>
+                                            break;
+                                        case 8:
+                                            <td class="align-middle">To Close</td>
+                                            break;
+                                        case 9:
+                                            <td class="align-middle">Unpaid</td>
+                                            break;
+
+                                    }
                                     <td class="col align-middle">
                                         @if (item.Document != null)
                                         {

@@ -1,5 +1,8 @@
-﻿document.addEventListener('DOMContentLoaded', function () {
-
+﻿const currentTheme = localStorage.getItem("theme");
+if (currentTheme) {
+    document.documentElement.setAttribute("data-bs-theme", currentTheme);
+}
+$(window).ready(function () {
     const toggleButton = document.getElementById("theme-toggle");
     let currentTheme = localStorage.getItem("theme");
     currentTheme = currentTheme != null ? currentTheme : "light";
@@ -16,5 +19,4 @@
         }
         localStorage.setItem("theme", currentTheme);
     });
-
 });

@@ -19,8 +19,8 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
           integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
           crossorigin="" />
-    <script src="~/js/theme-switcher.js"/>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="~/js/theme-switcher.js"/>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
             integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
@@ -119,11 +119,11 @@
                             </div>
                         </li>
                         <li class="nav-item" role="presentation">
-                            <button class="px-2 shadow-none nav-link text-decoration-none text-info @(ViewContext.ActionDescriptor.RouteValues["action"] == "PatientHistory" || ViewContext.ActionDescriptor.RouteValues["action"] == "BlockedHistory" || ViewContext.ActionDescriptor.RouteValues["action"] == "SearchRecords" || ViewContext.ActionDescriptor.RouteValues["action"] == "explorePatientRequests" ? "active" : "")" id="dropdownMenu4" data-bs-toggle="dropdown" aria-expanded="false">Records</button>
+                            <button class="px-2 shadow-none nav-link text-decoration-none text-info @(ViewContext.ActionDescriptor.RouteValues["action"] == "PatientHistory" || ViewContext.ActionDescriptor.RouteValues["action"] == "EmailLog" ||ViewContext.ActionDescriptor.RouteValues["action"] == "BlockedHistory" || ViewContext.ActionDescriptor.RouteValues["action"] == "SearchRecords" || ViewContext.ActionDescriptor.RouteValues["action"] == "explorePatientRequests" ? "active" : "")" id="dropdownMenu4" data-bs-toggle="dropdown" aria-expanded="false">Records</button>
                             <div class="dropdown">
                                 <ul class="dropdown-menu" aria-labelledby="dropdownMenu4">
                                     <li><a asp-action="SearchRecords" class="dropdown-item" type="button">Search Records </a></li>
-                                    <li><button class="dropdown-item" type="button">Email Logs</button></li>
+                                    <li><a asp-action="EmailLog" class="dropdown-item" type="button">Email Logs</a></li>
                                     <li><button class="dropdown-item" type="button">SMS Logs</button></li>
                                     <li><a asp-action="PatientHistory" class="dropdown-item" type="button">Patient Records</a></li>
                                     <li><a asp-action="BlockedHistory" class="dropdown-item" type="button">Blocked History</a></li>
@@ -173,6 +173,7 @@
 
         $(window).on('ready', function () {
             $("#overlay").fadeIn(200);
+            
         });
         $(window).on('load', function () {
             $("#overlay").fadeOut(200);

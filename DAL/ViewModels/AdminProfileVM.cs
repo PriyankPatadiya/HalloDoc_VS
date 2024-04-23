@@ -7,6 +7,7 @@ namespace DAL.ViewModels
 {
     public class AdminProfileVM
     {
+        public int? AdminId { get; set; }
         public string? UserName { get; set; }
 
         [Column(TypeName = "character varying")]

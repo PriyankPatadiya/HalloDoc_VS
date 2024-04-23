@@ -6,7 +6,10 @@ namespace BAL.Interface
 {
     public interface IAdminDashboard
     {
+        public bool isMailChanged(string email1, string email2);
+        public bool isAdminExistById(int id);
         public bool isAdminExist(string email);
+        public string getMailByAdminId(int adminId);    
         public string username(string email);
         public Admin getAdminByemail(string email); 
         public DAL.DataModels.Request reqbyreqid(int id);

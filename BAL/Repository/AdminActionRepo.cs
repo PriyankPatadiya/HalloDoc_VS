@@ -71,8 +71,8 @@ namespace BAL.Repository
                               region = reqclient.State,
                               ConfirmationNumber = req.ConfirmationNumber,
                               RequestClientId = reqclient.RequestClientId,
-
-                          });
+                              isPhysician = req.PhysicianId == null ? false : true
+                          }) ;
             result = result.Where(s => s.RequestClientId == reqclientId);
             return result;
         }

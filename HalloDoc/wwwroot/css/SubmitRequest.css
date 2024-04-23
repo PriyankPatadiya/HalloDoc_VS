@@ -3,23 +3,32 @@
     background-color: #e8eaf1;
     border: 1px solid #4367d3;
 }
-
+[data-bs-theme = "dark"] #patientbtn {
+    background-color: #31355b;
+}
 #familytbtn {
     color: #00adef;
     background-color: #e5f3f8;
     border: 1px solid #00adef;
 }
-
+[data-bs-theme = "dark"] #familytbtn {
+    background-color: #090a11;
+}
 #conciergebtn {
     color: #228b22;
     background-color: #e8f0e8;
     border: 1px solid #228b22;
 }
-
+[data-bs-theme = "dark"] #conciergebtn {
+    background-color: #15172a;
+}
 #businessbtn {
     color: #d90f81;
     background-color: #f7e5ee;
     border: 1px solid #d90f81;
+}
+[data-bs-theme = "dark"] #businessbtn {
+    background-color: #15172a;
 }
 
 #centerdiv {

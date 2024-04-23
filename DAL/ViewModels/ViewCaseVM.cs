@@ -37,6 +37,7 @@ namespace DAL.ViewModels
         public string? region { get; set; }
 
         public int? requestid { get; set; }
+        public bool isPhysician { get; set; }
 
         public List<Region>? regiontable { get; set; }
     }

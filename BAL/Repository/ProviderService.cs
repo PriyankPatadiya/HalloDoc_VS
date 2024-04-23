@@ -290,7 +290,7 @@ namespace BAL.Repository
             admin.Zip = model.ZipCode;
             admin.CreatedBy = user.Id;
             admin.Status = 1;
-
+            admin.RoleId = 16;
             _context.Admins.Add(admin);
             _context.SaveChanges();
 

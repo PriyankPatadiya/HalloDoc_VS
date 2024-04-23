@@ -261,7 +261,7 @@ namespace HalloDoc.Controllers
 
         #region View Case 
 
-        [CustomAuthorize(new string[] { "Administrator", "Provider" }, "6")]
+        [CustomAuthorize(new string[] { "Administrator", "Provider" }, "25")]
         [HttpGet("AdminDashBoard/ViewCaseAdmin/{reqcliId?}", Name = "AdminViewCase")]
         [HttpGet("ProviderDashboard/ViewCase/{reqcliId?}", Name = "ProviderCase")]
         public IActionResult ViewCase(string reqcliId)
@@ -285,7 +285,7 @@ namespace HalloDoc.Controllers
             return View("MainPage", MainModel);
         }
 
-        #endregion View Case
+        #endregion View Case    
 
         #region Close Case
         // Close Case Actions
@@ -335,7 +335,7 @@ namespace HalloDoc.Controllers
 
         #region View Notes
 
-        [CustomAuthorize(new string[] { "Administrator", "Provider" }, "6")]
+        [CustomAuthorize(new string[] { "Administrator", "Provider" }, "26")]
         [HttpGet("AdminDashboard/ViewNotesAdmin/{reqid?}", Name = "AdminViewNotes")]
         [HttpGet("ProviderDashboard/ViewNotes/{reqid?}", Name = "ProvideViewNotes")]
         public IActionResult ViewNotesAdminn(int reqid)
@@ -385,7 +385,7 @@ namespace HalloDoc.Controllers
         #endregion View Notes
 
         #region Send Order
-        [CustomAuthorize(new string[] { "Administrator", "Provider" }, "6")]
+        [CustomAuthorize(new string[] { "Administrator", "Provider" }, "21")]
         [HttpGet("ProviderDashboard/SendOrder/{requestid?}", Name = "SendOrderByProvider")]
         [HttpGet("AdminDashboard/SendOrder/{requestid?}", Name = "AdminSendOrder")]
         public IActionResult SendOrder(int requestid)
@@ -675,7 +675,7 @@ namespace HalloDoc.Controllers
 
         #region Admin Profile
 
-        [CustomAuthorize(new string[] { "Administrator" }, "6")]
+        [CustomAuthorize(new string[] { "Administrator" }, "5")]
         public IActionResult AdminProfile(string mail)
         {
             string email = HttpContext.Session.GetString("Email");
@@ -685,53 +685,65 @@ namespace HalloDoc.Controllers
             return View(adminn);
         }
 
-        public IActionResult changeAccInfo(AdminProfileVM model, List<string> regions)
+        public IActionResult changeAccInfo(AdminProfileVM model, int AdminId, List<string> regions)
         {
-            string email = HttpContext.Session.GetString("Email");
-            var isAdminExist = _admin.isAdminExist(email);
-            if (email != null && isAdminExist)
+            var isAdminExistById = _admin.isAdminExistById(AdminId);
+            var isAdminExist = _admin.isAdminExist(model.Email);
+            string prevMail = _admin.getMailByAdminId(AdminId);
+            bool isMailChanged = _admin.isMailChanged(prevMail, model.Email);
+            if (isAdminExistById)
             {
-                _admin.changeAccountInfo(model, email, regions);
-                HttpContext.Session.SetString("Email", email);
-                TempData["Message"] = "Edited Successfully";
-                TempData["MessageType"] = "success";
-
-                return email == model.Email ? RedirectToAction("AdminProfile") : RedirectToAction("PatientLoginn", "Home");
+                if(isMailChanged && isAdminExist)
+                {
+                    TempData["Message"] = "Added Email is Already Exist";
+                    TempData["MessageType"] = "warning";
+                    return RedirectToAction("AdminProfile", new {mail = model.Email});
+                }
+                else
+                {
+                    _admin.changeAccountInfo(model, prevMail, regions);
+                    HttpContext.Session.SetString("Email", model.Email);
+                    TempData["Message"] = "Edited Successfully";
+                    TempData["MessageType"] = "success";
+                    return isMailChanged == false ? RedirectToAction("AdminProfile", new {mail = model.Email}) : RedirectToAction("PatientLoginn", "Home");
+                }
             }
             TempData["Message"] = "Not able to change information";
             TempData["MessageType"] = "success";
-            return RedirectToAction("AdminProfile");
+            return RedirectToAction("AdminProfile", new {mail = prevMail});
         }
 
-        public IActionResult changeBillingInfo(AdminProfileVM model)
+        public IActionResult changeBillingInfo(int AdminId, AdminProfileVM model)
         {
-            string email = HttpContext.Session.GetString("Email");
+            string email = _admin.getMailByAdminId(AdminId);
             if (email != "")
             {
                 _admin.changeBillingInfo(model, email);
                 TempData["Message"] = "Edited Successfully";
                 TempData["MessageType"] = "success";
-                return RedirectToAction("AdminProfile");
+                return RedirectToAction("AdminProfile", new {mail = email});
             }
             TempData["Message"] = "Not able to change information";
             TempData["MessageType"] = "success";
-            return RedirectToAction("AdminProfile");
+            return RedirectToAction("AdminProfile", new {mail = email});
         }
 
-        public IActionResult changePass([FromForm] string Password)
+        public IActionResult changePass(int AdminId)
         {
-            string email = HttpContext.Session.GetString("Email");
+            string Password = Request.Form["Password"];
+            string userEmail = HttpContext.Session.GetString("Email");
+            string email = _admin.getMailByAdminId(AdminId);
             Password = _passwordHasher.HashPassword(null, Password);
-            if (email != "")
+            if (userEmail != "")
             {
                 _admin.changePassword(email, Password);
                 TempData["Message"] = "Password Changed....";
                 TempData["MessageType"] = "success";
-                return RedirectToAction("PatientLoginn", "Home");
+                return userEmail == email ? RedirectToAction("PatientLoginn", "Home") : RedirectToAction("AdminProfile", new {mail = email});
             }
             TempData["Message"] = "Not Able to change password";
             TempData["MessageType"] = "warning";
-            return RedirectToAction("AdminProfile");
+            return RedirectToAction("AdminProfile" , new {mail = email});
         }
 
         #endregion Admin Profile
@@ -774,7 +786,7 @@ namespace HalloDoc.Controllers
         #region Create Request
         // Create Request
 
-        [CustomAuthorize(new string[] { "Administrator", "Provider" }, "6")]
+        [CustomAuthorize(new string[] { "Administrator", "Provider" }, "27")]
         [HttpGet("ProviderDashboard/CreateRequestAdmin", Name = "createRequestProvider")]
         [HttpGet("AdminDashboard/CreateRequestAdmin", Name = "createRequestAdmin")]
         public IActionResult CreateRequestAdmin()
@@ -813,7 +825,7 @@ namespace HalloDoc.Controllers
         #region Provider Menu
         // Provider Menu
 
-        [CustomAuthorize(new string[] { "Administrator" }, "6")]
+        [CustomAuthorize(new string[] { "Administrator" }, "4")]
         public IActionResult Provider()
         {
             ProviderMenuVM model = new ProviderMenuVM();
@@ -1057,7 +1069,7 @@ namespace HalloDoc.Controllers
 
         #region Access
         // Access 
-        [CustomAuthorize(new string[] { "Administrator" }, "6")]
+        [CustomAuthorize(new string[] { "Administrator" }, "7")]
         public IActionResult userAccess()
         {
             return View("AccessMenu/UserAccess");
@@ -1069,6 +1081,8 @@ namespace HalloDoc.Controllers
             return PartialView("AccessMenu/_UserAccessPartial", result);
         }
 
+
+        [CustomAuthorize(new string[] { "Administrator" }, "4")]
         public IActionResult CreateAdminAcc()
         {
             AdminCreateAccVM model = new AdminCreateAccVM();
@@ -1088,8 +1102,23 @@ namespace HalloDoc.Controllers
             model.Regions = _admin.regions();
             return RedirectToAction("userAccess");
         }
+        public IActionResult CreateProviderAccessAcc()
+        {
+            PhysicianProfileVM model = new PhysicianProfileVM();
+            model.isFromUserAccess = true;
 
+            model.Regions = _admin.regions();
+            return View("ProviderMenu/CreateProviderAccount", model);
+        }
 
+        public IActionResult CreateAdminAccessAcc()
+        {
+            AdminCreateAccVM model = new AdminCreateAccVM();
+            model.Regions = _admin.regions();
+            return View("ProviderMenu/CreateAdminAccount", model);
+        }
+
+        [CustomAuthorize(new string[] { "Administrator" }, "7")]
         // Role Access
 
         public IActionResult roleAccess()
@@ -1144,27 +1173,13 @@ namespace HalloDoc.Controllers
             return RedirectToAction("roleAccess");
         }
 
-        public IActionResult CreateProviderAccessAcc()
-        {
-            PhysicianProfileVM model = new PhysicianProfileVM();
-            model.isFromUserAccess = true;
-
-            model.Regions = _admin.regions();
-            return View("ProviderMenu/CreateProviderAccount", model);
-        }
-
-        public IActionResult CreateAdminAccessAcc()
-        {
-            AdminCreateAccVM model = new AdminCreateAccVM();
-            model.Regions = _admin.regions();
-            return View("ProviderMenu/CreateAdminAccount", model);
-        }
+        
         #endregion Access
 
         #region Location
         // location 
 
-        [CustomAuthorize(new string[] { "Administrator" }, "6")]
+        [CustomAuthorize(new string[] { "Administrator" }, "16")]
         public IActionResult ProviderLocation()
         {
             return View();
@@ -1178,7 +1193,7 @@ namespace HalloDoc.Controllers
 
         #region Scheduling
 
-        [CustomAuthorize(new[] { "Administrator" }, "6")]
+        [CustomAuthorize(new[] { "Administrator" }, "2")]
         public IActionResult Scheduling()
         {
             SchedulingVM model = new SchedulingVM();
@@ -1409,7 +1424,7 @@ namespace HalloDoc.Controllers
 
         #region Partners
 
-        [CustomAuthorize(new[] { "Administrator" }, "6")]
+        [CustomAuthorize(new[] { "Administrator" }, "10")]
         public IActionResult Partners()
         {
             ViewBag.Regions = _admin.regions();
@@ -1479,7 +1494,7 @@ namespace HalloDoc.Controllers
 
         #region PatientHistory
 
-        [CustomAuthorize(new[] { "Administrator" }, "6")]
+        [CustomAuthorize(new[] { "Administrator" }, "3")]
         public IActionResult PatientHistory()
         {
             return View("RecordsMenu/PatientRecords");
@@ -1574,7 +1589,7 @@ namespace HalloDoc.Controllers
 
         #region Blocked History
 
-        [CustomAuthorize(new string[] { "Administrator" }, "6")]
+        [CustomAuthorize(new string[] { "Administrator" }, "15")]
         public IActionResult BlockedHistory()
         {
             return View("RecordsMenu/BlockedRequests");
@@ -1598,6 +1613,21 @@ namespace HalloDoc.Controllers
             return RedirectToAction("BlockedHistory");
         }
         #endregion Blocked History
+
+        #region Email-log
+
+        public IActionResult EmailLog()
+        {
+            return View("RecordsMenu/EmailLogs");
+        }
+
+        //public IActionResult getEmailRecords()
+        //{
+        //    var Emails = _admin.getEmailRecords();
+
+        //    return PartialView("RecordsMenu/_emailLogsPartial", Emails);
+        //}
+        #endregion
 
         #region Other
         [CustomAuthorize(new string[] { "Administrator", "Provider" }, "6")]

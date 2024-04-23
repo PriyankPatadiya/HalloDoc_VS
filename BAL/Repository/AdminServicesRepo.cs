@@ -18,7 +18,18 @@ namespace BAL.Repository
              _context = context;
              _uploadProvider = upload;
         }
-
+        public bool isMailChanged(string email1, string email2)
+        {
+            return !(email1 == email2);
+        }
+        public string getMailByAdminId(int adminId)
+        {
+            return _context.Admins.FirstOrDefault(u => u.AdminId == adminId).Email;
+        }
+        public bool isAdminExistById(int id)
+        {
+            return _context.Admins.Any(u => u.AdminId == id);
+        }
         public bool isAdminExist(string email)
         {
             return _context.AspNetUsers.Any(i => i.Email == email);
@@ -260,6 +271,7 @@ namespace BAL.Repository
                                      where admin.Email == email
                                      select new AdminProfileVM()
                                      {
+                                         AdminId = admin.AdminId,
                                          UserName = admin.Email,
                                          Password = AspNetUser.PasswordHash,
                                          FirstName = admin.FirstName,

@@ -64,6 +64,7 @@ $(document).ready(function () {
         filterPhysicianByRegion(RegionId);
     });
 
+
     // same as above
     $("#Regionnid").on("change", function () {
         var RegionId = $("#Regionnid").val();

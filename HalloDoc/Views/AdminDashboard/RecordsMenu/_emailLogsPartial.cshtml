@@ -1,0 +1,34 @@
+﻿@model List<DAL.DataModels.EmailLog>
+
+@if (ViewBag.IsEmpty)
+{
+    <div class="d-flex fs-4 justify-content-center text-body">
+        No Data Found !
+    </div>
+}
+else
+{
+    <Table class="table mb-0">
+
+        <tbody class="table-body">
+            <tr>
+                <th scope="col">Recipient</th>
+                <th scope="col">Action</th>
+                <th scope="col">RoleName</th>
+                <th scope="col">Email Id</th>
+                <th scope="col">Created Date</th>
+                <th scope="col">Sent Date</th>
+                <th scope="col">Sent</th>
+                <th scope="col">Sent Tries</th>
+                <th scope="col">Confirmation Number</th>
+            </tr>
+        </tbody>
+        <tbody>
+            @foreach(var item in Model)
+            {
+                <td class="align-middle"></td>    
+            }
+        </tbody>
+
+    </Table>
+}
