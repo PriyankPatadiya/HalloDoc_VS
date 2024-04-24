@@ -9,11 +9,12 @@
                 <button type="button" class="btn-close shadow-none" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <form method="post" enctype="multipart/form-data" id="EditTaskData" asp-action="EditTask">
-                <input id="TaskId" name="requestid" class="d-none" hidden />
+                <input id="TaskIddd" name="TaskId" class="d-none" hidden />
                 <div class="modal-body row gx-4">
                     <div class="form-floating my-3 control-group col-sm-12 col-md-12 col-lg-6">
                         <input type="text"
                                class="form-control"
+                               name="TaskName"
                                id="TaskName"
                                placeholder="First Name" required />
                         <label for="TaskName" class="ms-2">Task Name</label>
@@ -21,6 +22,7 @@
                     <div class="col-sm-12 col-md-12 col-lg-6 form-floating my-3">
                         <input type="text"
                                class="form-control"
+                               name="Assignee"
                                id="Assignee"
                                placeholder="First Name" required />
                         <label for="Assignee" class="ms-2">Assignee</label>
@@ -34,6 +36,7 @@
                     <div class="col-sm-12 col-md-12 col-lg-6 form-floating my-3">
                         <input type="text"
                                class="form-control"
+                               name="Discription"
                                id="Discription"
                                placeholder="Last Name" required />
                         <label for="Discription" class="ms-2">Discription</label>
@@ -47,6 +50,7 @@
                         <input type="date"
                                class="form-control"
                                id="DueDate"
+                               name="DueDate"
                                placeholder="Date Of Birth" required />
                         <label for="DueDate" class="ms-2">Due Date</label>
                         <div class="valid-feedback">
@@ -55,9 +59,8 @@
                         @*<span asp-validation-for="" class="text-danger" style="font-size: 11px;">  </span>*@
                     </div>
                     <div class="col-sm-12 col-md-12 col-lg-6 form-floating my-3 ">
-                        <select class="form-select form-select-sm py-2" aria-label=".form-select-sm example" id="City">
-                            <option selected>City</option>
-                            <option value="1">One</option>
+                        <select class="form-select form-select-sm py-2" aria-label=".form-select-sm example" id="City" name="City">
+                            <option value="1" >One</option>
                             <option value="2">Two</option>
                             <option value="3">Three</option>
                         </select>
@@ -65,6 +68,7 @@
                     <div class="col-sm-12 col-md-12 col-lg-6 form-floating my-3">
                         <input type="text"
                                class="form-control"
+                               name="Category"
                                id="Category"
                                placeholder="Last Name" required />
                         <label for="Category" class="ms-2">Categoty</label>
@@ -78,7 +82,6 @@
                     <div class="w-100 d-flex">
                         <div class="mx-2 p-0 w-50">
                             <button type="submit" class="btn btn-success w-100">Confirm</button>
-
                         </div>
                         <div class="mx-2 p-0 w-50">
                             <button type="button" data-bs-dismiss="modal" class="btn btn-outline-success w-100">cancel</button>
@@ -91,6 +94,9 @@
     </div>
 </div>
 <button class="d-none" data-bs-toggle="modal" data-bs-target="#EditTaskModal" id="submitmodal" hidden></button>
+
+@if(ViewBag.IsEmpty == false)
+{
     <table class="table mb-0">
 
         <thead class="table-body">
@@ -106,29 +112,54 @@
             </tr>
         </thead>
         <tbody>
-        @{
-        int i = 0; 
-        }
-        @foreach (var item in Model)
-        {
-            <tr>
+            @{
+                int i = 0;
+            }
+            @foreach (var item in Model)
+            {
+                <tr>
                     <td class="align-middle" id="ti_@i">@item.TaskId</td>
-                <td class="align-middle" id="tn_@i">@item.TaskName</td>
-                <td class="align-middle" id="as_@i">@item.Assignee</td>
-                <td class="align-middle" id="td_@i">@item.TaskDescription</td>
-                <td class="align-middle" id="dd_@i">@item.DueDate.Value.Date.ToString("MMMM dd, yyyy")</td>
-                <td class="align-middle" id="ca_@i">@item.Category</td>
-                <td class="align-middle" id="ci_@i">@item.city</td>
-                <td class="align-middle"><button onclick="openEditModal(@i)" class="btn btn-success mx-2">Edit</button><a asp-action="deleteTask" asp-route-TaskId="@item.TaskId" class="btn btn-danger">Delete</a></td>
-            </tr>
-            i++;
-        }
-            
-            
+                    <td class="align-middle" id="tn_@i">@item.TaskName</td>
+                    <td class="align-middle" id="as_@i">@item.Assignee</td>
+                    <td class="align-middle" id="td_@i">@item.TaskDescription</td>
+                    <td class="align-middle" id="dd_@i">@item.DueDate.Value.Date.ToString("MMMM dd, yyyy")</td>
+                    <td class="align-middle" id="ca_@i">@item.Category</td>
+                    <td class="align-middle" id="ci_@i">@item.city</td>
+                    <td class="align-middle"><button onclick="openEditModal(@i)" class="btn btn-success mx-2">Edit</button><a asp-action="deleteTask" asp-route-TaskId="@item.TaskId" class="btn btn-danger">Delete</a></td>
+                </tr>
+                i++;
+            }
+
+
         </tbody>
 
     </table>
-    <div class="pb-2 position-absolute d-flex justify-content-between align-items-center" style="bottom: 0%; width: 95%">
+}
+else
+{
+    <div class="d-flex align-items-center justify-content-center w-100 text-body fw-bold"> No Data Found    </div>
+}
+
+<div class="d-flex justify-content-end container align-items-center my-3" id="pagination">
+    <span class="mx-2">Items Per Page: </span>
+    <button class=" mx-3 btn btn-outline-secondary">10</button>
+    <span class="mx-3">1 - @ViewBag.Count of @ViewBag.TotalCount</span>
+    @{
+        int prevpage = Convert.ToInt32(ViewBag.CurrentPage) - 1;
+        int currpage = Convert.ToInt32(ViewBag.CurrentPage);
+        int nextpage = Convert.ToInt32(ViewBag.CurrentPage) + 1;
+    }
+
+
+    <a class="page-link btn rounded-4 btn-outline-info mx-3" id="previous" data-page="@(currpage)" aria-label="Previous" @(ViewBag.CurrentPage <= 1 ? "disabled" : "")>
+                &laquo;
+            </a>
+        
+            <a class="page-link btn rounded-4 btn-outline-info mx-1" id="next" data-page="@(nextpage)" aria-label="Next" @(ViewBag.CurrentPage >= ViewBag.TotalPages  ? "hidden" : "")>
+                &raquo;
+            </a>
+</div>
+    @*<div class="pb-2 position-absolute d-flex justify-content-between align-items-center" style="bottom: 0%; width: 95%">
         <nav id="pagination" aria-label="Page navigation">
             <ul class="pagination justify-content-center mb-0">
                 @if (ViewBag.CurrentPage >= 1 && ViewBag.CurrentPage <= ViewBag.TotalPages)
@@ -155,15 +186,29 @@
             </ul>
         </nav>
         <span>@ViewBag.CurrentPage of @ViewBag.TotalPages</span>
-    </div>
+    </div>*@
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.js">
+</script>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.js">
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js">
+
+</script>
+<link href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/themes/ui-lightness/jquery-ui.css" rel="stylesheet"
+      type="text/css" />
     <script>
+
     function openEditModal(i) {
-        debugger;
-         $("#TaskName").val($("#tn_"+i).html());
+        var date = moment($("#dd_" + i).html()).format('DD-MM-YYYY');
+        $("#TaskName").val($("#tn_"+i).html());
         $("#Assignee").val($("#as_" + i).html());
         $("#Discription").val($("#td_" + i).html());
-        $("City").val($("#ci_" + i).html());
-        $("#DueDate").val($("#dd_" + i).html());
+        $("#TaskIddd").val($("#ti_" + i).html());
+       var city =  $("City").val($("#ci_" + i).html());
+       var duedate = document.getElementById("DueDate");
+       duedate.value = date;
+        
         $("#Category").val($("#ca_" + i).html());
 
         $("#submitmodal").click();

@@ -3,6 +3,7 @@ using BLL_TaskManager.Interfaces;
 using DAL_TaskManager.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
+using System.Drawing.Printing;
 
 namespace AssignmentTask.Controllers
 {
@@ -26,10 +27,24 @@ namespace AssignmentTask.Controllers
         }
 
         // Get Tasks Data
-        public IActionResult getTasks(string searchstring)
+        public IActionResult getTasks(string searchstring, int pageSize, int currentPage)
         {
             var tasks = _taskManager.getTasks(searchstring);
-            return PartialView("_TasksPartialView", tasks);
+            int totalPages = (int)Math.Ceiling((double)tasks.Count() / pageSize);
+            var paginatedData = tasks.Skip((currentPage - 1) * pageSize).Take(pageSize).ToList();
+            if (paginatedData.Count != 0)
+            {
+                ViewBag.CurrentPage = currentPage;
+                ViewBag.IsEmpty = false;
+                ViewBag.TotalPages = totalPages;
+                ViewBag.Count = paginatedData.Count;
+                ViewBag.TotalCount = tasks.Count;
+            }
+            else
+            {
+                ViewBag.IsEmpty = true;
+            }
+            return PartialView("_TasksPartialView", paginatedData);
         }
 
         // Add Task
@@ -71,13 +86,33 @@ namespace AssignmentTask.Controllers
             }
         }
         
-        // edit modal data
-
-        public IActionResult getEditModalData(int TaskId)
+        // edit 
+        public IActionResult EditTask(IFormCollection formcollection)
         {
-            var data = _taskManager.getEditData(TaskId);
-            return Json(new { data = data });
+            string TaskId = formcollection["TaskId"];
+            string TaskName = formcollection["TaskName"];
+            string Assignee = formcollection["Assignee"];
+            string Discription = formcollection["Discription"];
+            string DueDate = formcollection["DueDate"];
+            string City = formcollection["City"];
+            string Category = formcollection["Catogery"];
+
+            try
+            {
+                _taskManager.ediTask(TaskId ,TaskName, Assignee, Discription, DueDate, City, Category);
+                TempData["Message"] = "Task Edited Successfully";
+                TempData["MessageType"] = "success";
+                return RedirectToAction("Index");
+            }
+            catch(Exception ex) 
+            {
+                TempData["Message"] = "something went wrong";
+                TempData["MessageType"] = "error";
+                return RedirectToAction("Index");
+            }
+
         }
+
 
 
         private void cache(Exception exception, object ex)

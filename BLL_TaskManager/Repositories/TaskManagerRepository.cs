@@ -35,7 +35,7 @@ namespace BLL_TaskManager.Repositories
                               DueDate = DateTime.Parse(tasks.DueDate.ToString()),
                               Category = category.Name,
                               city = tasks.City
-                          }).Where(u => String.IsNullOrEmpty(search) || u.TaskName.Contains(search));
+                          }).Where(u => String.IsNullOrEmpty(search) || u.Assignee.Contains(search));
             return result.ToList();
         }
 
@@ -91,6 +91,26 @@ namespace BLL_TaskManager.Repositories
                 city = data.City
             };
             return model;
+        }
+
+        #endregion
+
+        #region editData
+
+        public void ediTask(string TaskId, string TaskName, string Assignee, string Discription, string DueDate, string City, string Category)
+        {
+            var task = _context.Tasks.Find(int.Parse(TaskId));
+            if (task != null)
+            {
+                task.Assignee = Assignee;
+                task.TaskName = TaskName;
+                task.Description = Discription;
+                task.DueDate = DateOnly.Parse( DueDate);
+                task.City = City;
+                task.Category = Category;
+                _context.Update(task);
+                _context.SaveChanges();
+            }
         }
 
         #endregion
