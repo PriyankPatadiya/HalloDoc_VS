@@ -1,0 +1,174 @@
+﻿@model List<DAL_TaskManager.ViewModels.Task_DetailsVM>
+@*Modal*@
+
+<div class="modal fade" id="EditTaskModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header bg-success-subtle">
+                <h1 class="modal-title fs-5  text-success" id="exampleModalLabel">Task Form</h1>
+                <button type="button" class="btn-close shadow-none" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form method="post" enctype="multipart/form-data" id="EditTaskData" asp-action="EditTask">
+                <input id="TaskId" name="requestid" class="d-none" hidden />
+                <div class="modal-body row gx-4">
+                    <div class="form-floating my-3 control-group col-sm-12 col-md-12 col-lg-6">
+                        <input type="text"
+                               class="form-control"
+                               id="TaskName"
+                               placeholder="First Name" required />
+                        <label for="TaskName" class="ms-2">Task Name</label>
+                    </div>
+                    <div class="col-sm-12 col-md-12 col-lg-6 form-floating my-3">
+                        <input type="text"
+                               class="form-control"
+                               id="Assignee"
+                               placeholder="First Name" required />
+                        <label for="Assignee" class="ms-2">Assignee</label>
+                        <div class="valid-feedback">
+                            Looks good!
+                        </div>
+                        @*<span asp-validation-for="" class="invalid-feedback">*@
+
+                        </span>
+                    </div>
+                    <div class="col-sm-12 col-md-12 col-lg-6 form-floating my-3">
+                        <input type="text"
+                               class="form-control"
+                               id="Discription"
+                               placeholder="Last Name" required />
+                        <label for="Discription" class="ms-2">Discription</label>
+                        <div class="valid-feedback">
+                            Looks good!
+                        </div>
+                        @*<span asp-validation-for="" class="text-danger" style="font-size: 11px;"></span>*@
+                    </div>
+
+                    <div class="col-sm-12 col-md-12 col-lg-6 form-floating my-3">
+                        <input type="date"
+                               class="form-control"
+                               id="DueDate"
+                               placeholder="Date Of Birth" required />
+                        <label for="DueDate" class="ms-2">Due Date</label>
+                        <div class="valid-feedback">
+                            Looks good!
+                        </div>
+                        @*<span asp-validation-for="" class="text-danger" style="font-size: 11px;">  </span>*@
+                    </div>
+                    <div class="col-sm-12 col-md-12 col-lg-6 form-floating my-3 ">
+                        <select class="form-select form-select-sm py-2" aria-label=".form-select-sm example" id="City">
+                            <option selected>City</option>
+                            <option value="1">One</option>
+                            <option value="2">Two</option>
+                            <option value="3">Three</option>
+                        </select>
+                    </div>
+                    <div class="col-sm-12 col-md-12 col-lg-6 form-floating my-3">
+                        <input type="text"
+                               class="form-control"
+                               id="Category"
+                               placeholder="Last Name" required />
+                        <label for="Category" class="ms-2">Categoty</label>
+                        <div class="valid-feedback">
+                            Looks good!
+                        </div>
+                        @*<span asp-validation-for="" class="text-danger" style="font-size: 11px;"></span>*@
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <div class="w-100 d-flex">
+                        <div class="mx-2 p-0 w-50">
+                            <button type="submit" class="btn btn-success w-100">Confirm</button>
+
+                        </div>
+                        <div class="mx-2 p-0 w-50">
+                            <button type="button" data-bs-dismiss="modal" class="btn btn-outline-success w-100">cancel</button>
+                        </div>
+
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<button class="d-none" data-bs-toggle="modal" data-bs-target="#EditTaskModal" id="submitmodal" hidden></button>
+    <table class="table mb-0">
+
+        <thead class="table-body">
+            <tr>
+                <th scope="col">Task Id</th>
+                <th scope="col">Task Name</th>
+                <th scope="col">Assignee</th>
+                <th scope="col">Discription</th>
+                <th scope="col">Due Date</th>
+                <th scope="col">Category</th>
+                <th scope="col">City</th>
+                <th scope="col">Action</th>
+            </tr>
+        </thead>
+        <tbody>
+        @{
+        int i = 0; 
+        }
+        @foreach (var item in Model)
+        {
+            <tr>
+                    <td class="align-middle" id="ti_@i">@item.TaskId</td>
+                <td class="align-middle" id="tn_@i">@item.TaskName</td>
+                <td class="align-middle" id="as_@i">@item.Assignee</td>
+                <td class="align-middle" id="td_@i">@item.TaskDescription</td>
+                <td class="align-middle" id="dd_@i">@item.DueDate.Value.Date.ToString("MMMM dd, yyyy")</td>
+                <td class="align-middle" id="ca_@i">@item.Category</td>
+                <td class="align-middle" id="ci_@i">@item.city</td>
+                <td class="align-middle"><button onclick="openEditModal(@i)" class="btn btn-success mx-2">Edit</button><a asp-action="deleteTask" asp-route-TaskId="@item.TaskId" class="btn btn-danger">Delete</a></td>
+            </tr>
+            i++;
+        }
+            
+            
+        </tbody>
+
+    </table>
+    <div class="pb-2 position-absolute d-flex justify-content-between align-items-center" style="bottom: 0%; width: 95%">
+        <nav id="pagination" aria-label="Page navigation">
+            <ul class="pagination justify-content-center mb-0">
+                @if (ViewBag.CurrentPage >= 1 && ViewBag.CurrentPage <= ViewBag.TotalPages)
+                {
+                    int prevpage = Convert.ToInt32(ViewBag.CurrentPage) - 1;
+                    int currpage = Convert.ToInt32(ViewBag.CurrentPage);
+                    int nextpage = Convert.ToInt32(ViewBag.CurrentPage) + 1;
+                    <li class="page-item">
+                        <a class="page-link btn rounded-4 btn-outline-info mx-1" id="previous" data-page="@(prevpage)" aria-label="Previous" @(ViewBag.CurrentPage <= 1 ? "hidden" : "")>
+                            &laquo;
+                        </a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link btn rounded-4 btn-outline-info mx-1" id="current" data-page="@(currpage)" aria-label="Current">
+                            @(ViewBag.CurrentPage)
+                        </a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link btn rounded-4 btn-outline-info mx-1" id="next" data-page="@(nextpage)" aria-label="Next" @(ViewBag.CurrentPage >= ViewBag.TotalPages ? "hidden" : "")>
+                            &raquo;
+                        </a>
+                    </li>
+                }
+            </ul>
+        </nav>
+        <span>@ViewBag.CurrentPage of @ViewBag.TotalPages</span>
+    </div>
+    <script>
+    function openEditModal(i) {
+        debugger;
+         $("#TaskName").val($("#tn_"+i).html());
+        $("#Assignee").val($("#as_" + i).html());
+        $("#Discription").val($("#td_" + i).html());
+        $("City").val($("#ci_" + i).html());
+        $("#DueDate").val($("#dd_" + i).html());
+        $("#Category").val($("#ca_" + i).html());
+
+        $("#submitmodal").click();
+          
+    }
+    </script>
+
+
