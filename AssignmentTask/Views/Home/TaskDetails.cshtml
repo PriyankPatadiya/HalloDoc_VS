@@ -22,7 +22,7 @@
                         asp-for="TaskName"
                                class="form-control"
                                id="floatingInput1"
-                               placeholder="First Name" required />
+                               placeholder="First Name" />
                         <label for="floatingInput1" class="ms-2">Task Name</label>
                         </div>
                         <div class="col-sm-12 col-md-12 col-lg-6 form-floating my-3">
@@ -30,12 +30,12 @@
                                    asp-for="Assignee"
                                    class="form-control"
                                    id="floatingInput1"
-                                   placeholder="First Name" required />
+                                   placeholder="First Name"  />
                             <label for="floatingInput1" class="ms-2">Assignee</label>
                             <div class="valid-feedback">
                                 Looks good!
                             </div>
-                            @*<span asp-validation-for="" class="invalid-feedback">*@
+                        <span asp-validation-for="Assignee" class="invalid-feedback">
 
                             </span>
                         </div>
@@ -44,12 +44,12 @@
                                asp-for="TaskDescription"
                                    class="form-control"
                                    id="floatingInput2"
-                                   placeholder="Last Name" required />
+                                   placeholder="Last Name" />
                             <label for="floatingInput2" class="ms-2">Discreption</label>
                             <div class="valid-feedback">
                                 Looks good!
                             </div>
-                            @*<span asp-validation-for="" class="text-danger" style="font-size: 11px;"></span>*@
+                        <span asp-validation-for="TaskDescription" class="text-danger" style="font-size: 11px;"></span>
                         </div>
 
                         <div class="col-sm-12 col-md-12 col-lg-6 form-floating my-3">
@@ -57,12 +57,12 @@
                                    asp-for="DueDate"
                                    class="form-control"
                                    id="floatingInput3"
-                                   placeholder="Date Of Birth" required />
+                                   placeholder="Date Of Birth" />
                             <label for="floatingInput3" class="ms-2">Due Date</label>
                             <div class="valid-feedback">
                                 Looks good!
                             </div>
-                            @*<span asp-validation-for="" class="text-danger" style="font-size: 11px;">  </span>*@
+                        <span asp-validation-for="DueDate" class="text-danger" style="font-size: 11px;">  </span>
                       </div>
                     <div class="col-sm-12 col-md-12 col-lg-6 form-floating my-3 ">
                         <select class="form-select form-select-sm py-2" aria-label=".form-select-sm example" asp-for="city">
@@ -77,12 +77,12 @@
                         asp-for="Category"
                                class="form-control"
                                id="floatingInput2"
-                               placeholder="Last Name" required />
+                               placeholder="Last Name" />
                         <label for="floatingInput2" class="ms-2">Categoty</label>
                         <div class="valid-feedback">
                             Looks good!
                         </div>
-                        @*<span asp-validation-for="" class="text-danger" style="font-size: 11px;"></span>*@
+                        <span asp-validation-for="Category" class="text-danger" style="font-size: 11px;"></span>
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -110,7 +110,6 @@
 </div>
 
 <div class="container my-3" id="Tasks_PartialDiv"></div>  @*Partial View*@
-
 
 
 
@@ -151,7 +150,7 @@
     }
 </script>
 <script>
-    var pageSize = 2;
+    var pageSize = 10;
     getTasks(1);
 
     $(document).on("click", "#pagination a.page-link", function () {

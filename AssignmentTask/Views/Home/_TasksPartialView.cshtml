@@ -97,43 +97,46 @@
 
 @if(ViewBag.IsEmpty == false)
 {
-    <table class="table mb-0">
+    <div style="height : 60vh !important">
+        <table class="table mb-0">
 
-        <thead class="table-body">
-            <tr>
-                <th scope="col">Task Id</th>
-                <th scope="col">Task Name</th>
-                <th scope="col">Assignee</th>
-                <th scope="col">Discription</th>
-                <th scope="col">Due Date</th>
-                <th scope="col">Category</th>
-                <th scope="col">City</th>
-                <th scope="col">Action</th>
-            </tr>
-        </thead>
-        <tbody>
-            @{
-                int i = 0;
-            }
-            @foreach (var item in Model)
-            {
+            <thead class="table-body">
                 <tr>
-                    <td class="align-middle" id="ti_@i">@item.TaskId</td>
-                    <td class="align-middle" id="tn_@i">@item.TaskName</td>
-                    <td class="align-middle" id="as_@i">@item.Assignee</td>
-                    <td class="align-middle" id="td_@i">@item.TaskDescription</td>
-                    <td class="align-middle" id="dd_@i">@item.DueDate.Value.Date.ToString("MMMM dd, yyyy")</td>
-                    <td class="align-middle" id="ca_@i">@item.Category</td>
-                    <td class="align-middle" id="ci_@i">@item.city</td>
-                    <td class="align-middle"><button onclick="openEditModal(@i)" class="btn btn-success mx-2">Edit</button><a asp-action="deleteTask" asp-route-TaskId="@item.TaskId" class="btn btn-danger">Delete</a></td>
+                    <th scope="col">Task Id</th>
+                    <th scope="col">Task Name</th>
+                    <th scope="col">Assignee</th>
+                    <th scope="col">Discription</th>
+                    <th scope="col">Due Date</th>
+                    <th scope="col">Category</th>
+                    <th scope="col">City</th>
+                    <th scope="col">Action</th>
                 </tr>
-                i++;
-            }
+            </thead>
+            <tbody>
+                @{
+                    int i = 0;
+                }
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td class="align-middle" id="ti_@i">@item.TaskId</td>
+                        <td class="align-middle" id="tn_@i">@item.TaskName</td>
+                        <td class="align-middle" id="as_@i">@item.Assignee</td>
+                        <td class="align-middle" id="td_@i">@item.TaskDescription</td>
+                        <td class="align-middle" id="dd_@i">@item.DueDate.Value.Date.ToString("MMMM dd, yyyy")</td>
+                        <td class="align-middle" id="ca_@i">@item.Category</td>
+                        <td class="align-middle" id="ci_@i">@item.city</td>
+                        <td class="align-middle"><button onclick="openEditModal(@i)" class="btn btn-success mx-2">Edit</button><a asp-action="deleteTask" asp-route-TaskId="@item.TaskId" class="btn btn-danger">Delete</a></td>
+                    </tr>
+                    i++;
+                }
 
 
-        </tbody>
+            </tbody>
 
-    </table>
+        </table>
+
+    </div>
 }
 else
 {
