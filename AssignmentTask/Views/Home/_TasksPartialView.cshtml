@@ -151,7 +151,7 @@ else
     }
 
 
-    <a class="page-link btn rounded-4 btn-outline-info mx-3" id="previous" data-page="@(currpage)" aria-label="Previous" @(ViewBag.CurrentPage <= 1 ? "disabled" : "")>
+    <a class="page-link btn rounded-4 btn-outline-info mx-3" id="previous" data-page="@(prevpage)" aria-label="Previous" @(ViewBag.CurrentPage <= 1 ? "hidden" : "")>
                 &laquo;
             </a>
         
