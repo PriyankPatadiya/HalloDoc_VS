@@ -66,14 +66,14 @@
                                         
                                     <div class="d-flex justify-content-center my-3">
                                         <div class="form-check">
-                                            <input class="form-check-input" type="radio" id="houseCallRadio_@j">
-                                            <label class="form-check-label btn btn-outline-info" for="flexRadioDefault1">
+                                            <input class="form-check-input" type="radio" id="houseCallRadio_@j" hidden>
+                                            <label class="form-check-label btn btn-outline-info" for="houseCallRadio_@j">
                                                 House Call
                                             </label>
                                         </div>
                                         <div class="form-check">
-                                            <input class="form-check-input" type="radio" id="consultRedio_@j">
-                                            <label class="form-check-label btn btn-outline-info" for="flexRadioDefault2">
+                                            <input class="form-check-input" type="radio" id="consultRedio_@j" hidden>
+                                            <label class="form-check-label btn btn-outline-info" for="consultRedio_@j">
                                                Consult
                                             </label>
                                         </div>
@@ -381,7 +381,7 @@
                 int currpage = Convert.ToInt32(ViewBag.CurrentPage);
                 int nextpage = Convert.ToInt32(ViewBag.CurrentPage) + 1;
                 <li class="page-item">
-                    <a class="page-link btn rounded-4 btn-outline-info mx-1" id="previous" data-page="@(prevpage)" aria-label="Previous" @(ViewBag.CurrentPage <= 1 ? "hidden" : "")>
+                    <a class="page-link btn rounded-4 btn-outline-info mx-1 border border-secondary" id="previous" data-page="@(prevpage)" aria-label="Previous" @(ViewBag.CurrentPage <= 1 ? "hidden" : "")>
                         &laquo;
                     </a>
                 </li>
@@ -390,14 +390,14 @@
                     if (currpage + z <= ViewBag.TotalPages)
                     {
                         <li class="page-item">
-                            <a class="page-link btn rounded-4 btn-outline-info mx-1" id="current_@z" data-page="@(currpage + z)" aria-label="Current">
+                            <a class="page-link btn rounded-4 btn-outline-info mx-1 border border-secondary" id="current_@z" data-page="@(currpage + z)" aria-label="Current">
                                 @(ViewBag.CurrentPage + z)
                             </a>
                         </li>
                     }
                 }
                 <li class="page-item">
-                    <a class="page-link btn rounded-4 btn-outline-info mx-1" id="next" data-page="@(nextpage)" aria-label="Next" @(ViewBag.CurrentPage >= ViewBag.TotalPages ? "hidden" : "")>
+                    <a class="page-link btn rounded-4 btn-outline-info mx-1 border border-secondary" id="next" data-page="@(nextpage)" aria-label="Next" @(ViewBag.CurrentPage >= ViewBag.TotalPages ? "hidden" : "")>
                         &raquo;
                     </a>
                 </li>

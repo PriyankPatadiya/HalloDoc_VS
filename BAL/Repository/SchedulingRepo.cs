@@ -225,14 +225,15 @@ namespace BAL.Repository
 
         public List<Physician> OnDuty(string regionId)
         {
-            var currentTime = DateTime.Now.Hour;
+            var currentTime = DateTime.Now.Minute;
+            var currentHour = DateTime.Now.Hour;
             return (from shiftDetail in _context.ShiftDetails
             join physician in _context.Physicians on shiftDetail.Shift.PhysicianId equals physician.PhysicianId
             join physicianRegion in _context.PhysicianRegions on physician.PhysicianId equals physicianRegion.PhysicianId
             where (regionId == "0" || physicianRegion.RegionId == int.Parse(regionId)) &&
                   shiftDetail.ShiftDate.Date == DateTime.Now.Date &&
-                  currentTime >= shiftDetail.StartTime.Hour &&
-                  currentTime <= shiftDetail.EndTime.Hour &&
+                  (currentTime >= shiftDetail.StartTime.Minute && currentHour >= shiftDetail.StartTime.Hour) &&
+                  (currentTime <= shiftDetail.EndTime.Minute && currentHour <= shiftDetail.EndTime.Hour) &&
                   shiftDetail.IsDeleted == new BitArray(new[] { false }) && physician.IsDeleted == new BitArray(new[] { false })
             select physician).Distinct().ToList();
         }

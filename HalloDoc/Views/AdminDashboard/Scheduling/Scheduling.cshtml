@@ -183,7 +183,7 @@
                     <label for="floatingInput">Starting Date</label>
                 </div>
                 <div class="col-md-6 form-floating mb-3">
-                    <input id="StartTime" asp-for="Starttime" class="form-control rounded vcs" name="Starttime" type="time" placeholder=Suchtext autocomplete=off>
+                    <input id="StartTime" asp-for="Starttime" class="form-control rounded vcs" name="Starttime" type="time" placeholder=Suchtext autocomplete=off >
                     <label for="floatingInput">Start</label>
                 </div>
                 <div class="col-md-6 form-floating mb-3">
@@ -774,4 +774,8 @@
         let minutes = date.getMinutes().toString().padStart(2, '0');
         return `${hours}:${minutes}`;
     }
+    const currentTime = new Date();
+    const hours = currentTime.getHours();
+    const minutes = currentTime.getMinutes();
+    document.getElementById('StartTime').min = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
 </script>

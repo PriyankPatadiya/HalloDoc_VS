@@ -638,7 +638,7 @@ namespace HalloDoc.Controllers
 
         #region Send Aggrement
 
-        [CustomAuthorize(new string[] { "Administrator", "Provider" }, "6")]
+        [CustomAuthorize(new string[] { "Administrator", "Provider" }, "29")]
         public IActionResult SendAgreement(int requestid)
         {
 
@@ -764,7 +764,7 @@ namespace HalloDoc.Controllers
             string subject = "Submit A Request To Connect With Our Physicians";
             var body = new StringBuilder();
             body.AppendFormat("Hello");
-            body.AppendLine(@"Please Submit Your Request here");
+            body.AppendLine("Hello, " + PatientFirstname + PatientLastname + "Please Submit Your Request here " );
             body.AppendLine("<a href=\"" + link + "\">Click here</a>");
 
             string Body = body.ToString();
@@ -1610,6 +1610,8 @@ namespace HalloDoc.Controllers
         public IActionResult unBlockRequest(int RequestId)
         {
             _admin.unblockRequest(RequestId);
+            TempData["Message"] = "Request Unblocked !";
+            TempData["MessageType"] = "success";
             return RedirectToAction("BlockedHistory");
         }
         #endregion Blocked History
