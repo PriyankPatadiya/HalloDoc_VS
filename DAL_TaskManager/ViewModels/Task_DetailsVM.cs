@@ -9,7 +9,6 @@ namespace DAL_TaskManager.ViewModels
 {
     public class Task_DetailsVM
     {
-        [Required(ErrorMessage = "This field is Required!")]
         public int? TaskId { get; set; }
         [Required(ErrorMessage = "This field is Required!")]
 

@@ -35,7 +35,7 @@ namespace BLL_TaskManager.Repositories
                               DueDate = DateTime.Parse(tasks.DueDate.ToString()),
                               Category = category.Name,
                               city = tasks.City
-                          }).Where(u => String.IsNullOrEmpty(search) || u.Assignee.Contains(search));
+                          }).Where(u => String.IsNullOrEmpty(search.ToLower()) || u.Assignee.ToLower().Contains(search.ToLower()));
             return result.ToList();
         }
 
@@ -44,11 +44,15 @@ namespace BLL_TaskManager.Repositories
         #region AddTask
         public void AddTask(Task_DetailsVM model)
         {
-
-            DAL_TaskManager.DataModels.Category category = new DAL_TaskManager.DataModels.Category();
-            category.Name = model.Category;
-            _context.Categories.Add(category);
-            _context.SaveChanges();
+            bool isCatagoryExist = _context.Categories.Any(u => u.Name == model.Category);
+            DAL_TaskManager.DataModels.Category category = isCatagoryExist == false ? new DAL_TaskManager.DataModels.Category() : _context.Categories.FirstOrDefault(u => u.Name == model.Category);
+            if(!isCatagoryExist)
+            {
+                category.Name = model.Category;
+                _context.Categories.Add(category);
+                _context.SaveChanges();
+            }
+            
 
             DAL_TaskManager.DataModels.Task task = new DAL_TaskManager.DataModels.Task();
             task.TaskName = model.TaskName;
