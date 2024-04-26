@@ -35,7 +35,7 @@ namespace BLL_TaskManager.Repositories
                               DueDate = DateTime.Parse(tasks.DueDate.ToString()),
                               Category = category.Name,
                               city = tasks.City
-                          }).Where(u => String.IsNullOrEmpty(search.ToLower()) || u.Assignee.ToLower().Contains(search.ToLower()));
+                          }).Where(u => String.IsNullOrEmpty(search) || u.Assignee.ToLower().Contains(search.ToLower()));
             return result.ToList();
         }
 
