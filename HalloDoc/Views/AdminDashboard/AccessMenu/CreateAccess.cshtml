@@ -43,7 +43,7 @@
                 </div>
                 <div class="d-flex justify-content-end gap-2">
                     <button class="btn btn-info mb-3">Save</button>
-                    <button class="btn btn-outline-info mb-3">Cancel</button>
+                    <button type="button" class="btn btn-outline-info mb-3">Cancel</button>
                 </div>
             </form>
         </div>
@@ -63,7 +63,8 @@
             fetchRoles();
         });
         function fetchRoles() {
-            debugger
+            
+
             var role = $("#accounttype").val();
             console.log(role)
             $.ajax({

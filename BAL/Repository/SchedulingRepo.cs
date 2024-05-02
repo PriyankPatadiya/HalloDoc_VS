@@ -224,33 +224,34 @@ namespace BAL.Repository
         }
 
         public List<Physician> OnDuty(string regionId)
-        {
-            var currentTime = DateTime.Now.Minute;
-            var currentHour = DateTime.Now.Hour;
+            {            var currentTime = DateTime.Now.Hour;
+            var currentMinute = DateTime.Now.Minute;
             return (from shiftDetail in _context.ShiftDetails
             join physician in _context.Physicians on shiftDetail.Shift.PhysicianId equals physician.PhysicianId
             join physicianRegion in _context.PhysicianRegions on physician.PhysicianId equals physicianRegion.PhysicianId
             where (regionId == "0" || physicianRegion.RegionId == int.Parse(regionId)) &&
-                  shiftDetail.ShiftDate.Date == DateTime.Now.Date &&
-                  (currentTime >= shiftDetail.StartTime.Minute && currentHour >= shiftDetail.StartTime.Hour) &&
-                  (currentTime <= shiftDetail.EndTime.Minute && currentHour <= shiftDetail.EndTime.Hour) &&
-                  shiftDetail.IsDeleted == new BitArray(new[] { false }) && physician.IsDeleted == new BitArray(new[] { false })
-            select physician).Distinct().ToList();
+            _context.ShiftDetails.Any(item => item.Shift.PhysicianId == physician.PhysicianId &&
+                                                            item.ShiftDate.Date == DateTime.Now.Date &&
+                                                           (currentTime > item.StartTime.Hour || (currentTime == item.StartTime.Hour && currentMinute >= item.StartTime.Minute ))&&
+                                                           (currentTime <= item.EndTime.Hour || (currentTime == item.EndTime.Hour && currentMinute <= item.EndTime.Minute))&& 
+                                                           (item.IsDeleted == new BitArray(new[] { false })))
+                    select physician).Distinct().ToList();
         }
 
         public List<Physician> OffDuty(string regionId)
         {
             var currentTime = DateTime.Now.Hour;
-
+            var currentMinute = DateTime.Now.Minute;
             return (from physician in _context.Physicians
-                   join physicianRegion in _context.PhysicianRegions on physician.PhysicianId equals physicianRegion.PhysicianId
-                   where (regionId == "0" || physicianRegion.RegionId == int.Parse(regionId)) &&
-                         !_context.ShiftDetails.Any(item => item.Shift.PhysicianId == physician.PhysicianId &&
-                                                            item.ShiftDate.Date == DateTime.Now.Date &&
-                                                           currentTime >= item.StartTime.Hour &&
-                                                           currentTime <= item.EndTime.Hour &&
-                                                           item.IsDeleted == new BitArray(new[] { false }))
-                   select physician).Distinct().ToList();
+                    join physicianRegion in _context.PhysicianRegions on physician.PhysicianId equals physicianRegion.PhysicianId
+                    where (regionId == "0" || physicianRegion.RegionId == int.Parse(regionId)) &&
+                          !_context.ShiftDetails.Any(item => item.Shift.PhysicianId == physician.PhysicianId &&
+                                                             item.ShiftDate.Date == DateTime.Now.Date &&
+                                                            (currentTime >= item.StartTime.Hour || (currentTime == item.StartTime.Hour && currentMinute >= item.StartTime.Minute)) &&
+                                                            (currentTime <= item.EndTime.Hour || (currentTime == item.EndTime.Hour && currentMinute <= item.EndTime.Minute)) &&
+                                                            (item.IsDeleted == new BitArray(new[] { false })))
+                    select physician).Distinct().ToList();
+
         }
         public void returnShift(ShiftDetail sd)
         {

@@ -125,23 +125,24 @@
                                     <h1 class="modal-title fs-5  text-white" id="exampleModalLabel">Block Case</h1>
                                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                 </div>
+                                <form method="post" id="blockForm_@j">
+                                    <div class="modal-body">
+                                        <input id="RequestId_@j" value="@item.reqid" class="d-none" hidden/>
+                                        <p> Patient Name : <span id="text">@item.PatientName</span></p>
 
-                                <div class="modal-body">
-                                    <p> Patient Name : <span id="text">@item.PatientName</span></p>
+                                        <div class="form-floating mt-3">
+                                            <textarea class="form-control" name="reason" placeholder="Leave a comment here" id="Reason_@j" style="resize: none; min-height: 9vh !important"></textarea>
+                                            <label for="floatingTextarea2">provide Additional Notes</label>
+                                        </div>
 
-                                    <div class="form-floating mt-3">
-                                        <textarea class="form-control" name="reason" placeholder="Leave a comment here" id="floatingTextarea2" style="resize: none; min-height: 9vh !important"></textarea>
-                                        <label for="floatingTextarea2">provide Additional Notes</label>
                                     </div>
-
-                                </div>
-                                <div class="modal-footer">
-                                    <div class="d-flex justify-content-end mt-3">
-                                        <a asp-action="BlockCase" asp-route-reeqid="@item.reqid" class="btn btn-info">Confirm</a>
-                                        <button type="button" data-bs-dismiss="modal" class="btn btn-outline-info ms-3">cancel</button>
+                                    <div class="modal-footer">
+                                        <div class="d-flex justify-content-end mt-3">
+                                            <button type="button" onclick="submitBlockCaseForm(@j)" class="btn btn-info">Confirm</button>
+                                            <button type="button" data-bs-dismiss="modal" class="btn btn-outline-info ms-3">cancel</button>
+                                        </div>
                                     </div>
-                                </div>
-
+                                </form>
                             </div>
                         </div>
                     </div>
@@ -597,6 +598,20 @@
             });
         }
     }
+
+    function submitBlockCaseForm(j){
+        var reason = $("#Reason_"+j).val();
+        var requestId = $("#RequestId_"+j).val();
+
+        $.ajax({
+            type: 'POST',
+            url: '/AdminDashboard/BlockCase',
+            data: { reeqid : requestId , reason : reason },
+            success : function (response){
+                location.reload();
+            }
+        });
+    }
 </script>
 @if (ViewBag.EmptyMessage == null)
 {
@@ -637,5 +652,6 @@
                 $("#AssignForm").submit();
             }
         }
+
     </script>
 }

@@ -422,7 +422,6 @@
     });
 
     function filterPhysicianByRegion(RegionId) {
-        debugger
         console.log("hello")
         console.log("hello")
         console.log("hello")
@@ -446,7 +445,6 @@
     function TypeOfCareSave(requestid, i) {
         var houseCall = $(`#houseCallRadio_${i}`).is(":checked");
         var consult = $(`#consultRedio_${i}`).is(":checked");
-        debugger
         if(houseCall){
             var url = "/ProviderDashboard/HouseCall?requestId=" + requestid;
             window.location.href = url;

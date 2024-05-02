@@ -1,0 +1,100 @@
+﻿@{
+    Layout = ViewBag.IsPhysician == true ? "~/Views/Shared/_layoutProvider.cshtml" :  "~/Views/Shared/_LayoutAdminDash.cshtml";
+}
+
+<div class="container d-flex justify-content-between text-center align-items-center my-3">
+    <h3 class="text-body fw-semibold">Timesheet</h3>
+    @if (ViewBag.IsPhysician)
+    {
+        <a asp-action="Dashboard" asp-controller="ProviderDashboard" class="btn btn-outline-info"> ❮  Back </a>
+    }else{
+        <a asp-action="MainPage" class="btn btn-outline-info"> ❮  Back </a>
+    }
+</div>
+<div class="container my-3 bg-body shadow p-3 rounded" id="TimesheetmainDiv">
+    <div class="d-flex justify-content-between">
+        <div class="m-0 p-0 d-flex">
+            @if (ViewBag.IsPhysician == false)
+            {
+                <select class="form-select mx-2 py-3 shadow-none" aria-label="Default select example" id="selectPhysicianId">
+                    <option value="0">Search By Physician</option>
+                    @foreach (var item in ViewBag.Physicians)
+                    {
+                        <option value="@item.PhysicianId">@item.FirstName @item.LastName</option>
+                    }
+                </select>
+            }
+            else
+            {
+                <input class="d-none" id="PhysicianId" value="@ViewBag.physicianId" hidden />
+            }
+
+            <select class="form-select py-3 shadow-none" aria-label="Default select example" id="selectDate">
+                @{
+                    var currentDate = DateTime.Now;
+                    int month = 1;
+                    int year = currentDate.Year - 1;
+                    var currentMonth = currentDate.Month;
+                    var currentYear = currentDate.Year;
+                }
+                <option value="0">Search By Timesheetperiod</option>
+                @for (month = 1; month <= 12; month++)
+                {
+                    if (year < currentYear || (year == currentYear && month < currentMonth))
+                    {
+                        string startdate1 = new DateTime(year, month, 1).Date.ToString("yyyy/MM/dd");
+                        string enddate1 = new DateTime(year, month, 15).Date.ToString("yyyy/MM/dd");
+
+                        <option value="@startdate1">@startdate1 to @enddate1</option>
+
+                        string startdate2 = new DateTime(year, month, 16).Date.ToString("yyyy/MM/dd");
+                        string enddate2 = new DateTime(year, month, 1).AddMonths(1).AddDays(-1).Date.ToString("yyyy/MM/dd");
+
+                        <option value="@startdate2">@startdate2 to @enddate2</option>
+                        if (month == 12)
+                        {
+                            year = year + 1;
+                            month = 1;
+                        }
+                    }
+                }
+            </select>
+        </div>
+        @if (ViewBag.IsPhysician)
+        {
+            <div class="m-0 p-0">
+                <button class="btn btn-outline-info h-100" onclick="openTimesheetForm()">Finalize Timesheet</button>
+            </div>
+        }
+        
+    </div>
+</div>
+<div class="" id="fillTimesheetDiv">
+
+</div>
+
+<script>
+    function openTimesheetForm() {
+        var physicianid = $("#PhysicianId").val();
+        var date = $("#selectDate").val();
+
+
+        if(date != 0){
+            $.ajax({
+                type: 'GET',
+                url: "/AdminDashboard/getTimeSheetFormDetails",
+                data: { physicianId: physicianid, date: date },
+                success: function (response) {
+                    $("#fillTimesheetDiv").html(response);
+                    $("#TimesheetmainDiv").hide();
+                },
+                error: function (data) {
+                    alert(data.d);
+                }
+            });
+        }else{
+            alert("please select date");
+        }
+        
+    }
+</script>

@@ -7,12 +7,17 @@ namespace DAL.ViewModels
 {
     public class ProfilePatient
     {
+        [Required(ErrorMessage = "First Name is Required!")]
         [StringLength(50, ErrorMessage = "First Name should be between {2} and {1} characters.", MinimumLength = 2)]
         [RegularExpression(@"^[A-Z][a-z-']*\s*([A-Z][a-z-']*\s*)*$", ErrorMessage = "Invalid Name")]
         public string? FirstName { get; set; }
+        [Required(ErrorMessage = "Last Name is Required!")]
+
         [StringLength(50, ErrorMessage = "Last Name should be between {2} and {1} characters.", MinimumLength = 2)]
         [RegularExpression(@"^[A-Z][a-z-']*\s*([A-Z][a-z-']*\s*)*$", ErrorMessage = "Invalid Name")]
         public string? LastName { get; set; }
+
+        [Required(ErrorMessage = "Birth Date is Required!")]
 
         public DateTime BirthDate { get; set; }
 

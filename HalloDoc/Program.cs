@@ -34,7 +34,7 @@ builder.Services.AddScoped<IAccessMenu, AccessMenuRepo>();
 builder.Services.AddScoped<IProviderSite, ProviderSite>();
 builder.Services.AddScoped<IScheduling, SchedulingRepo>();
 builder.Services.AddScoped<IProviderDashboard, ProviderDashboardRepo>();
-//builder.Services.AddScoped<IJWTTokenservice, JWTTokenservicerepo>();
+builder.Services.AddScoped<Iinvoicing, InvoicingRepo>();
 
 
 // Add DbContext 
@@ -84,8 +84,8 @@ app.UseStaticFiles();
 app.UseRotativa();
 app.UseRouting();
 app.UseAuthentication();
-
 app.UseAuthorization();
+
 app.UseSession();
 app.MapControllerRoute(
     name: "default",

@@ -8,7 +8,7 @@ namespace BAL.Interface
         public List<AdminProvidersVM> getPhysicianList(int stateid);
         public List<AdminProvidersVM> getfilteredPhysicians(int stateid);
         public List<HealthProfessionalType> getProfessionals();
-
+        public List<Physician> PhysiciansList();
         public HealthProfessional getProfessionByVendorId(int vendorid);
         public Physician? getPhysicianById(int id);
         public List<PhysicianRegion> getList(int id);

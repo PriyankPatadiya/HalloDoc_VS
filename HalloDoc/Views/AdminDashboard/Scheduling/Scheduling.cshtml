@@ -169,6 +169,8 @@
                             <option value="@region.RegionId">@region.Name - (@region.Abbreviation)</option>
                         }
                     </select>
+                    <span id="RegionIdd" class="text-danger"></span>
+
                 </div>
 
                 <div class="form-floating mb-3">
@@ -185,10 +187,12 @@
                 <div class="col-md-6 form-floating mb-3">
                     <input id="StartTime" asp-for="Starttime" class="form-control rounded vcs" name="Starttime" type="time" placeholder=Suchtext autocomplete=off >
                     <label for="floatingInput">Start</label>
+                    <span class="text-danger" asp-validation-for="Starttime"></span>
                 </div>
                 <div class="col-md-6 form-floating mb-3">
                     <input id="EndTime" asp-for="Endtime" class="form-control rounded vcs" name="Endtime" type="time" placeholder=Suchtext autocomplete=off>
                     <label for="floatingInput">End</label>
+                    <span class="text-danger" id="EndTimeSpan" asp-validation-for="Endtime"></span>
                 </div>
                 <div class="col-md-6 d-flex align-items-center justify-content-start mb-3">
                     <label for="floatingInput">Repeat</label>
@@ -353,9 +357,13 @@
     <div id="calendar-container" class="fs-4 d-flex justify-content-center text-body"></div>
 </div>
 
+<partial name="_ValidationScriptsPartial"></partial>
+
 <script src="https://cdn.jsdelivr.net/npm/fullcalendar-scheduler@6.1.11/index.global.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js"></script>
+
 <script>
     if ('@TempData["Message"]' != '') {
         showToast('@TempData["Message"]', '@TempData["MessageType"]');
@@ -389,6 +397,7 @@
         });
     }
 </script>
+
 <script>
     function menubox() {
         event.preventDefault();
@@ -402,19 +411,15 @@
     };
 
     function submitAddShiftForm() {
-
         var regionId = $("#selectregion").val();
         var starttime = $("#StartTime").val();
         var endtime = $("#EndTime").val();
-        var endtime = $("#EndTime").val();
         console.log(regionId);
         if (regionId == null) {
-            alert("Please Select the reqion");
-        }
-        else if (endtime - starttime < 1) {
-            alert("endtime should be greater than starttime");
-        }
-        else {
+            $("#RegionIdd").text("Please Select The Region");
+        } else if (endtime < starttime || moment.duration(moment(endtime, "HH:mm:ss").diff(moment(starttime, "HH:mm:ss"))).asHours() < 1) {
+            $("#EndTimeSpan").text("End time should be at least one hour greater than start time");
+        } else {
             $("#createShiftModalForm").submit();
         }
     }
@@ -465,11 +470,14 @@
 
                             var calendarEl = document.getElementById('calendar');
                             calendar = new FullCalendar.Calendar(calendarEl, {
-                                height: 'auto',
+                                height: 'auto', 
+                                width: 'auto',
+                                eventMaxStack: 1,
+                                dayMaxEvents: 4,
                                 schedulerLicenseKey: 'GPL-My-Project-Is-Open-Source',
                                 themeSystem: 'bootstrap5',
                                 headerToolbar: false,
-                                initialView: 'resourceTimeline',
+                                initialView: 'resourceTimelineDay',
                                 resourceAreaWidth: '15%',
                                 resources: resources,
                                 events: events,
@@ -545,6 +553,22 @@
                                             }
                                         });
                                     });
+                                    $('#eventModal').show(function () {
+                                        if ($('#StartDateView').val() > "@DateTime.Now.ToString("yyyy-MM-dd")") {
+                                            $('#editbtn').removeClass('d-none');
+                                            $('#savebtn').addClass('d-none');
+                                            $('#returnshift').removeClass('d-none');
+                                            $('#deletebtn').removeClass('d-none');
+                                        }
+                                        else if ($('#StartDateView').val() == "@DateTime.Now.ToString("yyyy-MM-dd")") {
+                                            if ($('#StartTimeView').val() >= "@DateTime.Now.ToString("HH:MM:SS")") {
+                                                $('#editbtn').removeClass('d-none');
+                                                $('#savebtn').addClass('d-none');
+                                                $('#returnshift').removeClass('d-none');
+                                                $('#deletebtn').removeClass('d-none');
+                                            }
+                                        }
+                                    });
 
                                     $('#eventModal').on('click', '#savebtn', function () {
                                         // Get data to be saved
@@ -619,11 +643,12 @@
                                                         <label for="EndTime">End</label>
                                                     </div>
                                                     </div>
+                                                    
                                                         <div class="d-flex justify-content-end gap-2">
-                                                    <button class="btn btn-info" id="returnshift"  type="button">Return</button>
-                                                <button class="btn btn-info" id="editbtn" type="button">Edit</button>
+                                                    <button class="btn btn-info d-none" id="returnshift"  type="button">Return</button>
+                                                <button class="btn btn-info d-none" id="editbtn" type="button">Edit</button>
                                                     <button class="btn btn-success d-none" id="savebtn"  type="button">Save</button>
-                                                <button class="btn btn-danger" id="deletebtn" type="button">Delete</button>
+                                                <button class="btn btn-danger d-none" id="deletebtn" type="button">Delete</button>
                                             </div>
                                                     </form>
                                                 `;
@@ -648,6 +673,12 @@
                                 views: {
                                     resourceTimelineDay: {
                                         buttonText: 'Day',
+                                        slotLabelContent: function (slotInfo) {
+                                            var hours = slotInfo.date.getHours();
+                                            var meridiem = hours >= 12 ? 'PM' : 'AM';
+                                            hours = hours % 12 || 12;
+                                            return hours + meridiem;
+                                        }
                                     },
                                     resourceTimelineWeek: {
                                         buttonText: 'Week',

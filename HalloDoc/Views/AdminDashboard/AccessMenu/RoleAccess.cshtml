@@ -12,7 +12,7 @@
         </div>
     </div>
     <div class="card border-0 p-4 mb-5 rounded shadow" style="height: 80% !important;">
-        <div class="row justify-content-between ps-3">
+        <div class="row justify-content-between">
 
             
             <div class="d-flex col-3 mr-0 py-2 justify-content-end w-100">
@@ -20,7 +20,7 @@
                     <span>Create Access</span>
                 </a>
             </div>
-            <div class="table-responsive">
+            <div class="table-responsive d-none d-md-block">
                 <table class="table">
                     <colgroup>
                         <col style="width: 40% !important" />    
@@ -58,7 +58,42 @@
                     }
                 </table>
             </div>
-            
+            @*Accordion*@
+
+            <div class="accordion d-block d-md-none pb-3" id="accordionExample">
+
+                @if (ViewBag.EmptyMessage != null)
+                {
+                    <div class="fs-1">
+                        Empty....
+                    </div>
+                }
+                else
+                {
+                    int i = 0;
+                    @foreach (var item in Model)
+                    {
+                            <div class="accordion-item bg-info-subtle">
+                                <button class=" accordion-header providermenu-accordion btn w-100 px-2 shadow-none" type="button" data-bs-toggle="collapse" data-bs-target="#collapse_@i" aria-expanded="false" aria-controls="collapseTwo">
+                                    <div class="py-2 ps-3 d-flex align-items-center">
+                                        <span class="fs-5 mx-3">@item.Name</span>
+                                    </div>
+                                    <div class="ps-1 py-2 d-flex justify-content-start">
+                                        <span class="fs-5 mx-3">Account Type : @item.AccountType</span>
+                                    </div>
+                                <div class="ps-1 py-2 d-flex justify-content-start">
+                                    <a asp-action="EditAccess" asp-route-roleid="@item.RoleId" class="btn btn-outline-info">Edit</a>
+                                    <a asp-action="DeleteRole" asp-route-roleid="@item.RoleId" class="btn btn-outline-info">Delete</a>
+                                </div>
+                                </button>
+                                
+                            </div>
+                            i++;
+                    }
+                }
+
+            </div>
+
         </div>
     </div>
 </div>

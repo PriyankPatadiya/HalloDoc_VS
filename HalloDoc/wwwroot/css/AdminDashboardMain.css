@@ -76,8 +76,8 @@
     color: #efeef4 !important;
 }
 
-@media only screen and (max-width: 815px){
-    .buttonOfFilter  span {
+@media only screen and (max-width: 815px) {
+    .buttonOfFilter span {
         font-size: 12px;
     }
     #pills-Dashboard{

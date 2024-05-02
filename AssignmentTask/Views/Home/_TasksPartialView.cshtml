@@ -70,18 +70,26 @@
                                class="form-control"
                                name="Category"
                                id="Category"
+                               list="CategoryDataList"
                                placeholder="Last Name" required />
                         <label for="Category" class="ms-2">Categoty</label>
                         <div class="valid-feedback">
                             Looks good!
                         </div>
+                        <datalist id="CategoryDataList">
+                            <option value="Afghanistan"></option>
+                            <option value="Åland Islands"></option>
+                            <option value="Albania"></option>
+                            <option value="Algeria"></option>
+                            <option value="American Samoa"></option>
+                        </datalist>
                         @*<span asp-validation-for="" class="text-danger" style="font-size: 11px;"></span>*@
                     </div>
                 </div>
                 <div class="modal-footer">
                     <div class="w-100 d-flex">
                         <div class="mx-2 p-0 w-50">
-                            <button type="submit" class="btn btn-success w-100">Confirm</button>
+                            <button type="submit" class="btn btn-success w-100">Save</button>
                         </div>
                         <div class="mx-2 p-0 w-50">
                             <button type="button" data-bs-dismiss="modal" class="btn btn-outline-success w-100">cancel</button>
@@ -118,6 +126,34 @@
                 }
                 @foreach (var item in Model)
                 {
+                    <div class="modal fade"
+                         id="confirmDeleteModal_@i"
+                         tabindex="-1"
+                         aria-labelledby="exampleModalLabel"
+                         aria-hidden="true"
+                         onload="OnLoad()">
+                        <div class="modal-dialog modal-dialog-centered">
+                            <div class="modal-content px-5 border-1 border-success">
+
+                                <div class="warninglogo d-flex justify-content-center my-4 p-2 text-light ">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="70" height="70" fill="currentColor" class="bi bi-exclamation-circle bg-success border rounded-circle" viewBox="0 0 16 16">
+                                        <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16" />
+                                        <path d="M7.002 11a1 1 0 1 1 2 0 1 1 0 0 1-2 0M7.1 4.995a.905.905 0 1 1 1.8 0l-.35 3.507a.552.552 0 0 1-1.1 0z" />
+                                    </svg>
+                                </div>
+                                <div class="modalinfo text-center container ">
+                                    <h4>Delete Task</h4>
+                                    <span style="font-size: 13px;">
+                                        Confirm You want to delete the Task...
+                                    </span>
+                                </div>
+                                <div class="subbutton mx-auto my-4 pb-3">
+                                    <a asp-action="deleteTask" asp-route-TaskId="@item.TaskId" class="btn btn-success shadow-none border-0">Delete</a>
+                                    <button class="btn btn-outline-success" data-bs-dismiss="modal">Close</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                     <tr>
                         <td class="align-middle" id="ti_@i">@item.TaskId</td>
                         <td class="align-middle" id="tn_@i">@item.TaskName</td>
@@ -125,8 +161,21 @@
                         <td class="align-middle" id="td_@i">@item.TaskDescription</td>
                         <td class="align-middle" id="dd_@i">@item.DueDate.Value.Date.ToString("MMMM dd, yyyy")</td>
                         <td class="align-middle" id="ca_@i">@item.Category</td>
-                        <td class="align-middle" id="ci_@i">@item.city</td>
-                        <td class="align-middle"><button onclick="openEditModal(@i)" class="btn btn-success mx-2">Edit</button><a asp-action="deleteTask" asp-route-TaskId="@item.TaskId" class="btn btn-danger">Delete</a></td>
+                        @switch (item.city)
+                        {
+                            case "1":
+                                <td class="align-middle" id="ci_@i">one</td> 
+                                break;
+                            case "2":
+                                <td class="align-middle" id="ci_@i">two</td>
+                                break;
+                            case "3":
+                                <td class="align-middle" id="ci_@i">three</td>
+                                break;
+
+
+                        }
+                        <td class="align-middle"><button onclick="openEditModal(@i)" class="btn btn-success mx-2">Edit</button><button data-bs-toggle="modal" data-bs-target="#confirmDeleteModal_@i" class="btn btn-danger">Delete</button></td>
                     </tr>
                     i++;
                 }
@@ -162,34 +211,7 @@ else
                 &raquo;
             </a>
 </div>
-    @*<div class="pb-2 position-absolute d-flex justify-content-between align-items-center" style="bottom: 0%; width: 95%">
-        <nav id="pagination" aria-label="Page navigation">
-            <ul class="pagination justify-content-center mb-0">
-                @if (ViewBag.CurrentPage >= 1 && ViewBag.CurrentPage <= ViewBag.TotalPages)
-                {
-                    int prevpage = Convert.ToInt32(ViewBag.CurrentPage) - 1;
-                    int currpage = Convert.ToInt32(ViewBag.CurrentPage);
-                    int nextpage = Convert.ToInt32(ViewBag.CurrentPage) + 1;
-                    <li class="page-item">
-                        <a class="page-link btn rounded-4 btn-outline-info mx-1" id="previous" data-page="@(prevpage)" aria-label="Previous" @(ViewBag.CurrentPage <= 1 ? "hidden" : "")>
-                            &laquo;
-                        </a>
-                    </li>
-                    <li class="page-item">
-                        <a class="page-link btn rounded-4 btn-outline-info mx-1" id="current" data-page="@(currpage)" aria-label="Current">
-                            @(ViewBag.CurrentPage)
-                        </a>
-                    </li>
-                    <li class="page-item">
-                        <a class="page-link btn rounded-4 btn-outline-info mx-1" id="next" data-page="@(nextpage)" aria-label="Next" @(ViewBag.CurrentPage >= ViewBag.TotalPages ? "hidden" : "")>
-                            &raquo;
-                        </a>
-                    </li>
-                }
-            </ul>
-        </nav>
-        <span>@ViewBag.CurrentPage of @ViewBag.TotalPages</span>
-    </div>*@
+    
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.js">
 </script>
 
@@ -203,7 +225,7 @@ else
     <script>
 
     function openEditModal(i) {
-        var date = moment($("#dd_" + i).html()).format('DD-MM-YYYY');
+        var date = moment($("#dd_" + i).html()).format('YYYY-MM-DD');
         $("#TaskName").val($("#tn_"+i).html());
         $("#Assignee").val($("#as_" + i).html());
         $("#Discription").val($("#td_" + i).html());

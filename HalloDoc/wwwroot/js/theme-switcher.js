@@ -19,4 +19,4 @@ $(window).ready(function () {
         }
         localStorage.setItem("theme", currentTheme);
     });
-});
+}); 

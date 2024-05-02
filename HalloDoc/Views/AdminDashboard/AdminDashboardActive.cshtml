@@ -117,7 +117,6 @@
                                     <li><a class="dropdown-item pe-auto" asp-action="ViewDocuments" asp-route-reeqid="@item.reqid">View Uploads</a></li>
                                     <li><a class="dropdown-item" asp-action="ViewNotesAdmin" asp-route-reqid="@item.reqid">ViewNotes</a></li>
                                     <li><a class="dropdown-item" asp-action="SendOrder" asp-route-requestid="@item.reqid">Orders</a></li>
-                                    <li><a class="dropdown-item" href="#">Doctors Note</a></li>
                                     @if (item.IsEncounterFinalize != true)
                                     {
                                         <li><a class="dropdown-item" asp-action="EncounterForm" asp-route-requestid="@item.reqid">Encounter</a></li>
@@ -197,7 +196,6 @@
     });
 
     function filterPhysicianByRegion(RegionId) {
-        debugger
         console.log("hello")
         console.log("hello")
         console.log("hello")

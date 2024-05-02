@@ -1,39 +1,93 @@
 ﻿@model List<DAL.ViewModels.PartnersVM>
-<Table class="table mb-0">
-
-    <tbody class="table-secondary">
-        <tr>
-            <th scope="col">Profession</th>
-            <th scope="col">Business Name</th>
-            <th scope="col">Email</th>
-            <th scope="col">Fax Number</th>
-            <th scope="col">Phone Number</th>
-            <th scope="col">Business Contact</th>
-            <th scope="col">Actions</th>
-        </tr>
-    </tbody>
-    <tbody>
-
-        @foreach (var item in Model)
-        {
-            <tr>
-
-                <td class="align-middle">@item.profession</td>
-                <td class="align-middle">@item.BusinessName</td>
-                <td class="align-middle">@item.Email</td>
-                <td class="align-middle">@item.Fax</td>
-                <td class="align-middle">@item.phoneNumber</td>
-                <td class="align-middle">@item.BusinessContact</td>
-                <td class="align-middle">
-                    <a asp-action="EditBusiness" asp-route-Vendorid="@item.vendorid" class="btn btn-outline-info">Edit</a>
-                    <a asp-action="DeleteBusiness" asp-route-Vendorid="@item.vendorid" class="btn btn-outline-info">Delete</a>
-                </td>
-
-            </tr>
-        }
-    </tbody>
-
-</Table>
-@if (ViewBag.EmptyMessage != ""){
+@if (ViewBag.EmptyMessage != null){
     <div class="w-100 d-flex justify-content-center fs-1">@ViewBag.EmptyMessage</div>
+}else{
+    <div class="d-none d-md-block">
+        <Table class="table mb-0">
+
+            <tbody class="table-secondary">
+                <tr>
+                    <th scope="col">Profession</th>
+                    <th scope="col">Business Name</th>
+                    <th scope="col">Email</th>
+                    <th scope="col">Fax Number</th>
+                    <th scope="col">Phone Number</th>
+                    <th scope="col">Business Contact</th>
+                    <th scope="col">Actions</th>
+                </tr>
+            </tbody>
+            <tbody>
+
+                @foreach (var item in Model)
+                {
+                    <tr>
+
+                        <td class="align-middle">@item.profession</td>
+                        <td class="align-middle">@item.BusinessName</td>
+                        <td class="align-middle">@item.Email</td>
+                        <td class="align-middle">@item.Fax</td>
+                        <td class="align-middle">@item.phoneNumber</td>
+                        <td class="align-middle">@item.BusinessContact</td>
+                        <td class="align-middle">
+                            <a asp-action="EditBusiness" asp-route-Vendorid="@item.vendorid" class="btn btn-outline-info">Edit</a>
+                            <a asp-action="DeleteBusiness" asp-route-Vendorid="@item.vendorid" class="btn btn-outline-info">Delete</a>
+                        </td>
+
+                    </tr>
+                }
+            </tbody>
+
+        </Table>
+    </div>
+    
+
+    @*Accordion*@
+
+    <div class="accordion mx-2 pb-3" id="accordionExample">
+
+        @if (ViewBag.EmptyMessage != null)
+        {
+            <div class="fs-1">
+                Empty....
+            </div>
+        }
+        else
+        {
+            
+            int i = 0;
+            
+            @foreach (var item in Model)
+            {
+
+
+                <div class="accordion-item bg-info-subtle">
+                    <button class=" accordion-header providermenu-accordion btn w-100 px-2 shadow-none" type="button" data-bs-toggle="collapse" data-bs-target="#collapse_@i" aria-expanded="false" aria-controls="collapseTwo">
+                        <div class="py-2 ps-3 d-flex align-items-center">
+                            <span class="fs-4 mx-3">@item.BusinessName</span>
+                        </div>
+                       @* <div class="ps-1 py-2 d-flex justify-content-start">
+                            <span class="text-body">On Call Status: Un Available</span>
+                        </div>*@
+                    </button>
+                    <div id="collapse_@i" class="accordion-collapse collapse border-top border-secondary" data-bs-parent="#accordionExample">
+                        <div class="accordion-body position-relative p-3">
+                            <h6 class="fw-bold text-body">Email : @item.Email</h6>
+                            <span class="fw-bold text-body">
+                                Fax : @item.Fax 
+                            </span>
+                            <h6 class="fw-bold text-body">Phone Number : @item.phoneNumber</h6>
+                            <h6 class="fw-bold text-body">Business Contact : @item.BusinessContact</h6>
+                            <div class="d-flex justify-content-end align-items-center">
+                                <a asp-action="EditBusiness" asp-route-Vendorid="@item.vendorid" class="btn btn-outline-info">Edit</a>
+                                <a asp-action="DeleteBusiness" asp-route-Vendorid="@item.vendorid" class="btn btn-outline-info">Delete</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                i++;
+            }
+        }
+
+    </div>
+
 }

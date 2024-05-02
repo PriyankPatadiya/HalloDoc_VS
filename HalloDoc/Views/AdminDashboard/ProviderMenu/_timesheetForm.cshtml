@@ -1,0 +1,35 @@
+﻿@model DAL.ViewModels.TimeSheetVM
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>On Call Hours</th>
+                <th>Total Hours</th>
+                <th>Weekend/Holiday</th>
+                <th>Number Of HouseCalls</th>
+                <th>Number Of Phone Calls</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+            @{
+                int startDate = Model.startdate.Day;
+                int month = Model.startdate.Month;
+                int endDate = Model.enddate.Day;
+                int year = Model.startdate.Year;
+                DateOnly date = new DateOnly(year, month, startDate);
+            }
+            @for(int i=startDate; i<=endDate; i++)
+            {
+                @*<td>@date.</td>
+                <td>@item.onCallhours</td>
+                <td>@item.totalHours</td>
+                <td><input class="form-check" checked="@(item.isWeekend)"/></td>
+                <td>@item.HouseCallNo</td>
+                <td>@item.PhoneCallNo</td>*@
+
+            }
+            </tr>
+        </tbody>
+    </table>

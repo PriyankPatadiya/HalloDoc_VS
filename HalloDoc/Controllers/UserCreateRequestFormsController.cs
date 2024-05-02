@@ -2,6 +2,7 @@
 using BAL.Repository;
 using DAL.ViewModels;
 using Microsoft.AspNetCore.Mvc;
+using static BAL.Repository.AuthorizationRepo;
 using IHostingEnvironment = Microsoft.AspNetCore.Hosting.IHostingEnvironment;
 
 namespace HalloDoc.Controllers

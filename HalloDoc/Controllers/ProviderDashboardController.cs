@@ -3,6 +3,7 @@ using BAL.Repository;
 using DAL.DataContext;
 using DAL.ViewModels;
 using Microsoft.AspNetCore.Mvc;
+using static BAL.Repository.AuthorizationRepo;
 
 namespace HalloDoc.Controllers
 {

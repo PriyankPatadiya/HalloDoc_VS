@@ -26,6 +26,7 @@ namespace AssignmentTask.Controllers
             return View("TaskDetails");
         }
 
+
         // Get Tasks Data
         public IActionResult getTasks(string searchstring, int pageSize, int currentPage)
         {

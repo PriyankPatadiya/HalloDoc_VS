@@ -13,7 +13,7 @@ public partial class EncounterForm
     [Key]
     public int EncounterFormId { get; set; }
 
-    public int? RequestId { get; set; }
+    public int RequestId { get; set; }
 
     public string? HistoryOfPresentIllnessOrInjury { get; set; }
 

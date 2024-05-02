@@ -257,7 +257,7 @@ namespace BAL.Repository
                         CreatedDate = blockedrequest.CreatedDate,
                         PhoneNumber = blockedrequest.PhoneNumber,
                         Email = blockedrequest.Email,
-                        Notes = reqclient.Notes,
+                        Notes = blockedrequest.Reason,
                         IsActive = blockedrequest.IsActive[0]
                     });
         }

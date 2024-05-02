@@ -52,7 +52,10 @@ namespace BAL.Repository
                           }).ToList();
             return result;            
         }
-
+        public List<Physician> PhysiciansList()
+        {
+            return _context.Physicians.ToList();
+        }
         public List<AdminProvidersVM> getfilteredPhysicians(int stateid)
         {
             List<AdminProvidersVM> res = new List<AdminProvidersVM>();

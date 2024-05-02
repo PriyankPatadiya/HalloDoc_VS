@@ -18,7 +18,7 @@ public partial class HealthProfessional
     public int? Profession { get; set; }
 
     [StringLength(50)]
-    public string? FaxNumber { get; set; } = null!;
+    public string FaxNumber { get; set; } = null!;
 
     [StringLength(150)]
     public string? Address { get; set; }

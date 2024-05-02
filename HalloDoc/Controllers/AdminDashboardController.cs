@@ -11,6 +11,7 @@ using System.Collections;
 using OfficeOpenXml;
 using String = System.String;
 using Microsoft.CodeAnalysis;
+using static BAL.Repository.AuthorizationRepo;
 
 namespace HalloDoc.Controllers
 {
@@ -33,11 +34,13 @@ namespace HalloDoc.Controllers
         private readonly IAccessMenu _accessMenu;
         private readonly IScheduling _schedule;
         private readonly IProviderDashboard _pDashboard;
+        private readonly Iinvoicing _inv;
 
-        public AdminDashboardController( IAdminDashboard admin, IAdminActions action, IHostingEnvironment env, IuploadFile uploadfile, IPatientRequest request, IEmailService emailService, IPasswordHasher<AdminProfileVM> password,
-                    IProviders providers, IUploadProvider upload, IPasswordHasher<PhysicianProfileVM> hasher, IAccessMenu menu, IPasswordHasher<AdminCreateAccVM> hasherr, IProviderSite pSite, IScheduling schedule, IProviderDashboard pDashboard)
+        public AdminDashboardController(IAdminDashboard admin, IAdminActions action, IHostingEnvironment env, IuploadFile uploadfile, IPatientRequest request, IEmailService emailService, IPasswordHasher<AdminProfileVM> password,
+                    IProviders providers, IUploadProvider upload, IPasswordHasher<PhysicianProfileVM> hasher, IAccessMenu menu, IPasswordHasher<AdminCreateAccVM> hasherr, IProviderSite pSite, IScheduling schedule, IProviderDashboard pDashboard, Iinvoicing inv)
         {
             _admin = admin;
+            _inv = inv;
             _adminActions = action;
             _hostingEnvironment = env;
             _uploadfile = uploadfile;
@@ -56,7 +59,7 @@ namespace HalloDoc.Controllers
 
         #region Dashboard
 
-        [CustomAuthorize(new string[] { "Administrator"}, "6")]
+        [CustomAuthorize(new string[] { "Administrator" }, "6")]
         public IActionResult MainPage()
         {
             var email = HttpContext.Session.GetString("Email");
@@ -133,67 +136,86 @@ namespace HalloDoc.Controllers
         [CustomAuthorize(new string[] { "Administrator", "Provider" }, "6")]
         public IActionResult exportfile(string StatusButton, int pagesize, int currentpage)
         {
-            var result = _admin.GetRequestsQuery(StatusButton);
-            result = result.Skip((currentpage - 1) * pagesize).Take(pagesize);
-
-            using (var excel = new ExcelPackage())
+            try
             {
-                var worksheet = excel.Workbook.Worksheets.Add("sheet1");
-                worksheet.Cells[1, 1].Value = "PatientName";
-                worksheet.Cells[1, 2].Value = "BirthDate";
-                worksheet.Cells[1, 3].Value = "RequestorName";
-                worksheet.Cells[1, 4].Value = "RequestDate";
-                worksheet.Cells[1, 5].Value = "phone";
-                worksheet.Cells[1, 6].Value = "address";
-                worksheet.Cells[1, 7].Value = "Email";
+                var result = _admin.GetRequestsQuery(StatusButton);
+                result = result.Skip((currentpage - 1) * pagesize).Take(pagesize);
 
-                var row = 2;
-                foreach (var item in result)
+                using (var excel = new ExcelPackage())
                 {
-                    worksheet.Cells[row, 1].Value = item.physicianname;
-                    worksheet.Cells[row, 2].Value = item.BirthDate;
-                    worksheet.Cells[row, 3].Value = item.RequestorName;
-                    worksheet.Cells[row, 4].Value = item.RequestDate;
-                    worksheet.Cells[row, 5].Value = item.phone;
-                    worksheet.Cells[row, 6].Value = item.address;
-                    worksheet.Cells[row, 7].Value = item.Email;
-                    row++;
-                }
+                    var worksheet = excel.Workbook.Worksheets.Add("sheet1");
+                    worksheet.Cells[1, 1].Value = "PatientName";
+                    worksheet.Cells[1, 2].Value = "BirthDate";
+                    worksheet.Cells[1, 3].Value = "RequestorName";
+                    worksheet.Cells[1, 4].Value = "RequestDate";
+                    worksheet.Cells[1, 5].Value = "phone";
+                    worksheet.Cells[1, 6].Value = "address";
+                    worksheet.Cells[1, 7].Value = "Email";
 
-                var excelBytes = excel.GetAsByteArray();
-                return File(excelBytes, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "export.xlsx");
+                    var row = 2;
+                    foreach (var item in result)
+                    {
+                        worksheet.Cells[row, 1].Value = item.physicianname;
+                        worksheet.Cells[row, 2].Value = item.BirthDate;
+                        worksheet.Cells[row, 3].Value = item.RequestorName;
+                        worksheet.Cells[row, 4].Value = item.RequestDate;
+                        worksheet.Cells[row, 5].Value = item.phone;
+                        worksheet.Cells[row, 6].Value = item.address;
+                        worksheet.Cells[row, 7].Value = item.Email;
+                        row++;
+                    }
+
+                    var excelBytes = excel.GetAsByteArray();
+                    return File(excelBytes, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "export.xlsx");
+                }
+            }
+            catch (Exception ex)
+            {
+                var physicianId = HttpContext.Session.GetInt32("PhysicianId");
+                TempData["Message"] = "Something Went Wrong!";
+                TempData["MessageType"] = "warning";
+                return physicianId==null ? RedirectToAction("MainPage") : RedirectToAction("Dashboard","ProviderDashboard");
             }
         }
 
         public IActionResult exportAll(string StatusButton)
         {
-            var result = _admin.GetRequestsQuery(StatusButton);
-            using (var excel = new ExcelPackage())
+            try
             {
-                var worksheet = excel.Workbook.Worksheets.Add("sheet1");
-                worksheet.Cells[1, 1].Value = "PatientName";
-                worksheet.Cells[1, 2].Value = "BirthDate";
-                worksheet.Cells[1, 3].Value = "RequestorName";
-                worksheet.Cells[1, 4].Value = "RequestDate";
-                worksheet.Cells[1, 5].Value = "phone";
-                worksheet.Cells[1, 6].Value = "address";
-                worksheet.Cells[1, 7].Value = "Email";
-
-                var row = 2;
-                foreach (var item in result)
+                var result = _admin.GetRequestsQuery(StatusButton);
+                using (var excel = new ExcelPackage())
                 {
-                    worksheet.Cells[row, 1].Value = item.physicianname;
-                    worksheet.Cells[row, 2].Value = item.BirthDate;
-                    worksheet.Cells[row, 3].Value = item.RequestorName;
-                    worksheet.Cells[row, 4].Value = item.RequestDate;
-                    worksheet.Cells[row, 5].Value = item.phone;
-                    worksheet.Cells[row, 6].Value = item.address;
-                    worksheet.Cells[row, 7].Value = item.Email;
-                    row++;
-                }
+                    var worksheet = excel.Workbook.Worksheets.Add("sheet1");
+                    worksheet.Cells[1, 1].Value = "PatientName";
+                    worksheet.Cells[1, 2].Value = "BirthDate";
+                    worksheet.Cells[1, 3].Value = "RequestorName";
+                    worksheet.Cells[1, 4].Value = "RequestDate";
+                    worksheet.Cells[1, 5].Value = "phone";
+                    worksheet.Cells[1, 6].Value = "address";
+                    worksheet.Cells[1, 7].Value = "Email";
 
-                var excelBytes = excel.GetAsByteArray();
-                return File(excelBytes, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "exportAll.xlsx");
+                    var row = 2;
+                    foreach (var item in result)
+                    {
+                        worksheet.Cells[row, 1].Value = item.physicianname;
+                        worksheet.Cells[row, 2].Value = item.BirthDate;
+                        worksheet.Cells[row, 3].Value = item.RequestorName;
+                        worksheet.Cells[row, 4].Value = item.RequestDate;
+                        worksheet.Cells[row, 5].Value = item.phone;
+                        worksheet.Cells[row, 6].Value = item.address;
+                        worksheet.Cells[row, 7].Value = item.Email;
+                        row++;
+                    }
+
+                    var excelBytes = excel.GetAsByteArray();
+                    return File(excelBytes, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "exportAll.xlsx");
+                }
+            }
+            catch (Exception ex)
+            {
+                TempData["Message"] = "Something Went Wrong!";
+                TempData["MessageType"] = "warning";
+                return RedirectToAction("MainPage");
             }
         }
 
@@ -222,19 +244,37 @@ namespace HalloDoc.Controllers
         [HttpPost("AdminDashboard/EncounterForm/{requestid?}", Name = "EncounterPostAdmin")]
         public IActionResult EncounterForm(EncounterFormVM model)
         {
-            var physicianid = HttpContext.Session.GetInt32("PhysicianId");
-            _adminActions.addencounterdata(model);
-            return physicianid != null ? RedirectToAction("Dashboard", "ProviderDashboard") : RedirectToAction("MainPage");
+                var physicianid = HttpContext.Session.GetInt32("PhysicianId");
+            try
+            {
+                _adminActions.addencounterdata(model);
+                return physicianid != null ? RedirectToAction("Dashboard", "ProviderDashboard") : RedirectToAction("MainPage");
+            }
+            catch (Exception ex)
+            {
+                TempData["Message"] = "Something Went Wrong!";
+                TempData["MessageType"] = "warning";
+                return physicianid != null ? RedirectToAction("Dashboard", "ProviderDashboard") : RedirectToAction("MainPage");
+            }
 
         }
         public IActionResult finalizeForm(int requestid)
         {
-            bool result = _adminActions.finalize(requestid);
-            if (result == true)
+            try
             {
-                return RedirectToAction("Dashboard", "ProviderDashboard");
+                bool result = _adminActions.finalize(requestid);
+                if (result == true)
+                {
+                    return RedirectToAction("Dashboard", "ProviderDashboard");
+                }
+                return Ok("Can't finalize the form");
             }
-            return Ok("Can't finalize the form");
+            catch (Exception ex)
+            {
+                TempData["Message"] = "Something Went Wrong!";
+                TempData["MessageType"] = "warning";
+                return RedirectToAction("MainPage");
+            }
         }
 
         [HttpGet("ProviderDashboard/GeneratePdf/{requestid?}", Name = "DownloadPdfByProvider")]
@@ -266,23 +306,32 @@ namespace HalloDoc.Controllers
         [HttpGet("ProviderDashboard/ViewCase/{reqcliId?}", Name = "ProviderCase")]
         public IActionResult ViewCase(string reqcliId)
         {
-            var physicianid = HttpContext.Session.GetInt32("PhysicianId");
-            var requestclientId = reqcliId;
-            AdminMainPageVM MainModel = new AdminMainPageVM()
+                var physicianid = HttpContext.Session.GetInt32("PhysicianId");
+            try
             {
-                PageName = PageName.ViewCaseForm
-            };
-            ViewCaseVM result = _adminActions.getViewCaseData(int.Parse(requestclientId)).FirstOrDefault();
-            int requestid = _admin.getRequestIdbyRequestClientId(int.Parse(requestclientId));
-            int status = _admin.getStatusByRequetId(requestid);
-            result.Status = status;
-            result.requestid = requestid;
-            result.regiontable = _admin.regions();
-            MainModel.Casemodel = result;
+                var requestclientId = reqcliId;
+                AdminMainPageVM MainModel = new AdminMainPageVM()
+                {
+                    PageName = PageName.ViewCaseForm
+                };
+                ViewCaseVM result = _adminActions.getViewCaseData(int.Parse(requestclientId)).FirstOrDefault();
+                int requestid = _admin.getRequestIdbyRequestClientId(int.Parse(requestclientId));
+                int status = _admin.getStatusByRequetId(requestid);
+                result.Status = status;
+                result.requestid = requestid;
+                result.regiontable = _admin.regions();
+                MainModel.Casemodel = result;
 
-            ViewBag.IsPhysician = physicianid != null ? true : false;
+                ViewBag.IsPhysician = physicianid != null ? true : false;
 
-            return View("MainPage", MainModel);
+                return View("MainPage", MainModel);
+            }
+            catch (Exception ex)
+            {
+                TempData["Message"] = "Something Went Wrong!";
+                TempData["MessageType"] = "warning";
+                return physicianid != null ? RedirectToAction("Dashboard","ProviderDashboard") : RedirectToAction("MainPage");
+            }
         }
 
         #endregion View Case    
@@ -303,32 +352,50 @@ namespace HalloDoc.Controllers
         [HttpPost]
         public IActionResult CloseCase(CloseCaseVM model)
         {
-            bool isclosed = _adminActions.closecase(model);
-            if (isclosed == true)
+            try
             {
-                TempData["Message"] = "Data updated";
-                TempData["MessageType"] = "success";
+                bool isclosed = _adminActions.closecase(model);
+                if (isclosed == true)
+                {
+                    TempData["Message"] = "Data updated";
+                    TempData["MessageType"] = "success";
+                    return RedirectToAction("CloseCase", new { reqid = model.requestid });
+                }
+                TempData["Message"] = "Unable to Update The Data";
+                TempData["MessageType"] = "warning";
                 return RedirectToAction("CloseCase", new { reqid = model.requestid });
             }
-            TempData["Message"] = "Unable to Update The Data";
-            TempData["MessageType"] = "warning";
-            return RedirectToAction("CloseCase", new { reqid = model.requestid });
+            catch (Exception ex)
+            {
+                TempData["Message"] = "Something Went Wrong!";
+                TempData["MessageType"] = "warning";
+                return RedirectToAction("MainPage");
+            }
         }
 
 
         public IActionResult ClosecasePost(int reqid)
         {
-            var request = _admin.reqbyreqid(reqid);
-            if (request != null)
+            try
             {
-                _adminActions.closeRequest(request, reqid);
-                TempData["Message"] = "closed Request";
-                TempData["MessageType"] = "success";
+                var request = _admin.reqbyreqid(reqid);
+                if (request != null)
+                {
+                    _adminActions.closeRequest(request, reqid);
+                    TempData["Message"] = "closed Request";
+                    TempData["MessageType"] = "success";
+                    return RedirectToAction("MainPage");
+                }
+                TempData["Message"] = ".";
+                TempData["MessageType"] = "warning";
                 return RedirectToAction("MainPage");
             }
-            TempData["Message"] = ".";
-            TempData["MessageType"] = "warning";
-            return RedirectToAction("MainPage");
+            catch (Exception ex)
+            {
+                TempData["Message"] = "Something Went Wrong!";
+                TempData["MessageType"] = "warning";
+                return RedirectToAction("MainPage");
+            }
         }
 
         #endregion Close Case
@@ -354,32 +421,50 @@ namespace HalloDoc.Controllers
         [HttpPost]
         public IActionResult addAdminnote(ViewNotesVM model, int reqid)
         {
-            RequestNote notes = _adminActions.reqnotebyreqid(reqid);
-            var physicianId = HttpContext.Session.GetInt32("PhysicianId");
-            var email = HttpContext.Session.GetString("Email");
-            if (notes.CreatedBy == null)
+            try
             {
-                notes.CreatedBy = physicianId == null ? _admin.getAdminByemail(email).AspNetUserId : _pDashboard.getPhysicianbyEmail((int)physicianId).AspNetUserId;
-            }
-            model.RequestId = reqid;
-            if (notes != null)
-            {
-                _adminActions.addrequnotes(model, notes);
+                RequestNote notes = _adminActions.reqnotebyreqid(reqid);
+                var physicianId = HttpContext.Session.GetInt32("PhysicianId");
+                var email = HttpContext.Session.GetString("Email");
+                if (notes.CreatedBy == null)
+                {
+                    notes.CreatedBy = physicianId == null ? _admin.getAdminByemail(email).AspNetUserId : _pDashboard.getPhysicianbyEmail((int)physicianId).AspNetUserId;
+                }
+                model.RequestId = reqid;
+                if (notes != null)
+                {
+                    _adminActions.addrequnotes(model, notes);
+                    return RedirectToAction("ViewNotesAdminn", new { reqid = reqid });
+                }
                 return RedirectToAction("ViewNotesAdminn", new { reqid = reqid });
             }
-            return RedirectToAction("ViewNotesAdminn", new { reqid = reqid });
+            catch (Exception ex)
+            {
+                TempData["Message"] = "Something Went Wrong!";
+                TempData["MessageType"] = "warning";
+                return RedirectToAction("ViewNotesAdminn", new { reqid = reqid });
+            }
         }
         public IActionResult TransferNotes(int reeqid, string Notes)
         {
-            int phyid = int.Parse(Request.Form["physicianId"]);
+            try
+            {
+                int phyid = int.Parse(Request.Form["physicianId"]);
 
-            if (_adminActions.transferNotes(reeqid, phyid, Notes) == true)
-            {
-                return RedirectToAction("MainPage");
+                if (_adminActions.transferNotes(reeqid, phyid, Notes) == true)
+                {
+                    return RedirectToAction("MainPage");
+                }
+                else
+                {
+                    return Ok("Cannot Add TransferNotes");
+                }
             }
-            else
+            catch (Exception ex)
             {
-                return Ok("Cannot Add TransferNotes");
+                TempData["Message"] = "Something Went Wrong!";
+                TempData["MessageType"] = "warning";
+                return RedirectToAction("MainPage");
             }
         }
         #endregion View Notes
@@ -410,39 +495,47 @@ namespace HalloDoc.Controllers
         public IActionResult SendOrder(SendOrderVM model)
         {
             var physicianid = HttpContext.Session.GetInt32("PhysicianId");
+            try
+            {
 
-            AdminMainPageVM MainModel = new AdminMainPageVM()
-            {
-                PageName = PageName.SendOrder
-            };
-            if (physicianid == null)
-            {
-                var email = HttpContext.Session.GetString("Email");
-                var admin = _admin.username(email);
-                model.createdby = admin;
-            }
-            else
-            {
-                model.createdby = _pDashboard.getPhysicianbyEmail((int)physicianid).FirstName;
-            }
-            model.CreatedDate = DateTime.Now;
-            if (ModelState.IsValid)
-            {
-                bool issend = _adminActions.sendOrder(model);
-                if (issend == true)
+                AdminMainPageVM MainModel = new AdminMainPageVM()
                 {
-                    TempData["Message"] = "Successfully sent Your order!...";
-                    TempData["MessageType"] = "success";
-
-                    return physicianid == null ? RedirectToAction("MainPage") : RedirectToAction("Dashboard", "ProviderDashboard");
-
+                    PageName = PageName.SendOrder
+                };
+                if (physicianid == null)
+                {
+                    var email = HttpContext.Session.GetString("Email");
+                    var admin = _admin.username(email);
+                    model.createdby = admin;
                 }
-            }
-            TempData["Message"] = "Unable to send order";
-            TempData["MessageType"] = "warning";
-            return RedirectToAction("MainPage");
-        }
+                else
+                {
+                    model.createdby = _pDashboard.getPhysicianbyEmail((int)physicianid).FirstName;
+                }
+                model.CreatedDate = DateTime.Now;
+                if (ModelState.IsValid)
+                {
+                    bool issend = _adminActions.sendOrder(model);
+                    if (issend == true)
+                    {
+                        TempData["Message"] = "Successfully sent Your order!...";
+                        TempData["MessageType"] = "success";
 
+                        return physicianid == null ? RedirectToAction("MainPage") : RedirectToAction("Dashboard", "ProviderDashboard");
+
+                    }
+                }
+                TempData["Message"] = "Unable to send order";
+                TempData["MessageType"] = "warning";
+                return physicianid == null ? RedirectToAction("MainPage") : RedirectToAction("Dashboard", "ProviderDashboard");
+            }
+            catch (Exception ex)
+            {
+                TempData["Message"] = "Something Went Wrong!" + ex;
+                TempData["MessageType"] = "warning";
+                return physicianid == null ? RedirectToAction("MainPage") : RedirectToAction("Dashboard", "ProviderDashboard");
+            }
+        }
         #endregion Send Order
 
         #region Cancel Case
@@ -450,16 +543,25 @@ namespace HalloDoc.Controllers
         [HttpPost]
         public IActionResult CancelCase(int requestid)
         {
-            string? Reason = Request.Form["Reason"];
-            string? Notes = Request.Form["Notes"];
-
-            bool iscancel = _adminActions.changeStatusOnCancleCase(requestid, Reason, Notes);
-            if (iscancel)
+            try
             {
-                TempData["Message"] = "success";
-                TempData["MessageType"] = "success";
+                string? Reason = Request.Form["Reason"];
+                string? Notes = Request.Form["Notes"];
+
+                bool iscancel = _adminActions.changeStatusOnCancleCase(requestid, Reason, Notes);
+                if (iscancel)
+                {
+                    TempData["Message"] = "success";
+                    TempData["MessageType"] = "success";
+                }
+                return RedirectToAction("MainPage");
             }
-            return RedirectToAction("MainPage");
+            catch (Exception ex)
+            {
+                TempData["Message"] = "Something Went Wrong!";
+                TempData["MessageType"] = "warning";
+                return RedirectToAction("MainPage");
+            }
         }
 
         #endregion Cancel Case
@@ -469,24 +571,42 @@ namespace HalloDoc.Controllers
         [HttpPost]
         public IActionResult AssignCase(IFormCollection form)
         {
-
-            string reeqid = form["requestid"];
-            string physicianId = form["physicianId"];
-            string Notes = form["Notes"];
-            _adminActions.ChangeOnAssign(int.Parse(reeqid), int.Parse(physicianId), Notes);
-            return RedirectToAction("MainPage");
+            try
+            {
+                string reeqid = form["requestid"];
+                string physicianId = form["physicianId"];
+                string Notes = form["Notes"];
+                _adminActions.ChangeOnAssign(int.Parse(reeqid), int.Parse(physicianId), Notes);
+                return RedirectToAction("MainPage");
+            }
+            catch (Exception ex)
+            {
+                TempData["Message"] = "Something Went Wrong!";
+                TempData["MessageType"] = "warning";
+                return RedirectToAction("MainPage");
+            }
         }
         #endregion Assign Case
 
         #region Block Case
         // Block Request Actions
         [CustomAuthorize(new string[] { "Administrator" }, "6")]
+        [HttpPost]
         public IActionResult BlockCase(int reeqid, string reason)
         {
-            _adminActions.BlockCase(reeqid, reason);
-            TempData["Message"] = "Blocked Successfully";
-            TempData["MessageType"] = "success";
-            return RedirectToAction("MainPage");
+            try
+            {
+                _adminActions.BlockCase(reeqid, reason);
+                TempData["Message"] = "Blocked Successfully";
+                TempData["MessageType"] = "success";
+                return RedirectToAction("MainPage");
+            }
+            catch (Exception ex)
+            {
+                TempData["Message"] = "Something Went Wrong!";
+                TempData["MessageType"] = "warning";
+                return RedirectToAction("MainPage");
+            }
         }
         #endregion Block Case
 
@@ -517,18 +637,29 @@ namespace HalloDoc.Controllers
         [HttpGet("ProviderDashboard/downloadfile")]
         public IActionResult downloadfile(string filename)
         {
-            string Filename = Path.GetFileName(filename);
-            var filePath = Path.Combine(_hostingEnvironment.ContentRootPath, "wwwroot\\uploads", Filename);
+            var physicianid = HttpContext.Session.GetInt32("PhysicianId");
+            bool isPhysician = physicianid == null ? false : true;
+            try
+            {
+                string Filename = Path.GetFileName(filename);
+                var filePath = Path.Combine(_hostingEnvironment.ContentRootPath, "wwwroot\\uploads", Filename);
 
-            if (System.IO.File.Exists(filePath))
-            {
-                var filestream = new FileStream(filePath, FileMode.Open);
-                var contentType = "application/octet-stream";
-                return File(filestream, contentType, Filename);
+                if (System.IO.File.Exists(filePath))
+                {
+                    var filestream = new FileStream(filePath, FileMode.Open);
+                    var contentType = "application/octet-stream";
+                    return File(filestream, contentType, Filename);
+                }
+                else
+                {
+                    return NotFound();
+                }
             }
-            else
+            catch (Exception ex)
             {
-                return NotFound();
+                TempData["Message"] = "Something Went Wrong!";
+                TempData["MessageType"] = "warning";
+                return isPhysician ? RedirectToAction("Dashboard","ProviderDashboard") : RedirectToAction("MainPage");
             }
         }
 
@@ -536,29 +667,38 @@ namespace HalloDoc.Controllers
         [HttpPost("AdminDashboard/uploadFile/{requestid?}", Name = "uploadByAdmin")]
         public IActionResult uploadFile(int requestid)
         {
-            var physicianid = HttpContext.Session.GetInt32("PhysicianId");
-            ViewBag.IsPhysician = physicianid != null ? true : false;
-            var file = Request.Form.Files["Document"];
-
-            if (file == null)
+            try
             {
-                return NotFound();
-            }
-            else
+
+                var physicianid = HttpContext.Session.GetInt32("PhysicianId");
+                ViewBag.IsPhysician = physicianid != null ? true : false;
+                var file = Request.Form.Files["Document"];
+
+                if (file == null)
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    var uniquefilesavetoken = Guid.NewGuid().ToString();
+
+                    string fileName = Path.GetFileNameWithoutExtension(file.FileName);
+                    string extension = Path.GetExtension(file.FileName);
+                    fileName = $"{fileName}_{uniquefilesavetoken}{extension}";
+                    string path = Path.Combine(this._hostingEnvironment.WebRootPath, "uploads");
+                    _uploadfile.uploadfile(file, fileName, path);
+
+                    _request.Addrequestwisefile(fileName, requestid);
+                    ViewBag.IsUpload = true;
+                    TempData["Message"] = "file uploaded successfully....";
+                    TempData["MessageType"] = "success";
+                    return physicianid == null ? RedirectToAction("ViewDocuments", new { reeqid = requestid }) : RedirectToAction("ConcludeCare", "ProviderDashboard", new { requestId = requestid });
+                }
+            }catch (Exception ex)
             {
-                var uniquefilesavetoken = Guid.NewGuid().ToString();
-
-                string fileName = Path.GetFileNameWithoutExtension(file.FileName);
-                string extension = Path.GetExtension(file.FileName);
-                fileName = $"{fileName}_{uniquefilesavetoken}{extension}";
-                string path = Path.Combine(this._hostingEnvironment.WebRootPath, "uploads");
-                _uploadfile.uploadfile(file, fileName, path);
-
-                _request.Addrequestwisefile(fileName, requestid);
-                ViewBag.IsUpload = true;
-                TempData["Message"] = "file uploaded successfully....";
-                TempData["MessageType"] = "success";
-                return physicianid == null ? RedirectToAction("ViewDocuments", new { reeqid = requestid }) : RedirectToAction("ConcludeCare", "ProviderDashboard", new { requestId = requestid });
+                TempData["Message"] = "Something Went Wrong";
+                TempData["MessageType"] = "warning";
+                return RedirectToAction("MainPage");
             }
         }
 
@@ -566,35 +706,54 @@ namespace HalloDoc.Controllers
         [HttpPost("AdminDashboard/deleteFile/{reqid?}", Name = "deleteByAdmin")]
         public IActionResult deleteFile(int reqid, string filename)
         {
-            var requestwisefile = _admin.filebyReqidandName(reqid, filename);
-            var physicianid = HttpContext.Session.GetInt32("PhysicianId");
-            ViewBag.IsPhysician = physicianid != null ? true : false;
-            if (requestwisefile != null)
+            try
             {
-                _admin.deleteSingleFile(requestwisefile);
-                ViewBag.Isdelete = true;
-                TempData["Message"] = "file deleted successfully....";
-                TempData["MessageType"] = "success";
+                var requestwisefile = _admin.filebyReqidandName(reqid, filename);
+                var physicianid = HttpContext.Session.GetInt32("PhysicianId");
+                ViewBag.IsPhysician = physicianid != null ? true : false;
+                if (requestwisefile != null)
+                {
+                    _admin.deleteSingleFile(requestwisefile);
+                    ViewBag.Isdelete = true;
+                    TempData["Message"] = "file deleted successfully....";
+                    TempData["MessageType"] = "success";
+                    return physicianid == null ? RedirectToAction("ViewDocuments", new { reeqid = reqid }) : RedirectToAction("ConcludeCare", "ProviderDashboard", new { requestId = reqid });
+                }
+                TempData["Message"] = "Unable To delete file";
+                TempData["MessageType"] = "warning";
                 return physicianid == null ? RedirectToAction("ViewDocuments", new { reeqid = reqid }) : RedirectToAction("ConcludeCare", "ProviderDashboard", new { requestId = reqid });
             }
-            TempData["Message"] = "Unable To delete file";
-            TempData["MessageType"] = "warning";
-            return physicianid == null ? RedirectToAction("ViewDocuments", new { reeqid = reqid }) : RedirectToAction("ConcludeCare", "ProviderDashboard", new { requestId = reqid });
+            catch (Exception ex)
+            {
+                TempData["Message"] = "Something Went Wrong";
+                TempData["MessageType"] = "warning";
+                return RedirectToAction("MainPage");
+            }
         }
 
         [HttpPost]
         public IActionResult deleteAllFiles(List<string> selectedFiles, string reqid)
         {
-            bool isdeleteall = _admin.deleteAllFiles(selectedFiles);
-            if (isdeleteall)
+            try
             {
-                TempData["Message"] = "files deleted successfully....";
-                TempData["MessageType"] = "success";
+                bool isdeleteall = _admin.deleteAllFiles(selectedFiles);
+                if (isdeleteall)
+                {
+                    TempData["Message"] = "files deleted successfully....";
+                    TempData["MessageType"] = "success";
+                    return RedirectToAction("ViewDocuments", new { reeqid = reqid });
+                }
+                TempData["Message"] = "Can't find file or unable to delete the file";
+                TempData["MessageType"] = "warning";
                 return RedirectToAction("ViewDocuments", new { reeqid = reqid });
+
             }
-            TempData["Message"] = "Can't find file or unable to delete the file";
-            TempData["MessageType"] = "warning";
-            return RedirectToAction("ViewDocuments", new { reeqid = reqid });
+            catch (Exception ex)
+            {
+                TempData["Message"] = "Something Went Wrong";
+                TempData["MessageType"] = "warning";
+                return RedirectToAction("MainPage");
+            }
         }
 
         public IActionResult SendEmailWithAttachments(List<string> selectedFilesPath, string email, string reqid)
@@ -623,15 +782,24 @@ namespace HalloDoc.Controllers
         [CustomAuthorize(new string[] { "Administrator" }, "6")]
         public IActionResult ClearCaseee(int reqid)
         {
-            bool result = _adminActions.ClearCase(reqid);
+            try
+            {
+                bool result = _adminActions.ClearCase(reqid);
 
-            if (result == true)
-            {
-                return Ok("Successfully Cleared the Case");
+                if (result == true)
+                {
+                    return Ok("Successfully Cleared the Case");
+                }
+                else
+                {
+                    return Ok("Can't Clear the case");
+                }
             }
-            else
+            catch (Exception ex)
             {
-                return Ok("Can't Clear the case");
+                TempData["Message"] = "Something Went Wrong";
+                TempData["MessageType"] = "warning";
+                return RedirectToAction("MainPage");
             }
         }
         #endregion Clear Case
@@ -641,34 +809,42 @@ namespace HalloDoc.Controllers
         [CustomAuthorize(new string[] { "Administrator", "Provider" }, "29")]
         public IActionResult SendAgreement(int requestid)
         {
-
-            string token = Guid.NewGuid().ToString() + ":" + requestid.ToString() + ":" + DateTime.Now.ToString();
-            var link = Url.Action("ReviewAgreement", "PatientDashBoard", new { token = token }, protocol: HttpContext.Request.Scheme);
-
-            string to = _adminActions.clientsbyreqid(requestid).First().Email;
-            to = "priyank.patadiya@etatvasoft.com";
-            string subject = "Agreement";
-            var body = new StringBuilder();
-            body.AppendFormat("Hello");
-            body.AppendLine(@"Click below link to review the agreement");
-            body.AppendLine("<a href=\"" + link + "\">Click here to continue the process</a>");
-
-            string Body = body.ToString();
-
-            if (to != null)
+            try
             {
-                TempData["Message"] = "Aggrement Sent";
-                TempData["MessageType"] = "success";
-                _emailService.SendEmail(to, subject, Body);
+                string token = Guid.NewGuid().ToString() + ":" + requestid.ToString() + ":" + DateTime.Now.ToString();
+                var link = Url.Action("ReviewAgreement", "PatientDashBoard", new { token = token }, protocol: HttpContext.Request.Scheme);
+
+                string to = _adminActions.clientsbyreqid(requestid).First().Email;
+                to = "priyank.patadiya@etatvasoft.com";
+                string subject = "Agreement";
+                var body = new StringBuilder();
+                body.AppendFormat("Hello");
+                body.AppendLine(@"Click below link to review the agreement");
+                body.AppendLine("<a href=\"" + link + "\">Click here to continue the process</a>");
+
+                string Body = body.ToString();
+
+                if (to != null)
+                {
+                    TempData["Message"] = "Aggrement Sent";
+                    TempData["MessageType"] = "success";
+                    _emailService.SendEmail(to, subject, Body);
+
+                    return TempData["isFromPhysician"] != null ? RedirectToAction("Dashboard", "ProviderDashboard") : RedirectToAction("MainPage");
+
+
+                }
+                TempData["Message"] = "can't send Aggrement";
+                TempData["MessageType"] = "warning";
 
                 return TempData["isFromPhysician"] != null ? RedirectToAction("Dashboard", "ProviderDashboard") : RedirectToAction("MainPage");
-
-
             }
-            TempData["Message"] = "can't send Aggrement";
-            TempData["MessageType"] = "warning";
-
-            return TempData["isFromPhysician"] != null ? RedirectToAction("Dashboard", "ProviderDashboard") : RedirectToAction("MainPage");
+            catch(Exception ex)
+            {
+                TempData["Message"] = "Something Went Wrong";
+                TempData["MessageType"] = "warning";
+                return TempData["isFromPhysician"] != null ? RedirectToAction("Dashboard", "ProviderDashboard") : RedirectToAction("MainPage");
+            }
         }
 
         #endregion Send Aggrement
@@ -687,63 +863,91 @@ namespace HalloDoc.Controllers
 
         public IActionResult changeAccInfo(AdminProfileVM model, int AdminId, List<string> regions)
         {
-            var isAdminExistById = _admin.isAdminExistById(AdminId);
-            var isAdminExist = _admin.isAdminExist(model.Email);
-            string prevMail = _admin.getMailByAdminId(AdminId);
-            bool isMailChanged = _admin.isMailChanged(prevMail, model.Email);
-            if (isAdminExistById)
+                string prevMail = _admin.getMailByAdminId(AdminId);
+            try
             {
-                if(isMailChanged && isAdminExist)
+                var isAdminExistById = _admin.isAdminExistById(AdminId);
+                var isAdminExist = _admin.isAdminExist(model.Email);
+                bool isMailChanged = _admin.isMailChanged(prevMail, model.Email);
+                if (isAdminExistById)
                 {
-                    TempData["Message"] = "Added Email is Already Exist";
-                    TempData["MessageType"] = "warning";
-                    return RedirectToAction("AdminProfile", new {mail = model.Email});
+                    if (isMailChanged && isAdminExist)
+                    {
+                        TempData["Message"] = "Added Email is Already Exist";
+                        TempData["MessageType"] = "warning";
+                        return RedirectToAction("AdminProfile", new { mail = model.Email });
+                    }
+                    else
+                    {
+                        _admin.changeAccountInfo(model, prevMail, regions);
+                        HttpContext.Session.SetString("Email", model.Email);
+                        TempData["Message"] = "Edited Successfully";
+                        TempData["MessageType"] = "success";
+                        return isMailChanged == false ? RedirectToAction("AdminProfile", new { mail = model.Email }) : RedirectToAction("PatientLoginn", "Home");
+                    }
                 }
-                else
-                {
-                    _admin.changeAccountInfo(model, prevMail, regions);
-                    HttpContext.Session.SetString("Email", model.Email);
-                    TempData["Message"] = "Edited Successfully";
-                    TempData["MessageType"] = "success";
-                    return isMailChanged == false ? RedirectToAction("AdminProfile", new {mail = model.Email}) : RedirectToAction("PatientLoginn", "Home");
-                }
+                TempData["Message"] = "Not able to change information";
+                TempData["MessageType"] = "success";
+                return RedirectToAction("AdminProfile", new { mail = prevMail });
             }
-            TempData["Message"] = "Not able to change information";
-            TempData["MessageType"] = "success";
-            return RedirectToAction("AdminProfile", new {mail = prevMail});
+            catch (Exception ex)
+            {
+                TempData["Message"] = "Something Went Wrong";
+                TempData["MessageType"] = "warning";
+                return RedirectToAction("AdminProfile", new { mail = prevMail });
+            }
         }
 
         public IActionResult changeBillingInfo(int AdminId, AdminProfileVM model)
         {
-            string email = _admin.getMailByAdminId(AdminId);
-            if (email != "")
+                string email = _admin.getMailByAdminId(AdminId);
+            try
             {
-                _admin.changeBillingInfo(model, email);
-                TempData["Message"] = "Edited Successfully";
+                if (email != "")
+                {
+                    _admin.changeBillingInfo(model, email);
+                    TempData["Message"] = "Edited Successfully";
+                    TempData["MessageType"] = "success";
+                    return RedirectToAction("AdminProfile", new { mail = email });
+                }
+                TempData["Message"] = "Not able to change information";
                 TempData["MessageType"] = "success";
-                return RedirectToAction("AdminProfile", new {mail = email});
+                return RedirectToAction("AdminProfile", new { mail = email });
             }
-            TempData["Message"] = "Not able to change information";
-            TempData["MessageType"] = "success";
-            return RedirectToAction("AdminProfile", new {mail = email});
+            catch (Exception ex)
+            {
+                TempData["Message"] = "Error : " + ex.Message;
+                TempData["MessageType"] = "warning";
+                return RedirectToAction("AdminProfile", new { mail = email });
+            }
         }
 
         public IActionResult changePass(int AdminId)
         {
-            string Password = Request.Form["Password"];
-            string userEmail = HttpContext.Session.GetString("Email");
-            string email = _admin.getMailByAdminId(AdminId);
-            Password = _passwordHasher.HashPassword(null, Password);
-            if (userEmail != "")
+                string email = _admin.getMailByAdminId(AdminId);
+            try
             {
-                _admin.changePassword(email, Password);
-                TempData["Message"] = "Password Changed....";
-                TempData["MessageType"] = "success";
-                return userEmail == email ? RedirectToAction("PatientLoginn", "Home") : RedirectToAction("AdminProfile", new {mail = email});
+                string Password = Request.Form["Password"];
+                string userEmail = HttpContext.Session.GetString("Email");
+                Password = _passwordHasher.HashPassword(null, Password);
+                if (userEmail != "")
+                {
+                    _admin.changePassword(email, Password);
+                    TempData["Message"] = "Password Changed....";
+                    TempData["MessageType"] = "success";
+                    return userEmail == email ? RedirectToAction("PatientLoginn", "Home") : RedirectToAction("AdminProfile", new { mail = email });
+                }
+                TempData["Message"] = "Not Able to change password";
+                TempData["MessageType"] = "warning";
+                return RedirectToAction("AdminProfile", new { mail = email });
             }
-            TempData["Message"] = "Not Able to change password";
-            TempData["MessageType"] = "warning";
-            return RedirectToAction("AdminProfile" , new {mail = email});
+            catch (Exception ex)
+            {
+                TempData["Message"] = "Something Went Wrong";
+                TempData["MessageType"] = "warning";
+                return RedirectToAction("AdminProfile", new { mail = email });
+            }
+
         }
 
         #endregion Admin Profile
@@ -757,28 +961,36 @@ namespace HalloDoc.Controllers
         {
             var physicianId = HttpContext.Session.GetInt32("PhysicianId");
             bool isPhysician = physicianId != null ? true : false;
-
-            var link = Url.ActionLink("SubmitRequest", "Home", protocol: HttpContext.Request.Scheme);
-
-            string to = PatientEmail;
-            string subject = "Submit A Request To Connect With Our Physicians";
-            var body = new StringBuilder();
-            body.AppendFormat("Hello");
-            body.AppendLine("Hello, " + PatientFirstname + PatientLastname + "Please Submit Your Request here " );
-            body.AppendLine("<a href=\"" + link + "\">Click here</a>");
-
-            string Body = body.ToString();
-
-            if (to != null)
+            try
             {
-                TempData["Message"] = "email Sent Successfully";
-                TempData["MessageType"] = "success";
-                _emailService.SendEmail(to, subject, Body);
-                return isPhysician ? RedirectToAction("Dashboard","ProviderDashboard") : RedirectToAction("MainPage");
+                var link = Url.ActionLink("SubmitRequest", "Home", protocol: HttpContext.Request.Scheme);
+
+                string to = PatientEmail;
+                string subject = "Submit A Request To Connect With Our Physicians";
+                var body = new StringBuilder();
+                body.AppendFormat("Hello");
+                body.AppendLine("Hello, " + PatientFirstname + PatientLastname + "Please Submit Your Request here ");
+                body.AppendLine("<a href=\"" + link + "\">Click here</a>");
+
+                string Body = body.ToString();
+
+                if (to != null)
+                {
+                    TempData["Message"] = "email Sent Successfully";
+                    TempData["MessageType"] = "success";
+                    _emailService.SendEmail(to, subject, Body);
+                    return isPhysician ? RedirectToAction("Dashboard", "ProviderDashboard") : RedirectToAction("MainPage");
+                }
+                TempData["Message"] = "Can't Send Email";
+                TempData["MessageType"] = "warning";
+                return isPhysician ? RedirectToAction("Dashboard", "ProviderDashboard") : RedirectToAction("MainPage");
             }
-            TempData["Message"] = "Can't Send Email";
-            TempData["MessageType"] = "warning";
-            return isPhysician? RedirectToAction("Dashboard","ProviderDashboard") : RedirectToAction("MainPage");
+            catch (Exception ex)
+            {
+                TempData["Message"] = "Something Went Wrong";
+                TempData["MessageType"] = "warning";
+                return isPhysician ? RedirectToAction("Dashboard", "ProviderDashboard") : RedirectToAction("MainPage");
+            }
         }
 
         #endregion Send Link
@@ -803,20 +1015,29 @@ namespace HalloDoc.Controllers
         public async Task<IActionResult> CreateRequestAdmin(PatientReqVM model)
         {
             var physicianId = HttpContext.Session.GetInt32("PhysicianId");
-            var email = HttpContext.Session.GetString("Email");
-            if (ModelState.IsValid)
+            bool isPhysician = physicianId != null ? true : false;
+            try
             {
-                bool isPhysician = physicianId != null ? true : false;
-                model.State = await _request.GetStateAccordingToRegionId(model.SelectedStateId);
-                _request.AddAdminCreateRequest(model, email, isPhysician,(int)( isPhysician ? physicianId : 0) );
-                TempData["Message"] = "Request Added!";
-                TempData["MessageType"] = "success";
-                
-                return isPhysician ? RedirectToAction("Dashboard","ProviderDashboard") : RedirectToAction("MainPage");
+                var email = HttpContext.Session.GetString("Email");
+                if (ModelState.IsValid)
+                {
+                    model.State = await _request.GetStateAccordingToRegionId(model.SelectedStateId);
+                    _request.AddAdminCreateRequest(model, email, isPhysician, (int)(isPhysician ? physicianId : 0));
+                    TempData["Message"] = "Request Added!";
+                    TempData["MessageType"] = "success";
+
+                    return isPhysician ? RedirectToAction("Dashboard", "ProviderDashboard") : RedirectToAction("MainPage");
+                }
+                ViewBag.IsPhysician = physicianId != null ? true : false;
+                model.Region = _admin.regions();
+                return PartialView("CreateRequestAdmin", model);
             }
-            ViewBag.IsPhysician = physicianId != null ? true : false;
-            model.Region = _admin.regions();
-            return PartialView("CreateRequestAdmin", model);
+            catch (Exception ex)
+            {
+                TempData["Message"] = "Something Went Wrong";
+                TempData["MessageType"] = "warning";
+                return isPhysician ? RedirectToAction("Dashboard", "ProviderDashboard") : RedirectToAction("MainPage");
+            }
 
         }
 
@@ -873,71 +1094,93 @@ namespace HalloDoc.Controllers
 
         public IActionResult ResetPhysicianPassword(string Password, int physicianid)
         {
-
-            Physician? physician = _provider.getPhysicianById(physicianid);
-            AspNetUser? account = _provider.getAccByEmail(physician.Email);
-
-
-            if (account != null && Password != null)
+            try
             {
-                string passwordhash = _passwordHasher.HashPassword(null, Password);
-                _provider.UpdatePassword(account, passwordhash);
-                TempData["Message"] = "Password Changed Successfully!";
-                TempData["MessageType"] = "success";
+                Physician? physician = _provider.getPhysicianById(physicianid);
+                AspNetUser? account = _provider.getAccByEmail(physician.Email);
 
+                if (account != null && Password != null)
+                {
+                    string passwordhash = _passwordHasher.HashPassword(null, Password);
+                    _provider.UpdatePassword(account, passwordhash);
+                    TempData["Message"] = "Password Changed Successfully!";
+                    TempData["MessageType"] = "success";
+
+                }
+                else
+                {
+                    TempData["Message"] = "Can't Change Password!";
+                    TempData["MessageType"] = "success";
+                }
+
+                return RedirectToAction("ProviderProfile", new { id = physicianid });
             }
-            else
+            catch (Exception ex)
             {
-                TempData["Message"] = "Can't Change Password!";
-                TempData["MessageType"] = "success";
+                TempData["Message"] = "Something Went Wrong";
+                TempData["MessageType"] = "warning";
+                return RedirectToAction("ProviderProfile", new { id = physicianid });
             }
-
-            return RedirectToAction("ProviderProfile", new { id = physicianid });
         }
 
         public IActionResult PhysicianInformation(int id, string MobileNo, string[] Region, string SynchronizationEmail, string NPINumber, string MedicalLicense)
         {
-            Physician? physician = _provider.getPhysicianById(id);
-            AspNetUser? account = _provider.getAccByEmail(physician.Email);
-            string[] regions = Region;
-            if (physician != null)
-            {
-                _provider.updatePhysicianInfo(physician, MobileNo, regions, SynchronizationEmail, NPINumber, MedicalLicense);
-                TempData["Message"] = "Information Updated";
-                TempData["MessageType"] = "success";
+            try { 
+                Physician? physician = _provider.getPhysicianById(id);
+                AspNetUser? account = _provider.getAccByEmail(physician.Email);
+                string[] regions = Region;
+                if (physician != null)
+                {
+                    _provider.updatePhysicianInfo(physician, MobileNo, regions, SynchronizationEmail, NPINumber, MedicalLicense);
+                    TempData["Message"] = "Information Updated";
+                    TempData["MessageType"] = "success";
+                }
+                else
+                {
+                    TempData["Message"] = "Unable to Update Data";
+                    TempData["MessageType"] = "warning";
+                }
+                return RedirectToAction("ProviderProfile", new { id = id });
             }
-            else
+            catch (Exception ex)
             {
-                TempData["Message"] = "Unable to Update Data";
+                TempData["Message"] = "Something Went Wrong";
                 TempData["MessageType"] = "warning";
+                return RedirectToAction("ProviderProfile", new { id = id });
             }
-            return RedirectToAction("ProviderProfile", new { id = id });
-
         }
 
 
         public IActionResult MailingBillingInformationProvider(int physicianid, string MobileNo, string Address1, string Address2, string City, int State, string Zipcode)
         {
-
-            Physician? physician = _provider.getPhysicianById(physicianid);
-            if (physician != null)
+            try
             {
-                physician.Address1 = Address1;
-                physician.Address2 = Address2;
-                physician.City = City;
-                physician.Mobile = MobileNo;
-                physician.RegionId = State;
-                physician.Zip = Zipcode;
-                _provider.updateBilling(physician);
-                TempData["Message"] = "Data Updated";
-                TempData["MessageType"] = "success";
+                Physician? physician = _provider.getPhysicianById(physicianid);
+                if (physician != null)
+                {
+                    physician.Address1 = Address1;
+                    physician.Address2 = Address2;
+                    physician.City = City;
+                    physician.Mobile = MobileNo;
+                    physician.RegionId = State;
+                    physician.Zip = Zipcode;
+                    _provider.updateBilling(physician);
+                    TempData["Message"] = "Data Updated";
+                    TempData["MessageType"] = "success";
+                }
+                else
+                {
+                    TempData["Message"] = "Unable to Update Data";
+                    TempData["MessageType"] = "warning";
+                }
+                return RedirectToAction("ProviderProfile", new { id = physicianid });
             }
-            else
+            catch (Exception ex)
             {
-                TempData["Message"] = "Unable to Update Data";
+                TempData["Message"] = "Something Went Wrong";
                 TempData["MessageType"] = "warning";
+                return RedirectToAction("ProviderProfile", new { id = physicianid });
             }
-            return RedirectToAction("ProviderProfile", new { id = physicianid });
         }
 
         public IActionResult Physicianprofile(int id, string businessName, string businessWebsite, IFormFile signatureFile, IFormFile photoFile)
@@ -1173,7 +1416,7 @@ namespace HalloDoc.Controllers
             return RedirectToAction("roleAccess");
         }
 
-        
+
         #endregion Access
 
         #region Location
@@ -1187,7 +1430,7 @@ namespace HalloDoc.Controllers
         public IActionResult getPhysicianMapDetail()
         {
             List<PhysicianLocation> physicianLocations = _pDashboard.locationList();
-                return Json(physicianLocations);
+            return Json(physicianLocations);
         }
         #endregion Location
 
@@ -1407,8 +1650,8 @@ namespace HalloDoc.Controllers
         public IActionResult getMdsOnCall(string regionId)
         {
             var currentTime = DateTime.Now.Hour;
-            
 
+                
             var onDuty = _schedule.OnDuty(regionId);
 
             var offDuty = _schedule.OffDuty(regionId);
@@ -1421,6 +1664,30 @@ namespace HalloDoc.Controllers
             return PartialView("Scheduling/_providerOnCallPartial", providers);
         }
         #endregion Scheduling
+
+        #region Invocing
+
+        [HttpGet("AdminDashboard/Invoicing", Name = "InvoicingAdmin")]
+        [HttpGet("ProviderDashboard/Invoicing", Name = "InvoicingProvider")]
+        public IActionResult Invoicing()
+        {
+            var physicianId = HttpContext.Session.GetInt32("PhysicianId");
+            ViewBag.physicianId = physicianId;
+            ViewBag.IsPhysician = physicianId == null ? false : true;
+            ViewBag.Physicians = _provider.PhysiciansList();
+            return View("ProviderMenu/Invoicing");
+        }
+
+        public IActionResult getTimeSheetFormDetails(string physicianId, string date)
+        {
+            var model = new TimeSheetVM();
+            model.startdate = DateOnly.Parse(date);
+            model.enddate = DateOnly.FromDateTime( model.startdate.Day == 1 ? new DateTime(model.startdate.Year, model.startdate.Month, 15) : new DateTime(model.startdate.Year, model.startdate.Month, 1).AddMonths(1).AddDays(-1));
+            var result = _inv.getTimesheetdetails(physicianId, date);
+            model.forms = result;
+            return PartialView("ProviderMenu/_timesheetForm", model);
+        }
+        #endregion
 
         #region Partners
 
@@ -1462,7 +1729,7 @@ namespace HalloDoc.Controllers
             AddBusinessVM model = _providersite.getBusinessDetails(Vendorid);
             ViewBag.Regions = _admin.regions();
             ViewBag.Professions = _provider.getProfessionals();
-            
+
             return PartialView("Partners/EditBusiness", model);
         }
 
@@ -1545,9 +1812,9 @@ namespace HalloDoc.Controllers
         public IActionResult exportSearchRecordfile(int[] status, string patientName,
         string providerName, string phoneNum, string email, string requestType)
         {
-            var searchedRecord = _providersite.getSearchRecordsWithFilter(status, patientName, providerName, phoneNum, email, requestType, new DateTime() , new DateTime()).ToList();
+            var searchedRecord = _providersite.getSearchRecordsWithFilter(status, patientName, providerName, phoneNum, email, requestType, new DateTime(), new DateTime()).ToList();
 
-            
+
             using (var excel = new ExcelPackage())
             {
                 var worksheet = excel.Workbook.Worksheets.Add("sheet1");

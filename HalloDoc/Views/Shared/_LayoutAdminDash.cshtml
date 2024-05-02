@@ -43,7 +43,7 @@
 <body style="min-height: 100%; height:100%;" class="position-relative">
     <header class="">
         <nav class="navbar navbar-expand-lg d-flex justify-content-between border border-bottom position-fixed w-100 bg-body" style=" z-index: 100 !important; height: 11vh !important">
-            <button type="button" id="menuadmin" class="navbar-toggler position-absolute start-0 top-0 shadow-none btn btn-outline-info ms-3 mt-4 d-md-none d-block" data-bs-toggle="collapse" data-bs-target="#navbarTogglerDemo01" aria-controls="navbarTogglerDemo01" aria-expanded="false" aria-label="Toggle navigation">
+            <button type="button" id="menuadmin" class="position-absolute start-0 top-0 shadow-none btn btn-outline-info ms-3 mt-4 d-md-none d-block" data-bs-toggle="offcanvas" data-bs-target="#staticBackdrop" aria-controls="staticBackdrop">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-list" viewBox="0 0 16 16">
                     <path fill-rule="evenodd" d="M2.5 12a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5m0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5m0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5" />
                 </svg>
@@ -54,8 +54,8 @@
                  class=" ms-md-3 ms-5 ps-3" />
 
             <div class="text-center align-items-center">
-                <span class="text-secondary d-none d-sm-inline"> Welcome </span>
-                <span class="fw-bold fs-6 text-body mt-1 ">@TempData["username"]</span>
+                <span class="text-secondary d-none d-md-inline"> Welcome </span>
+                <span class="fw-bold fs-6 text-body mt-1 d-none d-md-inline">@TempData["username"]</span>
                 <a asp-controller="Home" asp-action="Logout"> <button class="btn text-decoration-none border border-info bg-transparent text-info shadow-none mx-2">Logout</button></a>
                 <button class="btn bg-transparent pt-1 pb-2 border border-info text-info me-4 shadow-none"
                         id="theme-toggle">
@@ -75,6 +75,73 @@
 
 
     </header>
+
+    @* Off Canvas *@
+
+    <div class="offcanvas offcanvas-start d-block d-md-none" data-bs-backdrop="static" tabindex="-1" id="staticBackdrop" aria-labelledby="staticBackdropLabel">
+        <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="staticBackdropLabel">@TempData["username"]</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+        <div class="offcanvas-body">
+            <div>
+                <ul class="nav flex-column">
+                    <li class="nav-item " role="presentation">
+                        <a class="px-2 shadow-none nav-link text-decoration-none text-info  @(ViewContext.ActionDescriptor.RouteValues["action"] == "MainPage" || ViewContext.ActionDescriptor.RouteValues["action"] == "ViewCase"|| ViewContext.ActionDescriptor.RouteValues["action"] == "ViewNotesAdminn" || ViewContext.ActionDescriptor.RouteValues["action"] == "ViewDocuments" || ViewContext.ActionDescriptor.RouteValues["action"] == "SendOrder" || ViewContext.ActionDescriptor.RouteValues["action"] == "CreateRequestAdmin" ? "active" : "")" asp-action="MainPage">Dashboard</a>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <a asp-action="ProviderLocation" class="px-2 nav-link text-info text-decoration-none  shadow-none @(ViewContext.ActionDescriptor.RouteValues["action"] == "ProviderLocation" ? "active" : "")">Provider Location</a>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <a class="px-2 shadow-none nav-link text-decoration-none text-info @(ViewContext.ActionDescriptor.RouteValues["action"] == "AdminProfile" ? "active" : "")" asp-action="AdminProfile">My Profile</a>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="px-2 shadow-none nav-link text-decoration-none text-info @(ViewContext.ActionDescriptor.RouteValues["action"] == "Provider" ||
+                            ViewContext.ActionDescriptor.RouteValues["action"] == "Scheduling" ||
+                            ViewContext.ActionDescriptor.RouteValues["action"] == "CreateProviderAcc" ||
+                            ViewContext.ActionDescriptor.RouteValues["action"] == "requestedShifts" ||
+                            ViewContext.ActionDescriptor.RouteValues["action"] == "ProviderProfile" ||
+                            ViewContext.ActionDescriptor.RouteValues["action"] == "ProviderOnCall" ? "active" : "")" id="dropdownMenu2" data-bs-toggle="dropdown" aria-expanded="false">
+                            Providers
+                        </button>
+                        <div class="dropdown">
+                            <ul class="dropdown-menu" aria-labelledby="dropdownMenu2">
+                                <li><a asp-action="Provider" asp-controller="AdminDashboard" class="dropdown-item" type="button">Provider</a></li>
+                                <li><a asp-action="Scheduling" asp-controller="AdminDashboard" class="dropdown-item" type="button">Scheduling</a></li>
+                                <li><a asp-action="Invoicing" asp-controller="AdminDashboard" class="dropdown-item" type="button">Invoicing</a></li>
+                            </ul>
+                        </div>
+                    </li>
+                    <li class="nav-item " role="presentation">
+                        <a asp-action="Partners" class="px-2 shadow-none nav-link text-decoration-none text-info @(ViewContext.ActionDescriptor.RouteValues["action"] == "Partners" || ViewContext.ActionDescriptor.RouteValues["action"] == "EditBusiness"  ? "active" : "")">Partners</a>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button type="button" class="px-2  shadow-none nav-link text-decoration-none text-info @(ViewContext.ActionDescriptor.RouteValues["action"] == "userAccess"  || ViewContext.ActionDescriptor.RouteValues["action"] == "roleAccess" || ViewContext.ActionDescriptor.RouteValues["action"] == "CreateAccess" || ViewContext.ActionDescriptor.RouteValues["action"] == "CreateAdminAccessAcc" || ViewContext.ActionDescriptor.RouteValues["action"] == "CreateProviderAccessAcc" ? "active" : "")" id="dropdownMenu3" data-bs-toggle="dropdown" aria-expanded="false">Access</button>
+                        <div class="dropdown">
+                            <ul class="dropdown-menu" aria-labelledby="dropdownMenu3">
+                                <li><a asp-action="userAccess" class="dropdown-item" type="button">UserAccess</a></li>
+                                <li><a asp-action="roleAccess" class="dropdown-item" type="button">Role Access</a></li>
+                            </ul>
+                        </div>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="px-2 shadow-none nav-link text-decoration-none text-info @(ViewContext.ActionDescriptor.RouteValues["action"] == "PatientHistory" || ViewContext.ActionDescriptor.RouteValues["action"] == "EmailLog" ||ViewContext.ActionDescriptor.RouteValues["action"] == "BlockedHistory" || ViewContext.ActionDescriptor.RouteValues["action"] == "SearchRecords" || ViewContext.ActionDescriptor.RouteValues["action"] == "explorePatientRequests" ? "active" : "")" id="dropdownMenu4" data-bs-toggle="dropdown" aria-expanded="false">Records</button>
+                        <div class="dropdown">
+                            <ul class="dropdown-menu" aria-labelledby="dropdownMenu4">
+                                <li><a asp-action="SearchRecords" class="dropdown-item" type="button">Search Records </a></li>
+
+                                <li><a asp-action="PatientHistory" class="dropdown-item" type="button">Patient Records</a></li>
+                                <li><a asp-action="BlockedHistory" class="dropdown-item" type="button">Blocked History</a></li>
+                            </ul>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    @* Header Tags *@
+
     <div class="w-100 shadow position-fixed bg-body" style="top: 11vh !important; z-index: 100">
         <nav class="navbar navbar-expand-lg py-0 shadow">
             <div class="container-fluid">
@@ -102,7 +169,8 @@
                                 <ul class="dropdown-menu" aria-labelledby="dropdownMenu2">
                                     <li><a asp-action="Provider" asp-controller="AdminDashboard" class="dropdown-item" type="button">Provider</a></li>
                                     <li><a asp-action="Scheduling" asp-controller="AdminDashboard" class="dropdown-item" type="button">Scheduling</a></li>
-                                    <li><button class="dropdown-item" type="button">Invoicing</button></li>
+                                    <li><a asp-action="Invoicing" asp-controller="AdminDashboard" class="dropdown-item" type="button">Invoicing</a></li>
+
                                 </ul>
                             </div>
                         </li>
@@ -123,8 +191,7 @@
                             <div class="dropdown">
                                 <ul class="dropdown-menu" aria-labelledby="dropdownMenu4">
                                     <li><a asp-action="SearchRecords" class="dropdown-item" type="button">Search Records </a></li>
-                                    <li><a asp-action="EmailLog" class="dropdown-item" type="button">Email Logs</a></li>
-                                    <li><button class="dropdown-item" type="button">SMS Logs</button></li>
+                                    
                                     <li><a asp-action="PatientHistory" class="dropdown-item" type="button">Patient Records</a></li>
                                     <li><a asp-action="BlockedHistory" class="dropdown-item" type="button">Blocked History</a></li>
                                 </ul>
@@ -147,7 +214,7 @@
     </div>
 
     <div class="container-fluid px-0 bg-light-subtle">
-        <main role="main" class="overflow-auto" style="height: 92vh !important; padding-top: 15vh !important">
+        <main role="main" class="main-layout overflow-auto" style="height: 92vh !important; padding-top: 15vh">
             @RenderBody()
         </main>
     </div>

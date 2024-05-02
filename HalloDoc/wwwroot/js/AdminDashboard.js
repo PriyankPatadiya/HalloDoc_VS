@@ -43,19 +43,25 @@ $(document).ready(function () {
         currentpage = 1;
         $('.buttonOfFilter').removeClass('active');
         $(this).addClass('active');
-        ChangeTable(path, StatusButton, currentpage, pagesize);
+        var storedpartial = localStorage.getItem("partialviewpath");
+        storedpartial = storedpartial != null ? storedpartial : "AdminDashboardNew";
+        ChangeTable(storedpartial, StatusButton, currentpage, pagesize);
     });
 
     //Search filter
     $("#SearchString").on("keyup", function () {
         currentpage = 1;
-        ChangeTable(path, StatusButton, currentpage, pagesize);
+        var storedpartial = localStorage.getItem("partialviewpath");
+        storedpartial = storedpartial != null ? storedpartial : "AdminDashboardNew";
+        ChangeTable(storedpartial, StatusButton, currentpage, pagesize);
     });
 
     // Status button 
     $("#SelectedStateId").on("change", function () {
         currentpage = 1;
-        ChangeTable(path, StatusButton, currentpage, pagesize);
+        var storedpartial = localStorage.getItem("partialviewpath");
+        storedpartial = storedpartial != null ? storedpartial : "AdminDashboardNew";
+        ChangeTable(storedpartial, StatusButton, currentpage, pagesize);
     });
 
     // physician dropdown in assign case
@@ -238,7 +244,6 @@ $(document).ready(function () {
     // downloadpdf in encouter action which is finalized
 
     $("#submitBtnEncounterForm").click(function () {
-        debugger;
         console.log("......")
     });
     function filterPhysicianByRegion(RegionId) {

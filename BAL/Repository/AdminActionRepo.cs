@@ -309,6 +309,7 @@ namespace BAL.Repository
                                      where req.RequestId == requestid
                                      select new EncounterFormVM
                                      {
+                                         Email = reqclient.Email,
                                          FirstName = reqclient.FirstName,
                                          LastName = reqclient.LastName,
                                          //Location = reqclient.Location,
