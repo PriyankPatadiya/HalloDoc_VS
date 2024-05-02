@@ -1,7 +1,13 @@
 ﻿@model DAL.ViewModels.TimeSheetVM
-
+@{
+    int startDate = Model.startdate.Day;
+    int month = Model.startdate.Month;
+    int endDate = Model.enddate.Day;
+    int year = Model.startdate.Year;
+    var form = Model.forms;
+}
     <table class="table">
-        <thead>
+        <thead class="text-body border-0">
             <tr>
                 <th>Date</th>
                 <th>On Call Hours</th>
@@ -12,24 +18,21 @@
             </tr>
         </thead>
         <tbody>
-            <tr>
-            @{
-                int startDate = Model.startdate.Day;
-                int month = Model.startdate.Month;
-                int endDate = Model.enddate.Day;
-                int year = Model.startdate.Year;
-                DateOnly date = new DateOnly(year, month, startDate);
-            }
+
             @for(int i=startDate; i<=endDate; i++)
             {
-                @*<td>@date.</td>
-                <td>@item.onCallhours</td>
-                <td>@item.totalHours</td>
-                <td><input class="form-check" checked="@(item.isWeekend)"/></td>
-                <td>@item.HouseCallNo</td>
-                <td>@item.PhoneCallNo</td>*@
+                <tr>
+                    @{
+                        string date = new DateTime(year, month, i).Date.ToString("dd/MM/yyyy");
+                    }
+                    <td class="align-middle text-center">@date</td>
+                    <td class="align-middle text-center">@*@form[i].onCallhours*@0</td>
+                    <td class="align-middle text-center"><input type="number" class="form-control" value="0">@*@form[i].totalHours*@</td>
+                    <td class="align-middle text-center"><input type="checkbox" class="form-check" checked /></td>
+                    <td class="align-middle text-center"><input type="number" class="form-control" value="0">@*@form[i].HouseCallNo*@</td>
+                    <td class="align-middle text-center"><input type="number" class="form-control" value="0">@*@form[i].PhoneCallNo*@</td>
+                </tr>
 
             }
-            </tr>
         </tbody>
     </table>
