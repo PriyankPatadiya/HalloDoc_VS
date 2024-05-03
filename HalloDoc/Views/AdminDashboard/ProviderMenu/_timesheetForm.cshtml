@@ -6,33 +6,41 @@
     int year = Model.startdate.Year;
     var form = Model.forms;
 }
-    <table class="table">
+<table class="table table-borderless ">
         <thead class="text-body border-0">
             <tr>
-                <th>Date</th>
-                <th>On Call Hours</th>
-                <th>Total Hours</th>
-                <th>Weekend/Holiday</th>
-                <th>Number Of HouseCalls</th>
-                <th>Number Of Phone Calls</th>
+            <th class="align-middle text-center">Date</th>
+            <th class="align-middle text-center">On Call Hours</th>
+            <th class="align-middle text-center">Total Hours</th>
+            <th class="align-middle text-center">Weekend/Holiday</th>
+            <th class="align-middle text-center">Number Of HouseCalls</th>
+            <th class="align-middle text-center">Number Of Phone Calls</th>
             </tr>
         </thead>
         <tbody>
-
-            @for(int i=startDate; i<=endDate; i++)
+        @{
+            int j = 0;
+        }
+            @for(int i=startDate; i<=endDate ; i++)
             {
                 <tr>
                     @{
                         string date = new DateTime(year, month, i).Date.ToString("dd/MM/yyyy");
                     }
                     <td class="align-middle text-center">@date</td>
-                    <td class="align-middle text-center">@*@form[i].onCallhours*@0</td>
-                    <td class="align-middle text-center"><input type="number" class="form-control" value="0">@*@form[i].totalHours*@</td>
-                    <td class="align-middle text-center"><input type="checkbox" class="form-check" checked /></td>
-                    <td class="align-middle text-center"><input type="number" class="form-control" value="0">@*@form[i].HouseCallNo*@</td>
-                    <td class="align-middle text-center"><input type="number" class="form-control" value="0">@*@form[i].PhoneCallNo*@</td>
+                    <td class="align-middle text-center">@(form[j] == null ? 0 : form[j].onCallhours)</td>
+                    <td class="align-middle text-center"><input type="number" class="form-control" value="@(form[j] == null ? 0 : @form[j].totalHours)"></td>
+                    <td class="align-middle text-center d-flex justify-content-center py-3">
+                        <input type="checkbox" class="form-check-input" checked="@(form[j] == null ? false : form[j].isWeekend)" />
+                    </td>
+                    <td class="align-middle text-center"><input type="number" class="form-control" value="@(form[j] == null ? 0 : form[j].HouseCallNo)"></td>
+                    <td class="align-middle text-center"><input type="number" class="form-control" value="@(form[j] == null ? 0 :form[j].PhoneCallNo)"></td>
                 </tr>
+                j++;
 
             }
         </tbody>
-    </table>
+</table>
+<div class="d-flex justify-content-end">
+    <button class="btn btn-info">submit</button>
+</div>

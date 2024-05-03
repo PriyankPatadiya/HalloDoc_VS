@@ -1,5 +1,6 @@
 ﻿using BAL.Interface;
 using DAL.DataContext;
+using DAL.DataModels;
 using DAL.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -42,6 +43,71 @@ namespace BAL.Repository
 
         
             return result;   
+        }
+
+        public bool isTimeSheetExist(DateOnly startdate)
+        {
+            bool result = _context.Timesheets.Any(u => u.StartDate == startdate);
+            return result;
+        }
+
+        public void AddNewSheet(DateOnly date, string physicianId)
+        {
+            DateOnly enddate = date.Day == 1 ? new DateOnly(date.Year, date.Month, 15) : new DateOnly(date.Year, date.Month, 1).AddMonths(1).AddDays(-1);
+            var sheet = new Timesheet();
+            sheet.PhysicianId = int.Parse(physicianId);
+            sheet.StartDate = date;
+            sheet.EndDate = enddate;
+            sheet.CreatedDate = DateTime.Now;
+            sheet.IsFinalize = false;
+            sheet.IsApproved = false;
+            sheet.CreatedBy = _context.Physicians.First(u => u.PhysicianId == int.Parse(physicianId)).AspNetUserId;
+            _context.Timesheets.Add(sheet);
+            _context.SaveChanges();
+
+            for(int i=date.Day; i<=enddate.Day; i++)
+            {
+                var TimesheetDetailDate = new DateOnly(enddate.Year, enddate.Month, i);
+                var timesheetdetail = new TimesheetDetail();
+                timesheetdetail.TimesheetId = sheet.TimesheetId;
+                timesheetdetail.TimesheetDate = TimesheetDetailDate;
+                timesheetdetail.TotalHours = 0;
+                timesheetdetail.IsWeekend = false;
+                timesheetdetail.NumberOfHouseCall = 0;
+                timesheetdetail.NumberOfPhoneCall = 0;
+                _context.TimesheetDetails.Add(timesheetdetail);
+            }
+            _context.SaveChanges();
+        }
+        public TimeSheetTableMainVM getTimesheetTableData(string date, int physicianId)
+        {
+            var table = new TimeSheetTableMainVM();
+
+            table.isFinalize = _context.Timesheets.Any(i => i.PhysicianId != physicianId && i.StartDate == DateOnly.Parse(date));
+
+            table.firstTable = (from timesheetdetails in _context.TimesheetDetails
+                                join timesheet in _context.Timesheets
+                                on timesheetdetails.TimesheetId equals timesheet.TimesheetId
+                                join shift in _context.Shifts
+                                on timesheet.PhysicianId equals shift.PhysicianId into leftshift
+                                from leftshifts in leftshift.DefaultIfEmpty()
+                                where timesheet.PhysicianId == physicianId && timesheet.StartDate == DateOnly.Parse(date)
+                                select new TimeSheetTableVM()
+                                {
+                                    shiftdate = DateOnly.Parse(date),
+                                    shiftCount = leftshifts.ShiftDetails.Where(u => DateOnly.FromDateTime(u.ShiftDate) == timesheetdetails.TimesheetDate).Count(),
+                                    NightShiftWeekend = 0,
+                                    HouseCallNightSWeekend = 0,
+                                    PhoneConsults = 0,
+                                    PhoneConsultsNightWeekend = 0,
+                                    BatchTesting = 0,
+
+                                }).Distinct().ToList();
+
+            table.secondTable = null;
+
+            return table;
+
         }
     }
 }

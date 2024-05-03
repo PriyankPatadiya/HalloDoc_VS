@@ -1680,13 +1680,30 @@ namespace HalloDoc.Controllers
 
         public IActionResult getTimeSheetFormDetails(string physicianId, string date)
         {
+
             var model = new TimeSheetVM();
             model.startdate = DateOnly.Parse(date);
+            model.physicianId = int.Parse(physicianId);
+
+            bool isSheetExist = _inv.isTimeSheetExist(model.startdate);
+
+            if (!isSheetExist)
+            {
+                _inv.AddNewSheet(model.startdate, physicianId);
+            }
+
             model.enddate = DateOnly.FromDateTime( model.startdate.Day == 1 ? new DateTime(model.startdate.Year, model.startdate.Month, 15) : new DateTime(model.startdate.Year, model.startdate.Month, 1).AddMonths(1).AddDays(-1));
             var result = _inv.getTimesheetdetails(physicianId, date);
             model.forms = result;
             return PartialView("ProviderMenu/_timesheetForm", model);
         }
+
+        public IActionResult getTimeSheetTableData(string startdate, int physicianId)
+        {
+            var result = _inv.getTimesheetTableData(startdate, physicianId);
+            return Json(result);
+        }
+
         #endregion
 
         #region Partners
