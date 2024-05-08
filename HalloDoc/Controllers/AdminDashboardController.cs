@@ -12,6 +12,8 @@ using OfficeOpenXml;
 using String = System.String;
 using Microsoft.CodeAnalysis;
 using static BAL.Repository.AuthorizationRepo;
+using Microsoft.EntityFrameworkCore;
+using DAL.DataContext;
 
 namespace HalloDoc.Controllers
 {
@@ -35,8 +37,9 @@ namespace HalloDoc.Controllers
         private readonly IScheduling _schedule;
         private readonly IProviderDashboard _pDashboard;
         private readonly Iinvoicing _inv;
+        private readonly ApplicationDbContext _context;
 
-        public AdminDashboardController(IAdminDashboard admin, IAdminActions action, IHostingEnvironment env, IuploadFile uploadfile, IPatientRequest request, IEmailService emailService, IPasswordHasher<AdminProfileVM> password,
+        public AdminDashboardController(ApplicationDbContext context ,IAdminDashboard admin, IAdminActions action, IHostingEnvironment env, IuploadFile uploadfile, IPatientRequest request, IEmailService emailService, IPasswordHasher<AdminProfileVM> password,
                     IProviders providers, IUploadProvider upload, IPasswordHasher<PhysicianProfileVM> hasher, IAccessMenu menu, IPasswordHasher<AdminCreateAccVM> hasherr, IProviderSite pSite, IScheduling schedule, IProviderDashboard pDashboard, Iinvoicing inv)
         {
             _admin = admin;
@@ -55,6 +58,7 @@ namespace HalloDoc.Controllers
             _providersite = pSite;
             _schedule = schedule;
             _pDashboard = pDashboard;
+            _context = context; 
         }
 
         #region Dashboard
@@ -1698,10 +1702,44 @@ namespace HalloDoc.Controllers
             return PartialView("ProviderMenu/_timesheetForm", model);
         }
 
+        public IActionResult getRecieptFormDetails(string physicianId, string date)
+        {
+            ViewBag.startDate = DateOnly.Parse(date);
+            ViewBag.endDate = DateOnly.FromDateTime(ViewBag.startDate.Day == 1 ? new DateTime(ViewBag.startDate.Year, ViewBag.startDate.Month, 15) : new DateTime(ViewBag.startDate.Year, ViewBag.startDate.Month, 1).AddMonths(1).AddDays(-1));
+            return PartialView("ProviderMenu/_addRecieptForm");
+        } 
+
         public IActionResult getTimeSheetTableData(string startdate, int physicianId)
         {
+            var userPhysicianId = HttpContext.Session.GetInt32("PhysicianId");
+            ViewBag.IsPhysician = userPhysicianId == null ?  false : true;
+            
             var result = _inv.getTimesheetTableData(startdate, physicianId);
-            return Json(result);
+         
+            ViewBag.IsNull = result.firstTable.Count == 0 ? true : false;
+            ViewBag.PhysicianName = _context.Physicians.First(u => u.PhysicianId == physicianId).FirstName;
+            
+            return PartialView("ProviderMenu/_timesheetDetails", result);
+        }
+
+        [HttpPost]
+        public IActionResult submitTimesheetData(TimeSheetVM list)
+        {
+            var modifier = _admin.getAspNetIdByPhysicianid((int)list.physicianId);
+            foreach(var i in list.forms)
+            {
+                TimesheetDetail? tsd = _inv.getTimesheetdetailInstanse(list.physicianId, i.date);
+                tsd.TotalHours = i.totalHours;
+                tsd.IsWeekend = i.isWeekend;
+                tsd.NumberOfHouseCall = i.HouseCallNo;
+                tsd.NumberOfPhoneCall = i.PhoneCallNo;
+                tsd.ModifiedDate = DateTime.Now;
+                tsd.ModifiedBy = modifier;
+
+                _context.TimesheetDetails.Update(tsd);
+                _context.SaveChanges();
+            }
+            return RedirectToAction("Invoicing");
         }
 
         #endregion

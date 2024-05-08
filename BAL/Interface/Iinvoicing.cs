@@ -1,4 +1,5 @@
-﻿using DAL.ViewModels;
+﻿using DAL.DataModels;
+using DAL.ViewModels;
 
 namespace BAL.Interface
 {
@@ -8,5 +9,6 @@ namespace BAL.Interface
         public bool isTimeSheetExist(DateOnly startdate);
         public void AddNewSheet(DateOnly date, string physicianId);
         public TimeSheetTableMainVM getTimesheetTableData(string date, int physicianId);
+        public TimesheetDetail getTimesheetdetailInstanse(int? physicianId, DateOnly date);
     }
 }

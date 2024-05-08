@@ -52,6 +52,10 @@ namespace BAL.Repository
                 _context.SaveChanges();
             }
         }
+        public string getAspNetIdByPhysicianid(int physicianid)
+        {
+            return _context.Physicians.Where(u => u.PhysicianId == physicianid).FirstOrDefault().AspNetUserId;
+        }
         public Admin getAdminByemail(string email)
         {
             return _context.Admins.FirstOrDefault(u => u.Email == email);

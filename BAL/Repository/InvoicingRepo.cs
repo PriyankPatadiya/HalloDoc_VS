@@ -35,7 +35,7 @@ namespace BAL.Repository
                               physicianId = timesheet.PhysicianId,
                               onCallhours = 0,
                               totalHours = timesheetdetail.TotalHours,
-                              isWeekend = timesheetdetail.IsWeekend,
+                              isWeekend = (bool)timesheetdetail.IsWeekend,
                               HouseCallNo = timesheetdetail.NumberOfHouseCall,
                               PhoneCallNo = timesheetdetail.NumberOfPhoneCall
 
@@ -87,18 +87,17 @@ namespace BAL.Repository
 
             table.firstTable = (from timesheetdetails in _context.TimesheetDetails
                                 join timesheet in _context.Timesheets
-                                on timesheetdetails.TimesheetId equals timesheet.TimesheetId
-                                join shift in _context.Shifts
-                                on timesheet.PhysicianId equals shift.PhysicianId into leftshift
-                                from leftshifts in leftshift.DefaultIfEmpty()
-                                where timesheet.PhysicianId == physicianId && timesheet.StartDate == DateOnly.Parse(date)
+                                on timesheetdetails.TimesheetId equals timesheet.TimesheetId into timesheetjoin
+                                from timesheetTotal in timesheetjoin.DefaultIfEmpty()
+                                where timesheetTotal.PhysicianId == physicianId && timesheetTotal.StartDate == DateOnly.Parse(date)
                                 select new TimeSheetTableVM()
                                 {
-                                    shiftdate = DateOnly.Parse(date),
-                                    shiftCount = leftshifts.ShiftDetails.Where(u => DateOnly.FromDateTime(u.ShiftDate) == timesheetdetails.TimesheetDate).Count(),
+                                    shiftdate = timesheetdetails.TimesheetDate,
+                                    shiftCount = _context.ShiftDetails.Where(u => DateOnly.FromDateTime(u.ShiftDate) == timesheetdetails.TimesheetDate && u.Shift.PhysicianId == physicianId && u.IsDeleted != new System.Collections.BitArray( new[]{ true })).Count(),
                                     NightShiftWeekend = 0,
                                     HouseCallNightSWeekend = 0,
                                     PhoneConsults = 0,
+                                    housecall = 0,
                                     PhoneConsultsNightWeekend = 0,
                                     BatchTesting = 0,
 
@@ -108,6 +107,11 @@ namespace BAL.Repository
 
             return table;
 
+        }
+
+        public TimesheetDetail getTimesheetdetailInstanse(int? physicianId, DateOnly date)
+        {
+            return _context.TimesheetDetails.FirstOrDefault(u => u.Timesheet.PhysicianId == physicianId && u.TimesheetDate == date);
         }
     }
 }

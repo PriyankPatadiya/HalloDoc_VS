@@ -1,0 +1,42 @@
+﻿@using DAL.ViewModels;
+@model TimeSheetTableMainVM
+
+@if (ViewBag.IsPhysician && ViewBag.IsNull)
+{
+    <div class="text-body mx-3 p-3">No Record(s) Found</div>
+}else if(!ViewBag.IsPhysician && Model.isFinalize == false)
+{
+    <div class="text-body mx-3 p-3"> @ViewBag.PhysicianName Has not finalized the timesheet in specified time period.</div>
+} 
+else
+{
+    <table class="d-none d-md-table table m-0 mb-3" style="margin-bottom: 0 !important;">
+        <thead class="table-secondary">
+            <tr>
+                <th  class="ps-3 align-middle">Shift Date</th>
+                <th class="ps-3 align-middle">Shift</th>
+                <th class="ps-3 align-middle" style="width: 10%;">Nightshift Weekend</th>
+                <th class="ps-3 align-middle">Housecall</th>
+                <th class="ps-3 align-middle" style="width: 10%;">Housecall Nights Weekend</th>
+                <th class="ps-3 align-middle">Phone Consults</th>
+                <th class="ps-3 align-middle" style="width: 20%;">Phone Consults Nights Weekend</th>
+                <th class="ps-3 align-middle">Batch Testing</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.firstTable)
+            {
+                <tr>
+                    <td scope="col" class="ps-3">@item.shiftdate.ToDateTime(new TimeOnly()).ToString("MMMM/dd/yyyy")</td>
+                    <td scope="col" class="ps-3">@item.shiftCount</td>
+                    <td scope="col" class="ps-3" style="width: 10%;">@item.NightShiftWeekend</td>
+                    <td scope="col" class="ps-3">@item.housecall</td>
+                    <td scope="col" class="ps-3" style="width: 10%;">@item.HouseCallNightSWeekend</td>
+                    <td scope="col" class="ps-3">@item.PhoneConsults</td>
+                    <td scope="col" class="ps-3" style="width: 10%;">@item.PhoneConsults</td>
+                    <td scope="col" class="ps-3">@item.BatchTesting</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

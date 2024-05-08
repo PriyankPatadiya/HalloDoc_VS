@@ -10,11 +10,11 @@ namespace DAL.ViewModels
     {
         public int physicianId { get; set; }
         public DateOnly date { get; set; }
-        public int onCallhours { get; set; }
-        public decimal? totalHours { get; set; }
-        public bool? isWeekend { get; set; } = false;
-        public int? HouseCallNo { get; set; }
-        public int? PhoneCallNo { get; set; }
+        public int onCallhours { get; set; } = 0;
+        public decimal? totalHours { get; set; } = 0;
+        public bool isWeekend { get; set; } = false;
+        public int? HouseCallNo { get; set; } = 0;
+        public int? PhoneCallNo { get; set; } = 0;
 
     }
 }

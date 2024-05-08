@@ -31,7 +31,7 @@ namespace BAL.Interface
         public void changePassword(string password, string email);
         public void deleteRequest(int requestId);
         public void unblockRequest(int requestId);
-        
+        public string getAspNetIdByPhysicianid(int physicianid);
         public void UpdateProviderProfile(int id, string businessName, string businessWebsite, IFormFile signatureFile, IFormFile photoFile);
     }
 }

@@ -10,6 +10,7 @@ namespace DAL.ViewModels
         public int HouseCallNightSWeekend { get; set; }
         public int PhoneConsults { get; set; }
         public int PhoneConsultsNightWeekend { get; set; }
+        public int housecall { get ; set; } 
         public int BatchTesting { get; set; }
 
     }

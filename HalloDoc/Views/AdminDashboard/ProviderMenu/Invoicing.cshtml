@@ -11,8 +11,8 @@
         <button onclick="history.back()" class="btn btn-outline-info"> ❮  Back </button>
     }
 </div>
-<div class="container my-3 bg-body shadow p-3 rounded" id="TimesheetmainDiv">
-    <div class="d-flex justify-content-between">
+<div class="container my-3 bg-body shadow px-0 rounded" id="TimesheetmainDiv">
+    <div class="d-flex justify-content-between p-3">
         <div class="m-0 p-0 d-flex">
             @if (ViewBag.IsPhysician == false)
             {
@@ -72,11 +72,12 @@
         
     </div>
 </div>
-<div class="container p-3 bg-body rounded shadow" id="fillTimesheetDiv">
+<div class="container bg-body rounded shadow" id="fillTimesheetDiv">
 
 </div>
 
-<div class="container my-2 px-0" id="AddReceiptBtn" style="display: none;"><button class="btn btn-info">Add Receipts</button></div>
+<div class="container my-2 px-0" id="AddReceiptBtn" style="display: none;"><button type="button" onclick="openAddRecieptForm()" class="btn btn-info">Add Receipts</button></div>
+<div class="container bg-body rounded shadow" id="addReciept"></div>
 <div class="container position-relative" id="FinalizeBtn" style="display: none;"><button class="btn btn-info position-absolute end-0 me-2">Finalize</button></div>
 
 <script>
@@ -114,6 +115,29 @@
                     $("#FinalizeBtn").show();
                     $("#TimesheetmainDiv").hide();
                     $("#fillTimesheetDiv").html(response);
+                },
+                error: function (data) {
+                    alert(data.d);
+                }
+            });
+        } else {
+            alert("please select date");
+        }
+    }
+
+    function openAddRecieptForm(){
+        var physicianid = $("#PhysicianId").val();
+        var date = $("#selectDate").val();
+
+        if (date != 0) {
+            $.ajax({
+                type: 'GET',
+                url: "/AdminDashboard/getRecieptFormDetails",
+                data: { physicianId: physicianid, date: date },
+                success: function (response) {
+                    console.log(response)
+                    
+                    $("#addReciept").html(response);
                 },
                 error: function (data) {
                     alert(data.d);
