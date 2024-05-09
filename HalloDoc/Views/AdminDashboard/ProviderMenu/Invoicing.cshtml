@@ -91,7 +91,6 @@
             url: "/AdminDashboard/getTimeSheetTableData",
             data: {startdate : startDate , physicianId : physicianid},
             success: function(response){
-                debugger;
                 if(response.isFinalize){
                     $("#FinalizeBtn").show();
                 }

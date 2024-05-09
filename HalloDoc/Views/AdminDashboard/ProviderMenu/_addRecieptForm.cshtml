@@ -1,36 +1,54 @@
-﻿@{
+﻿@model List<DAL.DataModels.TimesheetReimbursementDetail>
+@{
     int startDate = ViewBag.startDate.Day;
     int month = ViewBag.startDate.Month;
     int endDate = ViewBag.endDate.Day;
     int year = ViewBag.startDate.Year;
+    var Listmodel = Model;
 }
-<form asp-action="submitTimesheetData" method="post">
-    <table class="table table-borderless ">
-        <thead class="text-body border-0">
-            <tr>
-                <th class="align-middle text-center">Date</th>
-                <th class="align-middle text-center">Item</th>
-                <th class="align-middle text-center">Amount</th>
-                <th class="align-middle text-center" style="width: 20%">Bill</th>
-                <th class="align-middle text-center">Action</th>
-            </tr>
-        </thead>
-        <tbody>
-            @{
-                int j = 0;
-            }
-            @for (int i = startDate; i <= endDate; i++)
+<table class="table table-borderless ">
+    <thead class="text-body border-0">
+        <tr>
+            <th class="align-middle" style="width: 20% !important">Date</th>
+            <th class="align-middle" style="width: 20% !important">Item</th>
+            <th class="align-middle" style="width: 20% !important">Amount</th>
+            <th class="align-middle" style="width: 20% !important">Bill</th>
+            <th class="align-middle" style="width: 20% !important">Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        @{
+            int j = 0;
+        }
+        @for (int i = startDate; i <= endDate; i++)
+        {
+            string date = new DateTime(year, month, i).Date.ToString("dd/MM/yyyy");
+            @if (Listmodel != null && Listmodel[j] != null)
             {
                 <tr>
-                    
-                    @{
-                        string date = new DateTime(year, month, i).Date.ToString("dd/MM/yyyy");
-                    }
-                    <td class="align-middle text-center">@date</td>
-                    <td class="align-middle text-center">item</td>
-                    <td class="align-middle text-center">10</td>
-                    <td class="align-middle text-center d-flex justify-content-center py-3" style="width: 20%">
-                        <div class="input-group input-group-lg mt-5">
+                    <td class="align-middle">@date</td>
+                    <td class="align-middle">@Listmodel[j].ItemName</td>
+                    <td class="align-middle">@Listmodel[j].Amount</td>
+                    <td class="align-middle">@Listmodel[j].Bill</td>
+                    <td class="align-middle">@Listmodel[j].Bill</td>
+                    <td class="align-middle text-center d-flex justify-content-between"><button class="btn btn-outline-info">Edit</button><button class="btn btn-outline-info">Delete</button><button class="btn btn-outline-info">View</button></td>
+                </tr>
+            }
+            else
+            {
+                <tr>
+                    <td class="align-middle">@date</td>
+
+                    <td class="align-middle">
+                        <input type="text" class="form-control" asp-for="@Listmodel[j].ItemName" } />
+                    </td>
+
+                    <td class="align-middle">
+                        <input type="number" class="form-control" asp-for="@Listmodel[j].Amount" } />
+                    </td>
+
+                    <td class="align-middle d-flex justify-content-center py-3">
+                        <div class="input-group input-group-lg d-flex">
                             <label id="infoarea" for="fileInput" class="form-control fs-6 bg-body-secondary align-middle py-1 d-flex align-items-center">
                                 Select File
                             </label>
@@ -51,11 +69,52 @@
 
                         </div>
                     </td>
-                    <td class="align-middle text-center"></td>
-                </tr>
-                j++;
 
+                    <td class="align-middle"><button type="button" onclick="submitform()" class="btn btn-outline-info">submit</button></td>
+                </tr>
+                <div class="d-none">
+                    <form asp-action="sumbitReciept" id="form" method="post" class="myform addReimbursement" enctype="multipart/form-data">
+                        <input type="hidden" class="pay-item-hidden Item" name="Item" />
+                        <input type="hidden" class="pay-amount-hidden Amount" name="Amount" />
+                        <input type="hidden" name="PhysicianId" value="@ViewBag.PhysicianId" />
+                        <input type="hidden" name="StartDate" value="@ViewBag.startDate" />
+                        <input type="hidden" asp-for="@Model[j].TimesheetDetailId" name="Timesheetdetailid" />
+                        <div class="form-floating">
+                            <div class="col-md-12 form-floating d-flex file-parent">
+                                <div class="file-upload-timesheet border border-1" data-text="Select file">
+                                    <input name="file" type="file" class="file-upload-field" style="display:block;" id="file" value="">
+                                </div>
+                                <input type="submit" class="btn text-light btn-info rounded-0 d-flex align-items-lg-center fileupload" id="">
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            
             }
-        </tbody>
-    </table>
-</form>
+            j++;
+
+        }
+    </tbody>
+</table>
+
+<script>
+    function submitform() {
+        $("#form").submit();
+    }
+    $(document).ready(function () {
+        $('.pay-item-hidden').attr('name', 'Item');
+        $('.pay-amount-hidden').attr('name', 'Amount');
+        $(".pay-item").on("input", function () {
+            // Get the updated value
+            var newValue = $(this).val();
+            // Update the value of the hidden input field
+            $(this).closest("tr").find(".pay-item-hidden").val(newValue);
+        });
+        $(".pay-amount").on("input", function () {
+            // Get the updated value
+            var newValue = $(this).val();
+            // Update the value of the hidden input field
+            $(this).closest("tr").find(".pay-amount-hidden").val(newValue);
+        });
+    });
+</script>

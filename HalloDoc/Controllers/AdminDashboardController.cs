@@ -1706,6 +1706,10 @@ namespace HalloDoc.Controllers
         {
             ViewBag.startDate = DateOnly.Parse(date);
             ViewBag.endDate = DateOnly.FromDateTime(ViewBag.startDate.Day == 1 ? new DateTime(ViewBag.startDate.Year, ViewBag.startDate.Month, 15) : new DateTime(ViewBag.startDate.Year, ViewBag.startDate.Month, 1).AddMonths(1).AddDays(-1));
+
+            List<TimesheetReimbursementDetail> details = new List<TimesheetReimbursementDetail>();
+
+
             return PartialView("ProviderMenu/_addRecieptForm");
         } 
 
@@ -1715,10 +1719,10 @@ namespace HalloDoc.Controllers
             ViewBag.IsPhysician = userPhysicianId == null ?  false : true;
             
             var result = _inv.getTimesheetTableData(startdate, physicianId);
-         
+            ViewBag.PhysicianId = physicianId;
             ViewBag.IsNull = result.firstTable.Count == 0 ? true : false;
             ViewBag.PhysicianName = _context.Physicians.First(u => u.PhysicianId == physicianId).FirstName;
-            
+                
             return PartialView("ProviderMenu/_timesheetDetails", result);
         }
 
@@ -1741,7 +1745,10 @@ namespace HalloDoc.Controllers
             }
             return RedirectToAction("Invoicing");
         }
-
+        public IActionResult sumbitReciept(string Item)
+        {
+            return Ok();
+        }
         #endregion
 
         #region Partners
