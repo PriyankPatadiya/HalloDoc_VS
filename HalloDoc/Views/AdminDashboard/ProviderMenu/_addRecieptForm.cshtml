@@ -23,9 +23,10 @@
         @for (int i = startDate; i <= endDate; i++)
         {
             string date = new DateTime(year, month, i).Date.ToString("dd/MM/yyyy");
-            @if (Listmodel != null && Listmodel[j] != null)
+            @if (Listmodel.Count > 0 && Listmodel[j] != null)
             {
                 <tr>
+                <td class="d-none"><input id="tdId_@j" value="@Listmodel[j].TimesheetDetailId" hidden /></td>
                     <td class="align-middle">@date</td>
                     <td class="align-middle">@Listmodel[j].ItemName</td>
                     <td class="align-middle">@Listmodel[j].Amount</td>
@@ -37,14 +38,15 @@
             else
             {
                 <tr>
+                <td class="d-none"><input id="tdDate_@j" value="@date" hidden /></td>
                     <td class="align-middle">@date</td>
 
                     <td class="align-middle">
-                        <input type="text" class="form-control" asp-for="@Listmodel[j].ItemName" } />
+                        <input type="text" id="Itemname_@j" class="form-control"} />
                     </td>
 
                     <td class="align-middle">
-                        <input type="number" class="form-control" asp-for="@Listmodel[j].Amount" } />
+                        <input type="number" id="Amount_@j" class="form-control"} />
                     </td>
 
                     <td class="align-middle d-flex justify-content-center py-3">
@@ -52,7 +54,7 @@
                             <label id="infoarea" for="fileInput" class="form-control fs-6 bg-body-secondary align-middle py-1 d-flex align-items-center">
                                 Select File
                             </label>
-                            <input type="file" class="form-control" id="fileInput" hidden multiple />
+                            <input type="file" class="form-control" id="file_@j" hidden/>
                             <button class="input-group-text btn btn-info text-light" id="filesubmitbtn" type="button">
                                 <svg xmlns="http://www.w3.org/2000/svg"
                                      width="24"
@@ -70,25 +72,9 @@
                         </div>
                     </td>
 
-                    <td class="align-middle"><button type="button" onclick="submitform()" class="btn btn-outline-info">submit</button></td>
+                    <td class="align-middle"><button type="button" onclick="submitform(@j)" class="btn btn-outline-info">submit</button></td>
                 </tr>
-                <div class="d-none">
-                    <form asp-action="sumbitReciept" id="form" method="post" class="myform addReimbursement" enctype="multipart/form-data">
-                        <input type="hidden" class="pay-item-hidden Item" name="Item" />
-                        <input type="hidden" class="pay-amount-hidden Amount" name="Amount" />
-                        <input type="hidden" name="PhysicianId" value="@ViewBag.PhysicianId" />
-                        <input type="hidden" name="StartDate" value="@ViewBag.startDate" />
-                        <input type="hidden" asp-for="@Model[j].TimesheetDetailId" name="Timesheetdetailid" />
-                        <div class="form-floating">
-                            <div class="col-md-12 form-floating d-flex file-parent">
-                                <div class="file-upload-timesheet border border-1" data-text="Select file">
-                                    <input name="file" type="file" class="file-upload-field" style="display:block;" id="file" value="">
-                                </div>
-                                <input type="submit" class="btn text-light btn-info rounded-0 d-flex align-items-lg-center fileupload" id="">
-                            </div>
-                        </div>
-                    </form>
-                </div>
+                
             
             }
             j++;
@@ -96,9 +82,34 @@
         }
     </tbody>
 </table>
-
+<div class="d-none">
+    <form asp-action="sumbitReciept" id="form" method="post" class="myform addReimbursement" enctype="multipart/form-data">
+        <input type="hidden" id="ItemInput" class="pay-item-hidden Item" name="Item" />
+        <input type="hidden" id="AmountInput" class="pay-amount-hidden Amount" name="Amount" />
+        <input type="hidden" name="PhysicianId" value="@ViewBag.PhysicianId" />
+        <input type="hidden" id="dateInput" name="Date" />
+        <input type="hidden" id="timesheetdetailIdInput" name="Timesheetdetailid" />
+        <div class="form-floating">
+            <div class="col-md-12 form-floating d-flex file-parent">
+                <div class="file-upload-timesheet border border-1" data-text="Select file">
+                    <input name="file" type="file" class="file-upload-field" style="display:block;" id="fileInput">
+                </div>
+                <input type="submit" class="btn text-light btn-info rounded-0 d-flex align-items-lg-center fileupload">
+            </div>
+        </div>
+    </form>
+</div>
 <script>
-    function submitform() {
+    function submitform(i) {
+        var timesheetDetailId = $("#tdId_"+i).val();
+        $("#timesheetdetailIdInput").val(timesheetDetailId);
+        $("#ItemInput").val($("#Itemname_"+i).val());
+        $("#AmountInput").val($("#Amount_"+i).val());
+        $("#dateInput").val($("#tdDate_"+i).val());
+        var actualfile = $("#file_"+i)[0].files[0];
+        debugger;
+        $("#fileInput")[0].files[0] = actualfile;
+
         $("#form").submit();
     }
     $(document).ready(function () {

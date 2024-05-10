@@ -1706,11 +1706,23 @@ namespace HalloDoc.Controllers
         {
             ViewBag.startDate = DateOnly.Parse(date);
             ViewBag.endDate = DateOnly.FromDateTime(ViewBag.startDate.Day == 1 ? new DateTime(ViewBag.startDate.Year, ViewBag.startDate.Month, 15) : new DateTime(ViewBag.startDate.Year, ViewBag.startDate.Month, 1).AddMonths(1).AddDays(-1));
+            ViewBag.PhysicianId = physicianId;
+            var details = (from timesheetReimbutrsment in _context.TimesheetReimbursementDetails
+                           join timesheetdetails in _context.TimesheetDetails
+                           on timesheetReimbutrsment.TimesheetDetailId equals timesheetdetails.TimesheetDetailId
+                           where timesheetdetails.Timesheet.PhysicianId == int.Parse(physicianId) && timesheetdetails.Timesheet.StartDate == DateOnly.Parse(date)
+                           select new TimesheetReimbursementDetail()
+                           {
+                               TimesheetDetailId = timesheetdetails.TimesheetDetailId,
+                               Bill = timesheetReimbutrsment.Bill,
+                               ItemName = timesheetReimbutrsment.ItemName,
+                               Amount = timesheetReimbutrsment.Amount,
+                               CreatedBy =timesheetReimbutrsment.CreatedBy,
 
-            List<TimesheetReimbursementDetail> details = new List<TimesheetReimbursementDetail>();
+                           }).ToList();
 
 
-            return PartialView("ProviderMenu/_addRecieptForm");
+            return PartialView("ProviderMenu/_addRecieptForm", details);
         } 
 
         public IActionResult getTimeSheetTableData(string startdate, int physicianId)
@@ -1745,9 +1757,22 @@ namespace HalloDoc.Controllers
             }
             return RedirectToAction("Invoicing");
         }
-        public IActionResult sumbitReciept(string Item)
+        public IActionResult sumbitReciept(string Item, string Amount, int PhysicianId, DateOnly Date, IFormFile file)
         {
-            return Ok();
+
+            TimesheetReimbursementDetail tsr = new TimesheetReimbursementDetail();
+            tsr.TimesheetDetailId = _context.TimesheetDetails.FirstOrDefault(u => u.TimesheetDate == Date && u.Timesheet.PhysicianId == PhysicianId).TimesheetDetailId;
+            tsr.ItemName = Item;
+            tsr.Amount = int.Parse(Amount);
+            tsr.CreatedBy = _context.Physicians.FirstOrDefault(u => u.PhysicianId == PhysicianId).AspNetUserId;
+            tsr.IsDeleted = false;
+            tsr.Bill = file.FileName;
+
+            _context.TimesheetReimbursementDetails.Add(tsr);
+            _context.SaveChanges();
+
+            return RedirectToAction("Invoicing");
+            
         }
         #endregion
 
